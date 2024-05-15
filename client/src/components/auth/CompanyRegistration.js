@@ -56,7 +56,7 @@ const CompanyRegistration = () => {
     try {
       console.log("Sending data to the server:", formData);
       const response = await axios.post(
-        "http://localhost:5000/api/v1/company/register",
+        "/api/v1/company/register",
         formData
       );
      
