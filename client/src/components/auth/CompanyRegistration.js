@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+
 const CompanyRegistration = () => {
   const [formData, setFormData] = useState({
     businessName: "",
@@ -30,7 +31,6 @@ const CompanyRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate the required fields
     const requiredFields = [
       "businessName",
       "address",
@@ -56,7 +56,7 @@ const CompanyRegistration = () => {
     try {
       console.log("Sending data to the server:", formData);
       const response = await axios.post(
-        "http://localhost:5000/api/v1/company/register",
+        "/api/v1/company/register",
         formData
       );
      
@@ -98,7 +98,7 @@ const CompanyRegistration = () => {
 
   return (
     <form
-      className="max-w-6xl mx-auto p-4 bg-teal-700 text-black rounded-lg"
+      className="max-w-6xl mx-auto p-4 bg-teal-700 text-black rounded-lg "
       onSubmit={handleSubmit}
     >
        <div className="flex flex-wrap -mx-4">
