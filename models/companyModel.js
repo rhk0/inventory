@@ -58,7 +58,7 @@ const CompanySchema = new mongoose.Schema(
       required: true,
     },
     e_way_bill: {
-      type: String,
+type: String,
       required: true,
     },
   },
