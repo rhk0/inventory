@@ -17,10 +17,8 @@ export const registerController = async(req, res) => {
             taxable_value,
             gstIn,
             e_way_bill,
-            enableTds,
-            tanRegistrationNo,
-            tanNo,
-            deductorType} = req.body;
+           
+            } = req.body;
         const requiredFields = [
             'businessName',
             'address',
@@ -37,10 +35,7 @@ export const registerController = async(req, res) => {
             'taxable_value',
             'gstIn',
             'e_way_bill',
-            'enableTds',
-            'tanRegistrationNo',
-            'tanNo',
-            'deductorType'
+           
         ];
 
         const missingFields = [];
@@ -81,10 +76,7 @@ export const registerController = async(req, res) => {
         taxable_value,
         gstIn,
         e_way_bill,
-        enableTds,
-        tanRegistrationNo,
-        tanNo,
-        deductorType
+      
         
 
        })
