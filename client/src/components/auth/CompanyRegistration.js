@@ -59,8 +59,9 @@ const CompanyRegistration = () => {
         "http://localhost:5000/api/v1/company/register",
         formData
       );
-      console.log(response.data);
+     
       alert("Company created successfully!");
+      clearData();
     } catch (error) {
       console.error(
         "Error creating company:",
@@ -72,6 +73,27 @@ const CompanyRegistration = () => {
         }`
       );
     }
+  };
+  const initialFormData = {
+    businessName: "",
+    address: "",
+    b_state: "",
+    country: "",
+    pinCode: "",
+    contact: "",
+    email: "",
+    website: "",
+    financialYear: "",
+    bookFrom: "",
+    s_state: "",
+    tax_Rate: "",
+    taxable_value: "",
+    gstIn: "",
+    e_way_bill: true,
+    
+  };
+  const clearData = () => {
+    setFormData(initialFormData);
   };
 
   return (
@@ -249,28 +271,7 @@ const CompanyRegistration = () => {
         <button
           type="button"
           className="bg-red-500 text-white py-2 px-4 rounded"
-          onClick={() =>
-            setFormData({
-              businessName: "",
-              address: "",
-              b_state: "",
-              country: "",
-              pinCode: "",
-              contact: "",
-              email: "",
-              website: "",
-              financialYear: "",
-              bookFrom: "",
-              s_state: "",
-              tax_Rate: "",
-              taxable_value: "",
-              gstIn: "",
-              e_way_bill: true,
-              tanRegistrationNo: "",
-              tanNo: "",
-              deductorType: "",
-            })
-          }
+          onClick={clearData}
         >
           Cancel
         </button>
