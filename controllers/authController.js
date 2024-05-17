@@ -2,7 +2,8 @@ import userModel from "../models/userModel.js";
 import nodemailer from "nodemailer"
 import { hashPassword, comparePassword } from "../middleware/authHelper.js";
 import dkmodel from "../models/dkmodel.js";
-import { FaRegSmileWink } from "react-icons/fa";
+
+import JWT from "jsonwebtoken"
 export const userRegisterController = async (req, res) => {
   try {
     const {
@@ -180,3 +181,29 @@ export const verificationController =async(req,res)=>{
     return res.status(500).send({success:false,message:"Internal server issue",error})
   }
 }   
+
+export const loginController = async(req,res)=>{
+  try {
+    const {email,password}=req.body;
+    if(!email  || !password){
+      return res.send({success:false,message:"email and password both fields are required"})
+    }
+    const user = await userModel.findOne({email})
+    if(user){
+     const bpassword = await hashPassword(password)
+     const matched = await comparePassword(password,user.password)
+     const token = JWT.sign({_id: user._id},process.env.JWT_SECRET,{
+      expiresIn:"3d",
+     })
+
+     if(!matched){
+      return res.send({success:false,message:""})
+     }
+  return res.send({success:true,message:"Login successfully",user})
+    }
+    res.send("hit")
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({success:false,message:"internal server issue",error})
+  }
+}
