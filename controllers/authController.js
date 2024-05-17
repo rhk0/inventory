@@ -147,12 +147,10 @@ export const verificationController =async(req,res)=>{
    
     const exuser = await userModel.findOne({email})
     if(!exuser){
-      return res.send({success:false,message:"You are not a registerd user "})
+      return res.send({success:false,message:"You are not a registered user "})
     }
     if(exuser){
-      console.log("user find ")
-       
-        
+
      const ot = await dkmodel.findOne({email})
      if(!ot && exuser){
     console.log(" otp find ")
@@ -172,8 +170,6 @@ export const verificationController =async(req,res)=>{
       }
       return res.send({success:false,message:"Verification failed"})
       }
-      
-
     }      
  
   } catch (error) {
@@ -192,18 +188,26 @@ export const loginController = async(req,res)=>{
     if(user){
      const bpassword = await hashPassword(password)
      const matched = await comparePassword(password,user.password)
-     const token = JWT.sign({_id: user._id},process.env.JWT_SECRET,{
+     const AccessToken = JWT.sign({_id: user._id},process.env.JWT_SECRET,{
       expiresIn:"3d",
      })
 
      if(!matched){
-      return res.send({success:false,message:""})
+      return res.send({success:false,message:"invalide passwod please try...! Again "})
      }
-  return res.send({success:true,message:"Login successfully",user})
+     if(!user.verificationStatus){
+      return res.send({success:false,message:"Your email verification is Pending....!"})
+     }
+  return res.send({success:true,message:"Login successfully",user,AccessToken})
     }
-    res.send("hit")
+    if(!user){
+      return res.send({success:false,message:"User Not Registered..!"})
+    }
+  
   } catch (error) {
     console.log(error)
     res.status(500).send({success:false,message:"internal server issue",error})
   }
 }
+
+
