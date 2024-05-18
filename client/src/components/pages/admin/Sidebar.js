@@ -125,18 +125,15 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white hover:bg-blue-900 p-1"
                       >
-                        
                         Create Supplier
                       </Link>
-                    
-                        <Link
-                          to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white hover:bg-blue-900 p-1"
-                        >
-                          
-                          Manage Supplier
-                        </Link>
-                  
+
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white hover:bg-blue-900 p-1"
+                      >
+                        Manage Supplier
+                      </Link>
                     </li>
                   </ul>
                 )}
@@ -156,7 +153,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white"
                       >
-                        
                         Create Customer
                       </Link>
                       <li className="py-1 ">
@@ -164,7 +160,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white"
                         >
-                          
                           Manage Customer
                         </Link>
                       </li>
@@ -187,7 +182,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white"
                       >
-                        
                         Create Transporter
                       </Link>
                       <li className="py-1 ">
@@ -195,7 +189,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white"
                         >
-                          
                           Manage Transporter
                         </Link>
                       </li>
@@ -218,7 +211,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white"
                       >
-                        
                         Create Staff
                       </Link>
                       <li className="py-1 ">
@@ -226,7 +218,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white"
                         >
-                          
                           Manage Staff
                         </Link>
                       </li>
@@ -249,7 +240,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white"
                       >
-                        
                         Create Vender
                       </Link>
                       <li className="py-1 ">
@@ -257,7 +247,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white"
                         >
-                          
                           Manage Vender
                         </Link>
                       </li>
