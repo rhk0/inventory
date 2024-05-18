@@ -1,0 +1,294 @@
+
+.icon {
+  vertical-align: middle;
+  line-height: 1px;
+  font-size: 20px;
+}
+.icon_header {
+  vertical-align: middle;
+  line-height: 1px;
+  font-size: 26px;
+}
+.icon,
+.icon_header {
+  margin-right: 5px;
+}
+
+.close_icon {
+  color: red;
+  margin-left: 30px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr 1fr;
+  grid-template-rows: 0.2fr 3fr;
+  grid-template-areas:
+    "sidebar header header header"
+    "sidebar main main main";
+  height: 100vh;
+}
+
+/* Header  */
+.header {
+  grid-area: header;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px 0 30px;
+  /* box-shadow: 0 6px 7px -3px rgba(103, 41, 175, 0.233);
+  background-color: #201f42; */
+}
+   
+.menu-icon {
+  display: none;
+}
+/* End Header  */
+
+/* Sidebar  */
+#sidebar {
+  grid-area: sidebar;
+  height: 100%;
+
+  background-color: #1c216e;
+  overflow-y: auto;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+}
+
+.sidebar-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px 0px 30px;
+  margin-bottom: 30px;
+}
+ /* this is Created By Admin dharma */
+.sidebar-title > span {
+  display: none;
+}
+
+.sidebar-brand {
+  margin-top: 15px;
+  font-size: 20px;
+  font-weight: 700;
+  height: 50px;
+  width:180px;
+}
+
+.sidebar-list {
+  padding: 0;
+  list-style-type: none;
+}
+
+.sidebar-list-item {
+  padding: 16px 1px 23px 10px;
+  font-size: 18px;
+  gap: 5px;
+  color:aliceblue;
+}
+
+/* 
+.sidebar-list-item:hover {
+  background-color: #60207d;
+  cursor: pointer;
+  font-weight: bolder;
+
+  font-family: Mongolian Baliti;
+} */
+
+.sidebar-list-item > a {
+  text-decoration: none;
+  color:aliceblue;
+  
+}
+
+.sidebar-list-item >a :hover{
+  text-decoration: none;
+  color:#160b17;
+  font-size: large;
+  
+}
+
+.sidebar-responsive {
+  display: inline !important;
+  position: absolute;
+  /*
+    we want the z-index of the sidebar higher so that
+    the charts are not showing over the sidebar 
+    on small screens
+  */
+  z-index: 12 !important;
+}
+
+/* End Sidebar  */
+
+/* Main  */
+.main-container {
+  grid-area: main;
+  overflow-y: auto;
+  padding: 20px 2px;
+  color: rgba(255, 255, 255, 0.95);
+}
+.salaryRecord-container {
+  grid-area: main;
+  overflow-y: auto;
+  padding: 20px 2px;
+  /* color: rgba(255, 255, 255, 0.95); */
+}
+
+.addstaff-container{
+  grid-area: main;
+  overflow: auto;
+  /* padding: 20px 20px; */
+  background-color:#f1f1f54f;
+  color:  black
+
+}
+
+.main-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 16px 40px;
+  border-radius: 5px;
+}
+
+.card:first-child {
+  background-color: #254aad;
+}
+
+.card:nth-child(2) {
+  background-color: #751212;
+}
+
+.card:nth-child(3) {
+  background-color: #2e7d328f;
+}
+
+.card:nth-child(4) {
+  background-color: #d50000;
+}
+
+.card-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-inner > .card_icon {
+  font-size: 25px;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 60px;
+  height: 300px;
+}
+
+/* End Main  */
+
+/* Medium <= 992px */
+
+@media screen and (max-width: 992px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.2fr 3fr;
+    grid-template-areas:
+      "header"
+      "main";
+  }
+
+  #sidebar {
+    display: none;
+  }
+
+  .menu-icon {
+    display: inline;
+  }
+
+  .sidebar-title > span {
+    display: inline;
+  }
+}
+/* Small <= 768px */
+
+@media screen and (max-width: 768px) {
+  .main-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+    margin-top: 30px;
+  }
+}
+
+/* Extra Small <= 576px */
+
+@media screen and (max-width: 576px) {
+  .hedaer-left {
+    display: none;
+  }
+}
+
+.inline-container {
+  display: flex; /* Use flexbox for inline layout */
+  align-items: center; /* Align items vertically */
+}
+
+.icon {
+  margin-right: 10px; /* Add some spacing between the icon and text */
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+.header-left {
+  display: flex;
+}
+@media only screen and (max-width: 600px) {
+  .icon1 {
+    font-size: 12px; /* Adjust the font size as per your requirement */
+  }
+
+  .header-left input[type="search"] {
+    width: auto; /* Adjust the width of the input field */
+  }
+}
+.sub-menu {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sub-menu li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.sub-menu li .icon {
+  margin-right: 10px;
+}
+
+

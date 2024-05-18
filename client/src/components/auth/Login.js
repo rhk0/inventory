@@ -53,7 +53,7 @@ const Login = () => {
           </div>
           <div className="text-white text-center">
             <Link
-              href="#"
+             to="/forgetpassword"
               className="text-red-500 font-bold hover:text-yellow-400"
             >
               Forgot password ?

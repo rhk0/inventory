@@ -137,6 +137,7 @@ const Registration = () => {
                 className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
               />
             </div>
+
             <Link to="/otpverification">
               <button
                 type="submit"
@@ -145,6 +146,7 @@ const Registration = () => {
                 Sign Up
               </button>
             </Link>
+            
           </form>
         </div>
         <div className="text-white text-center">
