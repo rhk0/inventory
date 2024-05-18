@@ -5,7 +5,7 @@ import cors from "cors";
 import connectDb from "./config/db.js";
 import comanyRoute from "./routes/companyRoute.js"
 
-
+import authRoute from './routes/authRoute.js'
 
 //configuration of dotenv 
 dotenv.config();
@@ -21,6 +21,7 @@ app.use(express.json())
 
 // all apies  here 
 app.use("/api/v1/company",comanyRoute)
+app.use("/api/v1/auth",authRoute)
 app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)
 })
