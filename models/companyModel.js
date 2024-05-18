@@ -1,8 +1,16 @@
 import mongoose from "mongoose";
+
 const CompanySchema = new mongoose.Schema(
   {
-    //business Details
     businessName: {
+      type: String,
+      required: true,
+    },
+    printName: {
+      type: String,
+      required: true,
+    },
+    businessType: {
       type: String,
       required: true,
     },
@@ -42,22 +50,52 @@ const CompanySchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    //statutory Details
-
-    s_state: {
-      type: String,
-    },
+    // s_state: {
+    //   type: String,
+    //   // required: true,
+    // },
     tax_Rate: {
       type: String,
-    },
-    taxable_value: {
-      type: String,
+      // required: true,
     },
     gstIn: {
       type: String,
-      required: true,
+      // required: true,
     },
     e_way_bill: {
+      type: String,
+      required: true,
+    },
+    periodicalReturn: {
+      type: String,
+      required: true,
+    },
+
+    selectBank: {
+      type: String,
+      required: true,
+    },
+    accountName: {
+      type: String,
+      required: true,
+    },
+    accountNumber: {
+      type: String,
+      required: true,
+    },
+    irfcCode: {
+      type: String,
+      required: true,
+    },
+    upiId: {
+      type: String,
+      required: true,
+    },
+    enableBatch: {
+      type: String,
+      required: true,
+    },
+    enableExpire: {
       type: String,
       required: true,
     },
@@ -65,4 +103,4 @@ const CompanySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("company", CompanySchema);
+export default mongoose.model("Company", CompanySchema);

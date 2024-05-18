@@ -1,93 +1,116 @@
 import companyModel from "../models/companyModel.js";
 
-export const registerController = async(req, res) => {
-    try {
-        const { businessName,
-            address,
-            b_state,
-            country,
-            pinCode,
-            contact,
-            email,
-            website,
-            financialYear,
-            bookFrom,
-            s_state,
-            tax_Rate,
-            taxable_value,
-            gstIn,
-            e_way_bill,
-           
-            } = req.body;
-        const requiredFields = [
-            'businessName',
-            'address',
-            'b_state',
-            'country',
-            'pinCode',
-            'contact',
-            'email',
-            'website',
-            'financialYear',
-            'bookFrom',
-            's_state',
-            'tax_Rate',
-            'taxable_value',
-            'gstIn',
-            'e_way_bill',
-           
-        ];
+export const registerController = async (req, res) => {
+  try {
+    const {
+      businessName,
+      printName,
+      businessType,
+      address,
+      b_state,
+      country,
+      pinCode,
+      contact,
+      email,
+      website,
+      financialYear,
+      bookFrom,
+      // s_state,
+      tax_Rate,
+      gstIn,
+      e_way_bill,
+      periodicalReturn,
 
-        const missingFields = [];
+      selectBank,
+      accountName,
+      accountNumber,
+      irfcCode,
+      upiId,
+      enableBatch,
+      enableExpire,
+    } = req.body;
 
-        for (const field of requiredFields) {
-            if (!req.body[field]) {
-                missingFields.push(field);
-            }
-        }
+    const requiredFields = [
+      "businessName",
+      "printName",
+      "businessType",
+      "address",
+      "b_state",
+      "country",
+      "pinCode",
+      "contact",
+      "email",
+      "website",
+      "financialYear",
+      "bookFrom",
+      "e_way_bill",
+      "periodicalReturn",
 
-        if (missingFields.length > 0) {
-            return res.status(400).send({
-                message: "Required fields are missing",
-                missingFields: missingFields
-            });
-        }
-   
-      const old = await companyModel.findOne({businessName})
-      if(old){
-      return   res.send({
-            success:false,message:"this business already exist"
-        })
-      }
+      "selectBank",
+      "accountName",
+      "accountNumber",
+      "irfcCode",
+      "upiId",
+      "enableBatch",
+      "enableExpire",
+    ];
 
-       const data = await companyModel.create({
-        businessName,
-        address,
-        b_state,
-        country,
-        pinCode,
-        contact,
-        email,
-        website,
-        financialYear,
-        bookFrom,
-        s_state,
-        tax_Rate,
-        taxable_value,
-        gstIn,
-        e_way_bill,
-      
-        
+    const missingFields = requiredFields.filter(field => !req.body[field]);
 
-       })
-       if(data){
-        res.status(201).send({success:true,message:"company registration successfully",data})
-       }
-
-        
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: "Internal Server Error" ,error});
+    if (missingFields.length > 0) {
+      return res.status(400).send({
+        message: "Required fields are missing",
+        missingFields: missingFields,
+      });
     }
-}
-    
+
+    const old = await companyModel.findOne({ businessName });
+    if (old) {
+      return res.status(400).send({
+        success: false,
+        message: "This business already exists",
+      });
+    }
+
+    const data = await companyModel.create({
+      businessName,
+      printName,
+      businessType,
+      address,
+      b_state,
+      country,
+      pinCode,
+      contact,
+      email,
+      website,
+      financialYear,
+      bookFrom,
+      // s_state,
+      tax_Rate,
+      gstIn,
+      e_way_bill,
+      periodicalReturn,
+      selectBank,
+      accountName,
+      accountNumber,
+      irfcCode,
+      upiId,
+      enableBatch,
+      enableExpire,
+    });
+
+    return res.status(201).send({
+      success: true,
+      message: "Company registration successful",
+      data,
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+
+
+
