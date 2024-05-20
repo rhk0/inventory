@@ -1,39 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  BsCart3,
-  BsGrid1X2Fill,
-  BsFillArchiveFill,
-  BsFillGrid3X3GapFill,
-  BsPeopleFill,
-  BsListCheck,
-  BsMenuButtonWideFill,
-  BsFillGearFill,
-} from "react-icons/bs";
-import { FaCaretDown } from "react-icons/fa";
-import { IoMdClose, IoMdPersonAdd } from "react-icons/io";
-import {
-  MdOutlineDashboard,
-  MdCreateNewFolder,
-  MdMovieCreation,
-  MdFollowTheSigns,
-  MdOutlineFollowTheSigns,
-  MdLeaderboard,
-} from "react-icons/md";
-import { CiSquareMore } from "react-icons/ci";
-import { IoMdSettings } from "react-icons/io";
-import { MdUpcoming } from "react-icons/md";
-import { GiArcheryTarget } from "react-icons/gi";
-import { FaRegistered } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
 
-import { FiTarget } from "react-icons/fi";
-import { SlCalender } from "react-icons/sl";
-import { MdOutlineImportantDevices } from "react-icons/md";
-import { FaPlusSquare } from "react-icons/fa";
-import { GrUserManager } from "react-icons/gr";
-import { FaPersonCircleCheck, FaPerson } from "react-icons/fa6";
-import { BsFillPersonVcardFill } from "react-icons/bs";
-import { FcRules } from "react-icons/fc";
+import { IoMdClose } from "react-icons/io";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showCRMDropdown, setParties] = useState(false);
@@ -129,15 +99,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       >
                         Create Supplier
                       </Link>
-                    
-                        <Link
-                          to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white hover:bg-blue-900 p-1"
-                        >
-                          
-                          Manage Supplier
-                        </Link>
-                  
+
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Manage Supplier
+                      </Link>
                     </li>
                   </ul>
                 )}
@@ -159,7 +127,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       >
                         Create Customer
                       </Link>
-                      <li className="py-1 ">
+                      <li className=" ">
                         <Link
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white nesteditem p-1"
@@ -171,7 +139,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   </ul>
                 )}
               </li>
-              <li className="py-1 ">
+              <li className=" ">
                 <button
                   onClick={() => setTransport(!showtransport)}
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
@@ -261,41 +229,78 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             </ul>
           )}
         </li>
-        {/* <li className="px-4 py-2 hover:bg-gray-700">
+        {/* Cash */}
+
+        <li className="sidebar-list-item hover:bg-blue-900 ">
+          <a href="../src/pages/Dharma.js" className="w-full">
+            <Link to="/admin/dashboard" class="inline-container">
+              <span> Cash</span>
+            </Link>
+          </a>
+        </li>
+        {/* Bank */}
+        <li className="px-1 py-2 ">
           <button
-            onClick={() => setShowCRMDropdown(!showCRMDropdown)}
-            className="w-full flex items-center justify-between focus:outline-none text-white"
+            onClick={() => setBank(!showBankDropdown)}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span>Account</span>
-            <FaCaretDown />
+            <span className="">Bank</span>
+            {!showBankDropdown ? <IoIosArrowDown /> : <IoIosArrowForward />}
           </button>
-          {showCRMDropdown && (
-            <ul className="ml-4 mt-2">
-              <li className="py-1 ">
-                <button
-                  onClick={() => setseconLayer(!layer)}
-                  className="w-full flex items-center justify-between focus:outline-none text-white"
+          {showBankDropdown && (
+            <ul className="ml-4   ">
+              <li className=" ">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
                 >
-                  <span>Nested Account</span>
-                  <FaCaretDown />
+                  Add Bank
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Manage Bank
+                </Link>
+              </li>
+
+              <li className="  ">
+                <button
+                  onClick={() => setBankTransaction(!showBankTransction)}
+                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
+                >
+                  <span>Bank Transaction</span>
+                  {!showBankTransction ? (
+                    <IoIosArrowDown />
+                  ) : (
+                    <IoIosArrowForward />
+                  )}
                 </button>
-                {layer && (
-                  <ul className="ml-4 mt-2">
-                    <li className="py-1 ">
+                {showBankTransction && (
+                  <ul className="ml-4  px-1">
+                    <li className=" ">
                       <Link
                         to="/admin/dashboard/manageperformance"
-                        className="flex items-center text-white"
+                        className="flex items-center text-white nestitemhover"
                       >
-                        
-                        Nested Item
+                        Bank To Bank Transfer
                       </Link>
-                      <li className="py-1 ">
+                      <li className=" ">
                         <Link
                           to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white"
+                          className="flex items-center text-white nestitemhover"
                         >
-                          
-                          Nested Item
+                          Cash Deposit Into Bank
+                        </Link>
+                      </li>
+                      <li className=" ">
+                        <Link
+                          to="/admin/dashboard/manageperformance"
+                          className="flex items-center text-white nestitemhover"
+                        >
+                          Cash Withdraw From Bank
                         </Link>
                       </li>
                     </li>
@@ -304,15 +309,16 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
             </ul>
           )}
-        </li> */}
-        <ul className="sub-menu">
-          <li className="sidebar-list-item" onClick={closeSidebar}>
-            <Link to="/admin/dashboard/log-out" class="inline-container">
-              <MdFollowTheSigns className="icon" />
-              <span>Log Out</span>
-            </Link>
-          </li>
-        </ul>
+        </li>
+        {/* Logout */}
+        <li
+          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+          onClick={closeSidebar}
+        >
+          <Link to="/admin/dashboard/log-out" class="">
+            <span>Log Out</span>
+          </Link>
+        </li>
       </ul>
     </aside>
   );
