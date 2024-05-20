@@ -220,7 +220,7 @@ const CompanyRegistration = () => {
         Create Company
       </h4>
 
-      <div className="flex flex-wrap -mx-4">
+      <div className="flex flex-wrap -mx-4 ">
         <div className="mb-8 px-4 w-full md:w-1/2">
           <h2 className="text-2xl font-semibold mb-4">Business Details</h2>
           <label className="block mb-2">
@@ -416,22 +416,7 @@ const CompanyRegistration = () => {
           </label>
           {formData.enable_gst === "true" && (
             <>
-              {/* <label className="block mb-2">
-                State:
-                <select
-                  name="s_state"
-                  value={formData.s_state}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                >
-                  <option value="">Select State</option>
-                  {indianStates.map((state) => (
-                    <option key={state} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
-              </label> */}
+              
               <label className="block mb-2">
                 Registration Type:
                 <select

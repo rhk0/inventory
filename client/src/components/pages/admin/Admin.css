@@ -1,4 +1,3 @@
-
 .icon {
   vertical-align: middle;
   line-height: 1px;
@@ -42,7 +41,7 @@
   /* box-shadow: 0 6px 7px -3px rgba(103, 41, 175, 0.233);
   background-color: #201f42; */
 }
-   
+
 .menu-icon {
   display: none;
 }
@@ -66,7 +65,7 @@
   padding: 15px 30px 0px 30px;
   margin-bottom: 30px;
 }
- /* this is Created By Admin dharma */
+/* this is Created By Admin dharma */
 .sidebar-title > span {
   display: none;
 }
@@ -76,7 +75,7 @@
   font-size: 20px;
   font-weight: 700;
   height: 50px;
-  width:180px;
+  width: 180px;
 }
 
 .sidebar-list {
@@ -85,32 +84,57 @@
 }
 
 .sidebar-list-item {
-  padding: 16px 1px 23px 10px;
+  padding: 0px 1px 7px 10px;
   font-size: 18px;
-  gap: 5px;
-  color:aliceblue;
+  color: aliceblue;
+}
+.nestedlist{
+  padding: 0px 29px 0px 14px;
+  font-size: 18px;
+
 }
 
-/* 
+.nestitemhover:hover{
+  background-color: #60207d;
+  cursor: pointer;
+  font-weight: bolder;
+  border-radius: 5px;
+  font-family: Mongolian Baliti;
+}
+
 .sidebar-list-item:hover {
   background-color: #60207d;
   cursor: pointer;
   font-weight: bolder;
-
+  border-radius: 5px;
   font-family: Mongolian Baliti;
-} */
+}
+.nesteditem:hover{
+  background-color: #60207d;
+  cursor: pointer;
+  font-weight: bolder;
+  border-radius: 5px;
+  font-family: Mongolian Baliti;
+}
 
 .sidebar-list-item > a {
   text-decoration: none;
-  color:aliceblue;
-  
+  color: aliceblue;
 }
 
-.sidebar-list-item >a :hover{
+.sidebar-list-item > a :hover {
   text-decoration: none;
-  color:#160b17;
+  color:  #eadeeb;
   font-size: large;
-  
+}
+.innerlist{
+  font-size: large;
+}
+
+.innerlist :hover {
+  text-decoration: none;
+  color: #eadeeb;
+  font-size: large;
 }
 
 .sidebar-responsive {
@@ -140,13 +164,12 @@
   /* color: rgba(255, 255, 255, 0.95); */
 }
 
-.addstaff-container{
+.addstaff-container {
   grid-area: main;
   overflow: auto;
   /* padding: 20px 20px; */
-  background-color:#f1f1f54f;
-  color:  black
-
+  background-color: #f1f1f54f;
+  color: black;
 }
 
 .main-title {
@@ -290,5 +313,3 @@
 .sub-menu li .icon {
   margin-right: 10px;
 }
-
-

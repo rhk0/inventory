@@ -1,15 +1,10 @@
-import {React,useState} from "react";
-import { BsSearch, BsJustify } from "react-icons/bs";
+import {React} from "react";
+import {  BsJustify } from "react-icons/bs";
 import "./Admin.css";
 
-import { MdOutlineNotificationsActive, MdSpeakerNotes, MdCelebration } from "react-icons/md";
+
 function Header({ OpenSidebar }) {
-  
 
-
-
-
-  
   return (
     <header style={{backgroundColor:" #1c216e"}} className="header">
       <div className="menu-icon">
