@@ -1,15 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  BsCart3,
-  BsGrid1X2Fill,
-  BsFillArchiveFill,
-  BsFillGrid3X3GapFill,
-  BsPeopleFill,
-  BsListCheck,
-  BsMenuButtonWideFill,
-  BsFillGearFill,
-} from "react-icons/bs";
+
 import { FaCaretDown } from "react-icons/fa";
 import { IoMdClose, IoMdPersonAdd } from "react-icons/io";
 import {
@@ -155,7 +146,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       >
                         Create Customer
                       </Link>
-                      <li className="py-1 ">
+                      <li className="py-1">
                         <Link
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white"
@@ -167,7 +158,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   </ul>
                 )}
               </li>
-              <li className="py-1 ">
+              <li className="py-1">
                 <button
                   onClick={() => setTransport(!showtransport)}
                   className="w-full flex items-center justify-between focus:outline-none text-white"
@@ -257,50 +248,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             </ul>
           )}
         </li>
-        {/* <li className="px-4 py-2 hover:bg-gray-700">
-          <button
-            onClick={() => setShowCRMDropdown(!showCRMDropdown)}
-            className="w-full flex items-center justify-between focus:outline-none text-white"
-          >
-            <span>Account</span>
-            <FaCaretDown />
-          </button>
-          {showCRMDropdown && (
-            <ul className="ml-4 mt-2">
-              <li className="py-1 ">
-                <button
-                  onClick={() => setseconLayer(!layer)}
-                  className="w-full flex items-center justify-between focus:outline-none text-white"
-                >
-                  <span>Nested Account</span>
-                  <FaCaretDown />
-                </button>
-                {layer && (
-                  <ul className="ml-4 mt-2">
-                    <li className="py-1 ">
-                      <Link
-                        to="/admin/dashboard/manageperformance"
-                        className="flex items-center text-white"
-                      >
-                        
-                        Nested Item
-                      </Link>
-                      <li className="py-1 ">
-                        <Link
-                          to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white"
-                        >
-                          
-                          Nested Item
-                        </Link>
-                      </li>
-                    </li>
-                  </ul>
-                )}
-              </li>
-            </ul>
-          )}
-        </li> */}
         <ul className="sub-menu">
           <li className="sidebar-list-item" onClick={closeSidebar}>
             <Link to="/admin/dashboard/log-out" class="inline-container">

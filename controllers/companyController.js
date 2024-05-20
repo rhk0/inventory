@@ -44,7 +44,7 @@ export const registerController = async (req, res) => {
       "financialYear",
       "bookFrom",
       "e_way_bill",
-      "periodicalReturn",
+      // "periodicalReturn",
 
       "selectBank",
       "accountName",

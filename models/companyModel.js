@@ -68,7 +68,7 @@ const CompanySchema = new mongoose.Schema(
     },
     periodicalReturn: {
       type: String,
-      required: true,
+      // required: true,
     },
 
     selectBank: {
