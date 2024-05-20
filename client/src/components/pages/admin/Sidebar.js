@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import {
+  BsCart3,
+  BsGrid1X2Fill,
+  BsFillArchiveFill,
+  BsFillGrid3X3GapFill,
+  BsPeopleFill,
+  BsListCheck,
+  BsMenuButtonWideFill,
+  BsFillGearFill,
+} from "react-icons/bs";
 import { FaCaretDown } from "react-icons/fa";
 import { IoMdClose, IoMdPersonAdd } from "react-icons/io";
 import {
@@ -27,14 +36,15 @@ import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FcRules } from "react-icons/fc";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
-  const [showHRMDropdown, setShowHRMDropdown] = useState(false);
-  const [showCRMDropdown, setShowCRMDropdown] = useState(false);
+  const [showCRMDropdown, setParties] = useState(false);
   const [showtransport, setTransport] = useState(false);
   const [customer, setCostomer] = useState(false);
   const [showstaff, setStaff] = useState(false);
   const [showvendor, setVender] = useState(false);
-
   const [showspplier, setSupplier] = useState(false);
+
+  const [showBankDropdown, setBank] = useState(false);
+  const [showBankTransction, setBankTransaction] = useState(false);
 
   const sidebarRef = useRef(null);
 
@@ -70,7 +80,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
-          <img src="https://manasvitech.in/images/white-logo.png" />
+          <image src="https://manasvitech.in/images/white-logo.png" />
         </div>
         <span
           style={{ borderColor: "white" }}
@@ -82,74 +92,77 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       </div>
 
       <ul className="sidebar-list">
-        <li className="sidebar-list-item">
+        {/* Dashboard */}
+        <li className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1 ">
           <a href="../src/pages/Dharma.js" className="w-full">
             <Link to="/admin/dashboard" class="inline-container">
-              <MdOutlineDashboard className="icon" />
               <span> Dashboard</span>
             </Link>
           </a>
         </li>
-
-        <li className="px-4 py-2 ">
+        {/* Parties */}
+        <li className="px-0 py-2 ">
           <button
-            onClick={() => setShowCRMDropdown(!showCRMDropdown)}
-            className="w-full flex items-center justify-between focus:outline-none text-white  hover:bg-blue-900 p-1"
+            onClick={() => setParties(!showCRMDropdown)}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Parties</span>
-            <FaCaretDown />
+
+            {!showCRMDropdown ? <IoIosArrowDown /> : <IoIosArrowForward />}
           </button>
           {showCRMDropdown && (
-            <ul className="ml-4 mt-2 ">
-              <li className="py-1 ">
+            <ul className="ml-4  ">
+              <li className=" ">
                 <button
                   onClick={() => setSupplier(!showspplier)}
-                  className="w-full flex items-center justify-between focus:outline-none text-white hover:bg-blue-900 p-1 "
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Supplier</span>
-                  <FaCaretDown />
+                  {!showspplier ? <IoIosArrowDown /> : <IoIosArrowForward />}
                 </button>
                 {showspplier && (
-                  <ul className="ml-4 mt-2">
-                    <li className="py-1  ">
+                  <ul className="ml-4 ">
+                    <li className="  ">
                       <Link
                         to="/admin/dashboard/manageperformance"
-                        className="flex items-center text-white hover:bg-blue-900 p-1"
+                        className="flex items-center text-white nesteditem p-1"
                       >
                         Create Supplier
                       </Link>
-
-                      <Link
-                        to="/admin/dashboard/manageperformance"
-                        className="flex items-center text-white hover:bg-blue-900 p-1"
-                      >
-                        Manage Supplier
-                      </Link>
+                    
+                        <Link
+                          to="/admin/dashboard/manageperformance"
+                          className="flex items-center text-white hover:bg-blue-900 p-1"
+                        >
+                          
+                          Manage Supplier
+                        </Link>
+                  
                     </li>
                   </ul>
                 )}
               </li>
-              <li className="py-1 ">
+              <li className=" ">
                 <button
                   onClick={() => setCostomer(!customer)}
-                  className="w-full flex items-center justify-between focus:outline-none text-white"
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Customer</span>
-                  <FaCaretDown />
+                  {!customer ? <IoIosArrowDown /> : <IoIosArrowForward />}
                 </button>
                 {customer && (
-                  <ul className="ml-4 mt-2">
-                    <li className="py-1 ">
+                  <ul className="ml-4 ">
+                    <li className=" ">
                       <Link
                         to="/admin/dashboard/manageperformance"
-                        className="flex items-center text-white"
+                        className="flex items-center text-white nesteditem p-1"
                       >
                         Create Customer
                       </Link>
-                      <li className="py-1">
+                      <li className="py-1 ">
                         <Link
                           to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white"
+                          className="flex items-center text-white nesteditem p-1"
                         >
                           Manage Customer
                         </Link>
@@ -158,27 +171,27 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   </ul>
                 )}
               </li>
-              <li className="py-1">
+              <li className="py-1 ">
                 <button
                   onClick={() => setTransport(!showtransport)}
-                  className="w-full flex items-center justify-between focus:outline-none text-white"
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Transport</span>
-                  <FaCaretDown />
+                  {!showtransport ? <IoIosArrowDown /> : <IoIosArrowForward />}
                 </button>
                 {showtransport && (
-                  <ul className="ml-4 mt-2">
-                    <li className="py-1 ">
+                  <ul className="ml-4 ">
+                    <li className=" ">
                       <Link
                         to="/admin/dashboard/manageperformance"
-                        className="flex items-center text-white"
+                        className="flex items-center text-white nesteditem p-1"
                       >
                         Create Transporter
                       </Link>
-                      <li className="py-1 ">
+                      <li className=" ">
                         <Link
                           to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white"
+                          className="flex items-center text-white nesteditem p-1"
                         >
                           Manage Transporter
                         </Link>
@@ -187,27 +200,27 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   </ul>
                 )}
               </li>
-              <li className="py-1 ">
+              <li className=" ">
                 <button
                   onClick={() => setStaff(!showstaff)}
-                  className="w-full flex items-center justify-between focus:outline-none text-white"
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Staff</span>
-                  <FaCaretDown />
+                  {!showstaff ? <IoIosArrowDown /> : <IoIosArrowForward />}
                 </button>
                 {showstaff && (
-                  <ul className="ml-4 mt-2">
-                    <li className="py-1 ">
+                  <ul className="ml-4 ">
+                    <li className=" ">
                       <Link
                         to="/admin/dashboard/manageperformance"
-                        className="flex items-center text-white"
+                        className="flex items-center text-white nesteditem p-1"
                       >
                         Create Staff
                       </Link>
-                      <li className="py-1 ">
+                      <li className=" ">
                         <Link
                           to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white"
+                          className="flex items-center text-white nesteditem p-1"
                         >
                           Manage Staff
                         </Link>
@@ -216,27 +229,27 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   </ul>
                 )}
               </li>
-              <li className="py-1 ">
+              <li className=" ">
                 <button
                   onClick={() => setVender(!showvendor)}
-                  className="w-full flex items-center justify-between focus:outline-none text-white"
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Vendor</span>
-                  <FaCaretDown />
+                  {!showvendor ? <IoIosArrowDown /> : <IoIosArrowForward />}
                 </button>
                 {showvendor && (
-                  <ul className="ml-4 mt-2">
-                    <li className="py-1 ">
+                  <ul className="ml-4 ">
+                    <li className=" ">
                       <Link
                         to="/admin/dashboard/manageperformance"
-                        className="flex items-center text-white"
+                        className="flex items-center text-white nesteditem p-1"
                       >
                         Create Vender
                       </Link>
-                      <li className="py-1 ">
+                      <li className=" ">
                         <Link
                           to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white"
+                          className="flex items-center text-white nesteditem p-1"
                         >
                           Manage Vender
                         </Link>
@@ -248,6 +261,50 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             </ul>
           )}
         </li>
+        {/* <li className="px-4 py-2 hover:bg-gray-700">
+          <button
+            onClick={() => setShowCRMDropdown(!showCRMDropdown)}
+            className="w-full flex items-center justify-between focus:outline-none text-white"
+          >
+            <span>Account</span>
+            <FaCaretDown />
+          </button>
+          {showCRMDropdown && (
+            <ul className="ml-4 mt-2">
+              <li className="py-1 ">
+                <button
+                  onClick={() => setseconLayer(!layer)}
+                  className="w-full flex items-center justify-between focus:outline-none text-white"
+                >
+                  <span>Nested Account</span>
+                  <FaCaretDown />
+                </button>
+                {layer && (
+                  <ul className="ml-4 mt-2">
+                    <li className="py-1 ">
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white"
+                      >
+                        
+                        Nested Item
+                      </Link>
+                      <li className="py-1 ">
+                        <Link
+                          to="/admin/dashboard/manageperformance"
+                          className="flex items-center text-white"
+                        >
+                          
+                          Nested Item
+                        </Link>
+                      </li>
+                    </li>
+                  </ul>
+                )}
+              </li>
+            </ul>
+          )}
+        </li> */}
         <ul className="sub-menu">
           <li className="sidebar-list-item" onClick={closeSidebar}>
             <Link to="/admin/dashboard/log-out" class="inline-container">
