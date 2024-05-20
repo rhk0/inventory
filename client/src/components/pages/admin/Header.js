@@ -8,7 +8,8 @@ function Header({ OpenSidebar }) {
   return (
     <header style={{backgroundColor:" #1c216e"}} className="header">
       <div className="menu-icon">
-        <BsJustify className="icon" onClick={OpenSidebar} />
+        <BsJustify className="icon text-white" onClick={OpenSidebar} />
+       
       </div>
 
       <div className="header-left">
