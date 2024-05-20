@@ -24,6 +24,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showInventoryProduct, setInventoryProduct] = useState(false);
   const [showPurches, setPurches] = useState(false);
   const [showSales, setSales] = useState(false);
+  const [showExpenses, setExpenses] = useState(false);
+  const [showIncome, setIncome] = useState(false);
+  const [showCRM, setCRM] = useState(false);
+  const [showReport, setReport] = useState(false);
+  const [showSettings, setSettings] = useState(false);
   const sidebarRef = useRef(null);
 
   useEffect(() => {
@@ -58,7 +63,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
-          <image src="https://manasvitech.in/images/white-logo.png" />
+          <img src="https://manasvitech.in/images/white-logo.png" />
         </div>
         <span
           style={{ borderColor: "white" }}
@@ -86,7 +91,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           >
             <span className="">Parties</span>
 
-            {!showCRMDropdown ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            {!showCRMDropdown ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
           </button>
           {showCRMDropdown && (
             <ul className="ml-4  ">
@@ -96,7 +101,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Supplier</span>
-                  {!showspplier ? <IoIosArrowDown /> : <IoIosArrowForward />}
+                  {!showspplier ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
                 </button>
                 {showspplier && (
                   <ul className="ml-4 ">
@@ -124,7 +129,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Customer</span>
-                  {!customer ? <IoIosArrowDown /> : <IoIosArrowForward />}
+                  {!customer ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
                 </button>
                 {customer && (
                   <ul className="ml-4 ">
@@ -153,7 +158,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Transport</span>
-                  {!showtransport ? <IoIosArrowDown /> : <IoIosArrowForward />}
+                  {!showtransport ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
                 </button>
                 {showtransport && (
                   <ul className="ml-4 ">
@@ -182,7 +187,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Staff</span>
-                  {!showstaff ? <IoIosArrowDown /> : <IoIosArrowForward />}
+                  {!showstaff ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
                 </button>
                 {showstaff && (
                   <ul className="ml-4 ">
@@ -211,7 +216,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Vendor</span>
-                  {!showvendor ? <IoIosArrowDown /> : <IoIosArrowForward />}
+                  {!showvendor ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
                 </button>
                 {showvendor && (
                   <ul className="ml-4 ">
@@ -254,7 +259,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Bank</span>
-            {!showBankDropdown ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            {!showBankDropdown ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
           </button>
           {showBankDropdown && (
             <ul className="ml-4   ">
@@ -327,7 +332,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Inventory</span>
-            {!showInventory ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            {!showInventory ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
           </button>
           {showInventory && (
             <ul className="ml-4   ">
@@ -572,7 +577,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Purches</span>
-            {!showPurches ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            {!showPurches ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
           </button>
           {showPurches && (
             <ul className="ml-4   ">
@@ -626,7 +631,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Sales</span>
-            {!showSales ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            {!showSales ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
           </button>
           {showSales && (
             <ul className="ml-4   ">
@@ -651,7 +656,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   to="/admin/dashboard/manageperformance"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
                 >
-                 Delivery challan
+                  Delivery challan
                 </Link>
               </li>
               <li className="">
@@ -668,6 +673,232 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
                 >
                   Pay In
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        {/* Expenses */}
+        <li className="px-1 py-2 ">
+          <button
+            onClick={() => setExpenses(!showExpenses)}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+          >
+            <span className="">Expenses</span>
+            {!showExpenses ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+          </button>
+          {showExpenses && (
+            <ul className="ml-4   ">
+              <li className=" ">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                >
+                  Create Expenses
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Manage Expenses
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        {/* Income */}
+        <li className="px-1 py-2 ">
+          <button
+            onClick={() => setIncome(!showIncome)}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+          >
+            <span className="">Income</span>
+            {!showIncome ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+          </button>
+          {showIncome && (
+            <ul className="ml-4   ">
+              <li className=" ">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                >
+                  Create Income
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Manage Income
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        {/* Point Of Sales */}
+        <li className="sidebar-list-item hover:bg-blue-900 ">
+          <a href="../src/pages/Dharma.js" className="w-full">
+            <Link to="/admin/dashboard" class="inline-container">
+              <span> Point Of Sales</span>
+            </Link>
+          </a>
+        </li>
+
+        {/* CRM */}
+        <li className="px-1 py-2 ">
+          <button
+            onClick={() => setCRM(!showCRM)}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+          >
+            <span className="">CRM</span>
+            {!showCRM ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+          </button>
+          {showCRM && (
+            <ul className="ml-4   ">
+              <li className=" ">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                >
+                  Create Coupon
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Manage Coupon
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Add Membership
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Manage Membership
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Discount
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        {/* Online store  */}
+        <li className="sidebar-list-item hover:bg-blue-900 ">
+          <a href="../src/pages/Dharma.js" className="w-full">
+            <Link to="/admin/dashboard" class="inline-container">
+              <span> Online store </span>
+            </Link>
+          </a>
+        </li>
+        {/* Report */}
+        <li className="px-1 py-2 ">
+          <button
+            onClick={() => setReport(!showReport)}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+          >
+            <span className="">Report</span>
+            {!showReport ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+          </button>
+          {showReport && (
+            <ul className="ml-4   ">
+              <li className=" ">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                >
+                  Sales
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Purchase
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Accounts
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  GST
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        {/* Settings */}
+        <li className="px-1 py-2 ">
+          <button
+            onClick={() => setSettings(!showSettings)}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+          >
+            <span className="">Settings</span>
+            {!showSettings ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+          </button>
+          {showSettings && (
+            <ul className="ml-4   ">
+              <li className=" ">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                >
+                  Profile
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Taxes
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  User Role
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                >
+                  Term And Conditions
                 </Link>
               </li>
             </ul>
