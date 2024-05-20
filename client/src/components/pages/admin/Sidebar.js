@@ -58,7 +58,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
-          <image src="https://manasvitech.in/images/white-logo.png" />
+          <img src="https://manasvitech.in/images/white-logo.png" />
         </div>
         <span
           style={{ borderColor: "white" }}
@@ -215,14 +215,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 </button>
                 {showvendor && (
                   <ul className="ml-4 ">
-                    <li className=" ">
+                    <li className="">
                       <Link
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Vender
                       </Link>
-                      <li className=" ">
+                      <li className="">
                         <Link
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white nesteditem p-1"
@@ -511,7 +511,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 )}
               </li>
 
-              <li className="  ">
+              <li className="">
                 <button
                   onClick={() => setInventoryProduct(!showInventoryProduct)}
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
@@ -575,7 +575,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             {!showPurches ? <IoIosArrowDown /> : <IoIosArrowForward />}
           </button>
           {showPurches && (
-            <ul className="ml-4   ">
+            <ul className="ml-4">
               <li className=" ">
                 <Link
                   to="/admin/dashboard/manageperformance"
@@ -623,13 +623,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="px-1 py-2 ">
           <button
             onClick={() => setSales(!showSales)}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
             <span className="">Sales</span>
-            {!showSales ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            {!showSales ? <IoIosArrowDown/> : <IoIosArrowForward/>}
           </button>
           {showSales && (
-            <ul className="ml-4   ">
+            <ul className="ml-4">
               <li className=" ">
                 <Link
                   to="/admin/dashboard/manageperformance"
