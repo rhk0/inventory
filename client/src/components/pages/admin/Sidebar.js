@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
-import { MdLibraryAdd } from "react-icons/md";
+
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showCRMDropdown, setParties] = useState(false);
   const [showtransport, setTransport] = useState(false);
@@ -53,15 +53,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       OpenSidebar();
     }
   };
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsMenuOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsMenuOpen(false);
-  };
+ 
   return (
     <aside
       ref={sidebarRef}
@@ -77,19 +69,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               className="h-8"
             />
           </div>
-          <span
-            className="cursor-pointer text-black  rounded-full  bg-white p-2  relative"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <MdLibraryAdd className="text-xl" />
-            {isMenuOpen && (
-              <div className="text-nowrap absolute p-2  right-0 bg-slate-200 text-stone-950  rounded shadow">
-                {/* Content to display on hover */}
-                Create Company
-              </div>
-            )}
-          </span>
+          
         </div>
         <span
           style={{ borderColor: "white" }}
@@ -312,11 +292,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Bank Transaction</span>
-                  {!showBankTransction ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showBankTransction ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showBankTransction && (
                   <ul className="ml-4  px-1">
@@ -377,11 +353,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Category</span>
-                  {!showInventoryCategory ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryCategory ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryCategory && (
                   <ul className="ml-4  px-1">
@@ -413,11 +385,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Sub Category</span>
-                  {!showInventorySubCategory ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventorySubCategory ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventorySubCategory && (
                   <ul className="ml-4  px-1">
@@ -446,11 +414,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Brand</span>
-                  {!showInventoryBrand ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryBrand ?<IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryBrand && (
                   <ul className="ml-4  px-1">
@@ -480,11 +444,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Stock Unit</span>
-                  {!showInventoryStockUnit ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryStockUnit ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryStockUnit && (
                   <ul className="ml-4  px-1">
@@ -514,11 +474,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Branch</span>
-                  {!showInventoryBranch ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryBranch ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryBranch && (
                   <ul className="ml-4  px-1">
@@ -548,11 +504,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Product</span>
-                  {!showInventoryProduct ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryProduct ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryProduct && (
                   <ul className="ml-4  px-1">
