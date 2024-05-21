@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
-import { CiMenuBurger } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
-
+import { MdLibraryAdd } from "react-icons/md";
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showCRMDropdown, setParties] = useState(false);
   const [showtransport, setTransport] = useState(false);
@@ -83,9 +82,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <CiMenuBurger />
+            <MdLibraryAdd className="text-xl" />
             {isMenuOpen && (
-              <div className="text-nowrap absolute p-3 right-0 bg-slate-200 text-stone-950  rounded shadow">
+              <div className="text-nowrap absolute p-2  right-0 bg-slate-200 text-stone-950  rounded shadow">
                 {/* Content to display on hover */}
                 Create Company
               </div>

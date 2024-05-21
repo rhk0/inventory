@@ -93,7 +93,7 @@ const Home = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           <div className="flex  flex-col  hover:scale-95 items-center rounded-md ">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex gap-16 items-center justify-center rounded-md">
-              <span>10</span>
+              <span>900</span>
               <FaChartBar size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -102,7 +102,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full  flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>400</span>
               <FaMoneyBill size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -111,7 +111,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>600</span>
               <FaUsers size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -120,7 +120,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>1000</span>
               <FaShoppingCart size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -129,7 +129,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>500</span>
               <FaBuilding size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -138,7 +138,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>300</span>
               <FaMoneyCheckAlt size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -147,7 +147,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>300</span>
               <FaClipboardList size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -156,7 +156,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>550</span>
               <FaMoneyBillAlt size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -165,7 +165,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>400</span>
               <FaCubes size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -174,7 +174,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>700</span>
               <FaUserFriends size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -183,7 +183,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>400</span>
               <FaCashRegister size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -192,7 +192,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>6000</span>
               <FaPiggyBank size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -201,7 +201,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>800</span>
               <FaMoneyCheck size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -210,7 +210,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>900</span>
               <FaDollarSign size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -219,7 +219,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>10</span>
+              <span>300</span>
               <FaCalculator size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
