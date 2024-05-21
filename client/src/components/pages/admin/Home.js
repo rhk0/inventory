@@ -1,139 +1,235 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from "react";
+import {
+  FaChartBar,
+  FaMoneyBill,
+  FaUsers,
+  FaShoppingCart,
+  FaBuilding,
+  FaMoneyCheckAlt,
+  FaClipboardList,
+  FaMoneyBillAlt,
+  FaCubes,
+  FaUserFriends,
+  FaMoneyCheck,
+  FaCashRegister,
+  FaPiggyBank,
+  FaDollarSign,
+  FaCalculator,
+} from "react-icons/fa";
 
+const Home = () => {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterRef = useRef(null);
 
-function Home() {
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setIsFilterOpen(false);
+      }
+    }
 
-    // const data = [
-    //     {
-    //       name: 'Page A',
-    //       uv: 4000,
-    //       pv: 2400,
-    //       amt: 2400,
-    //     },
-    //     {
-    //       name: 'Page B',
-    //       uv: 3000,
-    //       pv: 1398,
-    //       amt: 2210,
-    //     },
-    //     {
-    //       name: 'Page C',
-    //       uv: 2000,
-    //       pv: 9800,
-    //       amt: 2290,
-    //     },
-    //     {
-    //       name: 'Page D',
-    //       uv: 2780,
-    //       pv: 3908,
-    //       amt: 2000,
-    //     },
-    //     {
-    //       name: 'Page E',
-    //       uv: 1890,
-    //       pv: 4800,
-    //       amt: 2181,
-    //     },
-    //     {
-    //       name: 'Page F',
-    //       uv: 2390,
-    //       pv: 3800,
-    //       amt: 2500,
-    //     },
-    //     {
-    //       name: 'Page G',
-    //       uv: 3490,
-    //       pv: 4300,
-    //       amt: 2100,
-    //     },
-    //   ];
-     
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const toggleFilter = () => {
+    setIsFilterOpen(!isFilterOpen);
+  };
+
+  const closeFilter = () => {
+    setIsFilterOpen(false);
+  };
+
+  const handleOptionClick = (event) => {
+    // Preventing the event propagation to avoid closing the filter options
+    event.stopPropagation();
+  };
+
+  const filterOptions = [
+    "Today",
+    "Last 7 days",
+    "Last 15 days",
+    "Last Month",
+    "Last Quarter",
+    "Last 6 Month",
+    "Last Year",
+  ];
 
   return (
-    <main className='main-container'>
-        <div className='main-title'>
-            <h3>DASHBOARD</h3>
+    <main className="main-container">
+      <div className=" p-2 bg-gray-100 ">
+        <div className="text-3xl font-bold text-indigo-700 text-center">
+          Dashboard
         </div>
-{/* 
-        <div className='main-cards'>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>PRODUCTS</h3>
-                    <BsFillArchiveFill className='card_icon'/>
-                </div>
-                <h1>300</h1>
-            </div>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>CATEGORIES</h3>
-                    <BsFillGrid3X3GapFill className='card_icon'/>
-                </div>
-                <h1>12</h1>
-            </div>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>CUSTOMERS</h3>
-                    <BsPeopleFill className='card_icon'/>
-                </div>
-                <h1>33</h1>
-            </div>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>ALERTS</h3>
-                    <BsFillBellFill className='card_icon'/>
-                </div>
-                <h1>42</h1>
-            </div>
-        </div>
-
-        <div className='charts'>
-            <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-            width={500}
-            height={300}
-            data={data}
-            margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-            }}
+        <div className="flex justify-start items-center mb-4 space-x-4">
+          <div className="relative inline-block" ref={filterRef}>
+            <button
+              className="bg-blue-500 hover:bg-green-500 text-white py-2 px-4 rounded"
+              onClick={toggleFilter}
             >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="pv" fill="#8884d8" />
-                <Bar dataKey="uv" fill="#82ca9d" />
-                </BarChart>
-            </ResponsiveContainer>
+              Filter
+            </button>
+            {isFilterOpen && (
+              <div className="absolute top-full left-0 mt-2  bg-white border border-gray-200 w-40 rounded shadow-lg">
+                <ul>
+                  {filterOptions.map((option, index) => (
+                    <li
+                      key={index}
+                      className="px-4 py-2 hover:bg-gray-200 text-black cursor-pointer"
+                      onClick={closeFilter}
+                      onMouseDown={handleOptionClick}
+                    >
+                      {option}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
 
-            <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                width={500}
-                height={300}
-                data={data}
-                margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                }}
-                >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-                </LineChart>
-            </ResponsiveContainer>
-
-        </div> */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="flex  flex-col  hover:scale-95 items-center rounded-md ">
+            <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex gap-16 items-center justify-center rounded-md">
+              <span>900</span>
+              <FaChartBar size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Total Sales
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-purple-400 h-24 text-2xl gap-16 w-full  flex items-center justify-center rounded-md">
+              <span>400</span>
+              <FaMoneyBill size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Total Invoices
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>600</span>
+              <FaUsers size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Trade Receivables
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>1000</span>
+              <FaShoppingCart size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Qty Sold
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>500</span>
+              <FaBuilding size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Total Customers
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>300</span>
+              <FaMoneyCheckAlt size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Total Purchase
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>300</span>
+              <FaClipboardList size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Total Bills
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>550</span>
+              <FaMoneyBillAlt size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Trade Payables
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>400</span>
+              <FaCubes size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Qty Purchase
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>700</span>
+              <FaUserFriends size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Total Supplier
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>400</span>
+              <FaCashRegister size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Cash
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>6000</span>
+              <FaPiggyBank size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Bank
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>800</span>
+              <FaMoneyCheck size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Total Expense
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>900</span>
+              <FaDollarSign size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Closing Units
+            </div>
+          </div>
+          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+            <div className="bg-pink-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
+              <span>300</span>
+              <FaCalculator size={24} />
+            </div>
+            <div className="mt-2 text-center text-black text-xl h-10 w-full">
+              Closing Stock
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

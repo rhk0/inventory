@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
-
 import { IoMdClose } from "react-icons/io";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
@@ -54,16 +53,23 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       OpenSidebar();
     }
   };
-
+ 
   return (
     <aside
       ref={sidebarRef}
       id="sidebar"
-      className={openSidebarToggle ? "sidebar-responsive" : ""}
+      className={openSidebarToggle ? "sidebar-responsive " : " p-2"}
     >
       <div className="sidebar-title">
-        <div className="sidebar-brand">
-          <img src="https://manasvitech.in/images/white-logo.png" />
+        <div className="flex justify-between items-center gap-5">
+          <div className="flex items-center">
+            <img
+              src="https://manasvitech.in/images/white-logo.png"
+              alt="Company Logo"
+              className="h-8"
+            />
+          </div>
+          
         </div>
         <span
           style={{ borderColor: "white" }}
@@ -91,7 +97,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           >
             <span className="">Parties</span>
 
-            {!showCRMDropdown ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showCRMDropdown ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showCRMDropdown && (
             <ul className="ml-4  ">
@@ -101,7 +107,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Supplier</span>
-                  {!showspplier ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+                  {!showspplier ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showspplier && (
                   <ul className="ml-4 ">
@@ -129,7 +135,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Customer</span>
-                  {!customer ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+                  {!customer ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {customer && (
                   <ul className="ml-4 ">
@@ -158,7 +164,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Transport</span>
-                  {!showtransport ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+                  {!showtransport ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showtransport && (
                   <ul className="ml-4 ">
@@ -187,7 +193,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Staff</span>
-                  {!showstaff ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+                  {!showstaff ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showstaff && (
                   <ul className="ml-4 ">
@@ -216,7 +222,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
                 >
                   <span>Vendor</span>
-                  {!showvendor ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+                  {!showvendor ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showvendor && (
                   <ul className="ml-4 ">
@@ -259,7 +265,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Bank</span>
-            {!showBankDropdown ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showBankDropdown ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showBankDropdown && (
             <ul className="ml-4   ">
@@ -286,11 +292,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Bank Transaction</span>
-                  {!showBankTransction ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showBankTransction ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showBankTransction && (
                   <ul className="ml-4  px-1">
@@ -332,7 +334,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Inventory</span>
-            {!showInventory ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showInventory ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showInventory && (
             <ul className="ml-4   ">
@@ -351,11 +353,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Category</span>
-                  {!showInventoryCategory ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryCategory ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryCategory && (
                   <ul className="ml-4  px-1">
@@ -387,11 +385,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Sub Category</span>
-                  {!showInventorySubCategory ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventorySubCategory ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventorySubCategory && (
                   <ul className="ml-4  px-1">
@@ -420,11 +414,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Brand</span>
-                  {!showInventoryBrand ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryBrand ?<IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryBrand && (
                   <ul className="ml-4  px-1">
@@ -454,11 +444,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Stock Unit</span>
-                  {!showInventoryStockUnit ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryStockUnit ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryStockUnit && (
                   <ul className="ml-4  px-1">
@@ -488,11 +474,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Branch</span>
-                  {!showInventoryBranch ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryBranch ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryBranch && (
                   <ul className="ml-4  px-1">
@@ -522,11 +504,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Product</span>
-                  {!showInventoryProduct ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowForward />
-                  )}
+                  {!showInventoryProduct ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showInventoryProduct && (
                   <ul className="ml-4  px-1">
@@ -577,7 +555,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Purches</span>
-            {!showPurches ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showPurches ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showPurches && (
             <ul className="ml-4">
@@ -631,7 +609,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
             <span className="">Sales</span>
-            {!showSales ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showSales ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showSales && (
             <ul className="ml-4">
@@ -685,7 +663,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Expenses</span>
-            {!showExpenses ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showExpenses ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showExpenses && (
             <ul className="ml-4   ">
@@ -716,7 +694,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Income</span>
-            {!showIncome ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showIncome ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showIncome && (
             <ul className="ml-4   ">
@@ -756,7 +734,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">CRM</span>
-            {!showCRM ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showCRM ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showCRM && (
             <ul className="ml-4   ">
@@ -818,7 +796,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Report</span>
-            {!showReport ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showReport ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showReport && (
             <ul className="ml-4   ">
@@ -865,7 +843,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Settings</span>
-            {!showSettings ?     <IoIosArrowForward   /> : <IoIosArrowDown />}
+            {!showSettings ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showSettings && (
             <ul className="ml-4   ">

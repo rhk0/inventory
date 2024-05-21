@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios"
 import {
   FaUserAlt,
   FaLock,
@@ -28,15 +29,18 @@ const Registration = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData,"form Data ");
     // Handle form submission logic here
-    console.log(formData);
+    const response =await axios.post("http://localhost:5000/api/v1/auth//register",formData)
+  
+  console.log(response," response data")
   };
 
   return (
     <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center text-white font-montserrat">
-      <div className="p-5  shadow-2xl rounded-lg  login-card p-8 w-full max-w-md flex flex-col">
+      <div className="p-5 hover:scale-95 shadow-2xl rounded-lg  login-card p-8 w-full max-w-md flex flex-col">
         <div className="header mb-12">
           <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-0 bg-white bg-opacity-10">
             <div className="text-white text-6xl">
@@ -108,7 +112,7 @@ const Registration = () => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="pl-12 pr-4 py-2 w-full bg-opacity-10 text-black border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
               />
             </div>
             <div className="form-field relative mb-4">
@@ -121,7 +125,7 @@ const Registration = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border text-black border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
               />
             </div>
             <div className="form-field relative mb-4">
@@ -138,14 +142,15 @@ const Registration = () => {
               />
             </div>
 
-            <Link to="/otpverification">
+            
               <button
                 type="submit"
                 className="bg-green-500 text-white py-3 px-4 w-full rounded-full uppercase font-bold mb-8 focus:outline-none transition duration-300 hover:bg-red-600 hover:text-white"
               >
                 Sign Up
               </button>
-            </Link>
+         
+
             
           </form>
         </div>

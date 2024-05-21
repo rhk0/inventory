@@ -123,7 +123,7 @@ export const userRegisterController = async (req, res) => {
 
     return res.status(500).send({
       success: false,
-      message: "internal issue",
+      message: "internal server  issue...!",
       error,
     });
   }
