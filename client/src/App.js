@@ -13,9 +13,9 @@ function App() {
     <div>
       <BrowserRouter>
       <Routes>
-          <Route path="/" element={<AdminDashboard/>}/>
+          <Route path="/dashboard" element={<AdminDashboard/>}/>
         <Route path="/CompanyRegistration" element={<CompanyRegistration/>}/>
-        <Route path="/login" element={<Login/>}/>
+        <Route path="/" element={<Login/>}/>
         <Route path="/registration" element={<Registraion/>}/>
         <Route path="/forgetpassword" element={<ForgotPassword/>}/>
         <Route path="/otpverification" element={<Otpverification/>}/>

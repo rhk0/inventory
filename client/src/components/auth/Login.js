@@ -1,12 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+   
+    try {
+      
+      const response = await axios.post("/api/v1/auth/login", formData);
+      
+      if (response.data.success) {
+        toast.success(response.data.message);
+       
+        setTimeout(()=>{
+          navigate("/dashboard");
+        },[3000])
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.");
+    }
+  };
+
   return (
-    <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen  flex justify-center items-center text-white font-montserrat">
-      <div className="p-10  hover:scale-95 shadow-2xl rounded-lg login-card p-8 w-full max-w-md flex flex-col">
+    <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center text-white font-montserrat">
+      <div className="p-10 hover:scale-95 shadow-2xl rounded-lg login-card p-8 w-full max-w-md flex flex-col">
         <div className="header mb-12">
           <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-4 bg-white bg-opacity-10">
             <div className="text-white text-6xl">
@@ -14,15 +52,18 @@ const Login = () => {
             </div>
           </div>
         </div>
-        <div className="form">
-          <div className="form-field username relative mb-6">
-            <div className="icon absolute bg-white text-black left-0 top-0  flex justify-center items-center w-10 h-10 rounded-full">
+        <form onSubmit={handleSubmit}>
+          <div className="form-field email relative mb-6">
+            <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
               <FaUserAlt />
             </div>
             <input
               type="text"
-              placeholder="Username"
-              className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+              name="email"
+              placeholder="email"
+              className="pl-12 pr-4 py-2 w-full text-black bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
           <div className="form-field password relative mb-6">
@@ -31,8 +72,11 @@ const Login = () => {
             </div>
             <input
               type="password"
-              placeholder="Password"
-              className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+              name="password"
+              placeholder="password"
+              className="pl-12 pr-4 py-2 w-full text-black bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+              value={formData.password}
+              onChange={handleChange}
             />
           </div>
           <button
@@ -41,26 +85,26 @@ const Login = () => {
           >
             Login
           </button>
-
-          <div className="text-white text-center">
-            Don't have an account?
-            <Link
-              to="/registration"
-              className="font-bold hover:text-yellow-400 text-blue-500"
-            >
-              Sign Up
-            </Link>
-          </div>
-          <div className="text-white text-center">
-            <Link
-             to="/forgetpassword"
-              className="text-red-500 font-bold hover:text-yellow-400"
-            >
-              Forgot password ?
-            </Link>
-          </div>
+        </form>
+        <div className="text-white text-center">
+          Don't have an account?
+          <Link
+            to="/registration"
+            className="font-bold hover:text-yellow-400 text-blue-500"
+          >
+            Sign Up
+          </Link>
+        </div>
+        <div className="text-white text-center">
+          <Link
+            to="/forgetpassword"
+            className="text-red-500 font-bold hover:text-yellow-400"
+          >
+            Forgot password?
+          </Link>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

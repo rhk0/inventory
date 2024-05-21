@@ -154,7 +154,7 @@ export const verificationController =async(req,res)=>{
      const ot = await dkmodel.findOne({email})
      if(!ot && exuser){
     console.log(" otp find ")
-      return res.status(200).send({success:true,message:"already verified"})
+      return res.status(200).send({success:false,message:"already verified"})
       
      }
       if(ot){
