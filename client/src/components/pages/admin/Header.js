@@ -24,7 +24,7 @@ function Header({ OpenSidebar }) {
 
       <div className="header-right ml-1 flex  flex-wrap gap-5">
       <span
-            className="cursor-pointer text-black  rounded-full  bg-white p-2  relative"
+            className="cursor-pointer text-black  rounded-full  bg-gray-300 p-2  relative"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >

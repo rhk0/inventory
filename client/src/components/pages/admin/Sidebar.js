@@ -226,14 +226,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 </button>
                 {showvendor && (
                   <ul className="ml-4 ">
-                    <li className=" ">
+                    <li className="">
                       <Link
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Vender
                       </Link>
-                      <li className=" ">
+                      <li className="">
                         <Link
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white nesteditem p-1"
@@ -498,7 +498,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 )}
               </li>
 
-              <li className="  ">
+              <li className="">
                 <button
                   onClick={() => setInventoryProduct(!showInventoryProduct)}
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
@@ -558,7 +558,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             {!showPurches ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showPurches && (
-            <ul className="ml-4   ">
+            <ul className="ml-4">
               <li className=" ">
                 <Link
                   to="/admin/dashboard/manageperformance"
@@ -606,13 +606,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="px-1 py-2 ">
           <button
             onClick={() => setSales(!showSales)}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
             <span className="">Sales</span>
             {!showSales ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showSales && (
-            <ul className="ml-4   ">
+            <ul className="ml-4">
               <li className=" ">
                 <Link
                   to="/admin/dashboard/manageperformance"

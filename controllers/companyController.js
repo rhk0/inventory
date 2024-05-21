@@ -1,4 +1,6 @@
 import companyModel from "../models/companyModel.js";
+import fs from "fs";
+
 
 export const registerController = async (req, res) => {
   try {
@@ -28,7 +30,20 @@ export const registerController = async (req, res) => {
       upiId,
       enableBatch,
       enableExpire,
-    } = req.body;
+    } = req.fields;
+    console.log(req.fields,"data of req")
+
+    const { photo } = req.files;
+
+    let photoData = null;
+
+    if (photo) {
+      console.log(photo,"thjis fijfoisdfjkoj ")
+      photoData = {
+        data: fs.readFileSync(photo.path),
+        contentType: photo.type,
+      };
+    }
 
     const requiredFields = [
       "businessName",
@@ -44,7 +59,7 @@ export const registerController = async (req, res) => {
       "financialYear",
       "bookFrom",
       "e_way_bill",
-      "periodicalReturn",
+      // "periodicalReturn",
 
       "selectBank",
       "accountName",
@@ -55,7 +70,7 @@ export const registerController = async (req, res) => {
       "enableExpire",
     ];
 
-    const missingFields = requiredFields.filter(field => !req.body[field]);
+    const missingFields = requiredFields.filter((field) => !req.fields[field]);
 
     if (missingFields.length > 0) {
       return res.status(400).send({
@@ -73,6 +88,7 @@ export const registerController = async (req, res) => {
     }
 
     const data = await companyModel.create({
+      photo: photoData,
       businessName,
       printName,
       businessType,
@@ -104,13 +120,10 @@ export const registerController = async (req, res) => {
       message: "Company registration successful",
       data,
     });
-
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: "Internal Server Error", details: error.message });
+    return res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
   }
 };
-
-
-
-
