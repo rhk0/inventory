@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -72,42 +72,43 @@ const indianBanks = [
   "Lakshmi Vilas Bank",
 ];
 
+const initialFormData = {
+  photo: null,
+
+  businessName: "",
+  printName: "",
+  businessType: "",
+  address: "",
+  b_state: "",
+  country: "",
+  pinCode: "",
+  contact: "",
+  email: "",
+  website: "",
+  financialYear: "",
+  bookFrom: "",
+  tax_Rate: "",
+  gstIn: "",
+  e_way_bill: "",
+  periodicalReturn: "",
+  enable_gst: "",
+  registration_Type: "",
+  selectBank: "",
+  accountName: "",
+  accountNumber: "",
+  irfcCode: "",
+  upiId: "",
+  enableBatch: "",
+  enableExpire: "",
+};
+
 const CompanyRegistration = () => {
-  const [formData, setFormData] = useState({
-    businessName: "",
-    printName: "",
-    businessType: "",
-    address: "",
-    b_state: "",
-    country: "",
-    pinCode: "",
-    contact: "",
-    email: "",
-    website: "",
-    financialYear: "",
-    bookFrom: "",
-    // s_state: "",
-    tax_Rate: "",
-    gstIn: "",
-    e_way_bill: "",
-    periodicalReturn: "",
-    enable_gst: "",
-    registration_Type: "",
-    selectBank:"",
-    accountName:"",
-    accountNumber:"",
-    irfcCode:"",
-    upiId:"",
-    enableBatch:"",
-    enableExpire:"",
-  });
+  const [formData, setFormData] = useState(initialFormData);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
 
     if (name === "enable_gst" && value === "true") {
       setFormData((prevData) => ({
@@ -128,6 +129,7 @@ const CompanyRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const requiredFields = [
       "businessName",
       "printName",
@@ -142,7 +144,7 @@ const CompanyRegistration = () => {
       "financialYear",
       "bookFrom",
       "e_way_bill",
-      "periodicalReturn",
+      // "periodicalReturn",
       "selectBank",
       "accountName",
       "accountNumber",
@@ -153,7 +155,7 @@ const CompanyRegistration = () => {
     ];
 
     if (formData.enable_gst === "true") {
-      requiredFields.push( "tax_Rate", "gstIn");
+      requiredFields.push("tax_Rate", "gstIn");
     }
 
     for (const field of requiredFields) {
@@ -164,8 +166,19 @@ const CompanyRegistration = () => {
     }
 
     try {
-      const response = await axios.post("/api/v1/company/register", formData);
-      toast.success("Company created successfully!");
+      const formDataToSend = new FormData();
+      for (let key in formData) {
+        formDataToSend.append(key, formData[key]);
+      }
+
+      const response = await axios.post(
+        "/api/v1/company/register",
+        formDataToSend
+      );
+      if (response) {
+        toast.success("Business Created Successfully...");
+      }
+
       clearData();
     } catch (error) {
       console.error(
@@ -181,48 +194,71 @@ const CompanyRegistration = () => {
   };
 
   const clearData = () => {
-    setFormData({
-      businessName: "",
-      printName: "",
-      businessType: "",
-      address: "",
-      b_state: "",
-      country: "",
-      pinCode: "",
-      contact: "",
-      email: "",
-      website: "",
-      financialYear: "",
-      bookFrom: "",
-      // s_state: "",
-      tax_Rate: "",
-      gstIn: "",
-      e_way_bill: "",
-      periodicalReturn: "",
-      enable_gst: "",
-      registration_Type: "",
-      selectBank:"",
-      accountName:"",
-      accountNumber:"",
-      irfcCode:"",
-      upiId:"",
-      enableBatch:"",
-      enableExpire:"",
-    });
+    setFormData(initialFormData);
+    setCurrentStep(1);
   };
 
-  return (
-    <form
-      className="max-w-6xl mx-auto p-4 bg-gray-200 text-black rounded-lg"
-      onSubmit={handleSubmit}
-    >
-      <h4 className="text-4xl font-semibold mb-4 text-center underline mb-6">
-        Create Company
-      </h4>
+  const nextStep = () => {
+    setCurrentStep((prevStep) => prevStep + 1);
+  };
 
-      <div className="flex flex-wrap -mx-4 ">
-        <div className="mb-8 px-4 w-full md:w-1/2">
-          <h2 className="text-2xl font-semibold mb-4">Business Details</h2>
+  const prevStep = () => {
+    setCurrentStep((prevStep) => prevStep - 1);
+  };
+
+  const photoInputRef = useRef(null);
+
+  const handlePhotoChange = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    setFormData((prevState) => ({
+      ...prevState,
+      photo: file,
+    }));
+  };
+
+  const renderStepIndicator = () => (
+    <div className="flex justify-center mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold">
+      {[
+        "Business Information",
+        "Accounting/Statutory Details",
+        "Banking Details",
+      ].map((step, index) => (
+        <div
+          key={index}
+          className={`flex items-center px-4 py-2 ${
+            currentStep === index + 1
+              ? "bg-violet-600 text-white underline underline-offset-8"
+              : "bg-gray-300"
+          } rounded-md mx-2 cursor-pointer transition duration-300`}
+          onClick={() => setCurrentStep(index + 1)}
+        >
+          {step}
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <form className="max-w-3xl mx-auto p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
+      <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
+        Set Up Business
+      </h4>
+      {renderStepIndicator()}
+      {currentStep === 1 && (
+        <div>
+          <label className="block mb-2">
+            Logo:
+            <input
+              type="file"
+              name="photo"
+              accept="image/*"
+              ref={photoInputRef}
+              onChange={handlePhotoChange}
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+            />
+          </label>
+
           <label className="block mb-2">
             Business Name:
             <input
@@ -230,7 +266,7 @@ const CompanyRegistration = () => {
               name="businessName"
               value={formData.businessName}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -240,7 +276,7 @@ const CompanyRegistration = () => {
               name="printName"
               value={formData.printName}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -249,7 +285,7 @@ const CompanyRegistration = () => {
               name="businessType"
               value={formData.businessType}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select</option>
               <option value="grocery">Grocery</option>
@@ -263,7 +299,7 @@ const CompanyRegistration = () => {
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -272,7 +308,7 @@ const CompanyRegistration = () => {
               name="b_state"
               value={formData.b_state}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select State</option>
               {indianStates.map((state) => (
@@ -289,7 +325,7 @@ const CompanyRegistration = () => {
               name="country"
               value={formData.country}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -299,7 +335,7 @@ const CompanyRegistration = () => {
               name="pinCode"
               value={formData.pinCode}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -309,7 +345,7 @@ const CompanyRegistration = () => {
               name="contact"
               value={formData.contact}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -319,7 +355,7 @@ const CompanyRegistration = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -329,7 +365,7 @@ const CompanyRegistration = () => {
               name="website"
               value={formData.website}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -339,7 +375,7 @@ const CompanyRegistration = () => {
               name="financialYear"
               value={formData.financialYear}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
           <label className="block mb-2">
@@ -349,19 +385,29 @@ const CompanyRegistration = () => {
               name="bookFrom"
               value={formData.bookFrom}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={nextStep}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+            >
+              Next
+            </button>
+          </div>
         </div>
-        <div className="mb-8 px-4 w-full md:w-1/2">
-          <h2 className="text-2xl font-semibold mb-4">Statutory Details</h2>
+      )}
+
+      {currentStep === 2 && (
+        <div>
           <label className="block mb-2">
             Enable Bill Wise Entry:
             <select
               name="e_way_bill"
               value={formData.e_way_bill}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select</option>
               <option value="true">Yes</option>
@@ -377,7 +423,7 @@ const CompanyRegistration = () => {
               name="enableBatch"
               value={formData.enableBatch}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select</option>
               <option value="true">Yes</option>
@@ -391,7 +437,7 @@ const CompanyRegistration = () => {
               name="enableExpire"
               value={formData.enableExpire}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select</option>
               <option value="true">Yes</option>
@@ -407,7 +453,7 @@ const CompanyRegistration = () => {
               name="enable_gst"
               value={formData.enable_gst}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select</option>
               <option value="true">Yes</option>
@@ -416,14 +462,13 @@ const CompanyRegistration = () => {
           </label>
           {formData.enable_gst === "true" && (
             <>
-              
               <label className="block mb-2">
                 Registration Type:
                 <select
                   name="registration_Type"
                   value={formData.registration_Type}
                   onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 >
                   <option value="">Select</option>
                   <option value="true">Yes</option>
@@ -439,7 +484,7 @@ const CompanyRegistration = () => {
                       name="tax_Rate"
                       value={formData.tax_Rate}
                       onChange={handleChange}
-                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                     />
                   </label>
                 </>
@@ -451,7 +496,7 @@ const CompanyRegistration = () => {
                   name="gstIn"
                   value={formData.gstIn}
                   onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
               </label>
 
@@ -461,7 +506,7 @@ const CompanyRegistration = () => {
                   name="periodicalReturn"
                   value={formData.periodicalReturn}
                   onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 >
                   <option value="">Select</option>
                   <option value="monthly">Monthly</option>
@@ -470,21 +515,36 @@ const CompanyRegistration = () => {
               </label>
             </>
           )}
+
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={prevStep}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+            >
+              Previous
+            </button>
+
+            <button
+              onClick={nextStep}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+            >
+              Next
+            </button>
+          </div>
         </div>
+      )}
 
-        {/* new fields */}
-
-        <div className="mb-8 px-4 w-full md:w-1/2">
-          <h2 className="text-2xl font-semibold mb-4">Banking Details</h2>
+      {currentStep === 3 && (
+        <div>
           <label className="block mb-2">
-            Select bank:
+            Select Bank:
             <select
               name="selectBank"
               value={formData.selectBank}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
-              <option value="">Select Bank</option>
+              <option value="">Select</option>
               {indianBanks.map((bank) => (
                 <option key={bank} value={bank}>
                   {bank}
@@ -492,16 +552,18 @@ const CompanyRegistration = () => {
               ))}
             </select>
           </label>
+
           <label className="block mb-2">
-            Account Holder Name:
+            Account Name:
             <input
               type="text"
               name="accountName"
               value={formData.accountName}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
+
           <label className="block mb-2">
             Account Number:
             <input
@@ -509,9 +571,10 @@ const CompanyRegistration = () => {
               name="accountNumber"
               value={formData.accountNumber}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
-          </label>{" "}
+          </label>
+
           <label className="block mb-2">
             IRFC Code:
             <input
@@ -519,9 +582,10 @@ const CompanyRegistration = () => {
               name="irfcCode"
               value={formData.irfcCode}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
-          </label>{" "}
+          </label>
+
           <label className="block mb-2">
             UPI ID:
             <input
@@ -529,27 +593,28 @@ const CompanyRegistration = () => {
               name="upiId"
               value={formData.upiId}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </label>
+
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={prevStep}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+            >
+              Previous
+            </button>
+
+            <button
+              onClick={handleSubmit}
+              className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+            >
+              Submit
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="flex justify-between">
-        <button
-          type="submit"
-          className="bg-green-500 text-white py-2 px-4 rounded"
-        >
-          Save
-        </button>
-        <button
-          type="button"
-          className="bg-red-500 text-white py-2 px-4 rounded"
-          onClick={clearData}
-        >
-          Cancel
-        </button>
-      </div>
-      <ToastContainer/>
+      )}
+      <ToastContainer />
     </form>
   );
 };
