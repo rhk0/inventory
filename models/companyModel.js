@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const CompanySchema = new mongoose.Schema(
   {
+
+    photo: {
+      data: Buffer,
+      contentType: String,
+    },
+    
     businessName: {
       type: String,
       required: true,

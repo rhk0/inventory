@@ -56,6 +56,7 @@
   overflow-y: auto;
   transition: all 0.5s;
   -webkit-transition: all 0.5s;
+  scrollbar-width: 10px;
 }
 
 .sidebar-title {
@@ -76,7 +77,9 @@
   font-weight: 700;
   height: 50px;
   width: 180px;
+  color: #7d203c;
 }
+
 
 .sidebar-list {
   padding: 0;
