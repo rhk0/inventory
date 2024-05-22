@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import {  Routes, Route } from "react-router-dom";
-import AdminDashboard from "../pages/admin/AdminDashboard";
+// import AdminDashboard from "../pages/admin/AdminDashboard";
 import Registration from "../auth/Registraion";
 import ForgotPassword from "../auth/ForgotPassword";
 import OtpVerification from "../auth/Otpverification";
@@ -19,24 +19,20 @@ const AdminRoute = () => {
 
   return (
     <div className="grid-container">
-      <Header OpenSidebar={OpenSidebar} />
-      <Sidebar
-        openSidebarToggle={openSidebarToggle}
-        OpenSidebar={OpenSidebar}
-      />
-      <Routes>
-       <Route path="/" element={<Home/>} />
-       <Route path="/dashboard" element={<AdminDashboard />} />
-          <Route path="/registration" element={<Registration />} />
-          <Route path="/forgetpassword" element={<ForgotPassword />} />
-          <Route path="/otpverification" element={<OtpVerification />} />
-          <Route path="/resetPassword" element={<ResetPassword />} />
-          <Route
-            path="/CompanyRegistration"
-            element={<CompanyRegistration />}
-          />
-      </Routes>
-    </div>
+    <Header OpenSidebar={OpenSidebar} />
+    <Sidebar
+      openSidebarToggle={openSidebarToggle}
+      OpenSidebar={OpenSidebar}
+    />
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/registration" element={<Registration />} />
+      <Route path="/forgetpassword" element={<ForgotPassword />} />
+      <Route path="/otpverification" element={<OtpVerification />} />
+      <Route path="/resetPassword" element={<ResetPassword />} />
+      <Route path="/CompanyRegistration" element={<CompanyRegistration />} />
+    </Routes>
+  </div>
   );
 };
 
