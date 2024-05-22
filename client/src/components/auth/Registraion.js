@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Loader from "../loader/Loader.js";
 import {
   FaUserAlt,
   FaLock,
@@ -13,6 +14,7 @@ import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
 const Registration = () => {
+  const [loading, setLoading] = useState(false);
   const nevigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: "",
@@ -44,7 +46,7 @@ const Registration = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
+    setLoading(true);
     // Handle form submission logic here
     const response = await axios.post("/api/v1/auth/register", formData);
     if (response.data.success) {
@@ -58,10 +60,16 @@ const Registration = () => {
       toast.error(response.data.message);
       return;
     }
+  
+    setLoading(false); // Set loading to false after the request
+  
   };
 
   return (
     <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center text-white font-montserrat">
+       {loading ? (
+          <Loader />
+        ) : (
       <div className="p-5 hover:scale-95 shadow-2xl rounded-lg  login-card p-8 w-full max-w-md flex flex-col">
         <div className="header mb-12">
           <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-0 bg-white bg-opacity-10">
@@ -71,7 +79,7 @@ const Registration = () => {
           </div>
         </div>
         <div>
-          <form onSubmit={handleSubmit} className="form">
+          <form  className="form">
             <div className="form-field relative mb-4">
               <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
                 <FaBuilding />
@@ -166,6 +174,7 @@ const Registration = () => {
 
             <button
               type="submit"
+              onClick={handleSubmit}
               className="bg-green-500 text-white py-3 px-4 w-full rounded-full uppercase font-bold mb-8 focus:outline-none transition duration-300 hover:bg-red-600 hover:text-white"
             >
               Sign Up
@@ -182,6 +191,8 @@ const Registration = () => {
           </Link>
         </div>
       </div>
+          
+        )}
       <ToastContainer />
     </div>
   );

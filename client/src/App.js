@@ -7,6 +7,7 @@ import Registraion from './components/auth/Registraion';
 import ForgotPassword from './components/auth/ForgotPassword';
 import Otpverification from './components/auth/Otpverification';
 import AdminDashboard from './components/pages/admin/AdminDashboard';
+import ResetPassword from './components/auth/ResetPassword';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/registration" element={<Registraion/>}/>
         <Route path="/forgetpassword" element={<ForgotPassword/>}/>
         <Route path="/otpverification" element={<Otpverification/>}/>
+        <Route path="/resetPassword" element={<ResetPassword/>}/>
       </Routes>
       </BrowserRouter>
     </div>
