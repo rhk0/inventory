@@ -10,4 +10,4 @@ router.post('/verification',verificationController )
 router.post('/login',loginController)
 router.post('/forget',forgetController)
 router.post('/resetPassword',resetPasswordController)
-export default router
+export default router;

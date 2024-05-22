@@ -31,7 +31,6 @@ export const registerController = async (req, res) => {
       enableBatch,
       enableExpire,
     } = req.fields;
-    console.log(req.fields,"data of req")
 
     const { photo } = req.files;
 
