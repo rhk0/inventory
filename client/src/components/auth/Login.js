@@ -100,7 +100,7 @@ const Login = () => {
         <div className="text-white text-center">
           Don't have an account?
           <Link
-            to="/admin/registration"
+            to="/registration"
             className="font-bold hover:text-yellow-400 text-blue-500"
           >
             Sign Up
@@ -108,7 +108,7 @@ const Login = () => {
         </div>
         <div className="text-white text-center">
           <Link
-            to="/admin/forgetpassword"
+            to="/forgetpassword"
             className="text-red-500 font-bold hover:text-yellow-400"
           >
             Forgot password?
