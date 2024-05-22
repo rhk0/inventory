@@ -16,7 +16,14 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-
+          <Route path="/registration" element={<Registraion />} />
+          <Route path="/forgetpassword" element={<ForgotPassword />} />
+          <Route path="/otpverification" element={<Otpverification />} />
+          <Route path="/resetPassword" element={<ResetPassword />} />
+          <Route
+            path="/CompanyRegistration"
+            element={<CompanyRegistration />}
+          />
           {/* admin protected routes */}
           <Route path="/admin" element={<AdminProtectedRoute />}>
             <Route path="/admin/*" element={<AdminRoutes />} />
