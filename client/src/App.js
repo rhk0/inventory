@@ -5,9 +5,10 @@ import Login from "./components/auth/Login";
 import Registraion from "./components/auth/Registraion";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import Otpverification from "./components/auth/Otpverification";
+import ResetPassword from "./components/auth/ResetPassword.js"
 import AdminDashboard from "./components/pages/admin/AdminDashboard";
 import { AdminProtectedRoute } from "./components/Routes/AdminProtectedRoute.js";
-import AdminRoutes from "./components/Routes/AdminRoute.js"
+import AdminRoutes from "./components/Routes/AdminRoute.js";
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
           <Route path="/registration" element={<Registraion />} />
           <Route path="/forgetpassword" element={<ForgotPassword />} />
           <Route path="/otpverification" element={<Otpverification />} />
-
+          <Route path="/resetPassword" element={<ResetPassword />} />
 
 
 
@@ -32,8 +33,6 @@ function App() {
           <Route path="/admin" element={<AdminProtectedRoute />}>
             <Route path="/admin/dashboard/*" element={<AdminRoutes />} />
           </Route>
-
-
         </Routes>
       </BrowserRouter>
     </div>

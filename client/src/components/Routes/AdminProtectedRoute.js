@@ -1,26 +1,24 @@
-import {useState,useEffect} from 'react'
-import {useAuth} from "../context/Auth.js"
-import { Outlet } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/Auth.js";
+import { Outlet } from "react-router-dom";
 import axios from "axios";
-import Spinner from "../Spinner";
+import Spinner from "../loader/Loader.js";
 
 export const AdminProtectedRoute = () => {
-    const[ok,setOk]=useState(false);
-    const [auth] =useState();
+  const [ok, setOk] = useState(false);
+  const [auth] = useAuth();
 
-    useEffect(()=>{
-        const autoCheck = async()=>{
-            const data = await axios.get("/api/v1/dkpk-auth/admin-auth");
-            if(data.data.ok){
-                setOk(true);
-            }
-            else{
-                setOk(false);
-            }
-        };
-        if(auth?.dtoken) autoCheck();
+  useEffect(() => {
+    const autoCheck = async () => {
+      const data = await axios.get("/api/v1/dkpk-auth/admin-auth");
+      if (data.data.ok) {
+        setOk(true);
+      } else {
+        setOk(false);
+      }
+    };
+    if (auth?.dtoken) autoCheck();
+  }, [auth?.dtoken]);
 
-    },[auth?.dtoken]);
-
-  return ok?<Outlet/> : <Spinner path=""/>;
-  }
+  return ok ? <Outlet /> : <Spinner path="" />;
+};

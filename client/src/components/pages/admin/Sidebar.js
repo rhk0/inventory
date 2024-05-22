@@ -5,11 +5,11 @@ import { IoIosArrowForward } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
-  const [showCRMDropdown, setParties] = useState(false);
-  const [showtransport, setTransport] = useState(false);
-  const [customer, setCostomer] = useState(false);
-  const [showstaff, setStaff] = useState(false);
-  const [showvendor, setVender] = useState(false);
+  const [showParties, setParties] = useState(false);
+  const [showTransport, setTransport] = useState(false);
+  const [showCustomer, setCustomer] = useState(false);
+  const [showStaff, setStaff] = useState(false);
+  const [showVendor, setVendor] = useState(false);
   const [showspplier, setSupplier] = useState(false);
 
   const [showBankDropdown, setBank] = useState(false);
@@ -30,6 +30,75 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showSettings, setSettings] = useState(false);
   const sidebarRef = useRef(null);
 
+  const closeAll = () => {
+    setParties(false);
+    setTransport(false);
+    setCustomer(false);
+    setStaff(false);
+    setVendor(false);
+    setSupplier(false);
+    setBank(false);
+    setBankTransaction(false);
+    setInventory(false);
+    setInventoryCategory(false);
+    setInventorySubCategory(false);
+    setInventoryBrand(false);
+    setInventoryStockUnit(false);
+    setInventoryBranch(false);
+    setInventoryProduct(false);
+    setPurches(false);
+    setSales(false);
+    setExpenses(false);
+    setIncome(false);
+    setCRM(false);
+    setReport(false);
+    setSettings(false);
+  };
+
+  const togglePurches = () => {
+    closeAll();
+    setPurches(!showPurches);
+  };
+
+  const toggleParties = () => {
+    closeAll();
+    setParties(!showParties);
+  };
+
+  const toggleBank = () => {
+    closeAll();
+    setBank(!showBankDropdown);
+  };
+
+  const toggleInventry = () => {
+    closeAll();
+    setInventory(!showInventory);
+  };
+
+  const toggleSales = () => {
+    closeAll();
+    setSales(!showSales);
+  };
+
+  const toggleExpenses = () => {
+    closeAll();
+    setExpenses(!showExpenses);
+  };
+
+  const toggleIncome = () => {
+    closeAll();
+    setIncome(!showIncome);
+  };
+
+  const toggleCRM = () => {
+    closeAll();
+    setCRM(!showCRM);
+  };
+
+  const toggleReport = () => {
+    closeAll();
+    setReport(!showReport);
+  };
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -47,13 +116,15 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openSidebarToggle, OpenSidebar]);
-
+  const toggleSettings = () => {
+    closeAll();
+    setSettings(!showSettings);
+  };
   const closeSidebar = () => {
     if (openSidebarToggle) {
       OpenSidebar();
     }
   };
- 
   return (
     <aside
       ref={sidebarRef}
@@ -69,7 +140,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               className="h-8"
             />
           </div>
-          
         </div>
         <span
           style={{ borderColor: "white" }}
@@ -82,43 +152,47 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
       <ul className="sidebar-list">
         {/* Dashboard */}
-        <li className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1 ">
+        <li className="sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dashboard" class="inline-container">
-              <span> Dashboard</span>
+            <Link to="/admin/dashboard" className="inline-container">
+              <span>Dashboard</span>
             </Link>
           </a>
         </li>
+
         {/* Parties */}
-        <li className="px-0 py-2 ">
+        <li className="px-0 py-2">
           <button
-            onClick={() => setParties(!showCRMDropdown)}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+          onClick={() => {setParties(!showParties)
+            toggleParties()
+          }}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
             <span className="">Parties</span>
-
-            {!showCRMDropdown ? <IoIosArrowForward /> : <IoIosArrowDown />}
+            {!showParties ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
-          {showCRMDropdown && (
-            <ul className="ml-4  ">
-              <li className=" ">
+          {showParties && (
+            <ul className="ml-4">
+              {/* Supplier */}
+              <li className="">
                 <button
                   onClick={() => setSupplier(!showspplier)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Supplier</span>
                   {!showspplier ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showspplier && (
-                  <ul className="ml-4 ">
-                    <li className="  ">
+                  <ul className="ml-4">
+                    <li>
                       <Link
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Supplier
                       </Link>
-
+                    </li>
+                    <li>
                       <Link
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nesteditem p-1"
@@ -129,118 +203,122 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   </ul>
                 )}
               </li>
-              <li className=" ">
+              {/* Customer */}
+              <li className="">
                 <button
-                  onClick={() => setCostomer(!customer)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
+                  onClick={() => setCustomer(!showCustomer)}
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Customer</span>
-                  {!customer ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showCustomer ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
-                {customer && (
-                  <ul className="ml-4 ">
-                    <li className=" ">
+                {showCustomer && (
+                  <ul className="ml-4">
+                    <li>
                       <Link
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Customer
                       </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white nesteditem p-1"
-                        >
-                          Manage Customer
-                        </Link>
-                      </li>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Manage Customer
+                      </Link>
                     </li>
                   </ul>
                 )}
               </li>
-              <li className=" ">
+              {/* Transport */}
+              <li className="">
                 <button
-                  onClick={() => setTransport(!showtransport)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
+                  onClick={() => setTransport(!showTransport)}
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Transport</span>
-                  {!showtransport ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showTransport ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
-                {showtransport && (
-                  <ul className="ml-4 ">
-                    <li className=" ">
+                {showTransport && (
+                  <ul className="ml-4">
+                    <li>
                       <Link
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Transporter
                       </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white nesteditem p-1"
-                        >
-                          Manage Transporter
-                        </Link>
-                      </li>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Manage Transporter
+                      </Link>
                     </li>
                   </ul>
                 )}
               </li>
-              <li className=" ">
+              {/* Staff */}
+              <li className="">
                 <button
-                  onClick={() => setStaff(!showstaff)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
+                  onClick={() => setStaff(!showStaff)}
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Staff</span>
-                  {!showstaff ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showStaff ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
-                {showstaff && (
-                  <ul className="ml-4 ">
-                    <li className=" ">
+                {showStaff && (
+                  <ul className="ml-4">
+                    <li>
                       <Link
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Staff
                       </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white nesteditem p-1"
-                        >
-                          Manage Staff
-                        </Link>
-                      </li>
                     </li>
-                  </ul>
-                )}
-              </li>
-              <li className=" ">
-                <button
-                  onClick={() => setVender(!showvendor)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem  "
-                >
-                  <span>Vendor</span>
-                  {!showvendor ? <IoIosArrowForward /> : <IoIosArrowDown />}
-                </button>
-                {showvendor && (
-                  <ul className="ml-4 ">
-                    <li className="">
+                    <li>
                       <Link
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Create Vender
+                        Manage Staff
                       </Link>
-                      <li className="">
-                        <Link
-                          to="/admin/dashboard/manageperformance"
-                          className="flex items-center text-white nesteditem p-1"
-                        >
-                          Manage Vender
-                        </Link>
-                      </li>
+                    </li>
+                  </ul>
+                )}
+              </li>
+              {/* Vendor */}
+              <li className="">
+                <button
+                  onClick={() => setVendor(!showVendor)}
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                >
+                  <span>Vendor</span>
+                  {!showVendor ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                </button>
+                {showVendor && (
+                  <ul className="ml-4">
+                    <li>
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Create Vendor
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Manage Vendor
+                      </Link>
                     </li>
                   </ul>
                 )}
@@ -248,12 +326,12 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             </ul>
           )}
         </li>
-        {/* Cash */}
 
-        <li className="sidebar-list-item hover:bg-blue-900 ">
+        {/* Cash */}
+        <li className="sidebar-list-item hover:bg-blue-900">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dashboard" class="inline-container">
-              <span> Cash</span>
+            <Link to="/admin/dashboard" className="inline-container">
+              <span>Cash</span>
             </Link>
           </a>
         </li>
@@ -261,7 +339,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Bank */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setBank(!showBankDropdown)}
+            onClick={() => {setBank(!showBankDropdown)
+              toggleBank();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Bank</span>
@@ -292,7 +372,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Bank Transaction</span>
-                  {!showBankTransction ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showBankTransction ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
                 </button>
                 {showBankTransction && (
                   <ul className="ml-4  px-1">
@@ -330,7 +414,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Inventory */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setInventory(!showInventory)}
+            onClick={() => {
+              setInventory(!showInventory);
+              toggleInventry();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Inventory</span>
@@ -353,7 +440,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Category</span>
-                  {!showInventoryCategory ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showInventoryCategory ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
                 </button>
                 {showInventoryCategory && (
                   <ul className="ml-4  px-1">
@@ -385,7 +476,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Sub Category</span>
-                  {!showInventorySubCategory ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showInventorySubCategory ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
                 </button>
                 {showInventorySubCategory && (
                   <ul className="ml-4  px-1">
@@ -414,7 +509,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Brand</span>
-                  {!showInventoryBrand ?<IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showInventoryBrand ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
                 </button>
                 {showInventoryBrand && (
                   <ul className="ml-4  px-1">
@@ -444,7 +543,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Stock Unit</span>
-                  {!showInventoryStockUnit ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showInventoryStockUnit ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
                 </button>
                 {showInventoryStockUnit && (
                   <ul className="ml-4  px-1">
@@ -474,7 +577,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Branch</span>
-                  {!showInventoryBranch ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showInventoryBranch ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
                 </button>
                 {showInventoryBranch && (
                   <ul className="ml-4  px-1">
@@ -504,7 +611,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
                 >
                   <span>Product</span>
-                  {!showInventoryProduct ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  {!showInventoryProduct ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
                 </button>
                 {showInventoryProduct && (
                   <ul className="ml-4  px-1">
@@ -551,7 +662,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Purches */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setPurches(!showPurches)}
+            onClick={() => {
+              setPurches(!showPurches);
+              togglePurches(); // Call togglePurches function
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Purches</span>
@@ -605,7 +719,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Sales */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setSales(!showSales)}
+            onClick={() => {
+              setSales(!showSales);
+              toggleSales();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
             <span className="">Sales</span>
@@ -659,7 +776,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Expenses */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setExpenses(!showExpenses)}
+            onClick={() => {
+              setExpenses(!showExpenses);
+              toggleExpenses();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Expenses</span>
@@ -690,7 +810,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Income */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setIncome(!showIncome)}
+            onClick={() => {
+              setIncome(!showIncome);
+              toggleIncome();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Income</span>
@@ -717,7 +840,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             </ul>
           )}
         </li>
-
         {/* Point Of Sales */}
         <li className="sidebar-list-item hover:bg-blue-900 ">
           <a href="../src/pages/Dharma.js" className="w-full">
@@ -730,7 +852,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* CRM */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setCRM(!showCRM)}
+            onClick={() => {
+              setCRM(!showCRM);
+              toggleCRM();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">CRM</span>
@@ -792,7 +917,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Report */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setReport(!showReport)}
+            onClick={() => {
+              setReport(!showReport);
+              toggleReport();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Report</span>
@@ -839,7 +967,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Settings */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setSettings(!showSettings)}
+            onClick={() => {
+              setSettings(!showSettings);
+              toggleSettings();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Settings</span>
