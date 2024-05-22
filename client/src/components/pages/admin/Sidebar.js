@@ -5,7 +5,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
-  const [showCRMDropdown, setParties] = useState(false);
+  const [showParties, setParties] = useState(false);
   const [showTransport, setTransport] = useState(false);
   const [showCustomer, setCustomer] = useState(false);
   const [showStaff, setStaff] = useState(false);
@@ -31,6 +31,21 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const sidebarRef = useRef(null);
 
   const closeAll = () => {
+    setParties(false);
+    setTransport(false);
+    setCustomer(false);
+    setStaff(false);
+    setVendor(false);
+    setSupplier(false);
+    setBank(false);
+    setBankTransaction(false);
+    setInventory(false);
+    setInventoryCategory(false);
+    setInventorySubCategory(false);
+    setInventoryBrand(false);
+    setInventoryStockUnit(false);
+    setInventoryBranch(false);
+    setInventoryProduct(false);
     setPurches(false);
     setSales(false);
     setExpenses(false);
@@ -43,6 +58,21 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const togglePurches = () => {
     closeAll();
     setPurches(!showPurches);
+  };
+
+  const toggleParties = () => {
+    closeAll();
+    setParties(!showParties);
+  };
+
+  const toggleBank = () => {
+    closeAll();
+    setBank(!showBankDropdown);
+  };
+
+  const toggleInventry = () => {
+    closeAll();
+    setInventory(!showInventory);
   };
 
   const toggleSales = () => {
@@ -133,13 +163,15 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Parties */}
         <li className="px-0 py-2">
           <button
-            onClick={() => setParties(!showCRMDropdown)}
+          onClick={() => {setParties(!showParties)
+            toggleParties()
+          }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
             <span className="">Parties</span>
-            {!showCRMDropdown ? <IoIosArrowForward /> : <IoIosArrowDown />}
+            {!showParties ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
-          {showCRMDropdown && (
+          {showParties && (
             <ul className="ml-4">
               {/* Supplier */}
               <li className="">
@@ -307,7 +339,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Bank */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setBank(!showBankDropdown)}
+            onClick={() => {setBank(!showBankDropdown)
+              toggleBank();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Bank</span>
@@ -380,7 +414,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Inventory */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setInventory(!showInventory)}
+            onClick={() => {
+              setInventory(!showInventory);
+              toggleInventry();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Inventory</span>
@@ -625,8 +662,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Purches */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setPurches(!showPurches)}
-            togglePurches
+            onClick={() => {
+              setPurches(!showPurches);
+              togglePurches(); // Call togglePurches function
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Purches</span>
@@ -680,7 +719,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Sales */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setSales(!showSales)}
+            onClick={() => {
+              setSales(!showSales);
+              toggleSales();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
             <span className="">Sales</span>
@@ -734,7 +776,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Expenses */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setExpenses(!showExpenses)}
+            onClick={() => {
+              setExpenses(!showExpenses);
+              toggleExpenses();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Expenses</span>
@@ -765,7 +810,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Income */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setIncome(!showIncome)}
+            onClick={() => {
+              setIncome(!showIncome);
+              toggleIncome();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Income</span>
@@ -804,7 +852,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* CRM */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setCRM(!showCRM)}
+            onClick={() => {
+              setCRM(!showCRM);
+              toggleCRM();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">CRM</span>
@@ -866,7 +917,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Report */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setReport(!showReport)}
+            onClick={() => {
+              setReport(!showReport);
+              toggleReport();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Report</span>
@@ -913,7 +967,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Settings */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => setSettings(!showSettings)}
+            onClick={() => {
+              setSettings(!showSettings);
+              toggleSettings();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="">Settings</span>
