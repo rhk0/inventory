@@ -17,21 +17,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
 
-          <Route path="/dashboard" element={<AdminDashboard />} />
-          <Route
-            path="/CompanyRegistration"
-            element={<CompanyRegistration />}
-          />
-          <Route path="/registration" element={<Registraion />} />
-          <Route path="/forgetpassword" element={<ForgotPassword />} />
-          <Route path="/otpverification" element={<Otpverification />} />
-          <Route path="/resetPassword" element={<ResetPassword />} />
-
-
-
           {/* admin protected routes */}
           <Route path="/admin" element={<AdminProtectedRoute />}>
-            <Route path="/admin/dashboard/*" element={<AdminRoutes />} />
+            <Route path="/admin/*" element={<AdminRoutes />} />
           </Route>
         </Routes>
       </BrowserRouter>

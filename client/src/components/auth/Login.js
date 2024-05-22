@@ -34,7 +34,7 @@ const Login = () => {
       if (response.data.success) {
         toast.success(response.data.message);
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/admin/dashboard");
         }, 3000);
       } else {
         toast.error(response.data.message);
@@ -100,7 +100,7 @@ const Login = () => {
         <div className="text-white text-center">
           Don't have an account?
           <Link
-            to="/registration"
+            to="/admin/registration"
             className="font-bold hover:text-yellow-400 text-blue-500"
           >
             Sign Up
@@ -108,7 +108,7 @@ const Login = () => {
         </div>
         <div className="text-white text-center">
           <Link
-            to="/forgetpassword"
+            to="/admin/forgetpassword"
             className="text-red-500 font-bold hover:text-yellow-400"
           >
             Forgot password?
