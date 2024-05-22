@@ -154,7 +154,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Dashboard */}
         <li className="sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dashboard" className="inline-container">
+            <Link to="/dashboard" className="inline-container">
               <span>Dashboard</span>
             </Link>
           </a>
@@ -163,9 +163,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Parties */}
         <li className="px-0 py-2">
           <button
-          onClick={() => {setParties(!showParties)
-            toggleParties()
-          }}
+            onClick={() => {
+              setParties(!showParties);
+              toggleParties();
+            }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
             <span className="">Parties</span>
@@ -339,7 +340,8 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Bank */}
         <li className="px-1 py-2 ">
           <button
-            onClick={() => {setBank(!showBankDropdown)
+            onClick={() => {
+              setBank(!showBankDropdown);
               toggleBank();
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
