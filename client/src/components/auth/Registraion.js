@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"
+import axios from "axios";
 import {
   FaUserAlt,
   FaLock,
@@ -8,9 +8,12 @@ import {
   FaBuilding,
   FaAddressCard,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 const Registration = () => {
+  const nevigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: "",
     userName: "",
@@ -28,14 +31,33 @@ const Registration = () => {
       [name]: value,
     });
   };
-
+  const clearData = () => {
+    setFormData({
+      businessName: "",
+      userName: "",
+      address: "",
+      contact: "",
+      email: "",
+      password: "",
+      businessType: "",
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData,"form Data ");
+ 
     // Handle form submission logic here
-    const response =await axios.post("http://localhost:5000/api/v1/auth//register",formData)
-  
-  console.log(response," response data")
+    const response = await axios.post("/api/v1/auth/register", formData);
+    if (response.data.success) {
+      toast.success(response.data.message);
+      clearData();
+      setTimeout(()=>{
+        nevigate("/otpverification");
+      },[3000])
+      return;
+    } else {
+      toast.error(response.data.message);
+      return;
+    }
   };
 
   return (
@@ -73,7 +95,7 @@ const Registration = () => {
                 placeholder="Username"
                 value={formData.userName}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="pl-12 pr-4 py-2 w-full bg-opacity-10 text-black border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
               />
             </div>
             <div className="form-field relative mb-4">
@@ -86,7 +108,7 @@ const Registration = () => {
                 placeholder="Address"
                 value={formData.address}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="pl-12 pr-4 py-2 w-full bg-opacity-10 text-black border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
               />
             </div>
             <div className="form-field relative mb-4">
@@ -142,28 +164,25 @@ const Registration = () => {
               />
             </div>
 
-            
-              <button
-                type="submit"
-                className="bg-green-500 text-white py-3 px-4 w-full rounded-full uppercase font-bold mb-8 focus:outline-none transition duration-300 hover:bg-red-600 hover:text-white"
-              >
-                Sign Up
-              </button>
-         
-
-            
+            <button
+              type="submit"
+              className="bg-green-500 text-white py-3 px-4 w-full rounded-full uppercase font-bold mb-8 focus:outline-none transition duration-300 hover:bg-red-600 hover:text-white"
+            >
+              Sign Up
+            </button>
           </form>
         </div>
         <div className="text-white text-center">
           Already have an account?{" "}
           <Link
-            to="/login"
+            to="/"
             className="font-bold hover:text-yellow-400 text-blue-500"
           >
             Login
           </Link>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

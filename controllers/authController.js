@@ -1,11 +1,11 @@
 import userModel from "../models/userModel.js";
-import nodemailer from "nodemailer"
+import nodemailer from "nodemailer";
 import { hashPassword, comparePassword } from "../middleware/authHelper.js";
-import dkmodel from "../models/dkmodel.js";
-import NodeCache from "node-cache";
-import JWT from "jsonwebtoken"
-const node_cache = new NodeCache({ stdTTL: 120 });
 
+import NodeCache from "node-cache";
+import JWT from "jsonwebtoken";
+
+const node_cache = new NodeCache({ stdTTL: 120 });
 
 export const userRegisterController = async (req, res) => {
   try {
@@ -19,7 +19,6 @@ export const userRegisterController = async (req, res) => {
       businessType,
     } = req.body;
 
-
     const requiredField = [
       "businessName",
       "userName",
@@ -31,7 +30,6 @@ export const userRegisterController = async (req, res) => {
     ];
 
     const missingFields = [];
-
     for (const field of requiredField) {
       if (!req.body[field]) {
         missingFields.push(field);
@@ -53,92 +51,82 @@ export const userRegisterController = async (req, res) => {
       });
     }
 
-    if(password.length<6){
-        return res.send({success:false,message:"password must be 6 digit"})
+    if (password.length < 6) {
+      return res.send({ success: false, message: "password must be 6 digit" });
     }
 
     // otp
 
     function generateStrongOTP() {
-      const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let otp = '';
+      const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let otp = "";
       for (let i = 0; i < 4; i++) {
-          const randomIndex = Math.floor(Math.random() * characters.length);
-          otp += characters[randomIndex];
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        otp += characters[randomIndex];
       }
       return otp;
-  }
-  
-  let otp = generateStrongOTP();
-  const message = "Your OTP for verification is " + otp +" Please use this code to complete your Registration. Do not share it. ~dharma ";
-  let transporter = nodemailer.createTransport({
-      service:"Gmail",  
-      auth:{
-          user:process.env.EMAIL_USER,
-          pass:process.env.EMAIL_PASS,
-      }
-  })
-// check old user 
-  const oldUser = await userModel.findOne({ email });
+    }
+
+    let otp = generateStrongOTP();
+    const message =
+      "Your OTP for verification is " +
+      otp +
+      " Please use this code to complete your Registration. Do not share it. ~dharma ";
+    let transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+    // check old user
+    const oldUser = await userModel.findOne({ email });
     if (oldUser) {
       return res.send({ message: "user already exist" });
-    } 
+    }
 
-
-
-  const subject = "OTP verification from accounting"
-  let info = await transporter.sendMail({
-      from :`Accounting Master <manasvistaff.dharma@gmail.com>`,
-      to:email,
-      subject:subject,
-      text:message
-  })
-   const exotp = await  dkmodel.findOne({email})
-  
-   if(exotp){
-    
-    const r =  await dkmodel.findOneAndDelete({email})
-   
-   }
-  await dkmodel.create({otp,email})
-    //end otp
-    
-    const hashedPwd = await hashPassword(password);
-    const data = await userModel.create({
-      businessName,
-      userName,
-      address,
-      contact,
-      email,
-      password:hashedPwd,
-      businessType,
-      verificationStatus:false,
+    const subject = "OTP verification from accounting";
+    let info = await transporter.sendMail({
+      from: `Accounting Master <manasvistaff.dharma@gmail.com>`,
+      to: email,
+      subject: subject,
+      text: message,
     });
-    if (data) {
-      res.status(201).send({
-        success: true,
-        message: "User Registration Completed Successfully!",
-        data,
-      });
+
+    const alldt = {
+      businessName: businessName,
+      userName: userName,
+      address: address,
+      contact: contact,
+      email: email,
+      password: password,
+      businessType: businessType,
+      otp: otp,
+    };
+
+    const cdata = node_cache.set(email, alldt);
+
+    if (cdata) {
+      return res.send({ success: true, message: "OTP sent Successfully...!" });
+    }
+    if (!cdata) {
+      return res.send({ success: false, message: "otp not send" });
     }
   } catch (error) {
-    
-
+    console.log(error);
     return res.status(500).send({
       success: false,
-      message: "internal server  issue...!",
+      message: "internal server  issue",
       error,
     });
   }
 };
 
-
-export const verificationController =async(req,res)=>{
+export const verificationController = async (req, res) => {
   try {
-    
-    const {email,otp}=req.body;
-    if(!otp || !email){
-      return res.send({message:"enter both email and otp field"})
+    const { email, otp } = req.body;
+    if (!otp || !email) {
+      return res.send({ message: "enter both email and otp field" });
     }
     const emailRegex = /^\S+@\S+\.\S+$/;
     if (!emailRegex.test(email)) {
@@ -147,197 +135,239 @@ export const verificationController =async(req,res)=>{
         message: "Invalid email format",
       });
     }
-   
-    const exuser = await userModel.findOne({email})
-    if(!exuser){
-      return res.send({success:false,message:"You are not a registered user "})
-    }
-    if(exuser){
 
-     const ot = await dkmodel.findOne({email})
-     if(!ot && exuser){
-    console.log(" otp find ")
-      return res.status(200).send({success:true,message:"already verified"})
-      
-     }
-      if(ot){
-      
-      if(ot.otp===otp){
-           const user = await userModel.findOneAndUpdate(
-            {email},
-            { verificationStatus:true},
-            {new:true}
-           )
-           await dkmodel.findOneAndDelete({email})
-        return res.send({success:true,message:"Verification completed Successfully",user})
+    const exu = await userModel.findOne({ email });
+
+    if (exu) {
+      return res
+        .status(200)
+        .send({ success: true, message: "already verified" });
+    }
+
+    const exuser = node_cache.get(email);
+
+    if (exuser) {
+      if (exuser.otp === otp) {
+        const {
+          businessName,
+          userName,
+          address,
+          contact,
+          email,
+          password,
+          businessType,
+        } = exuser;
+
+        const hashedPwd = await hashPassword(password);
+        const data = await userModel.create({
+          businessName,
+          userName,
+          address,
+          contact,
+          email,
+          password: hashedPwd,
+          businessType,
+        });
+        if (data) {
+          res.status(201).send({
+            success: true,
+            message: "User Registration Completed Successfully!",
+            data,
+          });
+        }
       }
-      return res.send({success:false,message:"Verification failed"})
+      if (exuser.otp !== otp) {
+        return res.send({ success: false, message: "invalid otp " });
       }
-    }      
- 
+    }
+    if (!exuser) {
+      return res.send({
+        success: false,
+        message: "You are not a registered user ",
+      });
+    }
   } catch (error) {
-    console.log(error)
-    return res.status(500).send({success:false,message:"Internal server issue",error})
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server issue", error });
   }
-}   
+};
 
-export const loginController = async(req,res)=>{
+export const loginController = async (req, res) => {
   try {
-    const {email,password}=req.body;
-    if(!email  || !password){
-      return res.send({success:false,message:"email and password both fields are required"})
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.send({
+        success: false,
+        message: "email and password both fields are required",
+      });
     }
-    const user = await userModel.findOne({email})
-    if(user){
-     const bpassword = await hashPassword(password)
-     const matched = await comparePassword(password,user.password)
-     const AccessToken = JWT.sign({_id: user._id},process.env.JWT_SECRET,{
-      expiresIn:"3d",
-     })
+    const user = await userModel.findOne({ email });
+    if (user) {
+      const bpassword = await hashPassword(password);
+      const matched = await comparePassword(password, user.password);
+      const AccessToken = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "3d",
+      });
 
-     if(!matched){
-      return res.send({success:false,message:"invalide passwod please try...! Again "})
-     }
-     if(!user.verificationStatus){
-      return res.send({success:false,message:"Your email verification is Pending....!"})
-     }
-  return res.send({success:true,message:"Login successfully",user,AccessToken})
+      if (!matched) {
+        return res.send({
+          success: false,
+          message: "invalide passwod please try...! Again ",
+        });
+      }
+
+      return res.send({
+        success: true,
+        message: "Login successfully",
+        user,
+        AccessToken,
+      });
     }
-    if(!user){
-      return res.send({success:false,message:"User Not Registered..!"})
+    if (!user) {
+      return res.send({ success: false, message: "User Not Registered..!" });
     }
-  
   } catch (error) {
-    console.log(error)
-    res.status(500).send({success:false,message:"internal server issue",error})
+    console.log(error);
+    res
+      .status(500)
+      .send({ success: false, message: "internal server issue", error });
   }
-}
+};
 
-export const forgetController = async(req,res)=>{
+export const forgetController = async (req, res) => {
   try {
-    const {email}=req.body;
-    if(!email){
-      return res.send({success:false,message:"email is required...!"})
+    const { email } = req.body;
+    if (!email) {
+      return res.send({ success: false, message: "email is required...!" });
     }
-    if(email){
+    if (email) {
       const emailRegex = /^\S+@\S+\.\S+$/;
-      if(!emailRegex.test(email)){
-     return res.status(400).send({success:false,message:"invalid email address "})
+      if (!emailRegex.test(email)) {
+        return res
+          .status(400)
+          .send({ success: false, message: "invalid email address " });
       }
 
-      // check in ex 
-      const ex = await userModel.findOne({email})
-      if(!ex){
-        return res.send({success:false,message:"You Are Not a Registered user...! "})
+      // check in ex
+      const ex = await userModel.findOne({ email });
+      if (!ex) {
+        return res.send({
+          success: false,
+          message: "You Are Not a Registered user...! ",
+        });
       }
-      if(ex)
-        {
-         if(!ex.verificationStatus){
-          return res.send({success:false,message:"You are not a verified user...!",ex})
-         }
-         
-         //send otp 
-         function generateStrongOTP() {
-          const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-          let otp = '';
+      if (ex) {
+        //send otp
+        function generateStrongOTP() {
+          const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          let otp = "";
           for (let i = 0; i < 4; i++) {
-              const randomIndex = Math.floor(Math.random() * characters.length);
-              otp += characters[randomIndex];
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            otp += characters[randomIndex];
           }
           return otp;
-      }
-      
-
-      let otp = generateStrongOTP();
-      const subject = "reset password otp from Point OF Sale"
-      const message = "Your OTP for verification is " + otp +" Please use this code to complete your Registration. Do not share it. ~dharma ";
-      let transporter = nodemailer.createTransport({
-          service:"Gmail",  
-          auth:{
-              user:process.env.EMAIL_USER,
-              pass:process.env.EMAIL_PASS,
-          }
-      })
-      let info = await transporter.sendMail({
-          from :`Point Of Sale <manasvistaff.dharma@gmail.com>`,
-          to:email,
-          subject:subject,
-          text:message
-      })
-
-      // node cache 
-     
-     node_cache.set(email,otp)
-     
-    return   res.status(200).send({success:true,message:"OTP sent Successfully",info})
-
         }
-        
-      return res.send({success:true})
-    }
 
+        let otp = generateStrongOTP();
+        const subject = "reset password otp from Accounting Master";
+        const message =
+          "Your OTP for verification is " +
+          otp +
+          " Please use this code to complete your Registration. Do not share it. ~dharma ";
+        let transporter = nodemailer.createTransport({
+          service: "Gmail",
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+        let info = await transporter.sendMail({
+          from: `Accounting Master <manasvistaff.dharma@gmail.com>`,
+          to: email,
+          subject: subject,
+          text: message,
+        });
 
-    
-  } catch (error) {
-    console.log(error)
-  }
-}
+        // node cache
 
-export const resetPasswordController = async (req,res)=>{
-  try {
+        node_cache.set(email, otp);
 
-    const {email,otp,password,confirmPassword}=req.body;
-    if(!email || !otp || !password || !confirmPassword){
-      return res.send({success:false,message:" 'email' , 'otp' , 'password' and 'confirmPassword'  field are required "})
-    }
-      
-    if(email){
-      const emailRegex = /^\S+@\S+\.\S+$/;
-      if(!emailRegex.test(email)){
-        return res.status(400).send({success:false,message:"invalid email address "})
-    }
-    const exUser = await userModel.findOne({email})
-    if(!exUser){
-      return res.send({success:false,messagge:"You Are Not the Registered User "})
-
-    }
-
-    if(password!==confirmPassword){
-      return res.send({success:false,message:"password and confirmPassword is not same "})
-    }
-    if(password.length<6 || confirmPassword.length<6)
-      {
-        return res.send({success:false,message:"password and confirmPassword length must be 6 digit"})
+        return res
+          .status(200)
+          .send({ success: true, message: "OTP sent Successfully", info });
       }
-      
-    const ootp = node_cache.get(email)
-    if(ootp){
-    // console.log(ootp,otp)
-      if(ootp===otp)
-          {
-            const npassword = await hashPassword(password)
-           
-            
-        
-          const updatedUser = await userModel.findOneAndUpdate({email},{ password:npassword
-            
-          },{new:true,})
-          if(updatedUser){
-            node_cache.del(email);
-            return res.send({success:true,message:"Password Updated Successfully",updatedUser})
-          }
-            return res.send({success:true,message:"ok"})
-          
 
-
-
-          }
+      return res.send({ success: true });
     }
-  }
-  return res.send({success:false,message:"Incorrect otp "})
   } catch (error) {
-    console.log(error)
-    res.status(500).send({success:false,message:"internal server issue...!"})
+    console.log(error);
   }
-}
+};
 
+export const resetPasswordController = async (req, res) => {
+  try {
+    const { email, otp, password, confirmPassword } = req.body;
+    if (!email || !otp || !password || !confirmPassword) {
+      return res.send({
+        success: false,
+        message:
+          " 'email' , 'otp' , 'password' and 'confirmPassword'  field are required ",
+      });
+    }
+
+    if (email) {
+      const emailRegex = /^\S+@\S+\.\S+$/;
+      if (!emailRegex.test(email)) {
+        return res
+          .status(400)
+          .send({ success: false, message: "invalid email address " });
+      }
+      const exUser = await userModel.findOne({ email });
+      if (!exUser) {
+        return res.send({
+          success: false,
+          messagge: "You Are Not the Registered User ",
+        });
+      }
+
+      if (password !== confirmPassword) {
+        return res.send({
+          success: false,
+          message: "password and confirmPassword is not same ",
+        });
+      }
+      if (password.length < 6 || confirmPassword.length < 6) {
+        return res.send({
+          success: false,
+          message: "password and confirmPassword length must be 6 digit",
+        });
+      }
+
+      const ootp = node_cache.get(email);
+      if (ootp) {
+        if (ootp === otp) {
+          const npassword = await hashPassword(password);
+
+          const updatedUser = await userModel.findOneAndUpdate(
+            { email },
+            { password: npassword },
+            { new: true }
+          );
+          if (updatedUser) {
+            node_cache.del(email);
+            return res.send({ success: true, message: " password updated Successfully", updatedUser });
+          }
+          return res.send({ success: true, message: "ok" });
+        }
+      }
+    }
+    return res.send({ success: false, message: "Incorrect otp " });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ success: false, message: "internal server issue...!" });
+  }
+};

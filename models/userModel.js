@@ -32,10 +32,7 @@ const userSchema = mongoose.Schema({
         type:String,
         required:true,
     },
-    verificationStatus:{
-        type:Boolean,
-        required:true,
-    },
+   
     role:{
         type:Number,
         required:true,
