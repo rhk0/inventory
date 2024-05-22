@@ -1,24 +1,27 @@
-import React from 'react'
-import { useState } from 'react'
-import './Admin.css'
-import Header from './Header'
-import Sidebar from './Sidebar'
-import Home from './Home'
+import React from "react";
+import { useState } from "react";
+import "./Admin.css";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import Home from "./Home";
 
 const AdminDashboard = () => {
-    const [openSidebarToggle, setOpenSidebarToggle] = useState(false)
+  const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
-    const OpenSidebar = () => {
-      setOpenSidebarToggle(!openSidebarToggle)
-    }
-  
+  const OpenSidebar = () => {
+    setOpenSidebarToggle(!openSidebarToggle);
+  };
+
   return (
-    <div className='grid-container'>
-      <Header OpenSidebar={OpenSidebar}/>
-      <Sidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar}/>
+    <div className="grid-container">
+      <Header OpenSidebar={OpenSidebar} />
+      <Sidebar
+        openSidebarToggle={openSidebarToggle}
+        OpenSidebar={OpenSidebar}
+      />
       <Home />
     </div>
-  )
-}
+  );
+};
 
-export default AdminDashboard
+export default AdminDashboard;
