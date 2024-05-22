@@ -2,14 +2,14 @@ import React from "react";
 import { useState } from "react";
 import {  Routes, Route } from "react-router-dom";
 // import AdminDashboard from "../pages/admin/AdminDashboard";
-import Registration from "../auth/Registraion";
-import ForgotPassword from "../auth/ForgotPassword";
-import OtpVerification from "../auth/Otpverification";
-import ResetPassword from "../auth/ResetPassword";
-import CompanyRegistration from "../auth/CompanyRegistration";
-import Header from "../pages/admin/Header";
-import Home from "../pages/admin/Home";
-import Sidebar from "../pages/admin/Sidebar";
+import Registration from "../auth/Registraion.js";
+import ForgotPassword from "../auth/ForgotPassword.js";
+import OtpVerification from "../auth/Otpverification.js";
+import ResetPassword from "../auth/ResetPassword.js";
+import CompanyRegistration from "../auth/CompanyRegistration.js";
+import Header from "../pages/admin/Header.js";
+import Home from "../pages/admin/Home.js";
+import Sidebar from "../pages/admin/Sidebar.js";
 const AdminRoute = () => {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
