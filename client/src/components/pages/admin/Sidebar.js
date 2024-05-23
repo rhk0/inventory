@@ -314,13 +314,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             {!showBankDropdown ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showBankDropdown && (
-            <ul className="ml-4   ">
+            <ul className="ml-4 ">
               <li className=" ">
                 <Link
                   to="/admin/dashboard/manageperformance"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
                 >
-                  Add Bank
+                  Add Bank 
                 </Link>
               </li>
               <li className="">
