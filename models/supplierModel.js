@@ -62,13 +62,13 @@ const supplierSchema = new mongoose.Schema({
     type: String,
   },
   discountPercentage: {
-    type: Number,
+    type: String,
   },
   discountAmount: {
-    type: Number,
+    type: String,
   },
   openingBalance: {
-    type: Number,
+    type: String,
   },
   drCr: {
     type: String,

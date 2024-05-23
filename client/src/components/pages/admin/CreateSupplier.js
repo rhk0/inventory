@@ -72,85 +72,64 @@ const indianBanks = [
   "Lakshmi Vilas Bank",
 ];
 
-const initialFormData = {
-  // photo: null,
-  // businessName: "",
-  // printName: "",
-  // businessType: "",
-  // address: "",
-  // b_state: "",
-  // country: "",
-  // pinCode: "",
-  // contact: "",
-  // email: "",
-  // website: "",
-  // financialYear: "",
-  // bookFrom: "",
-  // tax_Rate: "",
-  // gstIn: "",
-  // e_way_bill: "",
-  // periodicalReturn: "",
-  // enable_gst: "",
-  // registration_Type: "",
-  // selectBank: "",
-  // accountName: "",
-  // accountNumber: "",
-  // irfcCode: "",
-  // upiId: "",
-  // enableBatch: "",
-  // enableExpire: "",
-};
 
 const CompanyRegistration = () => {
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState({
+    name: "",
+    contact: "",
+    address: "",
+    pinCode: "",
+    state: "",
+    country: "",
+    email: "",
+    website: "",
+    registrationType: "",
+    gstIn: "",
+    panNo: "",
+    bankName: "",
+    ifscCode: "",
+    accountNo: "",
+    accountHolder: "",
+    upiId: "",
+    itemCategories: "",
+    discountPercentage: "",
+    discountAmount: "",
+    openingBalance: "",
+    drCr: "",
+  });
+
   const [currentStep, setCurrentStep] = useState(1);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-
-    if (name === "enable_gst" && value === "true") {
-      setFormData((prevData) => ({
-        ...prevData,
-        s_state: "",
-        tax_Rate: "",
-        gstIn: "",
-      }));
-    }
-
-    if (name === "registration_Type" && value === "false") {
-      setFormData((prevData) => ({
-        ...prevData,
-        tax_Rate: "",
-      }));
-    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const requiredFields = [
-      // "businessName",
-      // "printName",
-      // "businessType",
-      // "address",
-      // "b_state",
-      // "country",
-      // "pinCode",
-      // "contact",
-      // "email",
-      // "website",
-      // "financialYear",
-      // "bookFrom",
-      // "e_way_bill",
-      // // "periodicalReturn",
-      // "selectBank",
-      // "accountName",
-      // "accountNumber",
-      // "irfcCode",
-      // "upiId",
-      // "enableBatch",
-      // "enableExpire",
+      "name",
+      "contact",
+      "address",
+      "pinCode",
+      "state",
+      "country",
+      "email",
+      "website",
+      "registrationType",
+      "gstIn",
+      "panNo",
+      // "bankName": "",
+      // "ifscCode": "",
+      // "accountNo": "",
+      // "accountHolder": "",
+      // "upiId": "",
+      // "itemCategories": "",
+      // "discountPercentage": "",
+      // "discountAmount": "",
+      // "openingBalance": "",
+      // "drCr": ""
     ];
 
     for (const field of requiredFields) {
@@ -161,17 +140,14 @@ const CompanyRegistration = () => {
     }
 
     try {
-      const formDataToSend = new FormData();
-      for (let key in formData) {
-        formDataToSend.append(key, formData[key]);
-      }
-
       const response = await axios.post(
-        "/api/v1/company/register",
-        formDataToSend
+        "/api/v1/auth/CreateSupplier",
+        formData
       );
+
+
       if (response) {
-        toast.success("Business Created Successfully...");
+        toast.success("supplier Created Successfully...");
       }
 
       clearData();
@@ -189,7 +165,7 @@ const CompanyRegistration = () => {
   };
 
   const clearData = () => {
-    setFormData(initialFormData);
+    setFormData(formData);
     setCurrentStep(1);
   };
 
@@ -344,8 +320,12 @@ const CompanyRegistration = () => {
               className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
+              <option value="true">Regular</option>
+              <option value="false">Composition</option>
+              <option value="false">Unregistered</option>
+              <option value="false">Consumer</option>
+
+
             </select>
           </label>
 
@@ -434,7 +414,7 @@ const CompanyRegistration = () => {
             Account Holder:
             <input
               type="text"
-              name="accountName"
+              name="accountHolder"
               value={formData.accountHolder}
               onChange={handleChange}
               className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
@@ -488,6 +468,7 @@ const CompanyRegistration = () => {
             <input
               type="text"
               name="discountPercentage"
+              value={formData.discountPercentage}
               onChange={handleChange}
               className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
