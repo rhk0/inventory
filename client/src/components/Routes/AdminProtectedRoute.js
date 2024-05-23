@@ -10,15 +10,11 @@ export const AdminProtectedRoute = () => {
 
   useEffect(() => {
     const autoCheck = async () => {
-      const data = await axios.get("/api/v1/dkpk-auth/admin-auth");
-      if (data.data.ok) {
-        setOk(true);
-      } else {
-        setOk(false);
-      }
+      const { data } = await axios.get("/api/v1/auth/admin-auth");
+      setOk(data.ok);
     };
     if (auth?.dtoken) autoCheck();
   }, [auth?.dtoken]);
 
-  return ok ? <Outlet /> : <Spinner path="" />;
+  return ok ? <Outlet /> : <Spinner />;
 };
