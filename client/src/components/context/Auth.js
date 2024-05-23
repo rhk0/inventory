@@ -4,23 +4,24 @@ import axios from "axios";
 const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
-    duser: null,
-    dtoken: "",
+    user: null,
+    AccessToken: "",
   });
 
   //default axios
-  axios.defaults.headers.common["Authorization"] = auth?.dtoken;
+  axios.defaults.headers.common["Authorization"] = auth?.AccessToken;
 
   useEffect(() => {
     const data = sessionStorage.getItem("dauth");
+  
   //  console.log(data,"this is auth data")
     if (data) {
       const parseData = JSON.parse(data);
      // console.log(parseData,"this is auth data")
       setAuth({
         ...auth,
-        duser: parseData.user,
-        dtoken: parseData.token,
+        user: parseData.user,
+        AccessToken: parseData.AccessToken,
       });
     }
 
