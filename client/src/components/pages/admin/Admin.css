@@ -177,7 +177,7 @@
   /* color: rgba(255, 255, 255, 0.95); */
 }
 
-.addstaff-container {
+.responsive-container {
   grid-area: main;
   overflow: auto;
   /* padding: 20px 20px; */

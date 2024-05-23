@@ -187,7 +187,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/CreateSupplier"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Supplier
