@@ -5,6 +5,8 @@ import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
 import Loader from "../loader/Loader.js"; // Import the Loader component
+import { useAuth } from "../context/Auth.js";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -15,6 +17,8 @@ const Login = () => {
   });
 
   const [loading, setLoading] = useState(false); // Loading state
+  const [auth, setAuth] = useAuth();
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,9 +36,20 @@ const Login = () => {
       const response = await axios.post("/api/v1/auth/login", formData);
 
       if (response.data.success) {
+        
         toast.success(response.data.message);
+
+        setAuth({
+          ...auth,
+          duser: response.data.user,
+          dtoken: response.data.token,
+        });
+        sessionStorage.setItem("dauth", JSON.stringify(response.data))
+
+
+
         setTimeout(() => {
-          navigate("/admin/dashboard");
+          navigate("/admin");
         }, 3000);
       } else {
         toast.error(response.data.message);
