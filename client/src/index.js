@@ -3,8 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+<<<<<<< HEAD
 import { AuthProvider } from ".././src/components/context/Auth";
 
+=======
+import { AuthProvider } from './components/context/Auth';
+>>>>>>> 6723db38ff636c08bda152d0e0e3f4fb5285ab0d
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
