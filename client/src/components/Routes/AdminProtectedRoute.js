@@ -11,11 +11,6 @@ export const AdminProtectedRoute = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-<<<<<<< HEAD
-    const autoCheck = async () => {
-      const { data } = await axios.get("/api/v1/auth/admin-auth");
-      setOk(data.ok);
-=======
     const authCheck = async () => {
       try {
         const response = await axios.get("/api/v1/auth/Admin-auth");
@@ -32,12 +27,8 @@ export const AdminProtectedRoute = () => {
       } finally {
         setLoading(false);
       }
->>>>>>> 6723db38ff636c08bda152d0e0e3f4fb5285ab0d
     };
 
-<<<<<<< HEAD
-  return ok ? <Outlet /> : <Spinner />;
-=======
     if (auth?.AccessToken) {
       authCheck();
     } else {
@@ -55,5 +46,4 @@ export const AdminProtectedRoute = () => {
   }
 
   return ok ? <Outlet /> :navigate('/');
->>>>>>> 6723db38ff636c08bda152d0e0e3f4fb5285ab0d
 };

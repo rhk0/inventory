@@ -9,10 +9,6 @@ const AuthProvider = ({ children }) => {
     AccessToken: "",
   });
 
-<<<<<<< HEAD
-  useEffect(() => {
-    const data = sessionStorage.getItem("dauth");
-=======
   //default axios
   axios.defaults.headers.common["Authorization"] = auth?.AccessToken;
 
@@ -20,18 +16,12 @@ const AuthProvider = ({ children }) => {
     const data = sessionStorage.getItem("dauth");
   
   //  console.log(data,"this is auth data")
->>>>>>> 6723db38ff636c08bda152d0e0e3f4fb5285ab0d
     if (data) {
       const parseData = JSON.parse(data);
       setAuth({
-<<<<<<< HEAD
-        duser: parseData.user,
-        dtoken: parseData.token,
-=======
         ...auth,
         user: parseData.user,
         AccessToken: parseData.AccessToken,
->>>>>>> 6723db38ff636c08bda152d0e0e3f4fb5285ab0d
       });
     }
   }, []);
