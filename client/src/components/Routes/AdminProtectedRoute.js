@@ -14,16 +14,16 @@ export const AdminProtectedRoute = () => {
     const authCheck = async () => {
       try {
         const response = await axios.get("/api/v1/auth/Admin-auth");
-        console.log(response,"res")
+        console.log(response, "res");
 
         if (response.data.ok) {
           setOk(true);
         } else {
-          navigate('/'); // Redirect to a "No Access" page or another appropriate action
+          navigate("/"); // Redirect to a "No Access" page or another appropriate action
         }
       } catch (error) {
         console.error("Error during authentication check", error);
-        <div>Access Denied</div>;// Redirect to an error page or another appropriate action
+        <div>Access Denied</div>; // Redirect to an error page or another appropriate action
       } finally {
         setLoading(false);
       }
@@ -45,6 +45,6 @@ export const AdminProtectedRoute = () => {
     );
   }
 
-  return ok ? <Outlet /> :navigate('/');
+  return ok ? <Outlet /> : navigate("/");
 };
 // done every thing
