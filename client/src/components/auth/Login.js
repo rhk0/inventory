@@ -1,20 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
 import Loader from "../loader/Loader.js"; // Import the Loader component
+import { useAuth } from "../context/Auth.js";
 
 const Login = () => {
   const navigate = useNavigate();
+ const [auth,setAuth]=useAuth()
+const [dauth]=useAuth();
+ useEffect(()=>{
 
+if(dauth){
+  if(dauth.AccessToken){
+    navigate('/admin')
+  }
+}
+
+ })
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
   const [loading, setLoading] = useState(false); // Loading state
+ 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,9 +44,20 @@ const Login = () => {
       const response = await axios.post("/api/v1/auth/login", formData);
 
       if (response.data.success) {
+     
         toast.success(response.data.message);
+
+        setAuth({
+          ...auth,
+          user: response.data.user,
+          AccessToken: response.data.AccessToken,
+        });
+        sessionStorage.setItem("dauth", JSON.stringify(response.data));
+
+
+
         setTimeout(() => {
-          navigate("/admin/dashboard");
+          navigate("/admin");
         }, 3000);
       } else {
         toast.error(response.data.message);
@@ -49,7 +72,7 @@ const Login = () => {
   return (
     <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center text-white font-montserrat">
       {loading ? (
-          <Loader />
+          <Loader/>
         ) : (
       <div className="p-10 hover:scale-95 shadow-2xl rounded-lg login-card p-8 w-full max-w-md flex flex-col">
         <div className="header mb-12">
@@ -123,3 +146,4 @@ const Login = () => {
 };
 
 export default Login;
+// hsdjflskj dk sjfj
