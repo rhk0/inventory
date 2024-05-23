@@ -5,8 +5,7 @@ import Login from "./components/auth/Login";
 import Registraion from "./components/auth/Registraion";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import Otpverification from "./components/auth/Otpverification";
-import ResetPassword from "./components/auth/ResetPassword.js"
-import AdminDashboard from "./components/pages/admin/AdminDashboard";
+import ResetPassword from "./components/auth/ResetPassword.js";
 import { AdminProtectedRoute } from "./components/Routes/AdminProtectedRoute.js";
 import AdminRoutes from "./components/Routes/AdminRoute.js";
 

@@ -1,12 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import {  Routes, Route } from "react-router-dom";
-import AdminDashboard from "../pages/admin/AdminDashboard";
-import Registration from "../auth/Registraion";
-import ForgotPassword from "../auth/ForgotPassword";
-import OtpVerification from "../auth/Otpverification";
-import ResetPassword from "../auth/ResetPassword";
-import CompanyRegistration from "../auth/CompanyRegistration";
+import { Routes, Route } from "react-router-dom";
 import Header from "../pages/admin/Header";
 import Home from "../pages/admin/Home";
 import Sidebar from "../pages/admin/Sidebar";
@@ -25,16 +19,7 @@ const AdminRoute = () => {
         OpenSidebar={OpenSidebar}
       />
       <Routes>
-       <Route path="/" element={<Home/>} />
-       <Route path="/dashboard" element={<AdminDashboard />} />
-          <Route path="/registration" element={<Registration />} />
-          <Route path="/forgetpassword" element={<ForgotPassword />} />
-          <Route path="/otpverification" element={<OtpVerification />} />
-          <Route path="/resetPassword" element={<ResetPassword />} />
-          <Route
-            path="/CompanyRegistration"
-            element={<CompanyRegistration />}
-          />
+        <Route path="/" element={<Home />}/>
       </Routes>
     </div>
   );
