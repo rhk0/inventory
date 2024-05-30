@@ -51,7 +51,6 @@
 #sidebar {
   grid-area: sidebar;
   height: 100%;
-
   background-color: #1c216e;
   overflow-y: auto;
   transition: all 0.5s;
@@ -100,6 +99,7 @@
   font-size: 18px;
   color: aliceblue;
 }
+
 .nestedlist{
   padding: 0px 29px 0px 14px;
   font-size: 18px;
@@ -121,6 +121,7 @@
   border-radius: 5px;
   font-family: Mongolian Baliti;
 }
+
 .nesteditem:hover{
   background-color: #60207d;
   cursor: pointer;
