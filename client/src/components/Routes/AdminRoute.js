@@ -7,6 +7,8 @@ import Sidebar from "../pages/admin/Sidebar";
 import Test from "./Test";
 import { useAuth } from "../context/Auth";
 import CreateSupplier from "../pages/admin/CreateSupplier.js"
+import ManageSupplier from "../pages/admin/ManageSupplier.js"
+
 const AdminRoute = () => {
 
 const [auth]=useAuth();
@@ -36,6 +38,8 @@ if(!auth){
         <Route path="/" element={<Home />}/>
         <Route path ="/*" element = {<Test/>}/>
         <Route path="/CreateSupplier" element={<CreateSupplier />}/>
+        <Route path="ManageSupplier" element={<ManageSupplier />}/>
+
 
       </Routes>
     </div>
