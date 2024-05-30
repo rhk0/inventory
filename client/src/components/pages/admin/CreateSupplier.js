@@ -202,7 +202,7 @@ const CompanyRegistration = () => {
   );
 
   return (
-    <form className=" responsive-container max-w-3xl mx-auto p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
+    <form className=" responsive-container max-w-12xl mx-auto p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
       <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
         Add Suppliers
       </h4>
