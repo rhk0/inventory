@@ -72,7 +72,6 @@ const indianBanks = [
   "Lakshmi Vilas Bank",
 ];
 
-
 const CompanyRegistration = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -145,7 +144,6 @@ const CompanyRegistration = () => {
         formData
       );
 
-
       if (response) {
         toast.success("supplier Created Successfully...");
       }
@@ -178,7 +176,7 @@ const CompanyRegistration = () => {
   };
 
   const renderStepIndicator = () => (
-    <div className="flex justify-center mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold">
+    <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
       {[
         "Supplier Details",
         "Statutory Details",
@@ -202,357 +200,362 @@ const CompanyRegistration = () => {
   );
 
   return (
-   <div className=" responsive-container  px-4 py-1">
-     <form className=" mx-auto p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
-      <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
-        Add Suppliers
-      </h4>
-      {renderStepIndicator()}
-      {currentStep === 1 && (
-        <div>
-          <label className="block mb-2">
-            Name:
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Contact:
-            <input
-              type="text"
-              name="contact"
-              value={formData.contact}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            Address:
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Pin Code:
-            <input
-              type="text"
-              name="pinCode"
-              value={formData.pinCode}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            State:
-            <select
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select State</option>
-              {indianStates.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block mb-2">
-            Country:
-            <input
-              type="text"
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Website:
-            <input
-              type="text"
-              name="website"
-              value={formData.website}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 2 && (
-        <div>
-          <label className="block mb-2">
-            Registration Type:
-            <select
-              name="registrationType"
-              value={formData.registrationType}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select</option>
-              <option value="true">Regular</option>
-              <option value="false">Composition</option>
-              <option value="false">Unregistered</option>
-              <option value="false">Consumer</option>
-
-
-            </select>
-          </label>
-
-          <label className="block mb-2">
-            GSTIN:
-            <input
-              type="text"
-              name="gstIn"
-              value={formData.gstIn}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            PAN No:
-            <input
-              type="text"
-              name="panNo"
-              value={formData.panNo}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 3 && (
-        <div>
-          <label className="block mb-2">
-            Bank Name:
-            <select
-              name="bankName"
-              value={formData.bankName}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select</option>
-              {indianBanks.map((bank) => (
-                <option key={bank} value={bank}>
-                  {bank}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block mb-2">
-            IRFC Code:
-            <input
-              type="text"
-              name="irfcCode"
-              value={formData.irfcCode}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            Account No:
-            <input
-              type="text"
-              name="accountNo"
-              value={formData.accountNo}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            Account Holder:
-            <input
-              type="text"
-              name="accountHolder"
-              value={formData.accountHolder}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            UPI ID:
-            <input
-              type="text"
-              name="upiId"
-              value={formData.upiId}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 4 && (
-        <div>
-          <label className="block mb-2">
-            Item Categories
-            <input
-              type="text"
-              name="itemCategories"
-              value={formData.itemCategories}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            Discount %
-            <input
-              type="text"
-              name="discountPercentage"
-              value={formData.discountPercentage}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            Discount Amount
-            <input
-              type="text"
-              name="discountAmount"
-              value={formData.discountAmount}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {currentStep === 5 && (
-        <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-            <div>
+    <div className=" responsive-container  px-4 py-1 max-w-7xl">
+      <form className=" mx-auto  p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
+        <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
+          Add Suppliers
+        </h4>
+        {renderStepIndicator()}
+        {currentStep === 1 && (
+          <>
+            {" "}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
               <label className="block mb-2">
-                Opening Balance
+                Name:
                 <input
                   type="text"
-                  name="openingBalance"
-                  value={formData.openingBalance}
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                Contact:
+                <input
+                  type="text"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+
+              <label className="block mb-2">
+                Address:
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                Pin Code:
+                <input
+                  type="text"
+                  name="pinCode"
+                  value={formData.pinCode}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                State:
+                <select
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                >
+                  <option value="">Select State</option>
+                  {indianStates.map((state) => (
+                    <option key={state} value={state}>
+                      {state}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block mb-2">
+                Country:
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+
+              <label className="block mb-2">
+                Email:
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                Website:
+                <input
+                  type="text"
+                  name="website"
+                  value={formData.website}
                   onChange={handleChange}
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
               </label>
             </div>
-            <div>
-              <label className="block text-gray-700">Dr. / Cr.</label>
-              <select
-                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                name="drCr"
-                value={formData.drCr}
-                onChange={handleChange}
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={nextStep}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
               >
-                <option value="Dr">Dr</option>
-                <option value="Cr">Cr</option>
-              </select>
+                Next
+              </button>
+            </div>
+          </>
+        )}
+
+        {currentStep === 2 && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+              <label className="block mb-2">
+                Registration Type:
+                <select
+                  name="registrationType"
+                  value={formData.registrationType}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                >
+                  <option value="">Select</option>
+                  <option value="true">Regular</option>
+                  <option value="false">Composition</option>
+                  <option value="false">Unregistered</option>
+                  <option value="false">Consumer</option>
+                </select>
+              </label>
+
+              <label className="block mb-2">
+                GSTIN:
+                <input
+                  type="text"
+                  name="gstIn"
+                  value={formData.gstIn}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+
+              <label className="block mb-2">
+                PAN No:
+                <input
+                  type="text"
+                  name="panNo"
+                  value={formData.panNo}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+            </div>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={prevStep}
+                className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              >
+                Previous
+              </button>
+
+              <button
+                onClick={nextStep}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
+
+        {currentStep === 3 && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+              <label className="block mb-2">
+                Bank Name:
+                <select
+                  name="bankName"
+                  value={formData.bankName}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                >
+                  <option value="">Select</option>
+                  {indianBanks.map((bank) => (
+                    <option key={bank} value={bank}>
+                      {bank}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block mb-2">
+                IRFC Code:
+                <input
+                  type="text"
+                  name="irfcCode"
+                  value={formData.irfcCode}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+
+              <label className="block mb-2">
+                Account No:
+                <input
+                  type="text"
+                  name="accountNo"
+                  value={formData.accountNo}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+
+              <label className="block mb-2">
+                Account Holder:
+                <input
+                  type="text"
+                  name="accountHolder"
+                  value={formData.accountHolder}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+
+              <label className="block mb-2">
+                UPI ID:
+                <input
+                  type="text"
+                  name="upiId"
+                  value={formData.upiId}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+            </div>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={prevStep}
+                className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              >
+                Previous
+              </button>
+
+              <button
+                onClick={nextStep}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
+
+        {currentStep === 4 && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            <label className="block mb-2">
+              Item Categories
+              <input
+                type="text"
+                name="itemCategories"
+                value={formData.itemCategories}
+                onChange={handleChange}
+                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+              />
+            </label>
+
+            <label className="block mb-2">
+              Discount %
+              <input
+                type="text"
+                name="discountPercentage"
+                value={formData.discountPercentage}
+                onChange={handleChange}
+                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+              />
+            </label>
+
+            <label className="block mb-2">
+              Discount Amount
+              <input
+                type="text"
+                name="discountAmount"
+                value={formData.discountAmount}
+                onChange={handleChange}
+                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+              />
+            </label>
+
+ 
+          </div>
+          <div className="flex justify-between mt-4">
+              <button
+                onClick={prevStep}
+                className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              >
+                Previous
+              </button>
+
+              <button
+                onClick={nextStep}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              >
+                Next
+              </button>
+            </div>
+          </>
+        )}
+
+        {currentStep === 5 && (
+          <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+              <div>
+                <label className="block mb-2">
+                  Opening Balance
+                  <input
+                    type="text"
+                    name="openingBalance"
+                    value={formData.openingBalance}
+                    onChange={handleChange}
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                  />
+                </label>
+              </div>
+              <div>
+                <label className="block text-gray-700">Dr. / Cr.</label>
+                <select
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                  name="drCr"
+                  value={formData.drCr}
+                  onChange={handleChange}
+                >
+                  <option value="Dr">Dr</option>
+                  <option value="Cr">Cr</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={prevStep}
+                className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              >
+                Previous
+              </button>
+
+              <button
+                onClick={handleSubmit}
+                className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              >
+                Submit
+              </button>
             </div>
           </div>
-
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={handleSubmit}
-              className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      )}
-      <ToastContainer />
-    </form>
-   </div>
+        )}
+        <ToastContainer />
+      </form>
+    </div>
   );
 };
 

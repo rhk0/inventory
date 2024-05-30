@@ -195,7 +195,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/ManageSupplier"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Supplier
