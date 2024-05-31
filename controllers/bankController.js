@@ -1,83 +1,44 @@
-import supplierModel from "../models/supplierModel.js";
-import fs from "fs";
+import bankModel from "../models/bankModel.js";
 
-export const createSupplierController = async (req, res) => {
+export const createBankController = async (req, res) => {
   try {
-    const {
-      name,
-      contact,
-      address,
-      pinCode,
-      state,
-      country,
-      email,
-      website,
-      registrationType,
-      gstIn,
-      panNo,
-      bankName,
-      ifscCode,
-      accountNo,
-      accountHolder,
-      upiId,
-      itemCategories,
-      discountPercentage,
-      discountAmount,
-      openingBalance,
-      drCr,
-    } = req.body;
+    const { name, ifscCode, accountNumber, openingBalance, drCr } = req.body;
+
     const requiredFields = [
       "name",
-      "contact",
-      "address",
-      "pinCode",
-      "state",
-      "country",
-      "email",
-      "registrationType",
-      "panNo",
+      "ifscCode",
+      "accountNumber",
+      "openingBalance",
       "drCr",
     ];
+
     const missingFields = requiredFields.filter((field) => !req.body[field]);
+
     if (missingFields.length > 0) {
       return res.status(400).send({
         message: "Required fields are missing",
         missingFields: missingFields,
       });
     }
-    const old = await supplierModel.findOne({ email });
+
+    const old = await bankModel.findOne({ accountNumber });
     if (old) {
       return res.status(400).send({
         success: false,
-        message: "This supplier already exists",
+        message: "This Bank already exists",
       });
     }
-    const data = await supplierModel.create({
+
+    const data = await bankModel.create({
       name,
-      contact,
-      address,
-      pinCode,
-      state,
-      country,
-      email,
-      website,
-      registrationType,
-      gstIn,
-      panNo,
-      bankName,
       ifscCode,
-      accountNo,
-      accountHolder,
-      upiId,
-      itemCategories,
-      discountPercentage,
-      discountAmount,
+      accountNumber,
       openingBalance,
       drCr,
     });
     return res.status(201).send({
       success: true,
-      message: "Supplier Create successful",
+      message: "Bank Create successful",
       data,
     });
   } catch (error) {
@@ -87,9 +48,10 @@ export const createSupplierController = async (req, res) => {
       .json({ error: "Internal Server Error", details: error.message });
   }
 };
-export const manageSupplierController = async (req, res) => {
+
+export const manageBankController = async (req, res) => {
   try {
-    const data = await supplierModel.find();
+    const data = await bankModel.find();
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -108,10 +70,11 @@ export const manageSupplierController = async (req, res) => {
     });
   }
 };
-export const manageSingleSupplierController = async (req, res) => {
+
+export const manageSingleBankController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const data = await supplierModel.find({ _id });
+    const data = await bankModel.find({ _id });
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -130,20 +93,21 @@ export const manageSingleSupplierController = async (req, res) => {
     });
   }
 };
-export const deleteSupplierController = async (req, res) => {
+
+export const deleteBankController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const response = await supplierModel.findByIdAndDelete(_id);
+    const response = await bankModel.findByIdAndDelete(_id);
 
     if (!response) {
       return res
         .status(404)
-        .send({ success: false, message: "Supplier not found" });
+        .send({ success: false, message: "Bank not found" });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Supplier deleted successfully",
+      message: "Bank deleted successfully",
       response,
     });
   } catch (error) {
@@ -155,30 +119,16 @@ export const deleteSupplierController = async (req, res) => {
     });
   }
 };
-export const updateSupplierController = async (req, res) => {
+
+export const updateBankController = async (req, res) => {
   try {
-    const { _id } = req.params; 
+    const { _id } = req.params;
     const updateData = req.body;
+
     const requiredFields = [
       "name",
-      "contact",
-      "address",
-      "pinCode",
-      "state",
-      "country",
-      "email",
-      "website",
-      "registrationType",
-      "gstIn",
-      "panNo",
-      "bankName",
       "ifscCode",
-      "accountNo",
-      "accountHolder",
-      "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
+      "accountNumber",
       "openingBalance",
       "drCr",
     ];
@@ -193,23 +143,22 @@ export const updateSupplierController = async (req, res) => {
       });
     }
 
-   
-    const supplier = await supplierModel.findByIdAndUpdate(_id, updateData, {
+    const Bank = await bankModel.findByIdAndUpdate(_id, updateData, {
       new: true,
     });
-    console.log(supplier)
+    // console.log(Bank)
 
-    if (!supplier) {
+    if (!Bank) {
       return res.status(404).send({
         success: false,
-        message: "Supplier not found",
+        message: "Bank not found",
       });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Supplier updated successfully",
-      data: supplier,
+      message: "Bank updated successfully",
+      data: Bank,
     });
   } catch (error) {
     console.log(error);
