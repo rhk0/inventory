@@ -217,7 +217,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/AddCustomer"
+                        to="/admin/CreateCustomer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Customer
@@ -225,7 +225,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/ManageCustomer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Customer

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaTimes } from 'react-icons/fa';
 
 
-const SupplierViewModal = ({ supplierData, closeModal }) => {
+const CustomerViewModal = ({ customerData, closeModal }) => {
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
@@ -16,7 +16,7 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
   const renderStepIndicator = () => (
     <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
       {[
-        "Supplier Details",
+        "Customer Details",
         "Statutory Details",
         "Banking  Details",
         "Discounting",
@@ -46,7 +46,7 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
         <FaTimes />
       </button>
       <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800 mt-8">
-        Supplier
+        Customer
       </h4>
       {renderStepIndicator()}
       {currentStep === 1 && (
@@ -56,45 +56,45 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
             <label className="block mb-2">
               Name:
               <span type="text" name="name" className="flex-1 pl-4">
-                {supplierData.name}
+                {customerData.name}
               </span>
             </label>
             <label className="block mb-2">
               Contact:
               <span type="text" name="contact" className="flex-1 pl-4" />
-              {supplierData.contact}
+              {customerData.contact}
             </label>
 
             <label className="block mb-2">
               Address:
               <span type="text" name="address" className="flex-1 pl-4" />
-              {supplierData.address}
+              {customerData.address}
             </label>
             <label className="block mb-2">
               Pin Code:
               <span type="text" name="pinCode" className="flex-1 pl-4" />
-              {supplierData.pinCode}
+              {customerData.pinCode}
             </label>
             <label className="block mb-2">
               State:
               <span type="text" name="accountNo" className="flex-1 pl-4" />
-              {supplierData.state}
+              {customerData.state}
             </label>
             <label className="block mb-2">
               Country:
               <span type="text" name="country" className="flex-1 pl-4" />
-              {supplierData.country}
+              {customerData.country}
             </label>
 
             <label className="block mb-2">
               Email:
               <span type="email" name="email" className="flex-1 pl-4" />
-              {supplierData.email}
+              {customerData.email}
             </label>
             <label className="block mb-2">
               Website:
               <span type="text" name="website" className="flex-1 pl-4" />
-              {supplierData.website}
+              {customerData.website}
             </label>
           </div>
           <div className="flex justify-end mt-4">
@@ -118,19 +118,19 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
                 name="registrationType"
                 className="flex-1 pl-4"
               />
-              {supplierData.registrationType}
+              {customerData.registrationType}
             </label>
 
             <label className="block mb-2">
               GSTIN:
               <span type="text" name="gstIn" className="flex-1 pl-4" />
-              {supplierData.gstIn}
+              {customerData.gstIn}
             </label>
 
             <label className="block mb-2">
               PAN No:
               <span type="text" name="panNo" className="flex-1 pl-4" />
-              {supplierData.panNo}
+              {customerData.panNo}
             </label>
           </div>
           <div className="flex justify-between mt-4">
@@ -157,31 +157,31 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
             <label className="block mb-2">
               Bank Name:
               <span type="text" name="bankName" className="flex-1 pl-4" />
-              {supplierData.bankName}
+              {customerData.bankName}
             </label>
 
             <label className="block mb-2">
               Ifsc Code:
               <span type="text" name="ifscCode" className="flex-1 pl-4" />
-              {supplierData.ifscCode}
+              {customerData.ifscCode}
             </label>
 
             <label className="block mb-2">
               Account No:
               <span type="text" name="accountNo" className="flex-1 pl-4" />
-              {supplierData.accountNo}
+              {customerData.accountNo}
             </label>
 
             <label className="block mb-2">
               Account Holder:
               <span type="text" name="accountHolder" className="flex-1 pl-4" />
-              {supplierData.accountHolder}
+              {customerData.accountHolder}
             </label>
 
             <label className="block mb-2">
               UPI ID:
               <span type="text" name="upiId" className="flex-1 pl-4" />
-              {supplierData.upiId}
+              {customerData.upiId}
             </label>
           </div>
           <div className="flex justify-between mt-4">
@@ -208,7 +208,7 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
             <label className="block mb-2">
               Item Categories
               <span type="text" name="itemCategories" className="flex-1 pl-4" />
-              {supplierData.itemCategories}
+              {customerData.itemCategories}
             </label>
 
             <label className="block mb-2">
@@ -218,13 +218,13 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
                 name="discountPercentage"
                 className="flex-1 pl-4"
               />
-              {supplierData.discountPercentage}%
+              {customerData.discountPercentage}%
             </label>
 
             <label className="block mb-2">
               Discount Amount
               <span type="text" name="discountAmount" className="flex-1 pl-4" />
-              {supplierData.discountAmount}
+              {customerData.discountAmount}
             </label>
           </div>
           <div className="flex justify-between mt-4">
@@ -252,7 +252,7 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
               <label className="block mb-2">
                 Opening Balance
                 <span type="text" name="openingBalance" className="flex-1 pl-4">
-                  {supplierData.openingBalance}
+                  {customerData.openingBalance}
                 </span>
               </label>
             </div>
@@ -260,7 +260,7 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
               <label className="block flex items-center">
                 Dr. / Cr.
                 <span type="text" name="drCr" className="flex-1 pl-4">
-                  {supplierData.drCr}
+                  {customerData.drCr}
                 </span>
               </label>
             </div>
@@ -281,4 +281,4 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
   );
 };
 
-export default SupplierViewModal;
+export default CustomerViewModal;

@@ -96,7 +96,7 @@ const initialFormData = {
   drCr: "",
 };
 
-const AddCustomer = () => {
+const CreateCustomer = () => {
   const [formData, setFormData] = useState(initialFormData);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -561,4 +561,4 @@ const AddCustomer = () => {
   );
 };
 
-export default AddCustomer;
+export default CreateCustomer;

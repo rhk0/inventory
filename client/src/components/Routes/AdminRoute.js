@@ -11,6 +11,9 @@ import ManageSupplier from "../pages/admin/ManageSupplier.js"
 import AddCustomer from "../pages/admin/AddCustomer.js"
 import CreateTranspoter from "../pages/admin/CreateTransporter.js";
 import ManageTranspoter from "../pages/admin/ManageTransporter.js"
+import CreateCustomer from "../pages/admin/CreateCustomer.js"
+import ManageCustomer from "../pages/admin/ManageCustomer.js";
+
 const AdminRoute = () => {
 
 const [auth]=useAuth();
@@ -42,7 +45,9 @@ if(!auth){
         {/* rahul routing */}
         <Route path="/CreateSupplier" element={<CreateSupplier />}/>
         <Route path="/ManageSupplier" element={<ManageSupplier />}/>
-        <Route path="/AddCustomer" element={<AddCustomer />}/>
+        <Route path="/CreateCustomer" element={<CreateCustomer />}/>
+        <Route path="/ManageCustomer" element={<ManageCustomer />}/>
+
 
 
         {/* dheerendra routing */}
