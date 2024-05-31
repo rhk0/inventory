@@ -1,7 +1,7 @@
-import supplierModel from "../models/supplierModel.js";
+import customerModel from "../models/customersModel.js";
 import fs from "fs";
 
-export const createSupplierController = async (req, res) => {
+export const createCustomerController = async (req, res) => {
   try {
     const {
       name,
@@ -45,14 +45,14 @@ export const createSupplierController = async (req, res) => {
         missingFields: missingFields,
       });
     }
-    const old = await supplierModel.findOne({ email });
+    const old = await customerModel.findOne({ email });
     if (old) {
       return res.status(400).send({
         success: false,
-        message: "This supplier already exists",
+        message: "This Customer already exists",
       });
     }
-    const data = await supplierModel.create({
+    const data = await customerModel.create({
       name,
       contact,
       address,
@@ -77,7 +77,7 @@ export const createSupplierController = async (req, res) => {
     });
     return res.status(201).send({
       success: true,
-      message: "Supplier Create successful",
+      message: "Customer Create successful",
       data,
     });
   } catch (error) {
@@ -87,9 +87,9 @@ export const createSupplierController = async (req, res) => {
       .json({ error: "Internal Server Error", details: error.message });
   }
 };
-export const manageSupplierController = async (req, res) => {
+export const manageCustomerController = async (req, res) => {
   try {
-    const data = await supplierModel.find();
+    const data = await customerModel.find();
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -108,10 +108,10 @@ export const manageSupplierController = async (req, res) => {
     });
   }
 };
-export const manageSingleSupplierController = async (req, res) => {
+export const manageSingleCustomerController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const data = await supplierModel.find({ _id });
+    const data = await customerModel.find({ _id });
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -130,20 +130,20 @@ export const manageSingleSupplierController = async (req, res) => {
     });
   }
 };
-export const deleteSupplierController = async (req, res) => {
+export const deleteCustomerController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const response = await supplierModel.findByIdAndDelete(_id);
+    const response = await customerModel.findByIdAndDelete(_id);
 
     if (!response) {
       return res
         .status(404)
-        .send({ success: false, message: "Supplier not found" });
+        .send({ success: false, message: "Customer not found" });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Supplier deleted successfully",
+      message: "Customer deleted successfully",
       response,
     });
   } catch (error) {
@@ -155,11 +155,11 @@ export const deleteSupplierController = async (req, res) => {
     });
   }
 };
-export const updateSupplierController = async (req, res) => {
+export const updateCustomerController = async (req, res) => {
   try {
     const { _id } = req.params; 
     const updateData = req.body;
-  console.log(updateData)
+//   console.log(updateData)
     const requiredFields = [
       "name",
       "contact",
@@ -195,22 +195,22 @@ export const updateSupplierController = async (req, res) => {
     }
 
    
-    const supplier = await supplierModel.findByIdAndUpdate(_id, updateData, {
+    const Customer = await customerModel.findByIdAndUpdate(_id, updateData, {
       new: true,
     });
-    console.log(supplier)
+    // console.log(Customer)
 
-    if (!supplier) {
+    if (!Customer) {
       return res.status(404).send({
         success: false,
-        message: "Supplier not found",
+        message: "Customer not found",
       });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Supplier updated successfully",
-      data: supplier,
+      message: "Customer updated successfully",
+      data: Customer,
     });
   } catch (error) {
     console.log(error);

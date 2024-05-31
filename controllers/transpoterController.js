@@ -1,7 +1,7 @@
-import supplierModel from "../models/supplierModel.js";
+import transpoterModel from "../models/transpoterModel.js";
 import fs from "fs";
 
-export const createSupplierController = async (req, res) => {
+export const createtranspoterController = async (req, res) => {
   try {
     const {
       name,
@@ -20,9 +20,13 @@ export const createSupplierController = async (req, res) => {
       accountNo,
       accountHolder,
       upiId,
-      itemCategories,
-      discountPercentage,
-      discountAmount,
+      dispatchDocNo,
+      dispatchThrough,
+      destination,
+      billOfLading,
+      date,
+      vehicaleNo,
+
       openingBalance,
       drCr,
     } = req.body;
@@ -45,14 +49,14 @@ export const createSupplierController = async (req, res) => {
         missingFields: missingFields,
       });
     }
-    const old = await supplierModel.findOne({ email });
+    const old = await transpoterModel.findOne({ email });
     if (old) {
       return res.status(400).send({
         success: false,
-        message: "This supplier already exists",
+        message: "This transpoter already exists",
       });
     }
-    const data = await supplierModel.create({
+    const data = await transpoterModel.create({
       name,
       contact,
       address,
@@ -69,15 +73,18 @@ export const createSupplierController = async (req, res) => {
       accountNo,
       accountHolder,
       upiId,
-      itemCategories,
-      discountPercentage,
-      discountAmount,
+      dispatchDocNo,
+      dispatchThrough,
+      destination,
+      billOfLading,
+      date,
+      vehicaleNo,
       openingBalance,
       drCr,
     });
     return res.status(201).send({
       success: true,
-      message: "Supplier Create successful",
+      message: "transpoter Create successful",
       data,
     });
   } catch (error) {
@@ -87,9 +94,9 @@ export const createSupplierController = async (req, res) => {
       .json({ error: "Internal Server Error", details: error.message });
   }
 };
-export const manageSupplierController = async (req, res) => {
+export const managetranspoterController = async (req, res) => {
   try {
-    const data = await supplierModel.find();
+    const data = await transpoterModel.find();
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -108,10 +115,10 @@ export const manageSupplierController = async (req, res) => {
     });
   }
 };
-export const manageSingleSupplierController = async (req, res) => {
+export const manageSingletranspoterController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const data = await supplierModel.find({ _id });
+    const data = await transpoterModel.find({ _id });
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -130,20 +137,20 @@ export const manageSingleSupplierController = async (req, res) => {
     });
   }
 };
-export const deleteSupplierController = async (req, res) => {
+export const deletetranspoterController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const response = await supplierModel.findByIdAndDelete(_id);
+    const response = await transpoterModel.findByIdAndDelete(_id);
 
     if (!response) {
       return res
         .status(404)
-        .send({ success: false, message: "Supplier not found" });
+        .send({ success: false, message: "transpoter not found" });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Supplier deleted successfully",
+      message: "transpoter deleted successfully",
       response,
     });
   } catch (error) {
@@ -155,11 +162,11 @@ export const deleteSupplierController = async (req, res) => {
     });
   }
 };
-export const updateSupplierController = async (req, res) => {
+export const updatetranspoterController = async (req, res) => {
   try {
-    const { _id } = req.params; 
+    const { _id } = req.params;
     const updateData = req.body;
-  console.log(updateData)
+    //   console.log(updateData)
     const requiredFields = [
       "name",
       "contact",
@@ -177,9 +184,12 @@ export const updateSupplierController = async (req, res) => {
       "accountNo",
       "accountHolder",
       "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
+      "dispatchDocNo",
+      "dispatchThrough",
+      "destination",
+      "billOfLading",
+      "date",
+      "vehicaleNo",
       "openingBalance",
       "drCr",
     ];
@@ -194,23 +204,26 @@ export const updateSupplierController = async (req, res) => {
       });
     }
 
-   
-    const supplier = await supplierModel.findByIdAndUpdate(_id, updateData, {
-      new: true,
-    });
-    console.log(supplier)
+    const transpoter = await transpoterModel.findByIdAndUpdate(
+      _id,
+      updateData,
+      {
+        new: true,
+      }
+    );
+    // console.log(transpoter)
 
-    if (!supplier) {
+    if (!transpoter) {
       return res.status(404).send({
         success: false,
-        message: "Supplier not found",
+        message: "transpoter not found",
       });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Supplier updated successfully",
-      data: supplier,
+      message: "transpoter updated successfully",
+      data: transpoter,
     });
   } catch (error) {
     console.log(error);
