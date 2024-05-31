@@ -247,7 +247,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/createtranspoter"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Transporter
@@ -255,7 +255,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/managetranspoter"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Transporter
