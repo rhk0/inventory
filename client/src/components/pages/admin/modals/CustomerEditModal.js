@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes } from "react-icons/fa";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-
-const SupplierViewModal = ({ supplierData, closeModal }) => {
+const CustomerEditModal = ({ customerData, closeModal }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState(customerData);
 
   const nextStep = () => {
     setCurrentStep((prevStep) => prevStep + 1);
@@ -13,12 +15,72 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
     setCurrentStep((prevStep) => prevStep - 1);
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleUpdate = async () => {
+    
+    const requiredFields = [
+      "name",
+      "contact",
+      "address",
+      "pinCode",
+      "state",
+      "country",
+      "email",
+      "website",
+      "registrationType",
+      "gstIn",
+      "panNo",
+      "bankName",
+      "ifscCode",
+      "accountNo",
+      "accountHolder",
+      "upiId",
+      "itemCategories",
+      "discountPercentage",
+      "discountAmount",
+      "openingBalance",
+      "drCr",
+    ];
+
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        toast.error(`Please fill out the ${field} field.`);
+        return;
+      }
+    }
+
+    try {
+      const response = await axios.put(
+        `/api/v1/auth/updateCustomer/${formData._id}`,
+        formData
+      );
+
+      if (response.data.success) {
+        
+
+        toast.success("Customer updated successfully...");
+        closeModal();
+      } else {
+        console.error("Failed to update Customer");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const renderStepIndicator = () => (
     <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
       {[
-        "Supplier Details",
+        "Customer Details",
         "Statutory Details",
-        "Banking  Details",
+        "Banking Details",
         "Discounting",
         "Opening Balance",
       ].map((step, index) => (
@@ -38,7 +100,7 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
   );
 
   return (
-    <div className=" max-w-3xl mx-auto md:pl-4 md:pr-4 p-2 responsive-container  text-black ">
+    <div className="max-w-3xl mx-auto md:pl-4 md:pr-4 p-2 responsive-container text-black">
       <button
         className="absolute top-2 right-2 p-2 text-gray-700 text-xl hover:text-gray-900 focus:outline-none md:text-2xl md:top-4 md:right-4 border"
         onClick={closeModal}
@@ -46,55 +108,93 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
         <FaTimes />
       </button>
       <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800 mt-8">
-        Supplier
+        Customer
       </h4>
       {renderStepIndicator()}
       {currentStep === 1 && (
         <>
-          {" "}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <label className="block mb-2">
               Name:
-              <span type="text" name="name" className="flex-1 pl-4">
-                {supplierData.name}
-              </span>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
             <label className="block mb-2">
               Contact:
-              <span type="text" name="contact" className="flex-1 pl-4" />
-              {supplierData.contact}
+              <input
+                type="text"
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
 
             <label className="block mb-2">
               Address:
-              <span type="text" name="address" className="flex-1 pl-4" />
-              {supplierData.address}
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
             <label className="block mb-2">
               Pin Code:
-              <span type="text" name="pinCode" className="flex-1 pl-4" />
-              {supplierData.pinCode}
+              <input
+                type="text"
+                name="pinCode"
+                value={formData.pinCode}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
             <label className="block mb-2">
               State:
-              <span type="text" name="accountNo" className="flex-1 pl-4" />
-              {supplierData.state}
+              <input
+                type="text"
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
             <label className="block mb-2">
               Country:
-              <span type="text" name="country" className="flex-1 pl-4" />
-              {supplierData.country}
+              <input
+                type="text"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
 
             <label className="block mb-2">
               Email:
-              <span type="email" name="email" className="flex-1 pl-4" />
-              {supplierData.email}
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
             <label className="block mb-2">
               Website:
-              <span type="text" name="website" className="flex-1 pl-4" />
-              {supplierData.website}
+              <input
+                type="text"
+                name="website"
+                value={formData.website}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
           </div>
           <div className="flex justify-end mt-4">
@@ -113,24 +213,35 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <label className="block mb-2">
               Registration Type:
-              <span
+              <input
                 type="text"
                 name="registrationType"
+                value={formData.registrationType}
+                onChange={handleChange}
                 className="flex-1 pl-4"
               />
-              {supplierData.registrationType}
             </label>
 
             <label className="block mb-2">
               GSTIN:
-              <span type="text" name="gstIn" className="flex-1 pl-4" />
-              {supplierData.gstIn}
+              <input
+                type="text"
+                name="gstIn"
+                value={formData.gstIn}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
 
             <label className="block mb-2">
               PAN No:
-              <span type="text" name="panNo" className="flex-1 pl-4" />
-              {supplierData.panNo}
+              <input
+                type="text"
+                name="panNo"
+                value={formData.panNo}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
           </div>
           <div className="flex justify-between mt-4">
@@ -156,32 +267,57 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <label className="block mb-2">
               Bank Name:
-              <span type="text" name="bankName" className="flex-1 pl-4" />
-              {supplierData.bankName}
+              <input
+                type="text"
+                name="bankName"
+                value={formData.bankName}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
 
             <label className="block mb-2">
               Ifsc Code:
-              <span type="text" name="ifscCode" className="flex-1 pl-4" />
-              {supplierData.ifscCode}
+              <input
+                type="text"
+                name="ifscCode"
+                value={formData.ifscCode}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
 
             <label className="block mb-2">
               Account No:
-              <span type="text" name="accountNo" className="flex-1 pl-4" />
-              {supplierData.accountNo}
+              <input
+                type="text"
+                name="accountNo"
+                value={formData.accountNo}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
 
             <label className="block mb-2">
               Account Holder:
-              <span type="text" name="accountHolder" className="flex-1 pl-4" />
-              {supplierData.accountHolder}
+              <input
+                type="text"
+                name="accountHolder"
+                value={formData.accountHolder}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
 
             <label className="block mb-2">
               UPI ID:
-              <span type="text" name="upiId" className="flex-1 pl-4" />
-              {supplierData.upiId}
+              <input
+                type="text"
+                name="upiId"
+                value={formData.upiId}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
           </div>
           <div className="flex justify-between mt-4">
@@ -206,25 +342,36 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <label className="block mb-2">
-              Item Categories
-              <span type="text" name="itemCategories" className="flex-1 pl-4" />
-              {supplierData.itemCategories}
-            </label>
-
-            <label className="block mb-2">
-              Discount
-              <span
+              Item Categories:
+              <input
                 type="text"
-                name="discountPercentage"
+                name="itemCategories"
+                value={formData.itemCategories}
+                onChange={handleChange}
                 className="flex-1 pl-4"
               />
-              {supplierData.discountPercentage}%
             </label>
 
             <label className="block mb-2">
-              Discount Amount
-              <span type="text" name="discountAmount" className="flex-1 pl-4" />
-              {supplierData.discountAmount}
+              Discount Percentage:
+              <input
+                type="text"
+                name="discountPercentage"
+                value={formData.discountPercentage}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
+            </label>
+
+            <label className="block mb-2">
+              Discount Amount:
+              <input
+                type="text"
+                name="discountAmount"
+                value={formData.discountAmount}
+                onChange={handleChange}
+                className="flex-1 pl-4"
+              />
             </label>
           </div>
           <div className="flex justify-between mt-4">
@@ -250,18 +397,26 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-6">
             <div>
               <label className="block mb-2">
-                Opening Balance
-                <span type="text" name="openingBalance" className="flex-1 pl-4">
-                  {supplierData.openingBalance}
-                </span>
+                Opening Balance:
+                <input
+                  type="text"
+                  name="openingBalance"
+                  value={formData.openingBalance}
+                  onChange={handleChange}
+                  className="flex-1 pl-4"
+                />
               </label>
             </div>
             <div>
               <label className="block flex items-center">
-                Dr. / Cr.
-                <span type="text" name="drCr" className="flex-1 pl-4">
-                  {supplierData.drCr}
-                </span>
+                Dr. / Cr.:
+                <input
+                  type="text"
+                  name="drCr"
+                  value={formData.drCr}
+                  onChange={handleChange}
+                  className="flex-1 pl-4"
+                />
               </label>
             </div>
           </div>
@@ -273,12 +428,17 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
             >
               Previous
             </button>
+            <button
+              onClick={handleUpdate}
+              className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+            >
+              Update
+            </button>
           </div>
         </div>
       )}
-      {/* <ToastContainer /> */}
     </div>
   );
 };
 
-export default SupplierViewModal;
+export default CustomerEditModal;
