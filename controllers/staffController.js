@@ -41,6 +41,7 @@ export const createstaffController = async (req, res) => {
         contentType: adharCard.type,
       };
     }
+    
     if (panCard) {
       pancardData = {
         data: fs.readFileSync(panCard.path),
