@@ -4,11 +4,12 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDb from "./config/db.js";
 import comanyRoute from "./routes/companyRoute.js"
-
 import authRoute from './routes/authRoute.js'
 import supplierRoute from "./routes/supplierRoute.js"
-
-//configuration of dotenv 
+import customerRoute from "./routes/customerRoute.js"
+import transportRoute from "./routes/transportRoute.js"
+import vendorRoute from "./routes/vendorRoute.js"
+import staffRoute from "./routes/staffRoute.js"
 dotenv.config();
 
 //calling the db funciton 
@@ -24,6 +25,10 @@ app.use(express.json())
 app.use("/api/v1/company",comanyRoute)
 app.use("/api/v1/auth",authRoute)
 app.use("/api/v1/auth",supplierRoute)
+app.use("/api/v1/auth",customerRoute)
+app.use("/api/v1/auth",transportRoute)
+app.use("/api/v1/auth",vendorRoute)
+app.use("/api/v1/auth",staffRoute)
 app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)
 })

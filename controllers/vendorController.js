@@ -1,7 +1,7 @@
-import supplierModel from "../models/supplierModel.js";
+import vendorModel from "../models/vendorModel.js";
 import fs from "fs";
 
-export const createSupplierController = async (req, res) => {
+export const createvendorController = async (req, res) => {
   try {
     const {
       name,
@@ -20,9 +20,6 @@ export const createSupplierController = async (req, res) => {
       accountNo,
       accountHolder,
       upiId,
-      itemCategories,
-      discountPercentage,
-      discountAmount,
       openingBalance,
       drCr,
     } = req.body;
@@ -45,14 +42,14 @@ export const createSupplierController = async (req, res) => {
         missingFields: missingFields,
       });
     }
-    const old = await supplierModel.findOne({ email });
+    const old = await vendorModel.findOne({ email });
     if (old) {
       return res.status(400).send({
         success: false,
-        message: "This supplier already exists",
+        message: "This vendor already exists",
       });
     }
-    const data = await supplierModel.create({
+    const data = await vendorModel.create({
       name,
       contact,
       address,
@@ -69,15 +66,12 @@ export const createSupplierController = async (req, res) => {
       accountNo,
       accountHolder,
       upiId,
-      itemCategories,
-      discountPercentage,
-      discountAmount,
       openingBalance,
       drCr,
     });
     return res.status(201).send({
       success: true,
-      message: "Supplier Create successful",
+      message: "vendor Create successful",
       data,
     });
   } catch (error) {
@@ -87,9 +81,9 @@ export const createSupplierController = async (req, res) => {
       .json({ error: "Internal Server Error", details: error.message });
   }
 };
-export const manageSupplierController = async (req, res) => {
+export const managevendorController = async (req, res) => {
   try {
-    const data = await supplierModel.find();
+    const data = await vendorModel.find();
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -108,10 +102,10 @@ export const manageSupplierController = async (req, res) => {
     });
   }
 };
-export const manageSingleSupplierController = async (req, res) => {
+export const manageSinglevendorController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const data = await supplierModel.find({ _id });
+    const data = await vendorModel.find({ _id });
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -130,20 +124,20 @@ export const manageSingleSupplierController = async (req, res) => {
     });
   }
 };
-export const deleteSupplierController = async (req, res) => {
+export const deletevendorController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const response = await supplierModel.findByIdAndDelete(_id);
+    const response = await vendorModel.findByIdAndDelete(_id);
 
     if (!response) {
       return res
         .status(404)
-        .send({ success: false, message: "Supplier not found" });
+        .send({ success: false, message: "vendor not found" });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Supplier deleted successfully",
+      message: "vendor deleted successfully",
       response,
     });
   } catch (error) {
@@ -155,11 +149,11 @@ export const deleteSupplierController = async (req, res) => {
     });
   }
 };
-export const updateSupplierController = async (req, res) => {
+export const updatevendorController = async (req, res) => {
   try {
-    const { _id } = req.params; 
+    const { _id } = req.params;
     const updateData = req.body;
-  console.log(updateData)
+    //   console.log(updateData)
     const requiredFields = [
       "name",
       "contact",
@@ -177,9 +171,6 @@ export const updateSupplierController = async (req, res) => {
       "accountNo",
       "accountHolder",
       "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
       "openingBalance",
       "drCr",
     ];
@@ -194,23 +185,26 @@ export const updateSupplierController = async (req, res) => {
       });
     }
 
-   
-    const supplier = await supplierModel.findByIdAndUpdate(_id, updateData, {
-      new: true,
-    });
-    console.log(supplier)
+    const vendor = await vendorModel.findByIdAndUpdate(
+      _id,
+      updateData,
+      {
+        new: true,
+      }
+    );
+    // console.log(vendor)
 
-    if (!supplier) {
+    if (!vendor) {
       return res.status(404).send({
         success: false,
-        message: "Supplier not found",
+        message: "vendor not found",
       });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Supplier updated successfully",
-      data: supplier,
+      message: "vendor updated successfully",
+      data: vendor,
     });
   } catch (error) {
     console.log(error);
