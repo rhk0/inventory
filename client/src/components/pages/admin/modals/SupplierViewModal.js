@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import { FaTimes } from 'react-icons/fa';
+
 
 const SupplierViewModal = ({ supplierData, closeModal }) => {
-  console.log(supplierData);
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
@@ -38,10 +39,13 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
 
   return (
     <div className=" max-w-3xl mx-auto md:pl-4 md:pr-4 p-2 responsive-container  text-black ">
-      <button className="p-2 m-2"
-      onClick={closeModal}
-      >close</button>
-      <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
+      <button
+        className="absolute top-2 right-2 p-2 text-gray-700 text-xl hover:text-gray-900 focus:outline-none md:text-2xl md:top-4 md:right-4 border"
+        onClick={closeModal}
+      >
+        <FaTimes />
+      </button>
+      <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800 mt-8">
         Supplier
       </h4>
       {renderStepIndicator()}
@@ -114,7 +118,7 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
                 name="registrationType"
                 className="flex-1 pl-4"
               />
-              {supplierData.website}
+              {supplierData.registrationType}
             </label>
 
             <label className="block mb-2">
@@ -157,9 +161,9 @@ const SupplierViewModal = ({ supplierData, closeModal }) => {
             </label>
 
             <label className="block mb-2">
-              IRFC Code:
-              <span type="text" name="irfcCode" className="flex-1 pl-4" />
-              {supplierData.irfcCode}
+              Ifsc Code:
+              <span type="text" name="ifscCode" className="flex-1 pl-4" />
+              {supplierData.ifscCode}
             </label>
 
             <label className="block mb-2">
