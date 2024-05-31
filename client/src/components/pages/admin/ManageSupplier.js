@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Modal from "react-modal";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import SupplierViewModal from "./modals/SupplierViewModal";
 
 const ManageSupplier = () => {
   const [suppliers, setSuppliers] = useState([]);
+  const [viewModal, setViewModal] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
   useEffect(() => {
-    // Function to fetch supplier data
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.get("https://api.example.com/suppliers"); 
-        setSuppliers(response.data);
+        const response = await axios.get("/api/v1/auth/manageSupplier");
+        setSuppliers(response.data.data);
+
+        if (response.data.data) {
+          toast.success(" Get supplier data Successfully...");
+
+        }
       } catch (error) {
         console.error("Error fetching supplier data", error);
       }
@@ -17,6 +28,24 @@ const ManageSupplier = () => {
 
     fetchSuppliers();
   }, []);
+
+  const deleteSupplier = async (_id) => {
+    try {
+      const response = await axios.delete(`/api/v1/auth/deletesupplier/${_id}`);
+      setSuppliers(suppliers.filter((supplier) => supplier._id !== _id));
+    } catch (error) {
+      console.log("Error deleting supplier data", error);
+    }
+  };
+
+  const openViewModal = (suppliers) => {
+    setViewModal(true);
+    setModalData(suppliers);
+  };
+
+  const closeModal = () => {
+    setViewModal(false);
+  };
 
   return (
     <div className="container mx-auto p-4 responsive-container">
@@ -55,15 +84,35 @@ const ManageSupplier = () => {
               suppliers.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
-                  <td className="px-6 py-2 border-r text-sm">{supplier.name}</td>
-                  <td className="px-6 py-2 border-r text-sm">{supplier.contactDetail}</td>
-                  <td className="px-6 py-2 border-r text-sm">{supplier.address}</td>
-                  <td className="px-6 py-2 border-r text-sm">{supplier.gstNumber}</td>
-                  <td className="px-6 py-2 border-r text-sm">{supplier.openingBalance}</td>
                   <td className="px-6 py-2 border-r text-sm">
-                    <button className="mr-2 text-blue-600">View</button> / 
-                    <button className="mx-2 text-blue-600">Edit</button> / 
-                    <button className="ml-2 text-blue-600">Delete</button>
+                    {supplier.name}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.contact}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.address}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.gstIn}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.openingBalance}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    <button
+                      className="mx-1 text-blue-600"
+                      onClick={() => openViewModal(supplier)}
+                    >
+                      View
+                    </button>{" "}
+                    /<button className="mx-1 text-blue-600">Edit</button> /
+                    <button
+                      className="mx-1 text-blue-600"
+                      onClick={() => deleteSupplier(supplier._id)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))
@@ -76,7 +125,28 @@ const ManageSupplier = () => {
             )}
           </tbody>
         </table>
+
+        <Modal
+          isOpen={viewModal}
+          onRequestClose={closeModal}
+          contentLabel="View Item Modal"
+          style={{
+            content: {
+              width: "80%",
+              height: "80%",
+              maxWidth: "800px",
+              margin: "auto",
+              padding: "5px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "5px",
+            },
+          }}
+        >
+          <SupplierViewModal closeModal={closeModal} supplierData={modalData} />
+        </Modal>
       </div>
+      <ToastContainer />
+
     </div>
   );
 };

@@ -72,7 +72,6 @@ const supplierSchema = new mongoose.Schema({
   },
   drCr: {
     type: String,
-    enum: ['Dr', 'Cr'],
   }
 }, {
   timestamps: true,

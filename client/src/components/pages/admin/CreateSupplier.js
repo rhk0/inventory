@@ -72,30 +72,32 @@ const indianBanks = [
   "Lakshmi Vilas Bank",
 ];
 
+const initialFormData = {
+  name: "",
+  contact: "",
+  address: "",
+  pinCode: "",
+  state: "",
+  country: "",
+  email: "",
+  website: "",
+  registrationType: "",
+  gstIn: "",
+  panNo: "",
+  bankName: "",
+  irfcCode: "",
+  accountNo: "",
+  accountHolder: "",
+  upiId: "",
+  itemCategories: "",
+  discountPercentage: "",
+  discountAmount: "",
+  openingBalance: "",
+  drCr: "",
+};
+
 const CompanyRegistration = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    contact: "",
-    address: "",
-    pinCode: "",
-    state: "",
-    country: "",
-    email: "",
-    website: "",
-    registrationType: "",
-    gstIn: "",
-    panNo: "",
-    bankName: "",
-    ifscCode: "",
-    accountNo: "",
-    accountHolder: "",
-    upiId: "",
-    itemCategories: "",
-    discountPercentage: "",
-    discountAmount: "",
-    openingBalance: "",
-    drCr: "",
-  });
+  const [formData, setFormData] = useState(initialFormData);
 
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -119,16 +121,16 @@ const CompanyRegistration = () => {
       "registrationType",
       "gstIn",
       "panNo",
-      // "bankName": "",
-      // "ifscCode": "",
-      // "accountNo": "",
-      // "accountHolder": "",
-      // "upiId": "",
-      // "itemCategories": "",
-      // "discountPercentage": "",
-      // "discountAmount": "",
-      // "openingBalance": "",
-      // "drCr": ""
+      "bankName",
+      "irfcCode",
+      "accountNo",
+      "accountHolder",
+      "upiId",
+      "itemCategories",
+      "discountPercentage",
+      "discountAmount",
+      "openingBalance",
+      "drCr"
     ];
 
     for (const field of requiredFields) {
@@ -145,7 +147,7 @@ const CompanyRegistration = () => {
       );
 
       if (response) {
-        toast.success("supplier Created Successfully...");
+        toast.success("Supplier Created Successfully...");
       }
 
       clearData();
@@ -163,7 +165,7 @@ const CompanyRegistration = () => {
   };
 
   const clearData = () => {
-    setFormData(formData);
+    setFormData(initialFormData);
     setCurrentStep(1);
   };
 
