@@ -11,7 +11,8 @@ const ManageTranspoter = () => {
   const [Transpoters, setTranspoters] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [modalData, setModalData] = useState(null);
-
+  const [editModal, setEditModal] = useState(false);
+  
   useEffect(() => {
     const fetchTranspoters = async () => {
       try {
@@ -30,9 +31,25 @@ const ManageTranspoter = () => {
     fetchTranspoters();
   }, []);
 
+  const fetchTranspoters = async () => {
+    try {
+      const response = await axios.get("/api/v1/auth/manageTransport");
+      setTranspoters(response.data.data);
+
+      if (response.data.data) {
+        toast.success(" Get Transpoter data Successfully...");
+
+      }
+    } catch (error) {
+      console.error("Error fetching Transpoter data", error);
+    }
+  };
+
+
   const deleteTranspoter = async (_id) => {
     try {
       const response = await axios.delete(`/api/v1/auth/deleteTranspoter/${_id}`);
+      console.log(response);
       setTranspoters(Transpoters.filter((Transpoter) => Transpoter._id !== _id));
     } catch (error) {
       console.log("Error deleting Transpoter data", error);
@@ -44,9 +61,16 @@ const ManageTranspoter = () => {
   
     setModalData(Transpoters);
   };
+ 
+  const openEditModal = (suppliers) => {
+    setEditModal(true);
+    setModalData(suppliers);
+  };
 
   const closeModal = () => {
+    fetchTranspoters();
     setViewModal(false);
+    setEditModal(false);
   };
 
   return (
@@ -108,7 +132,7 @@ const ManageTranspoter = () => {
                     >
                       View
                     </button>{" "}
-                    /<button className="mx-1 text-blue-600">Edit</button> /
+                    <button className="mx-1 text-blue-600"  onClick={() => openEditModal(Transpoter)}>Edit</button> /
                     <button
                       className="mx-1 text-blue-600"
                       onClick={() => deleteTranspoter(Transpoter._id)}
@@ -145,6 +169,24 @@ const ManageTranspoter = () => {
           }}
         >
           <TranspoterViewModal closeModal={closeModal} TranspoterData={modalData} />
+         
+        </Modal>
+        <Modal
+          isOpen={editModal}
+          onRequestClose={closeModal}
+          contentLabel="View Item Modal"
+          style={{
+            content: {
+              width: "80%",
+              height: "80%",
+              maxWidth: "800px",
+              margin: "auto",
+              padding: "5px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "5px",
+            },
+          }}
+        >
           <TranspoterEditModal closeModal={closeModal} TranspoterData={modalData} />
         </Modal>
       </div>

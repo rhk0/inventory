@@ -8,7 +8,9 @@ import Test from "./Test";
 import { useAuth } from "../context/Auth";
 import CreateSupplier from "../pages/admin/CreateSupplier.js"
 import ManageSupplier from "../pages/admin/ManageSupplier.js"
-
+import AddCustomer from "../pages/admin/AddCustomer.js"
+import CreateTranspoter from "../pages/admin/CreateTransporter.js";
+import ManageTranspoter from "../pages/admin/ManageTransporter.js"
 const AdminRoute = () => {
 
 const [auth]=useAuth();

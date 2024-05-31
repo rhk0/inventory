@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useAuth } from '../context/Auth';
+import React from 'react';
+
 
 const Test = () => {
   // You can useTailwind CSS classes directly within your JSX
