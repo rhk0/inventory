@@ -96,7 +96,7 @@ const initialFormData = {
   drCr: "",
 };
 
-const CreateSupplier = () => {
+const AddCustomer = () => {
   const [formData, setFormData] = useState(initialFormData);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -142,12 +142,12 @@ const CreateSupplier = () => {
 
     try {
       const response = await axios.post(
-        "/api/v1/auth/CreateSupplier",
+        "/api/v1/auth/createCustomer",
         formData
       );
 
       if (response) {
-        toast.success("Supplier Created Successfully...");
+        toast.success("Customer Added Successfully...");
       }
 
       clearData();
@@ -205,7 +205,7 @@ const CreateSupplier = () => {
     <div className=" responsive-container  px-4 py-1 max-w-7xl">
       <form className=" mx-auto  p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
         <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
-          Add Suppliers
+          Add Customer
         </h4>
         {renderStepIndicator()}
         {currentStep === 1 && (
@@ -561,4 +561,4 @@ const CreateSupplier = () => {
   );
 };
 
-export default CreateSupplier;
+export default AddCustomer;

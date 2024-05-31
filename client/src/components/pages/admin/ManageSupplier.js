@@ -5,27 +5,27 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import SupplierViewModal from "./modals/SupplierViewModal";
+import SupplierEditModal from "./modals/SupplierEditModal";
 
 const ManageSupplier = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [viewModal, setViewModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+
   const [modalData, setModalData] = useState(null);
 
+  const fetchSuppliers = async () => {
+    try {
+      const response = await axios.get("/api/v1/auth/manageSupplier");
+      setSuppliers(response.data.data);
+
+
+    } catch (error) {
+      console.error("Error fetching supplier data", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchSuppliers = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageSupplier");
-        setSuppliers(response.data.data);
-
-        if (response.data.data) {
-          toast.success(" Get supplier data Successfully...");
-
-        }
-      } catch (error) {
-        console.error("Error fetching supplier data", error);
-      }
-    };
-
     fetchSuppliers();
   }, []);
 
@@ -33,6 +33,12 @@ const ManageSupplier = () => {
     try {
       const response = await axios.delete(`/api/v1/auth/deletesupplier/${_id}`);
       setSuppliers(suppliers.filter((supplier) => supplier._id !== _id));
+
+      if (response) {
+        toast.success(" delete all data Successfully...");
+      } else {
+        toast.error("error while deleting...");
+      }
     } catch (error) {
       console.log("Error deleting supplier data", error);
     }
@@ -43,8 +49,15 @@ const ManageSupplier = () => {
     setModalData(suppliers);
   };
 
+  const openEditModal = (suppliers) => {
+    setEditModal(true);
+    setModalData(suppliers);
+  };
+
   const closeModal = () => {
+    fetchSuppliers();
     setViewModal(false);
+    setEditModal(false);
   };
 
   return (
@@ -106,7 +119,14 @@ const ManageSupplier = () => {
                     >
                       View
                     </button>{" "}
-                    /<button className="mx-1 text-blue-600">Edit</button> /
+                    /
+                    <button
+                      className="mx-1 text-blue-600"
+                      onClick={() => openEditModal(supplier)}
+                    >
+                      Edit
+                    </button>{" "}
+                    /
                     <button
                       className="mx-1 text-blue-600"
                       onClick={() => deleteSupplier(supplier._id)}
@@ -125,7 +145,6 @@ const ManageSupplier = () => {
             )}
           </tbody>
         </table>
-
         <Modal
           isOpen={viewModal}
           onRequestClose={closeModal}
@@ -144,9 +163,27 @@ const ManageSupplier = () => {
         >
           <SupplierViewModal closeModal={closeModal} supplierData={modalData} />
         </Modal>
+
+        <Modal
+          isOpen={editModal}
+          onRequestClose={closeModal}
+          contentLabel="View Item Modal"
+          style={{
+            content: {
+              width: "80%",
+              height: "80%",
+              maxWidth: "800px",
+              margin: "auto",
+              padding: "5px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "5px",
+            },
+          }}
+        >
+          <SupplierEditModal closeModal={closeModal} supplierData={modalData} />
+        </Modal>
       </div>
       <ToastContainer />
-
     </div>
   );
 };

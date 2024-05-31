@@ -159,7 +159,6 @@ export const updateSupplierController = async (req, res) => {
   try {
     const { _id } = req.params; 
     const updateData = req.body;
-  console.log(updateData)
     const requiredFields = [
       "name",
       "contact",

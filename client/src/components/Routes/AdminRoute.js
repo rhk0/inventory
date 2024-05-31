@@ -8,6 +8,7 @@ import Test from "./Test";
 import { useAuth } from "../context/Auth";
 import CreateSupplier from "../pages/admin/CreateSupplier.js"
 import ManageSupplier from "../pages/admin/ManageSupplier.js"
+import AddCustomer from "../pages/admin/AddCustomer.js"
 
 const AdminRoute = () => {
 
@@ -38,7 +39,9 @@ if(!auth){
         <Route path="/" element={<Home />}/>
         <Route path ="/*" element = {<Test/>}/>
         <Route path="/CreateSupplier" element={<CreateSupplier />}/>
-        <Route path="ManageSupplier" element={<ManageSupplier />}/>
+        <Route path="/ManageSupplier" element={<ManageSupplier />}/>
+        <Route path="/AddCustomer" element={<AddCustomer />}/>
+
 
 
       </Routes>
