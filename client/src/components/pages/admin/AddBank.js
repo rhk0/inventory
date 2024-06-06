@@ -3,103 +3,16 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const indianStates = [
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhattisgarh",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Manipur",
-  "Meghalaya",
-  "Mizoram",
-  "Nagaland",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Sikkim",
-  "Tamil Nadu",
-  "Telangana",
-  "Tripura",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal",
-  "Andaman and Nicobar Islands",
-  "Chandigarh",
-  "Dadra and Nagar Haveli",
-  "Daman and Diu",
-  "Lakshadweep",
-  "Delhi",
-  "Puducherry",
-  "Ladakh",
-  "Jammu and Kashmir",
-];
-
-const indianBanks = [
-  "State Bank of India",
-  "Punjab National Bank",
-  "HDFC Bank",
-  "ICICI Bank",
-  "Axis Bank",
-  "Kotak Mahindra Bank",
-  "Bank of Baroda",
-  "Canara Bank",
-  "IndusInd Bank",
-  "Yes Bank",
-  "Union Bank of India",
-  "IDFC First Bank",
-  "Punjab & Sind Bank",
-  "UCO Bank",
-  "Indian Bank",
-  "Central Bank of India",
-  "Indian Overseas Bank",
-  "Bank of Maharashtra",
-  "Federal Bank",
-  "South Indian Bank",
-  "RBL Bank",
-  "Jammu & Kashmir Bank",
-  "Karnataka Bank",
-  "Dhanlaxmi Bank",
-  "Karur Vysya Bank",
-  "Lakshmi Vilas Bank",
-];
-
 const initialFormData = {
   name: "",
-  contact: "",
-  address: "",
-  pinCode: "",
-  state: "",
-  country: "",
-  email: "",
-  website: "",
-  registrationType: "",
-  gstIn: "",
-  panNo: "",
-  bankName: "",
   ifscCode: "",
-  accountNo: "",
-  accountHolder: "",
-  upiId: "",
-  itemCategories: "",
-  discountPercentage: "",
-  discountAmount: "",
+  accountNumber: "",
   openingBalance: "",
   drCr: "",
 };
 
 const AddBank = () => {
   const [formData, setFormData] = useState(initialFormData);
-
-  const [currentStep, setCurrentStep] = useState(1);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -111,24 +24,8 @@ const AddBank = () => {
 
     const requiredFields = [
       "name",
-      "contact",
-      "address",
-      "pinCode",
-      "state",
-      "country",
-      "email",
-      "website",
-      "registrationType",
-      "gstIn",
-      "panNo",
-      "bankName",
       "ifscCode",
-      "accountNo",
-      "accountHolder",
-      "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
+      "accountNumber",
       "openingBalance",
       "drCr",
     ];
@@ -141,12 +38,10 @@ const AddBank = () => {
     }
 
     try {
-      const response = await axios.post("/api/v1/auth/AddBank", formData);
-
+      const response = await axios.post("/api/v1/auth/createBank", formData);
       if (response) {
-        toast.success("Supplier Created Successfully...");
+        toast.success("AddBank Created Successfully...");
       }
-
       clearData();
     } catch (error) {
       console.error(
@@ -163,18 +58,54 @@ const AddBank = () => {
 
   const clearData = () => {
     setFormData(initialFormData);
-    setCurrentStep(1);
   };
 
   return (
     <div className=" responsive-container  px-4 py-1 max-w-7xl">
       <form className=" mx-auto  p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
         <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
-          Add Suppliers
+          Add Banks
         </h4>
 
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+            <div>
+              <label className="block mb-2">
+                Name
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="block mb-2">
+                IFSC
+                <input
+                  type="text"
+                  name="ifscCode"
+                  value={formData.ifscCode}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="block mb-2">
+                Account Number
+                <input
+                  type="text"
+                  name="accountNumber"
+                  value={formData.accountNumber}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+            </div>
+
             <div>
               <label className="block mb-2">
                 Opening Balance

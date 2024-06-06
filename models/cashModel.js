@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 
 const cashSchema = new mongoose.Schema({
   name: {
-    type: String,
-    
+    type: String  
   },
   drCr: {
     type: String,

@@ -15,6 +15,8 @@ import ManageCustomer from "../pages/admin/ManageCustomer.js";
 import CreateVendors from "../pages/admin/CreateVendors.js";
 import ManageVendor from "../pages/admin/ManageVendor.js";
 import CreateStaff from "../pages/admin/CreateStaff.js";
+import AddBank from "../pages/admin/AddBank.js";
+import ManageBank from "../pages/admin/ManageBank.js";
 
 const AdminRoute = () => {
 
@@ -58,6 +60,8 @@ if(!auth){
         <Route path="createvendors" element={<CreateVendors/>}/>
         <Route path="manageVendor" element={<ManageVendor/>}/>
         <Route path="createstaff" element={<CreateStaff/>}/>
+        <Route path="addbank" element ={< AddBank/>}/>
+        <Route path="managebank" element={<ManageBank/>}/>
 
 
       </Routes>
