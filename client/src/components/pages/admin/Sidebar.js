@@ -384,14 +384,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4  px-1">
                     <li className=" ">
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/BankToBankTransfer"
                         className="flex items-center text-white nestitemhover"
                       >
                         Bank To Bank Transfer
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to=""
                           className="flex items-center text-white nestitemhover"
                         >
                           Cash Deposit Into Bank

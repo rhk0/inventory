@@ -12,7 +12,8 @@ const Cash = () => {
 
   const [cashData, setCashData] = useState([]);
   const [modalData, setModalData] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -78,7 +79,12 @@ const Cash = () => {
 
   const handleEdit = (cash) => {
     setModalData(cash);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
+  };
+
+  const handleView = (cash) => {
+    setModalData(cash);
+    setIsViewModalOpen(true);
   };
 
   const handleModalChange = (e) => {
@@ -93,7 +99,7 @@ const Cash = () => {
     try {
       await axios.put(`/api/v1/auth/updateCash/${modalData._id}`, modalData);
       toast.success("Cash entry updated successfully");
-      setIsModalOpen(false);
+      setIsEditModalOpen(false);
       fetchCash();
     } catch (error) {
       console.error("Error updating cash entry:", error);
@@ -178,17 +184,19 @@ const Cash = () => {
                 <td className="px-4 py-2 border">{cash.name}</td>
                 <td className="px-4 py-2 border">{cash.openingBalance}</td>
                 <td className="px-4 py-2 border text-red-600">
-                  <a href="#view" className="mr-2">
+                  <button
+                    className="mr-2 text-blue-600"
+                    onClick={() => handleView(cash)}
+                  >
                     View
-                  </a>
+                  </button>
                   /
-                  <a
-                    href="#edit"
-                    className="mx-2"
+                  <button
+                    className="mx-2 text-green-600"
                     onClick={() => handleEdit(cash)}
                   >
                     Edit
-                  </a>
+                  </button>
                   /
                   <button
                     onClick={() => handleDelete(cash._id)}
@@ -203,19 +211,25 @@ const Cash = () => {
         </table>
       </div>
       <ToastContainer />
-      {isModalOpen && (
-        <Modal
+      {isEditModalOpen && (
+        <EditModal
           modalData={modalData}
-          setIsModalOpen={setIsModalOpen}
+          setIsEditModalOpen={setIsEditModalOpen}
           handleModalChange={handleModalChange}
           handleModalSubmit={handleModalSubmit}
+        />
+      )}
+      {isViewModalOpen && (
+        <ViewModal
+          modalData={modalData}
+          setIsViewModalOpen={setIsViewModalOpen}
         />
       )}
     </div>
   );
 };
 
-const Modal = ({ modalData, setIsModalOpen, handleModalChange, handleModalSubmit }) => {
+const EditModal = ({ modalData, setIsEditModalOpen, handleModalChange, handleModalSubmit }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -258,8 +272,8 @@ const Modal = ({ modalData, setIsModalOpen, handleModalChange, handleModalSubmit
           <div className="flex justify-end">
             <button
               type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="p-2 bg-gray-500 text-white rounded-md mr-2"
+              className="p-2 bg-gray-300 rounded-md mr-2"
+              onClick={() => setIsEditModalOpen(false)}
             >
               Cancel
             </button>
@@ -268,6 +282,40 @@ const Modal = ({ modalData, setIsModalOpen, handleModalChange, handleModalSubmit
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+};
+
+
+
+const ViewModal = ({ modalData, setIsViewModalOpen }) => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="bg-white p-6 rounded-md z-10 w-1/2">
+        <h2 className="text-2xl mb-4">View Cash Entry</h2>
+        <div className="mb-4">
+          <label className="block mb-2">Name</label>
+          <p className="mt-1 p-2 w-full border border-gray-300 rounded-md">{modalData.name}</p>
+        </div>
+        <div className="mb-4">
+          <label className="block mb-2">Opening Balance</label>
+          <p className="mt-1 p-2 w-full border border-gray-300 rounded-md">{modalData.openingBalance}</p>
+        </div>
+        <div className="mb-4">
+          <label className="block mb-2">Dr. / Cr.</label>
+          <p className="mt-1 p-2 w-full border border-gray-300 rounded-md">{modalData.drCr}</p>
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className="p-2 bg-gray-300 rounded-md"
+            onClick={() => setIsViewModalOpen(false)}
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );

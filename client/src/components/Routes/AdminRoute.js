@@ -16,6 +16,7 @@ import Cash from "../pages/admin/Cash.js";
 import CreateVendors from "../pages/admin/CreateVendors.js";
 import ManageVendor from "../pages/admin/ManageVendor.js";
 import CreateStaff from "../pages/admin/CreateStaff.js";
+import BankToBankTranfer from "../pages/admin/BankToBankTransfer.js"
 
 const AdminRoute = () => {
 
@@ -51,6 +52,8 @@ if(!auth){
         <Route path="/CreateCustomer" element={<CreateCustomer />}/>
         <Route path="/ManageCustomer" element={<ManageCustomer />}/>
         <Route path="/Cash" element={<Cash />}/>
+        <Route path="BankToBankTransfer" element={<BankToBankTranfer/>}/>
+
 
 
         {/* dheerendra routing */}
