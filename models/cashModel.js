@@ -8,6 +8,10 @@ const cashSchema = new mongoose.Schema({
   drCr: {
     type: String,
     enum: ['Dr', 'Cr'],
+  },
+
+  openingBalance:{
+    type:String,
   }
 }, {
   timestamps: true,

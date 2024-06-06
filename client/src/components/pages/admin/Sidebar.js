@@ -331,7 +331,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Cash */}
         <li className="sidebar-list-item hover:bg-blue-900">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dashboard" className="inline-container">
+            <Link to="/admin/cash" className="inline-container">
               <span>Cash</span>
             </Link>
           </a>

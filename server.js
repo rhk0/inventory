@@ -32,6 +32,7 @@ app.use("/api/v1/auth",transportRoute)
 app.use("/api/v1/auth",vendorRoute)
 app.use("/api/v1/auth",staffRoute)
 app.use("/api/v1/auth",bankRoute)
+app.use("/api/v1/auth",cashRoute);
 
 app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)
