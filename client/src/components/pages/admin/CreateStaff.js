@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -73,30 +73,30 @@ const indianBanks = [
 ];
 
 const initialFormData = {
+  photo: null,
+  adharCard: null,
+  panCard: null,
   name: "",
   contact: "",
   address: "",
-  pinCode: "",
   state: "",
-  country: "",
+  fatherName: "",
+  motherName: "",
   email: "",
-  website: "",
-  registrationType: "",
-  gstIn: "",
+  empId: "",
+  designation: "",
+  department: "",
+  adharCardNo: "",
   panNo: "",
+  drivingLicence: "",
   bankName: "",
+  accountNumber: "",
   ifscCode: "",
-  accountNo: "",
-  accountHolder: "",
-  upiId: "",
-  itemCategories: "",
-  discountPercentage: "",
-  discountAmount: "",
-  openingBalance: "",
-  drCr: "",
+  accountHolderName: "",
+  salaryAmount: "",
 };
 
-const CreateCustomer = () => {
+const CreateStaff = () => {
   const [formData, setFormData] = useState(initialFormData);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -113,24 +113,21 @@ const CreateCustomer = () => {
       "name",
       "contact",
       "address",
-      "pinCode",
       "state",
-      "country",
+      "fatherName",
+      "motherName",
       "email",
-      "website",
-      "registrationType",
-      "gstIn",
+      "empId",
+      "designation",
+      "department",
+      "adharCardNo",
       "panNo",
+      "drivingLicence",
       "bankName",
+      "accountNumber",
       "ifscCode",
-      "accountNo",
-      "accountHolder",
-      "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
-      "openingBalance",
-      "drCr",
+      "accountHolderName",
+      "salaryAmount",
     ];
 
     for (const field of requiredFields) {
@@ -141,13 +138,18 @@ const CreateCustomer = () => {
     }
 
     try {
+      const formDataToSend = new FormData();
+      for (let key in formData) {
+        formDataToSend.append(key, formData[key]);
+      }
+
       const response = await axios.post(
-        "/api/v1/auth/createCustomer",
-        formData
+        "/api/v1/auth/createStaff",
+        formDataToSend
       );
 
       if (response) {
-        toast.success("Customer Added Successfully...");
+        toast.success("Staff Created Successfully...");
       }
 
       clearData();
@@ -176,15 +178,26 @@ const CreateCustomer = () => {
   const prevStep = () => {
     setCurrentStep((prevStep) => prevStep - 1);
   };
+  const photoInputRef = useRef(null);
+
+  const handlePhotoChange = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    setFormData((prevState) => ({
+      ...prevState,
+      photo: file,
+      adharCard: file,
+      panCard: file,
+    }));
+  };
 
   const renderStepIndicator = () => (
     <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
       {[
-        "Supplier Details",
-        "Statutory Details",
+        "Staff Details",
+        "Documents Details",
         "Banking  Details",
-        "Discounting",
-        "Opening Balance",
+        "Salary Details",
       ].map((step, index) => (
         <div
           key={index}
@@ -204,15 +217,15 @@ const CreateCustomer = () => {
   return (
     <div className=" responsive-container  px-4 py-1 max-w-7xl">
       <form className=" mx-auto  p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
-        <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 bg-gray-300 text-violet-800 italic">
-          Add Customer
+        <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
+          Add Staff
         </h4>
         {renderStepIndicator()}
         {currentStep === 1 && (
           <>
             {" "}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-              <label className="block mb-2 ">
+              <label className="block mb-2">
                 Name:
                 <input
                   type="text"
@@ -243,16 +256,7 @@ const CreateCustomer = () => {
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
               </label>
-              <label className="block mb-2">
-                Pin Code:
-                <input
-                  type="text"
-                  name="pinCode"
-                  value={formData.pinCode}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
+
               <label className="block mb-2">
                 State:
                 <select
@@ -270,11 +274,21 @@ const CreateCustomer = () => {
                 </select>
               </label>
               <label className="block mb-2">
-                Country:
+                Father Name:
                 <input
                   type="text"
-                  name="country"
-                  value={formData.country}
+                  name="fatherName"
+                  value={formData.fatherName}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                Mother Name:
+                <input
+                  type="text"
+                  name="motherName"
+                  value={formData.motherName}
                   onChange={handleChange}
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
@@ -291,11 +305,31 @@ const CreateCustomer = () => {
                 />
               </label>
               <label className="block mb-2">
-                Website:
+                Emp Id :
                 <input
                   type="text"
-                  name="website"
-                  value={formData.website}
+                  name="empId"
+                  value={formData.empId}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                Designation :
+                <input
+                  type="text"
+                  name="designation"
+                  value={formData.designation}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                Department :
+                <input
+                  type="text"
+                  name="department"
+                  value={formData.department}
                   onChange={handleChange}
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
@@ -316,39 +350,69 @@ const CreateCustomer = () => {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
               <label className="block mb-2">
-                Registration Type:
-                <select
-                  name="registrationType"
-                  value={formData.registrationType}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                >
-                  <option value="">Select</option>
-                  <option value="Regular">Regular</option>
-                  <option value="Composition">Composition</option>
-                  <option value="Unregistered">Unregistered</option>
-                  <option value="Consumer">Consumer</option>
-                </select>
-              </label>
-
-              <label className="block mb-2">
-                GSTIN:
+                Aadhar Card No.:
                 <input
                   type="text"
-                  name="gstIn"
-                  value={formData.gstIn}
+                  name="adharCardNo"
+                  value={formData.adharCardNo}
                   onChange={handleChange}
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
               </label>
 
               <label className="block mb-2">
-                PAN No:
+                PAN Number:
                 <input
                   type="text"
                   name="panNo"
                   value={formData.panNo}
                   onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+
+              <label className="block mb-2">
+                Driving License :
+                <input
+                  type="text"
+                  name="drivingLicence"
+                  value={formData.drivingLicence}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                Photo :
+                <input
+                  type="file"
+                  name="photo"
+                  accept="image/*"
+                  ref={photoInputRef}
+                  onChange={handlePhotoChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+              <label className="block mb-2">
+                Aadhar Card:
+                <input
+                  type="file"
+                  name="adharCard"
+                  accept="image/*"
+                  ref={photoInputRef}
+                  onChange={handlePhotoChange}
+                  multiple
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                />
+              </label>
+
+              <label className="block mb-2">
+                Pan Card :
+                <input
+                  type="file"
+                  name="panCard"
+                  accept="image/*"
+                  ref={photoInputRef}
+                  onChange={handlePhotoChange}
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
               </label>
@@ -406,8 +470,8 @@ const CreateCustomer = () => {
                 Account No:
                 <input
                   type="text"
-                  name="accountNo"
-                  value={formData.accountNo}
+                  name="accountNumber"
+                  value={formData.accountNumber}
                   onChange={handleChange}
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
@@ -417,19 +481,8 @@ const CreateCustomer = () => {
                 Account Holder:
                 <input
                   type="text"
-                  name="accountHolder"
-                  value={formData.accountHolder}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
-
-              <label className="block mb-2">
-                UPI ID:
-                <input
-                  type="text"
-                  name="upiId"
-                  value={formData.upiId}
+                  name="accountHolderName"
+                  value={formData.accountHolderName}
                   onChange={handleChange}
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
@@ -454,87 +507,19 @@ const CreateCustomer = () => {
         )}
 
         {currentStep === 4 && (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-              <label className="block mb-2">
-                Item Categories
-                <input
-                  type="text"
-                  name="itemCategories"
-                  value={formData.itemCategories}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
-
-              <label className="block mb-2">
-                Discount %
-                <input
-                  type="text"
-                  name="discountPercentage"
-                  value={formData.discountPercentage}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
-
-              <label className="block mb-2">
-                Discount Amount
-                <input
-                  type="text"
-                  name="discountAmount"
-                  value={formData.discountAmount}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
-            </div>
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={prevStep}
-                className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-              >
-                Previous
-              </button>
-
-              <button
-                onClick={nextStep}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-              >
-                Next
-              </button>
-            </div>
-          </>
-        )}
-
-        {currentStep === 5 && (
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
               <div>
                 <label className="block mb-2">
-                  Opening Balance
+                  Salary Amount
                   <input
                     type="text"
-                    name="openingBalance"
-                    value={formData.openingBalance}
+                    name="salaryAmount"
+                    value={formData.salaryAmount}
                     onChange={handleChange}
                     className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                   />
                 </label>
-              </div>
-              <div>
-                <label className="block text-gray-700">Dr. / Cr.</label>
-                <select
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                  name="drCr"
-                  value={formData.drCr}
-                  onChange={handleChange}
-                >
-                  <option value="">Select</option>
-
-                  <option value="Dr">Dr</option>
-                  <option value="Cr">Cr</option>
-                </select>
               </div>
             </div>
 
@@ -561,4 +546,4 @@ const CreateCustomer = () => {
   );
 };
 
-export default CreateCustomer;
+export default CreateStaff;

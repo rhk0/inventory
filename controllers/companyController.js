@@ -4,6 +4,7 @@ import fs from "fs";
 
 export const registerController = async (req, res) => {
   try {
+    
     const {
       businessName,
       printName,

@@ -89,14 +89,13 @@ const initialFormData = {
   accountNo: "",
   accountHolder: "",
   upiId: "",
-  itemCategories: "",
-  discountPercentage: "",
-  discountAmount: "",
+
+
   openingBalance: "",
   drCr: "",
 };
 
-const CreateCustomer = () => {
+const CreateVendors = () => {
   const [formData, setFormData] = useState(initialFormData);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -126,9 +125,6 @@ const CreateCustomer = () => {
       "accountNo",
       "accountHolder",
       "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
       "openingBalance",
       "drCr",
     ];
@@ -142,12 +138,12 @@ const CreateCustomer = () => {
 
     try {
       const response = await axios.post(
-        "/api/v1/auth/createCustomer",
+        "/api/v1/auth/createVendor",
         formData
       );
 
       if (response) {
-        toast.success("Customer Added Successfully...");
+        toast.success("Vendor Created Successfully...");
       }
 
       clearData();
@@ -180,10 +176,9 @@ const CreateCustomer = () => {
   const renderStepIndicator = () => (
     <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
       {[
-        "Supplier Details",
+        "Vendors Details",
         "Statutory Details",
         "Banking  Details",
-        "Discounting",
         "Opening Balance",
       ].map((step, index) => (
         <div
@@ -204,15 +199,15 @@ const CreateCustomer = () => {
   return (
     <div className=" responsive-container  px-4 py-1 max-w-7xl">
       <form className=" mx-auto  p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
-        <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 bg-gray-300 text-violet-800 italic">
-          Add Customer
+        <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
+          Add Vendors 
         </h4>
         {renderStepIndicator()}
         {currentStep === 1 && (
           <>
             {" "}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-              <label className="block mb-2 ">
+              <label className="block mb-2">
                 Name:
                 <input
                   type="text"
@@ -250,7 +245,7 @@ const CreateCustomer = () => {
                   name="pinCode"
                   value={formData.pinCode}
                   onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                  className="mt-1 p-2 w-full  border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
               </label>
               <label className="block mb-2">
@@ -324,10 +319,10 @@ const CreateCustomer = () => {
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 >
                   <option value="">Select</option>
-                  <option value="Regular">Regular</option>
-                  <option value="Composition">Composition</option>
-                  <option value="Unregistered">Unregistered</option>
-                  <option value="Consumer">Consumer</option>
+                  <option value="true">Regular</option>
+                  <option value="false">Composition</option>
+                  <option value="false">Unregistered</option>
+                  <option value="false">Consumer</option>
                 </select>
               </label>
 
@@ -341,7 +336,6 @@ const CreateCustomer = () => {
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
               </label>
-
               <label className="block mb-2">
                 PAN No:
                 <input
@@ -352,6 +346,7 @@ const CreateCustomer = () => {
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />
               </label>
+
             </div>
             <div className="flex justify-between mt-4">
               <button
@@ -453,61 +448,9 @@ const CreateCustomer = () => {
           </>
         )}
 
+    
+
         {currentStep === 4 && (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-              <label className="block mb-2">
-                Item Categories
-                <input
-                  type="text"
-                  name="itemCategories"
-                  value={formData.itemCategories}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
-
-              <label className="block mb-2">
-                Discount %
-                <input
-                  type="text"
-                  name="discountPercentage"
-                  value={formData.discountPercentage}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
-
-              <label className="block mb-2">
-                Discount Amount
-                <input
-                  type="text"
-                  name="discountAmount"
-                  value={formData.discountAmount}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
-            </div>
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={prevStep}
-                className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-              >
-                Previous
-              </button>
-
-              <button
-                onClick={nextStep}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-              >
-                Next
-              </button>
-            </div>
-          </>
-        )}
-
-        {currentStep === 5 && (
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
               <div>
@@ -530,8 +473,6 @@ const CreateCustomer = () => {
                   value={formData.drCr}
                   onChange={handleChange}
                 >
-                  <option value="">Select</option>
-
                   <option value="Dr">Dr</option>
                   <option value="Cr">Cr</option>
                 </select>
@@ -561,4 +502,4 @@ const CreateCustomer = () => {
   );
 };
 
-export default CreateCustomer;
+export default CreateVendors;

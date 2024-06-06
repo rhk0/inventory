@@ -4,72 +4,59 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import TranspoterViewModal from "./modals/TransporterViewModel.js";
-import TranspoterEditModal from "./modals/TransporterEditModel.js";
+import VenderViewModel from "./modals/VendorViewModel";
+import VenderEditModel from "./modals/VenderEditModel";
 
-const ManageTranspoter = () => {
-  const [Transpoters, setTranspoters] = useState([]);
+const ManageVendor = () => {
+  const [Vender, setVender] = useState([]);
   const [viewModal, setViewModal] = useState(false);
-  const [modalData, setModalData] = useState(null);
   const [editModal, setEditModal] = useState(false);
 
+  const [modalData, setModalData] = useState(null);
+
+  const fetchVender = async () => {
+    try {
+      const response = await axios.get("/api/v1/auth/manageVendor");
+      setVender(response.data.data);
+
+
+    } catch (error) {
+      console.error("Error fetching supplier data", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchTranspoters = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageTransport");
-        setTranspoters(response.data.data);
-
-        if (response.data.data) {
-          toast.success(" Get Transpoter data Successfully...");
-        }
-      } catch (error) {
-        console.error("Error fetching Transpoter data", error);
-      }
-    };
-
-    fetchTranspoters();
+    fetchVender();
   }, []);
 
-  const fetchTranspoters = async () => {
+  const deleteSupplier = async (_id) => {
     try {
-      const response = await axios.get("/api/v1/auth/manageTransport");
-      setTranspoters(response.data.data);
+      const response = await axios.delete(`/api/v1/auth/deleteVendor/${_id}`);
+      setVender(Vender.filter((supplier) => supplier._id !== _id));
 
-      if (response.data.data) {
-        toast.success(" Get Transpoter data Successfully...");
+      if (response) {
+        toast.success(" delete all data Successfully...");
+      } else {
+        toast.error("error while deleting...");
       }
     } catch (error) {
-      console.error("Error fetching Transpoter data", error);
+      console.log("Error deleting supplier data", error);
     }
   };
 
-  const deleteTranspoter = async (_id) => {
-    try {
-      const response = await axios.delete(
-        `/api/v1/auth/deleteTransport/${_id}`
-      );
-      console.log(response);
-      setTranspoters(
-        Transpoters.filter((Transpoter) => Transpoter._id !== _id)
-      );
-    } catch (error) {
-      console.log("Error deleting Transpoter data", error);
-    }
-  };
-
-  const openViewModal = (Transpoters) => {
+  const openViewModal = (Vender) => {
     setViewModal(true);
-
-    setModalData(Transpoters);
+    setModalData(Vender);
   };
 
-  const openEditModal = (suppliers) => {
+  const openEditModal = (Vender) => {
     setEditModal(true);
-    setModalData(suppliers);
+    console.log(Vender,"vend")
+    setModalData(Vender);
   };
 
   const closeModal = () => {
-    fetchTranspoters();
+    fetchVender();
     setViewModal(false);
     setEditModal(false);
   };
@@ -77,72 +64,73 @@ const ManageTranspoter = () => {
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
-        Manage Transpoter
+        Manage Vendors
       </h1>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100 border-b">
-              <th className="px-6 py-2  text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 S.No
               </th>
-              <th className="px-6 py-2 text-nowrap border-r text-left text-sm font-medium text-gray-600">
-                Transpoter Name
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Supplier Name
               </th>
-              <th className="px-6 py-2  text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Contact Detail
               </th>
-              <th className="px-6 py-2  text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Address
               </th>
-              <th className="px-6 py-2  text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 GST Number
               </th>
-              <th className="px-6 py-2 border-r  text-nowrap text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Opening Balance
               </th>
-              <th className="px-6 py-2 text-left  text-nowrap text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 text-left text-sm font-medium text-gray-600">
                 Action
               </th>
             </tr>
           </thead>
           <tbody>
-            {Transpoters.length > 0 ? (
-              Transpoters.map((Transpoter, index) => (
-                <tr key={Transpoter.id} className="border-b">
+            {Vender.length > 0 ? (
+              Vender.map((supplier, index) => (
+                <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
-                  <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.name}
+                  <td className="px-6 py-2 border-r text-sm text-nowrap">
+                    {supplier.name}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.contact}
+                    {supplier.contact}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.address}
+                    {supplier.address}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.gstIn}
+                    {supplier.gstIn}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.openingBalance}
+                    {supplier.openingBalance}
                   </td>
-                  <td className="px-6 py-2 border-r text-sm">
+                  <td className="px-6 py-2 border-r text-sm text-nowrap">
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => openViewModal(Transpoter)}
+                      onClick={() => openViewModal(supplier)}
                     >
                       View
                     </button>{" "}
+                    /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => openEditModal(Transpoter)}
+                      onClick={() => openEditModal(supplier)}
                     >
                       Edit
                     </button>{" "}
-                    
+                    /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => deleteTranspoter(Transpoter._id)}
+                      onClick={() => deleteSupplier(supplier._id)}
                     >
                       Delete
                     </button>
@@ -152,13 +140,12 @@ const ManageTranspoter = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="px-6 py-2 text-center text-sm">
-                  No Transpoters found.
+                  No Vender found.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
-
         <Modal
           isOpen={viewModal}
           onRequestClose={closeModal}
@@ -175,11 +162,9 @@ const ManageTranspoter = () => {
             },
           }}
         >
-          <TranspoterViewModal
-            closeModal={closeModal}
-            TranspoterData={modalData}
-          />
+          <VenderViewModel closeModal={closeModal} VendorData={modalData} />
         </Modal>
+
         <Modal
           isOpen={editModal}
           onRequestClose={closeModal}
@@ -196,10 +181,8 @@ const ManageTranspoter = () => {
             },
           }}
         >
-          <TranspoterEditModal
-            closeModal={closeModal}
-            TranspoterData={modalData}
-          />
+            
+          <VenderEditModel closeModal={closeModal} VendorData={modalData} />
         </Modal>
       </div>
       <ToastContainer />
@@ -207,4 +190,4 @@ const ManageTranspoter = () => {
   );
 };
 
-export default ManageTranspoter;
+export default ManageVendor;
