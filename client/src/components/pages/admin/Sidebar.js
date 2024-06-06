@@ -353,7 +353,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4 ">
               <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/addbank"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
                 >
                   Add Bank 
@@ -361,7 +361,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/managebank"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
                 >
                   Manage Bank
