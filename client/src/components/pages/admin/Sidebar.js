@@ -277,7 +277,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/createstaff"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Staff
@@ -285,7 +285,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/managestaff"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Staff
@@ -307,7 +307,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/createvendors"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Vendor
@@ -315,7 +315,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/manageVendor"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Vendor

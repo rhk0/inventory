@@ -8,13 +8,13 @@ export const createCashController = async (req, res) => {
       openingBalance,
     } = req.body;
 
-    const old = await cashModel.findOne({ name });
-    if (old) {
-      return res.status(400).send({
-        success: false,
-        message: "This Cash already exists",
-      });
-    }
+    // const old = await cashModel.findOne({ name });
+    // if (old) {
+    //   return res.status(400).send({
+    //     success: false,
+    //     message: "This Cash already exists",
+    //   });
+    // }
 
     const data = await cashModel.create({
       name,

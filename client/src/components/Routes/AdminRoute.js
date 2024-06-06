@@ -13,6 +13,9 @@ import ManageTranspoter from "../pages/admin/ManageTransporter.js"
 import CreateCustomer from "../pages/admin/CreateCustomer.js"
 import ManageCustomer from "../pages/admin/ManageCustomer.js";
 import Cash from "../pages/admin/Cash.js";
+import CreateVendors from "../pages/admin/CreateVendors.js";
+import ManageVendor from "../pages/admin/ManageVendor.js";
+import CreateStaff from "../pages/admin/CreateStaff.js";
 
 const AdminRoute = () => {
 
@@ -53,6 +56,9 @@ if(!auth){
         {/* dheerendra routing */}
         <Route path="createtranspoter" element={<CreateTranspoter/>}/>
         <Route path="managetranspoter" element={<ManageTranspoter/>}/>
+        <Route path="createvendors" element={<CreateVendors/>}/>
+        <Route path="manageVendor" element={<ManageVendor/>}/>
+        <Route path="createstaff" element={<CreateStaff/>}/>
 
 
       </Routes>
