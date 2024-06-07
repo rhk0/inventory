@@ -62,12 +62,14 @@ const staffSchema = new mongoose.Schema(
       required: true,
     },
     photo: fileSchema,
+
     adharCards: [
       {
         data: Buffer,
         contentType: String,
       },
     ],
+    
     panCard: fileSchema,
     bankName: {
       type: String,
