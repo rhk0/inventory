@@ -34,6 +34,7 @@ app.use("/api/v1/auth",transportRoute)
 app.use("/api/v1/auth",vendorRoute)
 app.use("/api/v1/auth",staffRoute)
 app.use("/api/v1/auth",bankRoute)
+app.use("/api/v1/auth",cashRoute);
 app.use("/api/v1/auth",bankTransctionRoute)
 
 

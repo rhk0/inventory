@@ -331,7 +331,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Cash */}
         <li className="sidebar-list-item hover:bg-blue-900">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dashboard" className="inline-container">
+            <Link to="/admin/cash" className="inline-container">
               <span>Cash</span>
             </Link>
           </a>
@@ -384,14 +384,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4  px-1">
                     <li className=" ">
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/BankToBankTransfer"
                         className="flex items-center text-white nestitemhover"
                       >
                         Bank To Bank Transfer
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to=""
                           className="flex items-center text-white nestitemhover"
                         >
                           Cash Deposit Into Bank

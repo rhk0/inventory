@@ -5,6 +5,7 @@ export const createCashController = async (req, res) => {
     const {
       name,
       drCr,
+      openingBalance,
     } = req.body;
 
     // const old = await cashModel.findOne({ name });
@@ -18,6 +19,7 @@ export const createCashController = async (req, res) => {
     const data = await cashModel.create({
       name,
       drCr,
+      openingBalance,
     });
     return res.status(201).send({
       success: true,
