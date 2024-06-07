@@ -34,11 +34,8 @@ app.use("/api/v1/auth",transportRoute)
 app.use("/api/v1/auth",vendorRoute)
 app.use("/api/v1/auth",staffRoute)
 app.use("/api/v1/auth",bankRoute)
-<<<<<<< HEAD
 app.use("/api/v1/auth",cashRoute);
-=======
 app.use("/api/v1/auth",bankTransctionRoute)
->>>>>>> 5a14d15d4a866c91c6ff55300a091fe3194e19ad
 
 
 app.listen(process.env.PORT,async()=>{

@@ -24,10 +24,11 @@ export const createstaffController = async (req, res) => {
     } = req.fields;
 
     const { photo, panCard } = req.files;
-    const adharCards = Object.values(req.files.adharCard || {}); // Extracting multiple Adhar Card images
+    const adharCards = Object.values(req.files.adharCard || {});
 
     let photoData = null;
     let pancardData = null;
+    let adharcardData=[];
 
     if (photo) {
       photoData = {
