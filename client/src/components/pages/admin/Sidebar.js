@@ -391,7 +391,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </Link>
                       <li className=" ">
                         <Link
-                          to=""
+                          to="/admin/CashDepositeIntoBank"
                           className="flex items-center text-white nestitemhover"
                         >
                           Cash Deposit Into Bank
@@ -399,7 +399,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </li>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/CashWithdrwFromBank"
                           className="flex items-center text-white nestitemhover"
                         >
                           Cash Withdraw From Bank
@@ -429,7 +429,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/stockdetails"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
                 >
                   Stock Details
@@ -524,14 +524,20 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/dashboard/manageperformance"
                         className="flex items-center text-white nestitemhover"
                       >
-                        Add Sub Category
+                        Add Brand 
+                      </Link>
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white nestitemhover"
+                      >
+                        Add Sub Brand 
                       </Link>
                       <li className=" ">
                         <Link
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white nestitemhover"
                         >
-                          Manage Sub Category
+                          Manage Sub Brand 
                         </Link>
                       </li>
                     </li>

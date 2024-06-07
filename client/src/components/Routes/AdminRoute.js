@@ -19,6 +19,9 @@ import CreateStaff from "../pages/admin/CreateStaff.js";
 import BankToBankTranfer from "../pages/admin/BankToBankTransfer.js";
 import AddBank from "../pages/admin/AddBank.js";
 import ManageBank from "../pages/admin/ManageBank.js";
+import CashDepositeIntoBank from "../pages/admin/CashDepositeIntoBank.js";
+import CashWithdrwFromBank from "../pages/admin/CashWithdrwFromBank.js";
+import StockDetails from "../pages/admin/StockDetails.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -63,6 +66,11 @@ const AdminRoute = () => {
         <Route path="createstaff" element={<CreateStaff />} />
         <Route path="addbank" element={<AddBank />} />
         <Route path="managebank" element={<ManageBank />} />
+        <Route path="CashDepositeIntoBank" element={<CashDepositeIntoBank />}/>
+        <Route path="CashWithdrwFromBank" element={<CashWithdrwFromBank />}/>
+        <Route path="stockdetails" element={<StockDetails />}/>
+        
+        
       </Routes>
     </div>
   );

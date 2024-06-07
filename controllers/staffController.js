@@ -51,7 +51,7 @@ export const createstaffController = async (req, res) => {
           data: fs.readFileSync(adharCard.path),
           contentType: adharCard.type,
         };
-        
+
         adharcardData.push(data);
       }
     }
@@ -86,13 +86,14 @@ export const createstaffController = async (req, res) => {
     }
 
     const existingStaff = await staffModel.findOne({ $or: [{ email }, { empId }] });
+
     if (existingStaff) {
       return res.status(400).send({
         success: false,
         message: "This staff already exists with the provided email or empId",
       });
     }
-
+    
     const newStaff = await staffModel.create({
       photo: photoData,
       adharCards: adharcardData,
