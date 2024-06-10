@@ -106,7 +106,7 @@ export const createstaffController = async (req, res) => {
         message: "This staff already exists with the provided email or empId",
       });
     }
-
+    
     const newStaff = await staffModel.create({
       photo: photoData,
       adharCards: adharcardData,

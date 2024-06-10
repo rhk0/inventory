@@ -429,7 +429,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/stockdetails"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
                 >
                   Stock Details
@@ -525,6 +525,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         className="flex items-center text-white nestitemhover"
                       >
                         Add Brand
+                        Add Brand 
+                      </Link>
+                      <Link
+                        to="/admin/dashboard/manageperformance"
+                        className="flex items-center text-white nestitemhover"
+                      >
+                        Add Sub Brand 
                       </Link>
                       <li className=" ">
                         <Link
@@ -532,6 +539,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Brand
+                          Manage Sub Brand 
                         </Link>
                       </li>
                     </li>

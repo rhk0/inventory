@@ -44,6 +44,7 @@ export const bankToBankTransferController = async (req, res) => {
       .json({ error: "Internal Server Error", details: error.message });
   }
 };
+
 export const CashDepositeIntoBankController = async (req, res) => {
   try {
     const { date, contraNo, fromAccount, amount, toAccount } = req.body;
