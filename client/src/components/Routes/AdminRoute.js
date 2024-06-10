@@ -19,6 +19,12 @@ import CreateStaff from "../pages/admin/CreateStaff.js";
 import BankToBankTranfer from "../pages/admin/BankToBankTransfer.js";
 import AddBank from "../pages/admin/AddBank.js";
 import ManageBank from "../pages/admin/ManageBank.js";
+import AddCategory from "../pages/admin/AddCategory.js";
+import AddSubCategory from "../pages/admin/AddSubCategory.js";
+import AddBrand from "../pages/admin/AddBrand.js";
+import StockUnit from "../pages/admin/StockUnit.js";
+import CashWithDrawFromBank from "../pages/admin/CashWithDrawFromBank.js";
+import CashDepositIntoBank from "../pages/admin/CashDepositIntoBank.js"
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -54,6 +60,12 @@ const AdminRoute = () => {
         <Route path="/ManageCustomer" element={<ManageCustomer />} />
         <Route path="/Cash" element={<Cash />} />
         <Route path="BankToBankTransfer" element={<BankToBankTranfer />} />
+        <Route path="addcategory" element={<AddCategory />} />
+        <Route path="addsubcategory" element={<AddSubCategory />} />
+        <Route path="addbrand" element={<AddBrand />} />
+        <Route path="addstock" element={<StockUnit />} />
+        <Route path="cashwithdrawfrombank" element={<CashWithDrawFromBank/>}/>
+        <Route path="CashDepositIntoBank" element={<CashDepositIntoBank/>}/>
 
         {/* dheerendra routing */}
         <Route path="createtranspoter" element={<CreateTranspoter />} />
@@ -63,6 +75,7 @@ const AdminRoute = () => {
         <Route path="createstaff" element={<CreateStaff />} />
         <Route path="addbank" element={<AddBank />} />
         <Route path="managebank" element={<ManageBank />} />
+
       </Routes>
     </div>
   );

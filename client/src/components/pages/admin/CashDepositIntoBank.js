@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="p-6 bg-white responsive-container">
       <h3 className="text-center text-2xl sm:text-3xl font-bold text-purple-600 mb-6 underline ">
-        Bank to Bank Transfer
+      Cash Deposit Into Bank
       </h3>
       <div className="flex flex-col md:flex-row mt-4 justify-start space-y-4 md:space-y-0 md:space-x-4">
         <div className="w-full md:w-auto">

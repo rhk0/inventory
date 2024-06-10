@@ -1,5 +1,6 @@
 import staffModel from "../models/staffModel.js";
 import fs from "fs";
+
 export const createstaffController = async (req, res) => {
   try {
     const {
@@ -24,11 +25,13 @@ export const createstaffController = async (req, res) => {
     } = req.fields;
 
     const { photo, panCard } = req.files;
-    const adharCards = Object.values(req.files.adharCard || {});
-
+    const adharCards = req.files.adharCards;
+    console.log("photo", photo);
+    console.log("pancard", panCard);
+    console.log("adharcards", adharCards);
     let photoData = null;
     let pancardData = null;
-    let adharcardData=[];
+    let adharcardData = [];
 
     if (photo) {
       photoData = {
@@ -45,13 +48,22 @@ export const createstaffController = async (req, res) => {
     }
 
     // Handling multiple Adhar Card images
-    if (adharCards.length > 0) {
-      for (const adharCard of adharCards) {
+    if (adharCards) {
+      if (Array.isArray(adharCards)) {
+        for (const ad of adharCards) {
+          const data = {
+            data: fs.readFileSync(ad.path),
+            contentType: ad.type,
+          };
+          adharcardData.push(data);
+        }
+        console.log("if data");
+      } else {
+        console.log("else data");
         const data = {
-          data: fs.readFileSync(adharCard.path),
-          contentType: adharCard.type,
+          data: fs.readFileSync(adharCards.path),
+          contentType: adharCards.type,
         };
-        
         adharcardData.push(data);
       }
     }
@@ -85,7 +97,9 @@ export const createstaffController = async (req, res) => {
       });
     }
 
-    const existingStaff = await staffModel.findOne({ $or: [{ email }, { empId }] });
+    const existingStaff = await staffModel.findOne({
+      $or: [{ email }, { empId }],
+    });
     if (existingStaff) {
       return res.status(400).send({
         success: false,
@@ -123,16 +137,13 @@ export const createstaffController = async (req, res) => {
       data: newStaff,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error creating staff:", error);
     return res.status(500).json({
       error: "Internal Server Error",
       details: error.message,
     });
   }
 };
-
-
-
 
 export const manageStaffController = async (req, res) => {
   try {
@@ -204,7 +215,6 @@ export const manageSingleStaffController = async (req, res) => {
     });
   }
 };
-
 
 export const createProductController = async (req, res) => {
   try {
@@ -282,7 +292,6 @@ export const createProductController = async (req, res) => {
       photoCount++;
     }
 
-
     await products.save();
     res.status(201).send({
       success: true,
@@ -316,11 +325,3 @@ export const createProductController = async (req, res) => {
 //     });
 //   }
 // };
-
-
-
-
-
-
-
-

@@ -74,7 +74,7 @@ const indianBanks = [
 
 const initialFormData = {
   photo: null,
-  adharCard: null,
+  adharCards: null,
   panCard: null,
   name: "",
   contact: "",
@@ -179,6 +179,7 @@ const CreateStaff = () => {
     setCurrentStep((prevStep) => prevStep - 1);
   };
   const photoInputRef = useRef(null);
+  const adInputRef = useRef(null);
 
   const handlePhotoChange = (e) => {
     e.preventDefault();
@@ -186,9 +187,13 @@ const CreateStaff = () => {
     setFormData((prevState) => ({
       ...prevState,
       photo: file,
-      adharCard: file,
       panCard: file,
     }));
+  };
+
+  const handleAdChange = (e) => {
+    const files = Array.from(e.target.files);
+    setFormData((prevData) => ({ ...prevData, adharCards: files }));
   };
 
   const renderStepIndicator = () => (
@@ -396,10 +401,10 @@ const CreateStaff = () => {
                 Aadhar Card:
                 <input
                   type="file"
-                  name="adharCard"
+                  name="adharCards"
                   accept="image/*"
-                  ref={photoInputRef}
-                  onChange={handlePhotoChange}
+                  ref={adInputRef}
+                  onChange={handleAdChange}
                   multiple
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
                 />

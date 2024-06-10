@@ -391,7 +391,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </Link>
                       <li className=" ">
                         <Link
-                          to=""
+                          to="/admin/cashdepositintobank"
                           className="flex items-center text-white nestitemhover"
                         >
                           Cash Deposit Into Bank
@@ -399,7 +399,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </li>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/cashwithdrawfrombank"
                           className="flex items-center text-white nestitemhover"
                         >
                           Cash Withdraw From Bank
@@ -452,7 +452,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4  px-1">
                     <li className=" ">
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/addcategory"
                         className="flex items-center text-white nestitemhover"
                       >
                         Add Category
@@ -488,7 +488,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4  px-1">
                     <li className=" ">
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/addsubcategory"
                         className="flex items-center text-white nestitemhover"
                       >
                         Add Sub Category
@@ -521,17 +521,17 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4  px-1">
                     <li className=" ">
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/addbrand"
                         className="flex items-center text-white nestitemhover"
                       >
-                        Add Sub Category
+                        Add Brand
                       </Link>
                       <li className=" ">
                         <Link
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white nestitemhover"
                         >
-                          Manage Sub Category
+                          Manage Brand
                         </Link>
                       </li>
                     </li>
@@ -555,7 +555,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4  px-1">
                     <li className=" ">
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/addstock"
                         className="flex items-center text-white nestitemhover"
                       >
                         Add Stock Unit
