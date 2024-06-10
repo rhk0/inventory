@@ -125,23 +125,6 @@ export const updateBankController = async (req, res) => {
     const { _id } = req.params;
     const updateData = req.body;
 
-    const requiredFields = [
-      "name",
-      "ifscCode",
-      "accountNumber",
-      "openingBalance",
-      "drCr",
-    ];
-    const missingFields = requiredFields.filter(
-      (field) => !(field in updateData)
-    );
-
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
 
     const Bank = await bankModel.findByIdAndUpdate(_id, updateData, {
       new: true,
