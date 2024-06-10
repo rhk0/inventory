@@ -14,6 +14,9 @@ import cashRoute from "./routes/cashRoute.js"
 import bankRoute from "./routes/bankRoute.js"
 import bankTransctionRoute from "./routes/bankTransctionRoute.js"
 import InventoryCategoryRoute from "./routes/InventoryCategoryRoute.js"
+import InventorySubCategoryRoute from "./routes/InventorySubCategoryRoute.js"
+import InventoryBrandRoute from "./routes/InventoryBrandRoute.js"
+import InventroySubBrandRoute from "./routes/InventroySubBrandRoute.js"
 dotenv.config();
 
 //calling the db funciton 
@@ -38,7 +41,9 @@ app.use("/api/v1/auth",bankRoute)
 app.use("/api/v1/auth",cashRoute);
 app.use("/api/v1/auth",bankTransctionRoute)
 app.use("/api/v1/auth",InventoryCategoryRoute)
-
+app.use("/api/v1/auth",InventorySubCategoryRoute)
+app.use("/api/v1/auth",InventoryBrandRoute)
+app.use("/api/v1/auth",InventroySubBrandRoute)
 
 app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)
