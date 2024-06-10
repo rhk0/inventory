@@ -13,6 +13,7 @@ import staffRoute from "./routes/staffRoute.js"
 import cashRoute from "./routes/cashRoute.js"
 import bankRoute from "./routes/bankRoute.js"
 import bankTransctionRoute from "./routes/bankTransctionRoute.js"
+import InventoryCategoryRoute from "./routes/InventoryCategoryRoute.js"
 dotenv.config();
 
 //calling the db funciton 
@@ -36,6 +37,7 @@ app.use("/api/v1/auth",staffRoute)
 app.use("/api/v1/auth",bankRoute)
 app.use("/api/v1/auth",cashRoute);
 app.use("/api/v1/auth",bankTransctionRoute)
+app.use("/api/v1/auth",InventoryCategoryRoute)
 
 
 app.listen(process.env.PORT,async()=>{
