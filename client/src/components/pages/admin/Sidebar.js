@@ -459,7 +459,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/ManageCategory"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Category
@@ -525,10 +525,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         className="flex items-center text-white nestitemhover"
                       >
                         Add Brand
-                        Add Brand 
                       </Link>
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/AddSubBrand"
                         className="flex items-center text-white nestitemhover"
                       >
                         Add Sub Brand 
