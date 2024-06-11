@@ -160,39 +160,39 @@ export const updateCustomerController = async (req, res) => {
     const { _id } = req.params; 
     const updateData = req.body;
 //   console.log(updateData)
-    const requiredFields = [
-      "name",
-      "contact",
-      "address",
-      "pinCode",
-      "state",
-      "country",
-      "email",
-      "website",
-      "registrationType",
-      "gstIn",
-      "panNo",
-      "bankName",
-      "ifscCode",
-      "accountNo",
-      "accountHolder",
-      "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
-      "openingBalance",
-      "drCr",
-    ];
-    const missingFields = requiredFields.filter(
-      (field) => !(field in updateData)
-    );
+    // const requiredFields = [
+    //   "name",
+    //   "contact",
+    //   "address",
+    //   "pinCode",
+    //   "state",
+    //   "country",
+    //   "email",
+    //   "website",
+    //   "registrationType",
+    //   "gstIn",
+    //   "panNo",
+    //   "bankName",
+    //   "ifscCode",
+    //   "accountNo",
+    //   "accountHolder",
+    //   "upiId",
+    //   "itemCategories",
+    //   "discountPercentage",
+    //   "discountAmount",
+    //   "openingBalance",
+    //   "drCr",
+    // ];
+    // const missingFields = requiredFields.filter(
+    //   (field) => !(field in updateData)
+    // );
 
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
+    // if (missingFields.length > 0) {
+    //   return res.status(400).send({
+    //     message: "Required fields are missing",
+    //     missingFields: missingFields,
+    //   });
+    // }
 
    
     const Customer = await customerModel.findByIdAndUpdate(_id, updateData, {

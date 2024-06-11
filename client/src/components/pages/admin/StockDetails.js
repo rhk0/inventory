@@ -32,22 +32,22 @@ const StockDetails = () => {
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr>
-              <th className="px-4 py-2 border">S.no</th>
-              <th className="px-4 py-2 border">Product Name</th>
-              <th className="px-4 py-2 border">Brand Name</th>
-              <th className="px-4 py-2 border">Available Qty</th>
-              <th className="px-4 py-2 border">MRP</th>
-              <th className="px-4 py-2 border">Cost Price</th>
-              <th className="px-4 py-2 border">Landing Cost</th>
-              <th className="px-4 py-2 border">Stock Value</th>
-              <th className="px-4 py-2 border">Landing Stock Value</th>
+              <th className="px-4 py-2 borde text-white bg-purple-700">S.no</th>
+              <th className="px-4 py-2 border  text-white bg-purple-700">Product Name</th>
+              <th className="px-4 py-2 border  text-white bg-purple-700">Brand Name</th>
+              <th className="px-4 py-2 border  text-white bg-purple-700">Available Qty</th>
+              <th className="px-4 py-2 border  text-white bg-purple-700">MRP</th>
+              <th className="px-4 py-2 border  text-white bg-purple-700">Cost Price</th>
+              <th className="px-4 py-2 border  text-white bg-purple-700">Landing Cost</th>
+              <th className="px-4 py-2 border  text-white bg-purple-700">Stock Value</th>
+              <th className="px-4 py-2 border  text-white bg-purple-700">Landing Stock Value</th>
             </tr>
           </thead>
           <tbody>
             {stockData.map((item, index) => (
               <tr key={item.id} className="text-center">
                 <td className="px-4 py-2 border">{index + 1}</td>
-                <td className="px-4 py-2 border">{item.name}</td>
+                <td className="px-4 py-2 border  text-purple-700">{item.name}</td>
                 <td className="px-4 py-2 border">{item.brand}</td>
                 <td className="px-4 py-2 border">{item.qty}</td>
                 <td className="px-4 py-2 border">{item.mrp}</td>

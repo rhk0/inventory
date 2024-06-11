@@ -107,20 +107,20 @@ export const updateCashController = async (req, res) => {
     const { _id } = req.params; 
     const updateData = req.body;
 
-    const requiredFields = [
-      "name",
-      "drCr",
-    ];
-    const missingFields = requiredFields.filter(
-      (field) => !(field in updateData)
-    );
+    // const requiredFields = [
+    //   "name",
+    //   "drCr",
+    // ];
+    // const missingFields = requiredFields.filter(
+    //   (field) => !(field in updateData)
+    // );
 
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
+    // if (missingFields.length > 0) {
+    //   return res.status(400).send({
+    //     message: "Required fields are missing",
+    //     missingFields: missingFields,
+    //   });
+    // }
 
    
     const Cash = await cashModel.findByIdAndUpdate(_id, updateData, {

@@ -17,6 +17,8 @@ import InventoryCategoryRoute from "./routes/InventoryCategoryRoute.js"
 import InventorySubCategoryRoute from "./routes/InventorySubCategoryRoute.js"
 import InventoryBrandRoute from "./routes/InventoryBrandRoute.js"
 import InventroySubBrandRoute from "./routes/InventroySubBrandRoute.js"
+import InventoryStockUnitRoute from "./routes/InventoryStockUnitRoute.js"
+import InventoryCreateBranchesRoute from "./routes/InventoryCreateBranchesRoute.js"
 dotenv.config();
 
 //calling the db funciton 
@@ -44,6 +46,9 @@ app.use("/api/v1/auth",InventoryCategoryRoute)
 app.use("/api/v1/auth",InventorySubCategoryRoute)
 app.use("/api/v1/auth",InventoryBrandRoute)
 app.use("/api/v1/auth",InventroySubBrandRoute)
+app.use("/api/v1/auth",InventoryStockUnitRoute)
+app.use("/api/v1/auth",InventoryCreateBranchesRoute)
+
 
 app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)
