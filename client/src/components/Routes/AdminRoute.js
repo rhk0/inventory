@@ -29,6 +29,7 @@ import CashDepositIntoBank from "../pages/admin/CashDepositIntoBank.js"
 import StockDetails from "../pages/admin/StockDetails.js";
 import AddSubBrand from "../pages/admin/AddSubBrand.js";
 import ManageCategory from "../pages/admin/ManageCategory.js";
+import ManageSubCategory from "../pages/admin/ManageSubCategory.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -72,6 +73,7 @@ const AdminRoute = () => {
         <Route path="CashDepositIntoBank" element={<CashDepositIntoBank/>}/>
         <Route path ="AddSubBrand" element={<AddSubBrand/>}/>
         <Route path ="ManageCategory"element={<ManageCategory/>}/>
+        <Route path ="managesubcategory" element={<ManageSubCategory/>}/>
 
         {/* dheerendra routing */}
         <Route path="createtranspoter" element={<CreateTranspoter />} />

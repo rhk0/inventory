@@ -495,7 +495,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/managesubcategory"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Sub Category

@@ -151,11 +151,15 @@ const ManageCategory = () => {
           {selectedCategory && (
             <div>
               <p>
-                <strong>Category Name: </strong>
-                {selectedCategory.CategoryName}
+                <label className="block text-sm font-medium text-gray-700">
+                  Category Name
+                </label>
+                <span className="mt-1 block w-full py-2 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">                {selectedCategory.CategoryName}
+                </span>
               </p>
             </div>
           )}
+
           <button
             className="mt-4 px-4 py-2 bg-gray-600 text-white rounded"
             onClick={closeModals}

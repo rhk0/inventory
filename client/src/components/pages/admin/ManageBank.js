@@ -148,8 +148,8 @@ const ManageBank = () => {
           style={{
             content: {
               width: "80%",
-              height: "80%",
-              maxWidth: "800px",
+              height: "50%",
+              maxWidth: "600px",
               margin: "auto",
               padding: "5px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -167,7 +167,7 @@ const ManageBank = () => {
           style={{
             content: {
               width: "80%",
-              height: "80%",
+              height: "60%",
               maxWidth: "800px",
               margin: "auto",
               padding: "5px",
