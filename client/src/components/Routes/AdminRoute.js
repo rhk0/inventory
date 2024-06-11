@@ -25,10 +25,10 @@ import AddBrand from "../pages/admin/AddBrand.js";
 import StockUnit from "../pages/admin/StockUnit.js";
 import CashWithDrawFromBank from "../pages/admin/CashWithDrawFromBank.js";
 import CashDepositIntoBank from "../pages/admin/CashDepositIntoBank.js"
-
 import StockDetails from "../pages/admin/StockDetails.js";
 import AddSubBrand from "../pages/admin/AddSubBrand.js";
 import ManageCategory from "../pages/admin/ManageCategory.js";
+import ManageStockUnit from "../pages/admin/ManageStockUnit.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -81,11 +81,8 @@ const AdminRoute = () => {
         <Route path="createstaff" element={<CreateStaff />} />
         <Route path="addbank" element={<AddBank />} />
         <Route path="managebank" element={<ManageBank />} />
-
-
         <Route path="stockdetails" element={<StockDetails />}/>
-        
-        
+        <Route path="managestockunit" element={<ManageStockUnit />}/>
       </Routes>
     </div>
   );

@@ -3,7 +3,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ManageCategory = () => {
+const ManageStockUnit = () => {
+
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [viewModal, setViewModal] = useState(false);
@@ -15,10 +16,11 @@ const ManageCategory = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/getcategory");
+      const response = await axios.get("/api/v1/auth/getStockUnit   ");
+      console.log(response)
       setCategories(response.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to fetch categories");
     }
   };
 
@@ -40,7 +42,7 @@ const ManageCategory = () => {
 
   const deleteCategory = async (_id) => {
     try {
-      await axios.delete(`/api/v1/auth/deletecategory/${_id}`);
+      await axios.delete(`/api/v1/auth/deleteStockUnit/${_id}`);
       toast.success("Category deleted successfully");
 
       fetchCategories();
@@ -77,7 +79,10 @@ const ManageCategory = () => {
                 S.No
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Category Name
+              Symbol
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+              Formal name
               </th>
               <th className="px-6 py-2 text-left text-sm font-medium text-gray-600">
                 Action
@@ -90,7 +95,10 @@ const ManageCategory = () => {
                 <tr key={category._id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
-                    {category.CategoryName}
+                    {category.symbol}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm text-nowrap">
+                    {category.formalName}
                   </td>
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
                     <button
@@ -133,11 +141,36 @@ const ManageCategory = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded p-4 w-96">
             <h2 className="text-xl font-bold mb-4">View Category</h2>
-            <div>
-              <p>
-                <strong>Category Name</strong> {selectedCategory.CategoryName}
-              </p>
-            </div>
+            {selectedCategory.compoundedType==="singlecompounded"&& (
+              <div>
+                <p>
+                  <strong>Symbol</strong> {selectedCategory.symbol}
+                </p>
+                <p>
+                  <strong>Formal name</strong> {selectedCategory.formalName}
+                </p>
+              </div>
+            )}
+            
+             {selectedCategory.compoundedType==="compounded"&& (
+              <div>
+                <p>
+                  <strong>Symbol</strong> {selectedCategory.symbol}
+                </p>
+                <p>
+                  <strong>Formal name</strong> {selectedCategory.formalName}
+                </p>
+                <p>
+                  <strong>Primary Unit</strong> {selectedCategory.primaryUnit}
+                </p>
+                <p>
+                  <strong>Conversion of</strong> {selectedCategory.conversionOf}
+                </p>
+                <p>
+                  <strong> Secondary Unit</strong> {selectedCategory.secondaryUnit}
+                </p>
+              </div>
+            )}
             <button
               className="mt-4 px-4 py-2 bg-gray-600 text-white rounded"
               onClick={closeModals}
@@ -153,40 +186,42 @@ const ManageCategory = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded p-4 w-96">
             <h2 className="text-xl font-bold mb-4">Edit Category</h2>
-            <form onSubmit={handleEditSubmit}>
-              <div className="mb-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  Category Name
-                </label>
-                <input
-                  type="text"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  value={selectedCategory.CategoryName}
-                  onChange={(e) =>
-                    setSelectedCategory({
-                      ...selectedCategory,
-                      CategoryName: e.target.value,
-                    })
-                  }
-                  required
-                />
-              </div>
-              <div className="flex justify-end mt-4">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-gray-600 text-white rounded mr-2"
-                  onClick={closeModals}
-                >
-                  Close
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
+            {selectedCategory && (
+              <form onSubmit={handleEditSubmit}>
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Category Name
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    value={selectedCategory.CategoryName}
+                    onChange={(e) =>
+                      setSelectedCategory({
+                        ...selectedCategory,
+                        CategoryName: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex justify-end mt-4">
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-600 text-white rounded mr-2"
+                    onClick={closeModals}
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
@@ -194,4 +229,4 @@ const ManageCategory = () => {
   );
 };
 
-export default ManageCategory;
+export default ManageStockUnit;

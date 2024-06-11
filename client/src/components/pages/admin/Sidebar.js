@@ -569,7 +569,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/managestockunit"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Stock Unit
