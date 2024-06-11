@@ -2,15 +2,24 @@ import mongoose from "mongoose";
 
 const StockUnitSchema = new mongoose.Schema(
   {
-    type: {
+    compoundedType:{
       type: String,
     },
-    saymbol: {
+    symbol: {
       type: String,
     },
     formalName: {
-        type: String,
-      }
+      type: String,
+    },
+    primaryUnit: {
+      type: String,
+    },
+    conversionOf: {
+      type: String,
+    },
+    secondaryUnit: {
+      type: String,
+    },
   },
   {
     timestamps: true,

@@ -2,23 +2,17 @@ import InventoryStockUnitModel from "../models/InventoryStockUnitModel.js";
 
 export const createInventoryStockUnitController = async (req, res) => {
   try {
-    const { type, saymbol, formalName } = req.body;
-
-    const requiredFields = ["type", "saymbol", "formalName"];
-
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
+    const {compoundedType, symbol, formalName, primaryUnit, conversionOf, secondaryUnit } =
+      req.body;
+   
 
     const response = await InventoryStockUnitModel.create({
-      type,
-      saymbol,
+      compoundedType,
+      symbol,
       formalName,
+      primaryUnit,
+      conversionOf,
+      secondaryUnit,
     });
 
     if (response) {
@@ -85,23 +79,12 @@ export const updateInventoryStockUnitController = async (req, res) => {
   try {
     const { _id } = req.params;
 
-    const { type, saymbol, formalName } = req.body;
-
-    const requiredFields = ["type", "saymbol", "formalName"];
-    const missingFields = requiredFields.filter(
-      (field) => !(field in req.body)
-    );
-
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
+    const { symbol, formalName, primaryUnit, conversionOf, secondaryUnit } =
+      req.body;
 
     const StockUnit = await InventoryStockUnitModel.findByIdAndUpdate(
       _id,
-      { type, saymbol, formalName },
+      { symbol, formalName, primaryUnit, conversionOf, secondaryUnit },
       {
         new: true,
       }
