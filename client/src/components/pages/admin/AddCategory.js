@@ -1,6 +1,58 @@
-import React from "react";
-
+import React, { useState } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const AddCategory = () => {
+
+  const [formData, setFormData] = useState({
+    CategoryName: "",
+
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const requiredFields = [
+      "CategoryName",
+  
+    ];
+
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        toast.error(`Please fill out the ${field} field.`);
+        return;
+      }
+    }
+
+    try {
+      const response = await axios.post(
+        "/api/v1/auth/createcategory",
+        formData
+      );
+
+      if (response) {
+        toast.success(" Category Added  Successfully...");
+      }
+
+      clearData();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  const clearData = () => {
+    setFormData({
+      CategoryName: "",
+    });
+  };
   return (
     <div className="responsive-container">
       <form className=" mx-auto  p-8 border border-gray-300 shadow-lg rounded-lg">
@@ -11,20 +63,24 @@ const AddCategory = () => {
           <label className="block mb-2 ">Categorie Name:</label>
           <input
             type="text"
-            name="name"
+            name="CategoryName"
+            value={formData.CategoryName}
+            onChange={handleChange}
             className=" w-1/2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
           />
         </div>
 
         <div className="flex justify-between mt-8 px-2">
           <button
-            //   onClick={handleSubmit}
+              onClick={handleSubmit}
             className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
           >
             Submit
           </button>
         </div>
       </form>
+      <ToastContainer />
+
     </div>
   );
 };
