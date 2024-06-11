@@ -53,8 +53,8 @@ const ManageCategory = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(
-        `/api/v1/auth/updtaecategory/${selectedCategory._id}`,
+      await axios.put(`
+        /api/v1/auth/updtaecategory/${selectedCategory._id}`,
         selectedCategory
       );
       toast.success("Category updated successfully");
@@ -130,71 +130,99 @@ const ManageCategory = () => {
       <ToastContainer />
 
       {/* View Modal */}
-      {viewModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded p-4 w-96">
-            <h2 className="text-xl font-bold mb-4">View Category</h2>
-            {selectedCategory && (
-              <div>
-                <p>
-                  <strong>Name:</strong> {selectedCategory.CategoryName}
-                </p>
-              </div>
-            )}
-            <button
-              className="mt-4 px-4 py-2 bg-gray-600 text-white rounded"
-              onClick={closeModals}
-            >
-              Close
-            </button>
-          </div>
+      <Modal
+        isOpen={viewModal}
+        onRequestClose={closeModals}
+        contentLabel="View Category Modal"
+        style={{
+          content: {
+            width: "50%",
+            height: "30%",
+            maxWidth: "500px",
+            margin: "auto",
+            padding: "20px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+          },
+        }}
+      >
+        <div>
+            
+          <h2 className="text-xl font-bold mb-4">View Category</h2>
+          {selectedCategory && (
+            <div>
+              <p>
+                <strong>Category Name: </strong>
+                {selectedCategory.CategoryName}
+              </p>
+            </div>
+          )}
+          <button
+            className="mt-4 px-4 py-2 bg-gray-600 text-white rounded"
+            onClick={closeModals}
+          >
+            Close
+          </button>
         </div>
-      )}
+      </Modal>
 
       {/* Edit Modal */}
-      {editModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded p-4 w-96">
-            <h2 className="text-xl font-bold mb-4">Edit Category</h2>
-            {selectedCategory && (
-              <form onSubmit={handleEditSubmit}>
-                <div className="mb-3">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Category Name
-                  </label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    value={selectedCategory.CategoryName}
-                    onChange={(e) =>
-                      setSelectedCategory({
-                        ...selectedCategory,
-                        CategoryName: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-                <div className="flex justify-end mt-4">
-                  <button
-                    type="button"
-                    className="px-4 py-2 bg-gray-600 text-white rounded mr-2"
-                    onClick={closeModals}
-                  >
-                    Close
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
+      <Modal
+        isOpen={editModal}
+        onRequestClose={closeModals}
+        contentLabel="Edit Category Modal"
+        style={{
+          content: {
+            width: "50%",
+            height: "30%",
+            maxWidth: "500px",
+            margin: "auto",
+            padding: "20px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+          },
+        }}
+      >
+        <div>
+          <h2 className="text-xl font-bold mb-4">Edit Category</h2>
+          {selectedCategory && (
+            <form onSubmit={handleEditSubmit}>
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700">
+                  Category Name
+                </label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  value={selectedCategory.CategoryName}
+                  onChange={(e) =>
+                    setSelectedCategory({
+                      ...selectedCategory,
+                      CategoryName: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+              <div className="flex justify-end mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-gray-600 text-white rounded mr-2"
+                  onClick={closeModals}
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          )}
         </div>
-      )}
+      </Modal>
     </div>
   );
 };
