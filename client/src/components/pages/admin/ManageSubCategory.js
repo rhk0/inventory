@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ManageCategory = () => {
+const ManageSubCategory = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [viewModal, setViewModal] = useState(false);
@@ -19,7 +18,7 @@ const ManageCategory = () => {
       const response = await axios.get("/api/v1/auth/getcategory");
       setCategories(response.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to fetch categories");
     }
   };
 
@@ -129,6 +128,7 @@ const ManageCategory = () => {
       </div>
       <ToastContainer />
 
+
       {/* View Modal */}
       {viewModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -199,4 +199,4 @@ const ManageCategory = () => {
   );
 };
 
-export default ManageCategory;
+export default ManageSubCategory;
