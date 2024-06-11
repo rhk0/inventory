@@ -53,8 +53,8 @@ const ManageCategory = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(
-        `/api/v1/auth/updtaecategory/${selectedCategory._id}`,
+      await axios.put(`
+        /api/v1/auth/updtaecategory/${selectedCategory._id}`,
         selectedCategory
       );
       toast.success("Category updated successfully");
@@ -147,6 +147,7 @@ const ManageCategory = () => {
         }}
       >
         <div>
+            
           <h2 className="text-xl font-bold mb-4">View Category</h2>
           {selectedCategory && (
             <div>

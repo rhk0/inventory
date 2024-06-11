@@ -18,6 +18,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showInventoryCategory, setInventoryCategory] = useState(false);
   const [showInventorySubCategory, setInventorySubCategory] = useState(false);
   const [showInventoryBrand, setInventoryBrand] = useState(false);
+  const [showInventorySubBrand, setInventorySubBrand] = useState(false);
   const [showInventoryStockUnit, setInventoryStockUnit] = useState(false);
   const [showInventoryBranch, setInventoryBranch] = useState(false);
   const [showInventoryProduct, setInventoryProduct] = useState(false);
@@ -356,7 +357,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   to="/admin/addbank"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
                 >
-                  Add Bank 
+                  Add Bank
                 </Link>
               </li>
               <li className="">
@@ -505,6 +506,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   </ul>
                 )}
               </li>
+
               <li className="  ">
                 <button
                   onClick={() => setInventoryBrand(!showInventoryBrand)}
@@ -526,19 +528,46 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       >
                         Add Brand
                       </Link>
-                      <Link
-                        to="/admin/AddSubBrand"
-                        className="flex items-center text-white nestitemhover"
-                      >
-                        Add Sub Brand 
-                      </Link>
+
                       <li className=" ">
                         <Link
                           to="/admin/dashboard/manageperformance"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Brand
-                          Manage Sub Brand 
+                        </Link>
+                      </li>
+                    </li>
+                  </ul>
+                )}
+              </li>
+              <li className="  ">
+                <button
+                  onClick={() => setInventorySubBrand(!showInventorySubBrand)}
+                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
+                >
+                  <span>Sub Brand</span>
+                  {!showInventorySubBrand ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
+                </button>
+                {showInventorySubBrand && (
+                  <ul className="ml-4  px-1">
+                    <li className=" ">
+                      <Link
+                        to="/admin/AddSubBrand"
+                        className="flex items-center text-white nestitemhover"
+                      >
+                        Add Sub Brand
+                      </Link>
+                      <li className=" ">
+                        <Link
+                          to="/admin/dashboard/manageperformance"
+                          className="flex items-center text-white nestitemhover"
+                        >
+                          Manage Sub Brand
                         </Link>
                       </li>
                     </li>
@@ -569,7 +598,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/managestockunit"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Stock Unit
