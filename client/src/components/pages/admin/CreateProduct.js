@@ -5,7 +5,7 @@ const AddProduct = () => {
   const [purchasePrice, setPurchasePrice] = useState(0);
   const [gstRate, setGstRate] = useState("0%");
   const [landingCost, setLandingCost] = useState("");
-  const [options, setOptions] = useState([{ name: "", values: "" }]);
+  const [options, setOptions] = useState([{ name: "", values: [] }]);
   const [tableData, setTableData] = useState([]);
 
   const [Quantity, setQuantity] = useState(0);
@@ -34,7 +34,7 @@ const AddProduct = () => {
   };
 
   const handleAddOption = () => {
-    setOptions([...options, { name: "", values: "" }]);
+    setOptions([...options, { name: "", values: [] }]);
   };
 
   const handleRemoveOption = (index) => {
@@ -44,26 +44,78 @@ const AddProduct = () => {
 
   const updateTable = (newOptions) => {
     const tableVariants = newOptions
-      .filter((option) => option.values)
-      .flatMap((option) =>
-        option.values.split(",").map((value) => value.trim())
-      );
+      .filter((option) => option.values.length > 0)
+      .flatMap((option) => option.values);
 
     setTableData(tableVariants);
   };
 
   const calculateOpeningBalance = () => {
     const quantity = parseFloat(Quantity) || 0;
-    setAmount(quantity);
     const rate = parseFloat(Rate) || 0;
-    setAmount(rate);
     const total = quantity * rate;
-    setAmount(total);
+    setAmount(total.toFixed(2));
   };
 
   useEffect(() => {
     calculateOpeningBalance();
   }, [Quantity, Rate]);
+
+  const handleTagInputChange = (index, newTags) => {
+    const newOptions = [...options];
+    newOptions[index].values = newTags;
+    setOptions(newOptions);
+  };
+
+  const TagInput = ({ index, value }) => {
+    const [tags, setTags] = useState(value || []);
+    const [inputValue, setInputValue] = useState("");
+
+    const addTag = (e) => {
+      if (e.key === " " && inputValue.trim() !== "") {
+        const newTags = [...tags, inputValue.trim()];
+        setTags(newTags);
+        setInputValue("");
+        handleTagInputChange(index, newTags);
+      }
+    };
+
+    const removeTag = (indexToRemove) => {
+      const newTags = tags.filter((_, index) => index !== indexToRemove);
+      setTags(newTags);
+      handleTagInputChange(index, newTags);
+    };
+
+    return (
+      <div className="flex flex-col w-full">
+        <div className="flex flex-wrap items-center border border-gray-300 rounded ">
+          
+          {tags.map((tag, index) => (
+            <div
+              key={index}
+              className="flex items-center bg-red-500 text-white px-3 py-1 m-1 rounded"
+            >
+              {tag}
+              <button
+                className="ml-2 bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                onClick={() => removeTag(index)}
+              >
+                x
+              </button>
+            </div>
+          ))}
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={addTag}
+            placeholder="Enter Option Value"
+            className="flex-grow p-1 outline-none"
+          />
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="p-8 responsive-container">
@@ -73,6 +125,7 @@ const AddProduct = () => {
       <div className="bg-gray-200 p-4 rounded mb-4">
         <h2 className="font-bold mb-2 text-xl">Product Information</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
+          {/* Product Information Fields */}
           <div>
             <label className="block font-bold">Item Code</label>
             <input type="text" className="w-full p-1 border rounded " />
@@ -141,7 +194,6 @@ const AddProduct = () => {
               onChange={() => setIsChecked(!isChecked)}
               className=" border rounded"
             />
-
             {isChecked && (
               <input type="text" className="w-full p-1 border rounded" />
             )}
@@ -188,6 +240,7 @@ const AddProduct = () => {
           </div>
         </div>
       </div>
+
       <div className="bg-gray-200 p-4 rounded mb-4">
         <h2 className="font-bold mb-2 text-xl">Price Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4  gap-4">
@@ -293,184 +346,121 @@ const AddProduct = () => {
         </button>
       </div>
 
-      <div>
-        <div className="bg-gray-200 p-4 rounded mb-4">
-          {options.map((option, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-3 mb-2"
-            >
-              <div className="mb-2">
-                <label className="block font-bold">Variant Name</label>
-                <input
-                  type="text"
-                  className="w-full p-1 border rounded"
-                  placeholder="Variant Name"
-                  value={option.name}
-                  onChange={(e) =>
-                    handleOptionChange(index, "name", e.target.value)
-                  }
-                />
-              </div>
-              <div className="flex items-center">
-                <div className="flex-grow">
-                  <label className="block font-bold"> Variant Value</label>
-                  <input
-                    type="text"
-                    className="w-full p-1 border rounded"
-                    placeholder="e.g., S,M,L"
-                    value={option.values}
-                    onChange={(e) =>
-                      handleOptionChange(index, "values", e.target.value)
-                    }
-                  />
-                </div>
-                <button
-                  className="ml-2 text-red-400 mt-5 text-3xl"
-                  onClick={() => handleRemoveOption(index)}
-                >
-                  &times;
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button
-          className="p-2 border rounded text-blue-500"
-          onClick={handleAddOption}
-        >
-          Add More
-        </button>
-        <div className="overflow-x-auto">
-          <table className="w-full mt-4 border-collapse border border-gray-300 mb-8">
-            <thead>
-              <tr>
-                <th className="border border-gray-300 p-2">Variant</th>
-                <th className="border border-gray-300 p-2">Product Code</th>
-                <th className="border border-gray-300 p-2">Product Name</th>
-                <th className="border border-gray-300 p-2">Purchase Price</th>
-                <th className="border border-gray-300 p-2">Landing Cost</th>
-                <th className="border border-gray-300 p-2">MRP</th>
-                <th className="border border-gray-300 p-2">Retail Discount</th>
-                <th className="border border-gray-300 p-2">Retail Price</th>
-                <th className="border border-gray-300 p-2">Retail Margin</th>
-                <th className="border border-gray-300 p-2">
-                  Wholesaler Discount
-                </th>
-                <th className="border border-gray-300 p-2">Wholesaler Price</th>
-                <th className="border border-gray-300 p-2">
-                  Wholesaler Margin
-                </th>
-                <th className="border border-gray-300 p-2">Minimum stock</th>
-                <th className="border border-gray-300 p-2">Maximum stock</th>
-                <th className="border border-gray-300 p-2">Opening Qty</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map((variant, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-300 ">{variant}</td>
-                  <td className="border border-gray-300  ">
-                    <input type="text" className="w-full border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
+      <div className="bg-gray-200 p-4 rounded mb-4">
+        {options.map((option, index) => (
+          <div key={index} className="flex justify-between mb-2">
+            <div className="mb-2">
+            <label className="block font-bold">Variant Name</label>
 
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                  <td className="border border-gray-300 ">
-                    <input type="text" className="w-full  border rounded" />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            <input
+              type="text"
+              placeholder="Option Name"
+              value={option.name}
+              onChange={(e) =>
+                handleOptionChange(index, "name", e.target.value)
+              }
+              className="border rounded w-full mt-1 p-1" 
+            />
+            </div>
+
+
+            <TagInput index={index} value={option.values} />
+
+
+            <button
+              className="ml-2 text-red-400  text-3xl"
+              onClick={() => handleRemoveOption(index)}
+            >
+              &times;
+            </button>
+          </div>
+        ))}
+ 
+      </div>
+      <button
+          onClick={handleAddOption}
+          className="bg-blue-500 text-white px-3 py-1 rounded"
+        >
+          Add Option
+        </button>
+
+      <div className="overflow-x-auto">
+        <table className="w-full mt-4 border-collapse border border-gray-300 mb-8">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 p-2">Variant</th>
+              <th className="border border-gray-300 p-2">Product Code</th>
+              <th className="border border-gray-300 p-2">Product Name</th>
+              <th className="border border-gray-300 p-2">Purchase Price</th>
+              <th className="border border-gray-300 p-2">Landing Cost</th>
+              <th className="border border-gray-300 p-2">MRP</th>
+              <th className="border border-gray-300 p-2">Retail Discount</th>
+              <th className="border border-gray-300 p-2">Retail Price</th>
+              <th className="border border-gray-300 p-2">Retail Margin</th>
+              <th className="border border-gray-300 p-2">
+                Wholesaler Discount
+              </th>
+              <th className="border border-gray-300 p-2">Wholesaler Price</th>
+              <th className="border border-gray-300 p-2">Wholesaler Margin</th>
+              <th className="border border-gray-300 p-2">Minimum stock</th>
+              <th className="border border-gray-300 p-2">Maximum stock</th>
+              <th className="border border-gray-300 p-2">Opening Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((variant, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 ">{variant}</td>
+                <td className="border border-gray-300  ">
+                  <input type="text" className="w-full border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+                <td className="border border-gray-300 ">
+                  <input type="text" className="w-full  border rounded" />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 };
 
 export default AddProduct;
-
-
-
-// const TagInput = () => {
-//   const [tags, setTags] = useState([]);
-//   const [inputValue, setInputValue] = useState('');
-
-//   const addTag = (e) => {
-//     if (e.key === ' ' && inputValue.trim() !== '') {
-//       setTags([...tags, inputValue.trim()]);
-//       setInputValue('');
-//     }
-//   };
-
-//   const removeTag = (indexToRemove) => {
-//     setTags(tags.filter((_, index) => index !== indexToRemove));
-//   };
-
-//   return (
-//     <div className="flex flex-col w-80">
-//       <div className="flex flex-wrap items-center border border-gray-300 rounded p-2">
-//         {tags.map((tag, index) => (
-//           <div
-//             key={index}
-//             className="flex items-center bg-red-500 text-white px-3 py-1 m-1 rounded"
-//           >
-//             {tag}
-//             <button
-//               className="ml-2 bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center"
-//               onClick={() => removeTag(index)}
-//             >
-//               x
-//             </button>
-//           </div>
-//         ))}
-//         <input
-//           type="text"
-//           value={inputValue}
-//           onChange={(e) => setInputValue(e.target.value)}
-//           onKeyDown={addTag}
-//           placeholder="Enter Option Value"
-//           className="flex-grow p-1 outline-none"
-//         />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TagInput;
-// aq
