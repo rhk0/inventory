@@ -4,7 +4,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const BankEditModal = ({ BankData, closeModal }) => {
-  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState(BankData);
 
   const handleChange = (e) => {
@@ -48,30 +47,6 @@ const BankEditModal = ({ BankData, closeModal }) => {
     }
   };
 
-  const renderStepIndicator = () => (
-    <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
-      {[
-        "Bank Details",
-        "Statutory Details",
-        "Banking Details",
-        "Discounting",
-        "Opening Balance",
-      ].map((step, index) => (
-        <div
-          key={index}
-          className={`flex items-center px-4 py-2 ${
-            currentStep === index + 1
-              ? "bg-violet-600 text-white underline underline-offset-8"
-              : "bg-gray-300"
-          } rounded-md mx-2 cursor-pointer transition duration-300`}
-          onClick={() => setCurrentStep(index + 1)}
-        >
-          {step}
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <div className="max-w-3xl mx-auto md:pl-4 md:pr-4 p-2 responsive-container text-black">
       <button
@@ -86,9 +61,9 @@ const BankEditModal = ({ BankData, closeModal }) => {
 
       <div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-6">
-        <div>
+          <div>
             <label className="block mb-2">
-             name
+              name
               <input
                 type="text"
                 name="name"

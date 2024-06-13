@@ -625,14 +625,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4  px-1">
                     <li className=" ">
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/createbranch"
                         className="flex items-center text-white nestitemhover"
                       >
                         Add Branch
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/managebranches"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Branch
