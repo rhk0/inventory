@@ -30,6 +30,10 @@ import AddSubBrand from "../pages/admin/AddSubBrand.js";
 import ManageCategory from "../pages/admin/ManageCategory.js";
 import ManageSubCategory from "../pages/admin/ManageSubCategory.js";
 import ManageStockUnit from "../pages/admin/ManageStockUnit.js";
+import ManageBrand from "../pages/admin/ManageBrand.js";
+import ManageSubBrand from "../pages/admin/ManageSubBrand.js";
+import AddProduct from "../pages/admin/AddProduct.js";
+import ManageProduct from "../pages/admin/ManageProduct.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -74,7 +78,6 @@ const AdminRoute = () => {
         <Route path="AddSubBrand" element={<AddSubBrand />} />
         <Route path="ManageCategory" element={<ManageCategory />} />
         <Route path="managesubcategory" element={<ManageSubCategory />} />
-
         {/* dheerendra routing */}
         <Route path="createtranspoter" element={<CreateTranspoter />} />
         <Route path="managetranspoter" element={<ManageTranspoter />} />
@@ -85,7 +88,11 @@ const AdminRoute = () => {
         <Route path="managebank" element={<ManageBank />} />
         <Route path="stockdetails" element={<StockDetails />} />
         <Route path="managestockunit" element={<ManageStockUnit />} />
-      </Routes>
+        <Route path="manageBrand" element={<ManageBrand />} />
+        <Route path="manageSubBrand" element={<ManageSubBrand />} />
+        <Route path="createproduct" element={<AddProduct />} />
+        <Route path="manageproduct" element={<ManageProduct />} />
+      </Routes> 
     </div>
   );
 };

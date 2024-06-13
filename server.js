@@ -19,6 +19,11 @@ import InventoryBrandRoute from "./routes/InventoryBrandRoute.js"
 import InventroySubBrandRoute from "./routes/InventroySubBrandRoute.js"
 import InventoryStockUnitRoute from "./routes/InventoryStockUnitRoute.js"
 import InventoryCreateBranchesRoute from "./routes/InventoryCreateBranchesRoute.js"
+import productRoute from "./routes/productRoute.js"
+import formidable from 'express-formidable';
+
+
+
 dotenv.config();
 
 //calling the db funciton 
@@ -48,6 +53,8 @@ app.use("/api/v1/auth",InventoryBrandRoute)
 app.use("/api/v1/auth",InventroySubBrandRoute)
 app.use("/api/v1/auth",InventoryStockUnitRoute)
 app.use("/api/v1/auth",InventoryCreateBranchesRoute)
+app.use("/api/v1/auth",productRoute)
+app.use(formidable());
 
 
 app.listen(process.env.PORT,async()=>{

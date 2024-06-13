@@ -531,7 +531,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/manageBrand"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Brand
@@ -564,7 +564,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/manageSubBrand"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Sub Brand
@@ -659,14 +659,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4  px-1">
                     <li className=" ">
                       <Link
-                        to="/admin/dashboard/manageperformance"
+                        to="/admin/createproduct"
                         className="flex items-center text-white nestitemhover"
                       >
                         Add Product
                       </Link>
                       <li className=" ">
                         <Link
-                          to="/admin/dashboard/manageperformance"
+                          to="/admin/manageproduct"
                           className="flex items-center text-white nestitemhover"
                         >
                           Manage Product
