@@ -32,8 +32,6 @@ import ManageSubCategory from "../pages/admin/ManageSubCategory.js";
 import ManageStockUnit from "../pages/admin/ManageStockUnit.js";
 import ManageBrand from "../pages/admin/ManageBrand.js";
 import ManageSubBrand from "../pages/admin/ManageSubBrand.js";
-import AddProduct from "../pages/admin/AddProduct.js";
-import ManageProduct from "../pages/admin/ManageProduct.js";
 import CreateBranches from "../pages/admin/CreateBranches.js";
 import ManageBranches from "../pages/admin/ManageBranches.js";
 import CreateProduct from "../pages/admin/CreateProduct.js";
@@ -97,8 +95,8 @@ const AdminRoute = () => {
         <Route path="managestockunit" element={<ManageStockUnit />} />
         <Route path="manageBrand" element={<ManageBrand />} />
         <Route path="manageSubBrand" element={<ManageSubBrand />} />
-        <Route path="createproduct" element={<AddProduct />} />
-        <Route path="manageproduct" element={<ManageProduct />} />
+      
+ 
       </Routes> 
     </div>
   );

@@ -425,7 +425,7 @@ const AddProduct = () => {
 
 export default AddProduct;
 
-// import React, { useState } from 'react';
+
 
 // const TagInput = () => {
 //   const [tags, setTags] = useState([]);
