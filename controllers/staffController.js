@@ -26,9 +26,9 @@ export const createstaffController = async (req, res) => {
 
     const { photo, panCard } = req.files;
     const adharCards = req.files.adharCards;
-    console.log("photo", photo);
-    console.log("pancard", panCard);
-    console.log("adharcards", adharCards);
+    // console.log("photo", photo);
+    // console.log("pancard", panCard);
+    // console.log("adharcards", adharCards);
     let photoData = null;
     let pancardData = null;
     let adharcardData = [];

@@ -30,6 +30,9 @@ import AddSubBrand from "../pages/admin/AddSubBrand.js";
 import ManageCategory from "../pages/admin/ManageCategory.js";
 import ManageSubCategory from "../pages/admin/ManageSubCategory.js";
 import ManageStockUnit from "../pages/admin/ManageStockUnit.js";
+import CreateBranches from "../pages/admin/CreateBranches.js";
+import ManageBranches from "../pages/admin/ManageBranches.js";
+import CreateProduct from "../pages/admin/CreateProduct.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -74,6 +77,9 @@ const AdminRoute = () => {
         <Route path="AddSubBrand" element={<AddSubBrand />} />
         <Route path="ManageCategory" element={<ManageCategory />} />
         <Route path="managesubcategory" element={<ManageSubCategory />} />
+        <Route path="createbranch" element={<CreateBranches />} />
+        <Route path="managebranches" element={<ManageBranches />} />
+        <Route path="createproduct" element={<CreateProduct/>}/>
 
         {/* dheerendra routing */}
         <Route path="createtranspoter" element={<CreateTranspoter />} />
