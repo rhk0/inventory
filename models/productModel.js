@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-
-
 const QuatationRowSchema =  mongoose.Schema({
   variant: { type: String },
   productCode: { type: String },
