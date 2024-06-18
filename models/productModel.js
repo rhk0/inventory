@@ -1,22 +1,22 @@
 import mongoose from "mongoose";
 
-const QuatationRowSchema =  mongoose.Schema({
-  variant: { type: String },
-  productCode: { type: String },
-  productName: { type: String },
-  purchasePrice: { type: Number },
-  landingCost: { type: Number },
-  mrp: { type: Number },
-  retailDiscount: { type: Number },
-  retailPrice: { type: Number },
-  retailMargin: { type: Number },
-  wholesalerDiscount: { type: Number },
-  wholesalerPrice: { type: Number },
-  wholesaleMargin: { type: Number },
-  minimumStock: { type: Number },
-  maximumStock: { type: Number },
-openingQty: { type: Number },
-});
+// const QuatationRowSchema =  mongoose.Schema({
+//   variant: { type: String },
+//   productCode: { type: String },
+//   productName: { type: String },
+//   purchasePrice: { type: Number },
+//   landingCost: { type: Number },
+//   mrp: { type: Number },
+//   retailDiscount: { type: Number },
+//   retailPrice: { type: Number },
+//   retailMargin: { type: Number },
+//   wholesalerDiscount: { type: Number },
+//   wholesalerPrice: { type: Number },
+//   wholesaleMargin: { type: Number },
+//   minimumStock: { type: Number },
+//   maximumStock: { type: Number },
+// openingQty: { type: Number },
+// });
 
 const productSchema = new mongoose.Schema(
   {
@@ -137,7 +137,7 @@ const productSchema = new mongoose.Schema(
     amount: {
       type: String,
     },
-    rows: [QuatationRowSchema],
+    // rows: [QuatationRowSchema],
   },
   {
     timestamps: true,

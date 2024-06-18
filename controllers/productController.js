@@ -40,84 +40,84 @@ export const createProductController = async (req, res) => {
       rate,
       units,
       amount,
-      items,
+      // items,
     } = req.fields;
 
    
 
     // Parse 'items' if it's a stringified JSON array
-    let parsedItems;
-    try {
-      parsedItems = JSON.parse(items);
-    } catch (e) {
-      return res.status(400).send({
-        message: "Invalid JSON format for items field",
-        details: e.message,
-      });
-    }
+    // let parsedItems;
+    // try {
+    //   parsedItems = JSON.parse(items);
+    // } catch (e) {
+    //   return res.status(400).send({
+    //     message: "Invalid JSON format for items field",
+    //     details: e.message,
+    //   });
+    // }
 
-    const rows = parsedItems.map((rowData) => ({
-      variant: rowData.variant,
-      productCode: rowData.productCode,
-      productName: rowData.productName,
-      purchasePrice: rowData.purchasePrice,
-      landingCost: rowData.landingCost,
-      mrp: rowData.mrp,
-      retailDiscount: rowData.retailDiscount,
-      retailPrice: rowData.retailPrice,
-      retailMargin: rowData.retailMargin,
-      wholesalerDiscount: rowData.wholesalerDiscount,
-      wholesalerPrice: rowData.wholesalerPrice,
-      wholesaleMargin: rowData.wholesaleMargin,
-      minimumStock: rowData.minimumStock,
-      maximumStock: rowData.maximumStock,
-      openingQty: rowData.openingQty,
-    }));
+    // const rows = parsedItems.map((rowData) => ({
+    //   variant: rowData.variant,
+    //   productCode: rowData.productCode,
+    //   productName: rowData.productName,
+    //   purchasePrice: rowData.purchasePrice,
+    //   landingCost: rowData.landingCost,
+    //   mrp: rowData.mrp,
+    //   retailDiscount: rowData.retailDiscount,
+    //   retailPrice: rowData.retailPrice,
+    //   retailMargin: rowData.retailMargin,
+    //   wholesalerDiscount: rowData.wholesalerDiscount,
+    //   wholesalerPrice: rowData.wholesalerPrice,
+    //   wholesaleMargin: rowData.wholesaleMargin,
+    //   minimumStock: rowData.minimumStock,
+    //   maximumStock: rowData.maximumStock,
+    //   openingQty: rowData.openingQty,
+    // }));
     const photoFiles = Object.values(req.files);
-    const requiredFields = [
-      "itemCode",
-      "productName",
-      "category",
-      "subCategory",
-      "brand",
-      "subBrand",
-      "uom",
-      "gstRate",
-      "purchaseTaxInclude",
-      "salesTaxInclude",
-      "cess",
-      "batchNo",
-      "expiryDate",
-      "manufacture",
-      "ingredients",
-      "feature",
-      "description",
-      "newWeight",
-      "purchasePrice",
-      "landingCost",
-      "mrp",
-      "retailDiscount",
-      "retailPrice",
-      "retailMargin",
-      "wholesalerDiscount",
-      "wholesalerPrice",
-      "wholesaleMargin",
-      "minimumStock",
-      "maximumStock",
-      "particular",
-      "quantity",
-      "rate",
-      "units",
-      "amount",
-    ];
+    // const requiredFields = [
+    //   "itemCode",
+    //   "productName",
+    //   "category",
+    //   "subCategory",
+    //   "brand",
+    //   "subBrand",
+    //   "uom",
+    //   "gstRate",
+    //   "purchaseTaxInclude",
+    //   "salesTaxInclude",
+    //   "cess",
+    //   "batchNo",
+    //   "expiryDate",
+    //   "manufacture",
+    //   "ingredients",
+    //   "feature",
+    //   "description",
+    //   "newWeight",
+    //   "purchasePrice",
+    //   "landingCost",
+    //   "mrp",
+    //   "retailDiscount",
+    //   "retailPrice",
+    //   "retailMargin",
+    //   "wholesalerDiscount",
+    //   "wholesalerPrice",
+    //   "wholesaleMargin",
+    //   "minimumStock",
+    //   "maximumStock",
+    //   "particular",
+    //   "quantity",
+    //   "rate",
+    //   "units",
+    //   "amount",
+    // ];
 
-    const missingFields = requiredFields.filter((field) => !req.fields[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
+    // const missingFields = requiredFields.filter((field) => !req.fields[field]);
+    // if (missingFields.length > 0) {
+    //   return res.status(400).send({
+    //     message: "Required fields are missing",
+    //     missingFields: missingFields,
+    //   });
+    // }
 
     const product = new productModel({
       itemCode,
@@ -155,7 +155,7 @@ export const createProductController = async (req, res) => {
       units,
       amount,
       photo: [],
-      rows,
+      // rows,
     });
 
     let photoCount = 0;
