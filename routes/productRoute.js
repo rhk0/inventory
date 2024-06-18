@@ -9,7 +9,7 @@ import {
 
 const router = express.Router();
 
-router.post("/createproduct",formidable(),  createProductController);
+router.post("/createproduct",  createProductController);
 router.get("/manageproduct", manageProductController);
 router.delete("/deleteproduct/:_id", deleteProductController);
 router.put("/updateproduct/:_id", updateProductController);

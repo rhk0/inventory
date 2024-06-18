@@ -1,10 +1,51 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+const initialFormData = {
+  itemCode: "",
+  productName: "",
+  category: "",
+  subCategory: "",
+  brand: "",
+  subBrand: "",
+  uom: "",
+  gstRate: "0%",
+  purchaseTaxInclude: false,
+  salesTaxInclude: false,
+  cess: false,
+  batchNo: "",
+  expiryDate: "",
+  manufacturer: "",
+  ingredients: "",
+  feature: "",
+  description: "",
+  netWeight: "",
+  photo: [],
+  purchasePrice: 0,
+  landingCost: 0,
+  mrp: 0,
+  retailDiscount: 0,
+  retailPrice: 0,
+  retailMargin: 0,
+  wholesalerDiscount: 0,
+  wholesalerPrice: 0,
+  wholesaleMargin: 0,
+  minimumStock: 0,
+  maximumStock: 0,
+  particular: "",
+  quantity: 0,
+  rate: 0,
+  units: "",
+  amount: 0,
+  items: [],
+};
 
 const AddProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [purchasePrice, setPurchasePrice] = useState(0);
   const [gstRate, setGstRate] = useState("0%");
-  const [landingCost, setLandingCost] = useState("");
+  const [landingCost, setLandingCost] = useState(0);
   const [options, setOptions] = useState([{ name: "", values: [] }]);
   const [tableData, setTableData] = useState([]);
 
@@ -13,11 +54,99 @@ const AddProduct = () => {
   const [Amount, setAmount] = useState("");
   const [addvarints, setVarints] = useState(false);
 
+  const [formData, setFormData] = useState(initialFormData);
+  const [photos, setPhotos] = useState([]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (name === "purchasePrice") {
+      setPurchasePrice(value); // Update purchasePrice state
+    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData, "sdfjd");
+
+    try {
+      const formDataToSend = new FormData();
+      for (let key in formData) {
+        formDataToSend.append(key, formData[key]);
+      }
+
+      photos?.forEach((p, index) => {
+        formDataToSend.append(`photo_${index}`, p);
+      });
+
+      const response = await axios.post(
+        "/api/v1/auth/createProduct",
+        formDataToSend
+      );
+      console.log(response, "dsjkfjk");
+
+      if (response) {
+        toast.success("Product Created Successfully...");
+      }
+
+      // clearData();
+    } catch (error) {
+      console.error(
+        "Error creating product:",
+        error.response ? error.response.data : error.message
+      );
+      toast.error(
+        `There was an error creating the product: ${
+          error.response ? error.response.data.message : error.message
+        }`
+      );
+    }
+  };
+
+  const clearData = () => {
+    setFormData(initialFormData);
+    setPurchasePrice(0);
+    setLandingCost(0);
+  };
+
+  const handleQuantityChange = (e) => {
+    const quantity = parseFloat(e.target.value) || 0;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      quantity,
+      amount: quantity * prevFormData.rate,
+    }));
+  };
+
+  const handleRateChange = (e) => {
+    const rate = parseFloat(e.target.value) || 0;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      rate,
+      amount: rate * prevFormData.quantity,
+    }));
+  };
+
+  const handleGstRateChange = (e) => {
+    const gstRate = parseFloat(e.target.value) || 0;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      gstRate,
+    }));
+  };
+
   const calculateLandingCost = () => {
     const price = parseFloat(purchasePrice) || 0;
     const gst = parseFloat(gstRate) / 100 || 0;
     const cost = price + price * gst;
     setLandingCost(cost.toFixed(2));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      landingCost: cost.toFixed(2), // Update formData with landingCost
+    }));
   };
 
   useEffect(() => {
@@ -129,39 +258,76 @@ const AddProduct = () => {
           {/* Product Information Fields */}
           <div>
             <label className="block font-bold">Item Code</label>
-            <input type="text" className="w-full p-1 border rounded " />
+            <input
+              type="text"
+              name="itemCode"
+              className="w-full p-1 border rounded"
+              value={formData.itemCode}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Product Name</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="text"
+              name="productName"
+              className="w-full p-1 border rounded"
+              value={formData.productName}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Category</label>
-            <select className="w-full p-1 border rounded">
+            <select
+              name="category"
+              className="w-full p-1 border rounded"
+              value={formData.category}
+              onChange={handleChange}
+            >
               {/* Options go here */}
             </select>
           </div>
           <div>
             <label className="block font-bold">Sub Category</label>
-            <select className="w-full p-1 border rounded">
+            <select
+              className="w-full p-1 border rounded"
+              name="subCategory"
+              value={formData.subCategory}
+              onChange={handleChange}
+            >
               {/* Options go here */}
             </select>
           </div>
           <div>
             <label className="block font-bold">Brand</label>
-            <select className="w-full p-1 border rounded">
+            <select
+              className="w-full p-1 border rounded"
+              name="brand"
+              value={formData.brand}
+              onChange={handleChange}
+            >
               {/* Options go here */}
             </select>
           </div>
           <div>
             <label className="block font-bold">Sub Brand</label>
-            <select className="w-full p-1 border rounded">
+            <select
+              className="w-full p-1 border rounded"
+              name="subBrand"
+              value={formData.subBrand}
+              onChange={handleChange}
+            >
               {/* Options go here */}
             </select>
           </div>
           <div>
             <label className="block font-bold">UOM</label>
-            <select className="w-full p-1 border rounded">
+            <select
+              className="w-full p-1 border rounded"
+              name="uom"
+              value={formData.uom}
+              onChange={handleChange}
+            >
               {/* Options go here */}
             </select>
           </div>
@@ -169,23 +335,36 @@ const AddProduct = () => {
             <label className="block font-bold">GST Rate</label>
             <select
               className="w-full p-1 border rounded"
-              value={gstRate}
-              onChange={(e) => setGstRate(e.target.value)}
+              name="gstRate"
+              value={formData.gstRate}
+              onChange={handleGstRateChange}
             >
-              <option value="0%">0%</option>
-              <option value="5%">5%</option>
-              <option value="12%">12%</option>
-              <option value="18%">18%</option>
-              <option value="28%">28%</option>
+              <option value="0">0%</option>
+              <option value="5">5%</option>
+              <option value="12">12%</option>
+              <option value="18">18%</option>
+              <option value="28">28%</option>
             </select>
           </div>
           <div>
             <label className="font-bold">Purchase Tax Include</label>
-            <input type="checkbox" className="p-1 m-4 border rounded" />
+            <input
+              type="checkbox"
+              className="p-1 m-4 border rounded"
+              name="purchaseTaxInclude"
+              checked={formData.purchaseTaxInclude}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <label className="font-bold">Sales Tax Include</label>
-            <input type="checkbox" className="p-1 m-4 border rounded" />
+            <input
+              type="checkbox"
+              className="p-1 m-4 border rounded"
+              name="salesTaxInclude"
+              checked={formData.salesTaxInclude}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <label className="font-bold px-2">Cess</label>
@@ -196,52 +375,116 @@ const AddProduct = () => {
               className=" border rounded"
             />
             {isChecked && (
-              <input type="text" className="w-full p-1 border rounded" />
+              <input
+                type="text"
+                className="w-full p-1 border rounded"
+                name="cess"
+                checked={formData.cess}
+                onChange={handleChange}
+              />
             )}
           </div>
           <div>
             <label className="block font-bold">Batch No.</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="text"
+              name="batchNo"
+              className="w-full p-1 border rounded"
+              value={formData.batchNo}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Expiry Date</label>
-            <input type="date" className="w-full p-1 border rounded" />
+            <input
+              type="date"
+              name="expiryDate"
+              className="w-full p-1 border rounded"
+              value={formData.expiryDate}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <label className="block font-bold">Manufacturer</label>
-            <select className="w-full p-1 border rounded">
+            <select
+              className="w-full p-1 border rounded"
+              name="manufacturer"
+              value={formData.manufacturer}
+              onChange={handleChange}
+            >
               {/* Options go here */}
             </select>
           </div>
           <div>
             <label className="block font-bold">Ingredients</label>
-            <textarea type="text" className="w-full p-1 border rounded" />
+            <textarea
+              type="text"
+              name="ingredients"
+              className="w-full p-1 border rounded"
+              value={formData.ingredients}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Features</label>
-            <textarea type="text" className="w-full p-1 border rounded" />
+            <textarea
+              type="text"
+              name="feature"
+              className="w-full p-1 border rounded"
+              value={formData.feature}
+              onChange={handleChange}
+            />
           </div>
+
           <div>
             <label className="block font-bold">Description</label>
-            <textarea type="text" className="w-full p-1 border rounded" />
+            <textarea
+              name="description"
+              className="w-full p-1 border rounded"
+              value={formData.description}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Net Weight</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="text"
+              name="netWeight"
+              className="w-full p-1 border rounded"
+              value={formData.netWeight}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Product Photo</label>
+
             <input
               type="file"
               name="photo"
               accept="image/*"
               className="w-full p-1 border rounded"
               multiple
+              onChange={(e) =>
+                setFormData({ ...formData, photo: e.target.files })
+              }
             />
+          </div>
+          <div className="mb-3">
+            {Array.isArray(photos) &&
+              photos.length > 0 &&
+              photos.map((selectedPhoto, index) => (
+                <div key={index} className="text-center">
+                  <img
+                    src={URL.createObjectURL(selectedPhoto)}
+                    alt={`product_photo_${index}`}
+                    height={"200px"}
+                    className="img img-responsive"
+                  />
+                </div>
+              ))}
           </div>
         </div>
       </div>
-
       <div className="bg-gray-200 p-4 rounded mb-4">
         <h2 className="font-bold mb-2 text-xl">Price Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4  gap-4">
@@ -249,6 +492,7 @@ const AddProduct = () => {
             <label className="block font-bold">Purchase Price</label>
             <input
               type="number"
+              name="purchasePrice"
               className="w-full p-1 border rounded"
               value={purchasePrice}
               onChange={(e) => setPurchasePrice(e.target.value)}
@@ -258,46 +502,102 @@ const AddProduct = () => {
             <label className="block font-bold">Landing Cost</label>
             <input
               type="text"
+              name="landingCost"
               className="w-full p-1 border rounded"
               value={landingCost}
+              onChange={handleChange}
               readOnly
             />
           </div>
           <div>
             <label className="block font-bold">MRP</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="mrp"
+              className="w-full p-1 border rounded"
+              value={formData.mrp}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Retail Discount</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="retailDiscount"
+              className="w-full p-1 border rounded"
+              value={formData.retailDiscount}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Retail Price</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="retailPrice"
+              className="w-full p-1 border rounded"
+              value={formData.retailPrice}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Retail Margin</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="retailMargin"
+              className="w-full p-1 border rounded"
+              value={formData.retailMargin}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Wholesaler Discount</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="wholesalerDiscount"
+              className="w-full p-1 border rounded"
+              value={formData.wholesalerDiscount}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Wholesaler Price</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="wholesalerPrice"
+              className="w-full p-1 border rounded"
+              value={formData.wholesalerPrice}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Wholesale Margin</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="wholesaleMargin"
+              className="w-full p-1 border rounded"
+              value={formData.wholesaleMargin}
+              onChange={handleChange}
+            />{" "}
           </div>
           <div>
             <label className="block font-bold">Minimum Stock</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="minimumStock"
+              className="w-full p-1 border rounded"
+              value={formData.minimumStock}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <label className="block font-bold">Maximum Stock</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="number"
+              name="maximumStock"
+              className="w-full p-1 border rounded"
+              value={formData.maximumStock}
+              onChange={handleChange}
+            />
           </div>
         </div>
       </div>
@@ -306,37 +606,52 @@ const AddProduct = () => {
         <div className="grid grid-cols-5 gap-4">
           <div>
             <label className="block font-bold">Particular</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="text"
+              name="particular"
+              className="w-full p-1 border rounded"
+              value={formData.particular}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <label className="block font-bold">Quantity</label>
             <input
               type="number"
+              name="quantity"
               className="w-full p-1 border rounded"
-              value={Quantity}
-              onChange={(e) => setQuantity(e.target.value)}
+              value={formData.quantity}
+              onChange={handleQuantityChange}
             />
           </div>
           <div>
             <label className="block font-bold">Rate</label>
             <input
               type="number"
+              name="rate"
               className="w-full p-1 border rounded"
-              value={Rate}
-              onChange={(e) => setRate(e.target.value)}
+              value={formData.rate}
+              onChange={handleRateChange}
             />
           </div>
           <div>
             <label className="block font-bold">Units</label>
-            <input type="text" className="w-full p-1 border rounded" />
+            <input
+              type="text"
+              name="units"
+              className="w-full p-1 border rounded"
+              value={formData.units}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <label className="block font-bold">Amount</label>
             <input
               type="text"
+              name="amount"
               className="w-full p-1 border rounded"
               readOnly
-              value={Amount}
+              value={formData.amount}
             />
           </div>
         </div>
@@ -472,10 +787,14 @@ const AddProduct = () => {
         </>
       )}
       <div className=" flex justify-end mb-5">
-        <button className="bg-green-700 p-2 pl-10 pr-10 mt-5 text-white rounded-md flex justify-end flex-end">
+        <button
+          className="bg-green-700 p-2 pl-10 pr-10 mt-5 text-white rounded-md flex justify-end flex-end"
+          onClick={handleSubmit}
+        >
           Save
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 };
