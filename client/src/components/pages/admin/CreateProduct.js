@@ -2,44 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const initialFormData = {
-  itemCode: "",
-  productName: "",
-  category: "",
-  subCategory: "",
-  brand: "",
-  subBrand: "",
-  uom: "",
-  gstRate: "0%",
-  purchaseTaxInclude: false,
-  salesTaxInclude: false,
-  cess: false,
-  batchNo: "",
-  expiryDate: "",
-  manufacturer: "",
-  ingredients: "",
-  feature: "",
-  description: "",
-  netWeight: "",
-  photo: [],
-  purchasePrice: 0,
-  landingCost: 0,
-  mrp: 0,
-  retailDiscount: 0,
-  retailPrice: 0,
-  retailMargin: 0,
-  wholesalerDiscount: 0,
-  wholesalerPrice: 0,
-  wholesaleMargin: 0,
-  minimumStock: 0,
-  maximumStock: 0,
-  particular: "",
-  quantity: 0,
-  rate: 0,
-  units: "",
-  amount: 0,
-  items: [],
-};
 
 const AddProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -54,13 +16,50 @@ const AddProduct = () => {
   const [Amount, setAmount] = useState("");
   const [addvarints, setVarints] = useState(false);
 
-  const [formData, setFormData] = useState(initialFormData);
-  const [photos, setPhotos] = useState([]);
+  const [formData, setFormData] = useState({
+    itemCode: "",
+    productName: "",
+    category: "",
+    subCategory: "",
+    brand: "",
+    subBrand: "",
+    uom: "",
+    gstRate: "0%",
+    purchaseTaxInclude: false,
+    salesTaxInclude: false,
+    cess: false,
+    batchNo: "",
+    expiryDate: "",
+    manufacturer: "",
+    ingredients: "",
+    feature: "",
+    description: "",
+    netWeight: "",
+    img: [],
+    purchasePrice: 0,
+    landingCost: 0,
+    mrp: 0,
+    retailDiscount: 0,
+    retailPrice: 0,
+    retailMargin: 0,
+    wholesalerDiscount: 0,
+    wholesalerPrice: 0,
+    wholesaleMargin: 0,
+    minimumStock: 0,
+    maximumStock: 0,
+    particular: "",
+    quantity: 0,
+    rate: 0,
+    units: "",
+    amount: 0,
+    // items: [],
+  });
+  const [imgs, setimgs] = useState([]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (name === "purchasePrice") {
-      setPurchasePrice(value); // Update purchasePrice state
+      setPurchasePrice(value);
     }
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -71,21 +70,22 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData, "sdfjd");
+    const form = new FormData();
+    for (const key in formData) {
+      form.append(key, formData[key]);
+    }
+    for (let i = 0; i < imgs.length; i++) {
+      form.append("img", imgs[i]);
+    }
+    form.append("items", JSON.stringify(options));
 
     try {
-      const formDataToSend = new FormData();
-      for (let key in formData) {
-        formDataToSend.append(key, formData[key]);
-      }
-
-      photos?.forEach((p, index) => {
-        formDataToSend.append(`photo_${index}`, p);
+      const response = await axios.post("/api/v1/auth/createProduct", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      const response = await axios.post(
-        "/api/v1/auth/createProduct",
-        formDataToSend
-      );
       console.log(response, "dsjkfjk");
 
       if (response) {
@@ -107,7 +107,7 @@ const AddProduct = () => {
   };
 
   const clearData = () => {
-    setFormData(initialFormData);
+    setFormData(formData);
     setPurchasePrice(0);
     setLandingCost(0);
   };
@@ -145,7 +145,7 @@ const AddProduct = () => {
     setLandingCost(cost.toFixed(2));
     setFormData((prevFormData) => ({
       ...prevFormData,
-      landingCost: cost.toFixed(2), // Update formData with landingCost
+      landingCost: cost.toFixed(2),
     }));
   };
 
@@ -456,33 +456,31 @@ const AddProduct = () => {
             />{" "}
           </div>
           <div>
-            <label className="block font-bold">Product Photo</label>
+            <label className="block font-bold">Product img</label>
 
             <input
               type="file"
-              name="photo"
+              name="img"
               accept="image/*"
               className="w-full p-1 border rounded"
               multiple
-              onChange={(e) =>
-                setFormData({ ...formData, photo: e.target.files })
-              }
+              onChange={(e) => setimgs(Array.from(e.target.files))}
             />
           </div>
-          <div className="mb-3">
-            {Array.isArray(photos) &&
-              photos.length > 0 &&
-              photos.map((selectedPhoto, index) => (
+          {/* <div className="mb-3">
+            {Array.isArray(imgs) &&
+              imgs.length > 0 &&
+              imgs.map((selectedimg, index) => (
                 <div key={index} className="text-center">
                   <img
-                    src={URL.createObjectURL(selectedPhoto)}
-                    alt={`product_photo_${index}`}
+                    src={URL.createObjectURL(selectedimg)}
+                    alt={`product_img_${index}`}
                     height={"200px"}
                     className="img img-responsive"
                   />
                 </div>
               ))}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="bg-gray-200 p-4 rounded mb-4">
@@ -733,51 +731,51 @@ const AddProduct = () => {
               <tbody>
                 {tableData.map((variant, index) => (
                   <tr key={index} className="mt-1">
-                    <td className="border border-gray-300 text-center  pt-2 pl-1 pr-1">
+                    <td className="border border-gray-300 text-center pt-2 pl-1 pr-1">
                       {variant}
                     </td>
-                    <td className="border border-gray-300  ">
-                      <input type="text" className="w-full border rounded" />
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                    <td className="border border-gray-300">
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
                       <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
+                    </td>
+                    <td className="border border-gray-300 ">
+                      <input type="text" className="w-full border rounded"/>
                     </td>
 
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full  border rounded" />
+                      <input type="text" className="w-full border rounded"/>
                     </td>
                   </tr>
                 ))}
@@ -799,7 +797,3 @@ const AddProduct = () => {
   );
 };
 export default AddProduct;
-
-
-
-

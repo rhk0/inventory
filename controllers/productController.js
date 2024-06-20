@@ -1,9 +1,8 @@
-import ProductModel from "../models/productModel.js";
+ import ProductModel from "../models/productModel.js";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Convert import.meta.url to __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -91,14 +90,17 @@ export const createProductController = async (req, res) => {
         items,
       } = req.body;
 
-      let parsedItems;
-      try {
-        parsedItems = JSON.parse(items);
-      } catch (e) {
-        return res.status(400).send({
-          message: "Invalid JSON format for items field",
-          details: e.message,
-        });
+      // Validate and parse the items field
+      let parsedItems = [];
+      if (items) {
+        try {
+          parsedItems = JSON.parse(items);
+        } catch (e) {
+          return res.status(400).send({
+            message: "Invalid JSON format for items field",
+            details: e.message,
+          });
+        }
       }
 
       const rows = parsedItems.map((rowData) => ({
@@ -119,58 +121,58 @@ export const createProductController = async (req, res) => {
         openingQty: rowData.openingQty,
       }));
 
-      const requiredFields = [
-        "itemCode",
-        "productName",
-        "category",
-        "subCategory",
-        "brand",
-        "subBrand",
-        "uom",
-        "gstRate",
-        "purchaseTaxInclude",
-        "salesTaxInclude",
-        "cess",
-        "batchNo",
-        "expiryDate",
-        "manufacture",
-        "ingredients",
-        "feature",
-        "description",
-        "newWeight",
-        "purchasePrice",
-        "landingCost",
-        "mrp",
-        "retailDiscount",
-        "retailPrice",
-        "retailMargin",
-        "wholesalerDiscount",
-        "wholesalerPrice",
-        "wholesaleMargin",
-        "minimumStock",
-        "maximumStock",
-        "particular",
-        "quantity",
-        "rate",
-        "units",
-        "amount",
-      ];
+      // const requiredFields = [
+      //   "itemCode",
+      //   "productName",
+      //   "category",
+      //   "subCategory",
+      //   "brand",
+      //   "subBrand",
+      //   "uom",
+      //   "gstRate",
+      //   "purchaseTaxInclude",
+      //   "salesTaxInclude",
+      //   "cess",
+      //   "batchNo",
+      //   "expiryDate",
+      //   "manufacture",
+      //   "ingredients",
+      //   "feature",
+      //   "description",
+      //   "newWeight",
+      //   "purchasePrice",
+      //   "landingCost",
+      //   "mrp",
+      //   "retailDiscount",
+      //   "retailPrice",
+      //   "retailMargin",
+      //   "wholesalerDiscount",
+      //   "wholesalerPrice",
+      //   "wholesaleMargin",
+      //   "minimumStock",
+      //   "maximumStock",
+      //   "particular",
+      //   "quantity",
+      //   "rate",
+      //   "units",
+      //   "amount",
+      // ];
 
-      const missingFields = requiredFields.filter(
-        (field) => !req.body[field]
-      );
-      if (missingFields.length > 0) {
-        return res.status(400).send({
-          message: "Required fields are missing",
-          missingFields: missingFields,
-        });
-      }
+      // const missingFields = requiredFields.filter(
+      //   (field) => !req.body[field]
+      // );
+      // if (missingFields.length > 0) {
+      //   return res.status(400).send({
+      //     message: "Required fields are missing",
+      //     missingFields: missingFields,
+      //   });
+      // }
 
-      const img = req.files ? req.files.map(file => file.path) : [];
+      const img = req.files ? req.files.map((file) => file.path) : [];
 
-      if (!img.length) {
-        return res.status(400).send({ error: "Images are required." });
-      }
+      // if (!img.length) {
+      //   return res.status(400).send({ error: "Images are required." });
+      // }
 
       try {
         const newProduct = new ProductModel({
@@ -224,7 +226,6 @@ export const createProductController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
-
 
 export const manageProductController = async (req, res) => {
   try {
@@ -472,4 +473,3 @@ export const updateProductController = async (req, res) => {
     });
   }
 };
-
