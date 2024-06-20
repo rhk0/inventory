@@ -770,7 +770,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4">
               <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/salesQuotation"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
                 >
                   Quotation
