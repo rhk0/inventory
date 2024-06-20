@@ -2,11 +2,9 @@ import ProductModel from "../models/productModel.js";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
-
 // Convert import.meta.url to __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "./uploads/"));
@@ -18,7 +16,6 @@ const storage = multer.diskStorage({
     );
   },
 });
-
 const upload = multer({
   storage: storage,
   limits: { fileSize: 1000000 }, // 1MB file size limit per file
@@ -35,7 +32,6 @@ const upload = multer({
     }
   },
 }).array("img", 10); // 'img' corresponds to the field name in your form data, 10 is the max count
-
 export const createProductController = async (req, res) => {
   try {
     // Handle file upload
@@ -224,8 +220,6 @@ export const createProductController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
-
-
 export const manageProductController = async (req, res) => {
   try {
     const data = await productModel.find();
@@ -272,7 +266,6 @@ export const deleteProductController = async (req, res) => {
     });
   }
 };
-
 export const updateProductController = async (req, res) => {
   try {
     const {

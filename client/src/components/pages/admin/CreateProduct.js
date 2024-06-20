@@ -412,7 +412,7 @@ const AddProduct = () => {
               value={formData.manufacturer}
               onChange={handleChange}
             >
-              {/* Options go here */}
+             
             </select>
           </div>
           <div>
@@ -423,7 +423,7 @@ const AddProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.ingredients}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
             <label className="block font-bold">Features</label>
@@ -443,7 +443,7 @@ const AddProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.description}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
             <label className="block font-bold">Net Weight</label>
@@ -453,7 +453,7 @@ const AddProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.netWeight}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
             <label className="block font-bold">Product Photo</label>
