@@ -52,7 +52,7 @@ const AddProduct = () => {
     rate: 0,
     units: "",
     amount: 0,
-    // items: [],
+    items: [],
   });
   const [imgs, setimgs] = useState([]);
 
@@ -411,9 +411,7 @@ const AddProduct = () => {
               name="manufacturer"
               value={formData.manufacturer}
               onChange={handleChange}
-            >
-             
-            </select>
+            ></select>
           </div>
           <div>
             <label className="block font-bold">Ingredients</label>
@@ -735,47 +733,47 @@ const AddProduct = () => {
                       {variant}
                     </td>
                     <td className="border border-gray-300">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
                       <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
 
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
+                      <input type="text" className="w-full border rounded" />
                     </td>
                   </tr>
                 ))}
@@ -792,7 +790,7 @@ const AddProduct = () => {
           Save
         </button>
       </div>
-      <ToastContainer />
+      <ToastContainer/>
     </div>
   );
 };
