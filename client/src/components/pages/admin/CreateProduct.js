@@ -52,7 +52,6 @@ const CreateProduct = () => {
     rate: 0,
     units: "",
     amount: 0,
-    // items: [],
   });
   const [imgs, setimgs] = useState([]);
 
@@ -277,231 +276,116 @@ const CreateProduct = () => {
       <h4 className="text-3xl font-bold mb-4 text-center bg-gray-300">
         Create Product
       </h4>
-      <div className="bg-gray-200 p-4 rounded mb-4">
-        <h2 className="font-bold mb-2 text-xl">Product Information</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
-          {/* Product Information Fields */}
-          <div>
-            <label className="block font-bold">Item Code</label>
-            <input
-              type="text"
-              name="itemCode"
-              className="w-full p-1 border rounded"
-              value={formData.itemCode}
-              onChange={handleChange}
-            />{" "}
-          </div>
-          <div>
-            <label className="block font-bold">Product Name</label>
-            <input
-              type="text"
-              name="productName"
-              className="w-full p-1 border rounded"
-              value={formData.productName}
-              onChange={handleChange}
-            />{" "}
-          </div>
-          <div>
-            <label className="block font-bold">Category</label>
-            <select
-              name="category"
-              className="w-full p-1 border rounded"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              {/* Options go here */}
-            </select>
-          </div>
-          <div>
-            <label className="block font-bold">Sub Category</label>
-            <select
-              className="w-full p-1 border rounded"
-              name="subCategory"
-              value={formData.subCategory}
-              onChange={handleChange}
-            >
-              {/* Options go here */}
-            </select>
-          </div>
-          <div>
-            <label className="block font-bold">Brand</label>
-            <select
-              className="w-full p-1 border rounded"
-              name="brand"
-              value={formData.brand}
-              onChange={handleChange}
-            >
-              {/* Options go here */}
-            </select>
-          </div>
-          <div>
-            <label className="block font-bold">Sub Brand</label>
-            <select
-              className="w-full p-1 border rounded"
-              name="subBrand"
-              value={formData.subBrand}
-              onChange={handleChange}
-            >
-              {/* Options go here */}
-            </select>
-          </div>
-          <div>
-            <label className="block font-bold">UOM</label>
-            <select
-              className="w-full p-1 border rounded"
-              name="uom"
-              value={formData.uom}
-              onChange={handleChange}
-            >
-              {/* Options go here */}
-            </select>
-          </div>
-          <div>
-            <label className="block font-bold">GST Rate</label>
-            <select
-              className="w-full p-1 border rounded"
-              name="gstRate"
-              value={formData.gstRate}
-              onChange={handleGstRateChange}
-            >
-              <option value="0">0%</option>
-              <option value="5">5%</option>
-              <option value="12">12%</option>
-              <option value="18">18%</option>
-              <option value="28">28%</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-bold">Purchase Tax Include</label>
-            <input
-              type="checkbox"
-              className="p-1 m-4 border rounded"
-              name="purchaseTaxInclude"
-              checked={formData.purchaseTaxInclude}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label className="font-bold">Sales Tax Include</label>
-            <input
-              type="checkbox"
-              className="p-1 m-4 border rounded"
-              name="salesTaxInclude"
-              checked={formData.salesTaxInclude}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label className="font-bold px-2">Cess</label>
-            <input
-              type="checkbox"
-              checked={isChecked}
-              onChange={() => setIsChecked(!isChecked)}
-              className=" border rounded"
-            />
-            {isChecked && (
-              <input
-                type="text"
-                className="w-full p-1 border rounded"
-                name="cess"
-                checked={formData.cess}
-                onChange={handleChange}
-              />
-            )}
-          </div>
-          <div>
-            <label className="block font-bold">Batch No.</label>
-            <input
-              type="text"
-              name="batchNo"
-              className="w-full p-1 border rounded"
-              value={formData.batchNo}
-              onChange={handleChange}
-            />{" "}
-          </div>
-          <div>
-            <label className="block font-bold">Expiry Date</label>
-            <input
-              type="date"
-              name="expiryDate"
-              className="w-full p-1 border rounded"
-              value={formData.expiryDate}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label className="block font-bold">Manufacturer</label>
-            <select
-              className="w-full p-1 border rounded"
-              name="manufacturer"
-              value={formData.manufacturer}
-              onChange={handleChange}
-            >
-             
-            </select>
-          </div>
-          <div>
-            <label className="block font-bold">Ingredients</label>
-            <textarea
-              type="text"
-              name="ingredients"
-              className="w-full p-1 border rounded"
-              value={formData.ingredients}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label className="block font-bold">Features</label>
-            <textarea
-              type="text"
-              name="feature"
-              className="w-full p-1 border rounded"
-              value={formData.feature}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="block font-bold">Description</label>
-            <textarea
-              name="description"
-              className="w-full p-1 border rounded"
-              value={formData.description}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label className="block font-bold">Net Weight</label>
-            <input
-              type="text"
-              name="netWeight"
-              className="w-full p-1 border rounded"
-              value={formData.netWeight}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label className="block font-bold">Product img</label>
-
-            <input
-              type="file"
-              name="img"
-              accept="image/*"
-              className="w-full p-1 border rounded"
-              multiple
-              onChange={(e) => setimgs(Array.from(e.target.files))}
-            />
-          </div>
-          {/* <div className="mb-3">
-            {Array.isArray(imgs) &&
-              imgs.length > 0 &&
-              imgs.map((selectedimg, index) => (
-                <div key={index} className="text-center">
-                  <img
-                    src={URL.createObjectURL(selectedimg)}
-                    alt={`product_img_${index}`}
-                    height={"200px"}
-                    className="img img-responsive"
+      <ToastContainer />
+      <div className="row">
+        <div className="col-md-6">
+          <form onSubmit={handleSubmit}>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="mb-4">
+                  <label
+                    htmlFor="itemCode"
+                    className="block mb-2 font-bold ml-2"
+                  >
+                    Item Code
+                  </label>
+                  <input
+                    type="text"
+                    id="itemCode"
+                    name="itemCode"
+                    value={formData.itemCode}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded p-2"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="productName"
+                    className="block mb-2 font-bold ml-2"
+                  >
+                    Product Name
+                  </label>
+                  <input
+                    type="text"
+                    id="productName"
+                    name="productName"
+                    value={formData.productName}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded p-2"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="category"
+                    className="block mb-2 font-bold ml-2"
+                  >
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded p-2"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="subCategory"
+                    className="block mb-2 font-bold ml-2"
+                  >
+                    Sub Category
+                  </label>
+                  <input
+                    type="text"
+                    id="subCategory"
+                    name="subCategory"
+                    value={formData.subCategory}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded p-2"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="brand" className="block mb-2 font-bold ml-2">
+                    Brand
+                  </label>
+                  <input
+                    type="text"
+                    id="brand"
+                    name="brand"
+                    value={formData.brand}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded p-2"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="subBrand"
+                    className="block mb-2 font-bold ml-2"
+                  >
+                    Sub Brand
+                  </label>
+                  <input
+                    type="text"
+                    id="subBrand"
+                    name="subBrand"
+                    value={formData.subBrand}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded p-2"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="uom" className="block mb-2 font-bold ml-2">
+                    UOM
+                  </label>
+                  <input
+                    type="text"
+                    id="uom"
+                    name="uom"
+                    value={formData.uom}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded p-2"
                   />
                 </div>
                 <div className="mb-4">
@@ -780,109 +664,44 @@ const CreateProduct = () => {
                   </select>
                 </div>
               </div>
-            ))}
-            <button
-              onClick={handleAddOption}
-              className="bg-blue-500 text-white px-3 py-1 rounded"
-            >
-              Add More
-            </button>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full mt-4 border-collapse border border-gray-300 mb-8">
-              <thead>
-                <tr>
-                  <th className="border border-gray-300 p-2">Variant</th>
-                  <th className="border border-gray-300 p-2">Product Code</th>
-                  <th className="border border-gray-300 p-2">Product Name</th>
-                  <th className="border border-gray-300 p-2">Purchase Price</th>
-                  <th className="border border-gray-300 p-2">Landing Cost</th>
-                  <th className="border border-gray-300 p-2">MRP</th>
-                  <th className="border border-gray-300 p-2">
-                    Retail Discount
-                  </th>
-                  <th className="border border-gray-300 p-2">Retail Price</th>
-                  <th className="border border-gray-300 p-2">Retail Margin</th>
-                  <th className="border border-gray-300 p-2">
-                    Wholesaler Discount
-                  </th>
-                  <th className="border border-gray-300 p-2">
-                    Wholesaler Price
-                  </th>
-                  <th className="border border-gray-300 p-2">
-                    Wholesaler Margin
-                  </th>
-                  <th className="border border-gray-300 p-2">Minimum stock</th>
-                  <th className="border border-gray-300 p-2">Maximum stock</th>
-                  <th className="border border-gray-300 p-2">Opening Qty</th>
+            </div>
+            <div className="mb-4">
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Submit
+              </button>
+              <button
+                type="button"
+                onClick={handleChange}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 ml-4"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+        <div className="col-md-6">
+          <h4 className="text-center mb-4">Supplier List</h4>
+          <table className="w-full border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 p-2">Supplier Name</th>
+                <th className="border border-gray-300 p-2">Contact Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* {suppliers.map((supplier) => (
+                <tr key={supplier.id}>
+                  <td className="border border-gray-300 p-2">{supplier.name}</td>
+                  <td className="border border-gray-300 p-2">{supplier.contact}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {tableData.map((variant, index) => (
-                  <tr key={index} className="mt-1">
-                    <td className="border border-gray-300 text-center pt-2 pl-1 pr-1">
-                      {variant}
-                    </td>
-                    <td className="border border-gray-300">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded"/>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
-      <div className=" flex justify-end mb-5">
-        <button
-          className="bg-green-700 p-2 pl-10 pr-10 mt-5 text-white rounded-md flex justify-end flex-end"
-          onClick={handleSubmit}
-        >
-          Save
-        </button>
+              ))} */}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };
