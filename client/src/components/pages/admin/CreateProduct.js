@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
+import "react-toastify/dist/ReactToastify.css";a
 
 const AddProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
