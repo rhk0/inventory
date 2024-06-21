@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 
-import "react-toastify/dist/ReactToastify.css";a
+import "react-toastify/dist/ReactToastify.css";
 
 const AddProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -796,3 +796,4 @@ const AddProduct = () => {
   );
 };
 export default AddProduct;
+sjfdkj dskflk clgfd kdsfk
