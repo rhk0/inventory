@@ -1,7 +1,43 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-  // Other fields...
+  itemCode: { type: String },
+  productName: { type: String },
+  category: { type: String },
+  subCategory: { type: String },
+  brand: { type: String },
+  subBrand: { type: String },
+  uom: { type: String },
+  gstRate: { type: String },
+  purchaseTaxInclude: { type: String },
+  salesTaxInclude: { type: String },
+  cess: { type: String },
+  batchNo: { type: String },
+  expiryDate: { type: String },
+  manufacture: { type: String },
+  ingredients: { type: String },
+  feature: { type: String },
+  description: { type: String },
+  newWeight: { type: String },
+  purchasePrice: { type: String },
+  landingCost: { type: String },
+  mrp: { type: String },
+  retailDiscount: { type: String },
+  retailPrice: { type: String },
+  retailMargin: { type: String },
+  wholesalerDiscount: { type: String },
+  wholesalerPrice: { type: String },
+  wholesaleMargin: { type: String },
+  minimumStock: { type: String },
+  maximumStock: { type: String },
+  particular: { type: String },
+  quantity: { type: String },
+  rate: { type: String },
+  units: { type: String },
+  amount: { type: String },  
+  img: [{
+    type: String,
+}],
   rows: [
     {
       variant: String,
@@ -23,4 +59,4 @@ const productSchema = new mongoose.Schema({
   ],
 });
 
-export default mongoose.model("Product", productSchema);
+export default mongoose.model("product", productSchema);
