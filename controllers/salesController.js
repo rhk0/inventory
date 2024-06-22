@@ -14,7 +14,7 @@ export const createSalesController = async (req, res) => {
       shippingAddress,
       Items,
       taxAmount,
-      totalAmount
+      totalAmount,
     } = req.body;
 
     // const requiredFields = [
@@ -63,7 +63,7 @@ export const createSalesController = async (req, res) => {
         shippingAddress,
         rows,
         taxAmount,
-        totalAmount
+        totalAmount,
       });
       const savedProduct = await newProduct.save();
       res.status(201).send({

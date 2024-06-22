@@ -10,7 +10,7 @@ const SalesQuotation = () => {
       id: 1,
       itemcode: "",
       itemName: "",
-      hsnCode: 0,
+      hsnCode: "",
       qty: 0,
       rate: 0,
       cgst: 0,
@@ -38,7 +38,7 @@ const SalesQuotation = () => {
       id: Items.length + 1,
       itemcode: "",
       itemName: "",
-      hsnCode: 0,
+      hsnCode: "",
       qty: 0,
       rate: 0,
       cgst: 0,
@@ -102,7 +102,7 @@ const SalesQuotation = () => {
         <div className="p-4 border-b border-gray-300">
           <div className="grid grid-cols-4 gap-4">
             <div>
-              <label className="block font-semibold">Date</label>
+              <label className="block font-bold">Date</label>
               <input
                 type="date"
                 name="date"
@@ -112,7 +112,7 @@ const SalesQuotation = () => {
               />
             </div>
             <div>
-              <label className="block font-semibold">Quotation No</label>
+              <label className="block font-bold">Quotation No</label>
               <input
                 type="text"
                 name="quotationNo"
@@ -122,7 +122,7 @@ const SalesQuotation = () => {
               />
             </div>
             <div>
-              <label htmlFor="customer" className="block font-semibold">
+              <label htmlFor="customer" className="block font-bold">
                 Select Customer
               </label>
               <select
@@ -136,7 +136,7 @@ const SalesQuotation = () => {
               </select>
             </div>
             <div>
-              <label className="block font-semibold">Reverse Charge</label>
+              <label className="block font-bold">Reverse Charge</label>
               <select
                 name="reverseCharge"
                 className="border p-2 rounded w-full"
@@ -149,7 +149,7 @@ const SalesQuotation = () => {
               </select>
             </div>
             <div>
-              <label className="block font-semibold">Place of Supply</label>
+              <label className="block font-bold">Place of Supply</label>
               <input
                 type="text"
                 name="placeOfSupply"
@@ -159,7 +159,7 @@ const SalesQuotation = () => {
               />
             </div>
             <div>
-              <label className="block font-semibold">Payment Terms</label>
+              <label className="block font-bold">Payment Terms</label>
               <input
                 type="text"
                 name="paymentsTerms"
@@ -169,7 +169,7 @@ const SalesQuotation = () => {
               />
             </div>
             <div>
-              <label className="block font-semibold">Due Date</label>
+              <label className="block font-bold">Due Date</label>
               <input
                 type="date"
                 name="dueDate"
@@ -179,7 +179,7 @@ const SalesQuotation = () => {
               />
             </div>
             <div>
-              <label className="block font-semibold">Tax Type</label>
+              <label className="block font-bold">Tax Type</label>
               <select
                 name="taxType"
                 className="border p-2 rounded w-full"
@@ -194,7 +194,7 @@ const SalesQuotation = () => {
           </div>
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold">Billing Address</label>
+              <label className="block font-bold">Billing Address</label>
               <textarea
                 name="billingAddress"
                 className="border p-2 rounded w-full"
@@ -204,7 +204,7 @@ const SalesQuotation = () => {
               ></textarea>
             </div>
             <div>
-              <label className="block font-semibold">Shipping Address</label>
+              <label className="block font-bold">Shipping Address</label>
               <textarea
                 name="shippingAddress"
                 className="border p-2 rounded w-full"
@@ -219,7 +219,7 @@ const SalesQuotation = () => {
         {/* Product Details */}
         <div className="p-4">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold">Product Details</h3>
+            <h3 className="font-bold">Product Details</h3>
           </div>
           <table className="w-full border">
             <thead>
@@ -267,7 +267,7 @@ const SalesQuotation = () => {
                   </td>
                   <td className="border p-2">
                     <input
-                      type="number"
+                      type="text"
                       name="hsnCode"
                       className="border p-2 w-full"
                       value={product.hsnCode}
@@ -326,7 +326,6 @@ const SalesQuotation = () => {
                     </td>
                   )}
                   <td className="border p-2">
-                    Rs.{" "}
                     {(
                       product.rate * product.qty +
                       (product.rate * product.qty * product.cgst) / 100 +
@@ -361,11 +360,11 @@ const SalesQuotation = () => {
           <div className="flex justify-end">
             <div className="flex gap-5 text-right">
               <div className="mb-2">
-                <span className="block font-semibold mb-4">Tax Amount:</span>
-                <span className="block font-bold ">Total Amount:</span>
+                <span className="block font-bold mb-4">Tax Amount:</span>
+                <span className="block font-bold ">Net Amount:</span>
               </div>
               <div>
-                <span className="block mb-4">
+                <span className="block mb-4 font-bold">
                   Rs.{" "}
                   {Items.reduce(
                     (acc, product) =>
@@ -376,7 +375,7 @@ const SalesQuotation = () => {
                     0
                   ).toFixed(2)}
                 </span>
-                <span className="block font-bold ">
+                <span className="block font-bold">
                   Rs.{" "}
                   {Items.reduce(
                     (acc, product) =>
@@ -388,7 +387,6 @@ const SalesQuotation = () => {
                     0
                   ).toFixed(2)}
                 </span>
-
               </div>
             </div>
           </div>
