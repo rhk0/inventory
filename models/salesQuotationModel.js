@@ -24,6 +24,9 @@ const salesquotationSchema = new mongoose.Schema({
       total: Number,
     },
   ],
+  taxAmount:{type:Number},
+  totalAmount:{type:Number},
+
 });
 
 export default mongoose.model("salesquotation", salesquotationSchema);
