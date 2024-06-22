@@ -776,6 +776,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   Quotation
                 </Link>
               </li>
+              <li className=" ">
+                <Link
+                  to="/admin/managesalesQuotation"
+                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                >
+                 Manage Quotation
+                </Link>
+              </li>
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
