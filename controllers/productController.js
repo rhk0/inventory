@@ -1,4 +1,4 @@
- import ProductModel from "../models/productModel.js";
+import ProductModel from "../models/productModel.js";
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -87,7 +87,6 @@ export const createProductController = async (req, res) => {
         amount,
         items,
       } = req.body;
-
       // Validate and parse the items field
       let parsedItems = [];
       if (items) {
@@ -224,7 +223,6 @@ export const createProductController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
-
 
 export const manageProductController = async (req, res) => {
   try {
