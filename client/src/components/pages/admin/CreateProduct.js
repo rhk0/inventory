@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
-const createProduct = () => {
+const CreateProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [purchasePrice, setPurchasePrice] = useState(0);
   const [gstRate, setGstRate] = useState("0%");
@@ -795,4 +795,4 @@ const createProduct = () => {
     </div>
   );
 };
-export default createProduct;
+export default CreateProduct;

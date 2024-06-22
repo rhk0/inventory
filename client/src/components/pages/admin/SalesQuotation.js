@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
 const App = () => {
+  const [customers, setCustomers] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -15,6 +17,17 @@ const App = () => {
       total: 0,
     },
   ]);
+  useEffect(() => {
+    // Example data fetching
+    const fetchCustomers = async () => {
+      const response = await fetch('/api/customers'); // Replace with your API endpoint
+      const data = await response.json();
+      setCustomers(data);
+    };
+
+    fetchCustomers();
+  }, []);
+
 
   const addProduct = (index) => {
     const newProduct = {
@@ -37,6 +50,9 @@ const App = () => {
   const removeProduct = (id) => {
     setProducts(products.filter((product) => product.id !== id));
   };
+  const handleCustomerChange = (event) => {
+    setSelectedCustomer(event.target.value);
+  };
 
   return (
     <div className="responsive-container p-4 bg-white shadow-md rounded-lg">
@@ -47,7 +63,7 @@ const App = () => {
           <div>
             <label className="block font-semibold">Date</label>
             <input
-              type="text"
+              type="date"
               className="border p-2 rounded w-full"
             />
           </div>
@@ -59,9 +75,22 @@ const App = () => {
             />
           </div>
           <div>
-            <label className="block font-semibold">Select Customer</label>
-            <input type="date" className="border p-2 rounded w-full" />
-          </div>
+        <label htmlFor="customer" className="block font-semibold">Select Customer</label>
+        <select
+          id="customer"
+          name="customer"
+          value={selectedCustomer}
+          onChange={handleCustomerChange}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">Select Customer</option>
+          {customers.map((customer) => (
+            <option key={customer.id} value={customer.id}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
+      </div>
           <div>
             <label className="block font-semibold">Reverse Charge</label>
             <select className="border p-2 rounded w-full">
@@ -71,17 +100,37 @@ const App = () => {
           </div>
           <div>
             <label className="block font-semibold">Place of Supply</label>
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-            />
+            <select
+          id="customer"
+          name="customer"
+          value={selectedCustomer}
+          onChange={handleCustomerChange}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">Place of Supply </option>
+          {customers.map((customer) => (
+            <option key={customer.id} value={customer.id}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
           </div>
           <div>
             <label className="block font-semibold">Payment Terms</label>
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-            />
+            <select
+          id="customer"
+          name="customer"
+          value={selectedCustomer}
+          onChange={handleCustomerChange}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">Payment Terms</option>
+          {customers.map((customer) => (
+            <option key={customer.id} value={customer.id}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
           </div>{" "}
           <div>
             <label className="block font-semibold">Due Date</label>
@@ -92,10 +141,20 @@ const App = () => {
           </div>{" "}
           <div>
             <label className="block font-semibold">Tax Type</label>
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-            />
+            <select
+          id="customer"
+          name="customer"
+          value={selectedCustomer}
+          onChange={handleCustomerChange}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">Tax Type</option>
+          {customers.map((customer) => (
+            <option key={customer.id} value={customer.id}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
           </div>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-4">
