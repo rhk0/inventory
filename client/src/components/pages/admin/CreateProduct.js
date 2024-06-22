@@ -821,7 +821,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
-const AddProduct = () => {
+const CreateProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [purchasePrice, setPurchasePrice] = useState(0);
   const [gstRate, setGstRate] = useState("0%");
@@ -1290,7 +1290,7 @@ const AddProduct = () => {
                 <div key={index} className="text-center">
                   <img
                     src={URL.createObjectURL(selectedimg)}
-                    alt={`product_img_${index}`}
+                    alt={product_img_${index}}
                     height={"200px"}
                     className="img img-responsive"
                   />
@@ -1612,4 +1612,4 @@ const AddProduct = () => {
     </div>
   );
 };
-export default AddProduct;
+export default CreateProduct;
