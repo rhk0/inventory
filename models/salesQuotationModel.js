@@ -7,7 +7,7 @@ const salesquotationSchema = new mongoose.Schema({
   reverseCharge: { type: String },
   placeOfSupply: { type: String },
   paymentsTerms: { type: String },
-  dueDtae: { type: String },
+  dueDate: { type: String },
   taxType: { type: String },
   billingAddress: { type: String },
   shippingAddress: { type: String }, 

@@ -10,7 +10,26 @@ const CreateProduct = () => {
   const [gstRate, setGstRate] = useState("0%");
   const [landingCost, setLandingCost] = useState(0);
   const [options, setOptions] = useState([{ name: "", values: [] }]);
-  const [tableData, setTableData] = useState([]);
+
+  const [Items, setItems] = useState([
+    {
+      variant: "",
+      productCode: "",
+      productName: "",
+      purchasePrice: "",
+      landingCost: "",
+      mrp: "",
+      retailDiscount: "",
+      retailPrice: "",
+      retailMargin: "",
+      wholesalerDiscount: "",
+      wholesalerPrice: "",
+      wholesaleMargin: "",
+      minimumStock: "",
+      maximumStock: "",
+      openingQty: "",
+    },
+  ]);
 
   const [Quantity, setQuantity] = useState(0);
   const [Rate, setRate] = useState(0);
@@ -53,7 +72,7 @@ const CreateProduct = () => {
     rate: 0,
     units: "",
     amount: 0,
-    items: [],
+    Items: [],
   });
   const [imgs, setimgs] = useState([]);
 
@@ -68,6 +87,13 @@ const CreateProduct = () => {
     }));
   };
 
+  const handleProductChange = (index, event) => {
+    const { name, value } = event.target;
+    const newItems = [...Items];
+    newItems[index][name] = value;
+    setItems(newItems);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData, "sdfjd");
@@ -78,7 +104,7 @@ const CreateProduct = () => {
     for (let i = 0; i < imgs.length; i++) {
       form.append("img", imgs[i]);
     }
-    form.append("items", JSON.stringify(options));
+    form.append("items", JSON.stringify(Items));
 
     try {
       const response = await axios.post("/api/v1/auth/createProduct", form, {
@@ -178,7 +204,7 @@ const CreateProduct = () => {
       .filter((option) => option.values.length > 0)
       .flatMap((option) => option.values);
 
-    setTableData(tableVariants);
+    setItems(tableVariants);
   };
 
   const calculateOpeningBalance = () => {
@@ -467,19 +493,19 @@ const CreateProduct = () => {
             />
           </div>
           {/* <div className="mb-3">
-            {Array.isArray(imgs) &&
-              imgs.length > 0 &&
-              imgs.map((selectedimg, index) => (
-                <div key={index} className="text-center">
-                  <img
-                    src={URL.createObjectURL(selectedimg)}
-                    alt={product_img_${index}}
-                    height={"200px"}
-                    className="img img-responsive"
-                  />
-                </div>
-              ))}
-          </div> */}
+              {Array.isArray(imgs) &&
+                imgs.length > 0 &&
+                imgs.map((selectedimg, index) => (
+                  <div key={index} className="text-center">
+                    <img
+                      src={URL.createObjectURL(selectedimg)}
+                      alt={product_img_${index}}
+                      height={"200px"}
+                      className="img img-responsive"
+                    />
+                  </div>
+                ))}
+            </div> */}
         </div>
       </div>
       <div className="bg-gray-200 p-4 rounded mb-4">
@@ -728,25 +754,50 @@ const CreateProduct = () => {
                 </tr>
               </thead>
               <tbody>
-                {tableData.map((variant, index) => (
+                {Items.map((variant, index) => (
                   <tr key={index} className="mt-1">
                     <td className="border border-gray-300 text-center pt-2 pl-1 pr-1">
                       {variant}
                     </td>
                     <td className="border border-gray-300">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        value={variant.productCode}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        value={variant.productName}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        value={variant.purchasePrice}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        value={variant.landingCost}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                    <td className="border border-gray-300">
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        value={variant.mrp}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
                       <input type="text" className="w-full border rounded" />
@@ -791,7 +842,7 @@ const CreateProduct = () => {
           Save
         </button>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };

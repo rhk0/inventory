@@ -1,402 +1,461 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const App = () => {
-  const [customers, setCustomers] = useState([]);
+const SalesQuotation = () => {
   const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [products, setProducts] = useState([
+  const [Items, setItems] = useState([
     {
       id: 1,
       itemcode: "",
-      name: "",
+      itemName: "",
+      hsnCode: "",
       qty: 0,
-      freeQty: 0,
-      price: 0,
-      dis1: 0,
-      dis2: 0,
-      tax: 0,
+      rate: 0,
+      cgst: 0,
+      sgst: 0,
+      igst: 0,
       total: 0,
     },
   ]);
-  useEffect(() => {
-    // Example data fetching
-    const fetchCustomers = async () => {
-      const response = await fetch('/api/customers'); // Replace with your API endpoint
-      const data = await response.json();
-      setCustomers(data);
-    };
 
-    fetchCustomers();
-  }, []);
-
+  const [formData, setFormData] = useState({
+    date: "",
+    quotationNo: "",
+    reverseCharge: "",
+    placeOfSupply: "",
+    paymentsTerms: "",
+    dueDate: "",
+    taxType: "",
+    billingAddress: "",
+    shippingAddress: "",
+    Items: [],
+  });
 
   const addProduct = (index) => {
     const newProduct = {
-      id: products.length + 1,
+      id: Items.length + 1,
       itemcode: "",
-      name: "",
+      itemName: "",
+      hsnCode: "",
       qty: 0,
-      freeQty: 0,
-      price: 0,
-      dis1: 0,
-      dis2: 0,
-      tax: 0,
+      rate: 0,
+      cgst: 0,
+      sgst: 0,
+      igst: 0,
       total: 0,
     };
-    const newProducts = [...products];
-    newProducts.splice(index + 1, 0, newProduct);
-    setProducts(newProducts);
+    const newItems = [...Items];
+    newItems.splice(index + 1, 0, newProduct);
+    setItems(newItems);
   };
 
   const removeProduct = (id) => {
-    setProducts(products.filter((product) => product.id !== id));
+    setItems(Items.filter((product) => product.id !== id));
   };
+
   const handleCustomerChange = (event) => {
     setSelectedCustomer(event.target.value);
   };
 
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleProductChange = (index, event) => {
+    const { name, value } = event.target;
+    const newItems = [...Items];
+    newItems[index][name] = value;
+    setItems(newItems);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const data = {
+      ...formData,
+      selectedCustomer,
+      Items,
+    };
+
+    try {
+      const response = await axios.post(
+        "/api/v1/salesQuationRoute/createSalesQuotaition",
+        data
+      );
+      if (response) {
+        toast.success("Quotation Created Successfully...");
+      }
+    } catch (error) {
+      console.error("Error submitting quotation:", error);
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="responsive-container p-4 bg-white shadow-md rounded-lg">
-      {/* Header Section */}
-      <h1 className="text-center text-3xl mb-4">Quotation</h1>
-      <div className="p-4 border-b border-gray-300">
-        <div className="grid grid-cols-4 gap-4">
-          <div>
-            <label className="block font-semibold">Date</label>
-            <input
-              type="date"
-              className="border p-2 rounded w-full"
-            />
-          </div>
-          <div>
-            <label className="block font-semibold">Quotation No</label>
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-            />
-          </div>
-          <div>
-        <label htmlFor="customer" className="block font-semibold">Select Customer</label>
-        <select
-          id="customer"
-          name="customer"
-          value={selectedCustomer}
-          onChange={handleCustomerChange}
-          className="border p-2 rounded w-full"
-        >
-          <option value="">Select Customer</option>
-          {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>
-              {customer.name}
-            </option>
-          ))}
-        </select>
-      </div>
-          <div>
-            <label className="block font-semibold">Reverse Charge</label>
-            <select className="border p-2 rounded w-full">
-              <option>No</option>
-              <option>Yes</option>
-            </select>
-          </div>
-          <div>
-            <label className="block font-semibold">Place of Supply</label>
-            <select
-          id="customer"
-          name="customer"
-          value={selectedCustomer}
-          onChange={handleCustomerChange}
-          className="border p-2 rounded w-full"
-        >
-          <option value="">Place of Supply </option>
-          {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>
-              {customer.name}
-            </option>
-          ))}
-        </select>
-          </div>
-          <div>
-            <label className="block font-semibold">Payment Terms</label>
-            <select
-          id="customer"
-          name="customer"
-          value={selectedCustomer}
-          onChange={handleCustomerChange}
-          className="border p-2 rounded w-full"
-        >
-          <option value="">Payment Terms</option>
-          {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>
-              {customer.name}
-            </option>
-          ))}
-        </select>
-          </div>{" "}
-          <div>
-            <label className="block font-semibold">Due Date</label>
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-            />
-          </div>{" "}
-          <div>
-            <label className="block font-semibold">Tax Type</label>
-            <select
-          id="customer"
-          name="customer"
-          value={selectedCustomer}
-          onChange={handleCustomerChange}
-          className="border p-2 rounded w-full"
-        >
-          <option value="">Tax Type</option>
-          {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>
-              {customer.name}
-            </option>
-          ))}
-        </select>
-          </div>
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          <div>
-            <label className="block font-semibold">Billing Address</label>
-            <textarea
-              className="border p-2 rounded w-full"
-              rows="3"
-            ></textarea>
-          </div>
-          <div>
-            <label className="block font-semibold">Shipping Address</label>
-            <textarea
-              className="border p-2 rounded w-full"
-              rows="3"
-            ></textarea>
-          </div>
-        </div>
-      </div>
+      <style>
+        {`
+             @media print {
+              @page {
+                size: A4;
+                margin: 0;
+                width:100%;
+              }
+                   
+              @media print {
+                body * {
+                  visibility: hidden;
+                }
+                .responsive-container, .responsive-container * {
+                  visibility: visible;
+                }
+                .responsive-container {
+                  position: absolute;
+                  left: 0;
+                  top: 0;
+                  width: 100%;
+                }
+                .hide-on-print {
+                  display: none !important;
+                }
+                .hide-on-print button{
+                  display: none !important;
+                }
+              }
+              .print-container {
+                display: block;
+                page-break-before: always;
+              }
 
-      {/* Product Details */}
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold">Product Details</h3>
-        </div>
-        <table className="w-full border">
-          <thead>
-            <tr>
-              <th className="border p-2">S.No.</th>
-              <th className="border p-2">Itemcode</th>
-              <th className="border p-2">Item Name</th>
-              <th className="border p-2">HSN Code</th>
-              <th className="border p-2">Qty</th>
-              <th className="border p-2">Rate</th>
-              <th className="border p-2">CGST</th>
-              <th className="border p-2">SGST</th>
-              <th className="border p-2">IGST</th>
-              <th className="border p-2">Total</th>
-              <th className="border p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product, index) => (
-              <tr key={product.id}>
-                <td className="border p-2">{index + 1}</td>
-                <td className="border p-2">
-                  <input
-                    type="text"
-                    className="border p-2 w-full"
-                    value={product.itemcode}
-                    onChange={(e) => {
-                      const newProducts = [...products];
-                      newProducts[index].itemcode = e.target.value;
-                      setProducts(newProducts);
-                    }}
-                  />
-                </td>
-                <td className="border p-2">
-                  <input
-                    type="text"
-                    className="border p-2 w-full"
-                    value={product.name}
-                    onChange={(e) => {
-                      const newProducts = [...products];
-                      newProducts[index].name = e.target.value;
-                      setProducts(newProducts);
-                    }}
-                  />
-                </td>
-                <td className="border p-2">
-                  <input
-                    type="number"
-                    className="border p-2 w-full"
-                    value={product.qty}
-                    onChange={(e) => {
-                      const newProducts = [...products];
-                      newProducts[index].qty = e.target.value;
-                      setProducts(newProducts);
-                    }}
-                  />
-                </td>
-                <td className="border p-2">
-                  <input
-                    type="number"
-                    className="border p-2 w-full"
-                    value={product.freeQty}
-                    onChange={(e) => {
-                      const newProducts = [...products];
-                      newProducts[index].freeQty = e.target.value;
-                      setProducts(newProducts);
-                    }}
-                  />
-                </td>
-                <td className="border p-2">
-                  <input
-                    type="number"
-                    className="border p-2 w-full"
-                    value={product.price}
-                    onChange={(e) => {
-                      const newProducts = [...products];
-                      newProducts[index].price = e.target.value;
-                      setProducts(newProducts);
-                    }}
-                  />
-                </td>
-                <td className="border p-2">
-                  <input
-                    type="number"
-                    className="border p-2 w-full"
-                    value={product.dis1}
-                    onChange={(e) => {
-                      const newProducts = [...products];
-                      newProducts[index].dis1 = e.target.value;
-                      setProducts(newProducts);
-                    }}
-                  />
-                </td>
-                <td className="border p-2">
-                  <input
-                    type="number"
-                    className="border p-2 w-full"
-                    placeholder="%"
-                    value={product.dis2}
-                    onChange={(e) => {
-                      const newProducts = [...products];
-                      newProducts[index].dis2 = e.target.value;
-                      setProducts(newProducts);
-                    }}
-                  />
-                </td>
-                <td className="border p-2">
-                  Rs.{" "}
-                  {(
-                    ((product.price * product.qty -
-                      (product.price * product.qty * product.dis1) / 100 -
-                      (product.price * product.qty * product.dis2) / 100) *
-                      product.tax) /
-                    100
-                  ).toFixed(2)}
-                </td>
-                <td className="border p-2">
-                  Rs.{" "}
-                  {(
-                    product.price * product.qty -
-                    (product.price * product.qty * product.dis1) / 100 -
-                    (product.price * product.qty * product.dis2) / 100 +
-                    ((product.price * product.qty -
-                      (product.price * product.qty * product.dis1) / 100 -
-                      (product.price * product.qty * product.dis2) / 100) *
-                      product.tax) /
-                      100
-                  ).toFixed(2)}
-                </td>
-                <td className="border p-2 flex gap-2">
-                  <button
-                    className="bg-green-500 text-white rounded-md  pl-3 pr-3 pt-0 pb-0  text-2xl "
-                    onClick={() => addProduct(index)}
-                  >
-                    +
-                  </button>
-                  <button
-                    className="bg-red-500 text-white rounded-md p-2 pl-3 pr-3 pt-0 pb-0  text-2xl"
-                    onClick={() => removeProduct(product.id)}
-                  >
-                    -
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              html, body {
+                width: 270mm;
+              }
+          
+        `}
+      </style>
 
-      {/* Footer Section */}
-      <div className="p-4 border-t border-gray-300">
-        <div className="flex justify-end">
-          <div className="flex gap-5 text-right">
-            <div className="mb-2">
-              <span className="block font-semibold">Tax Amount:</span>
-              <span className="block font-semibold">Total Amount:</span>
-              <span className="block font-semibold">Roundoff:</span>
-              <span className="block font-bold">Net Amount:</span>
+      <form className="print">
+        <h1 className="text-center text-3xl mb-4 font-bold bg-gray-200">
+          Quotation
+        </h1>
+        <div className="p-4 border-b border-gray-300 bg-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4  gap-4">
+            <div>
+              <label className="block font-bold">Date</label>
+              <input
+                type="date"
+                name="date"
+                className="border p-2 rounded w-full"
+                value={formData.date}
+                onChange={handleInputChange}
+              />
             </div>
             <div>
-              <span className="block">
-                Rs.{" "}
-                {products
-                  .reduce(
-                    (acc, product) =>
-                      acc +
-                      ((product.price * product.qty -
-                        (product.price * product.qty * product.dis1) / 100 -
-                        (product.price * product.qty * product.dis2) / 100) *
-                        product.tax) /
-                        100,
-                    0
-                  )
-                  .toFixed(2)}
-              </span>
-              <span className="block">
-                Rs.{" "}
-                {products
-                  .reduce(
-                    (acc, product) =>
-                      acc +
-                      (product.price * product.qty -
-                        (product.price * product.qty * product.dis1) / 100 -
-                        (product.price * product.qty * product.dis2) / 100 +
-                        ((product.price * product.qty -
-                          (product.price * product.qty * product.dis1) / 100 -
-                          (product.price * product.qty * product.dis2) / 100) *
-                          product.tax) /
-                          100),
-                    0
-                  )
-                  .toFixed(2)}
-              </span>
-              <span className="block">Rs. 0.00</span>
-              <span className="block font-bold">
-                Rs.{" "}
-                {products
-                  .reduce(
-                    (acc, product) =>
-                      acc +
-                      (product.price * product.qty -
-                        (product.price * product.qty * product.dis1) / 100 -
-                        (product.price * product.qty * product.dis2) / 100 +
-                        ((product.price * product.qty -
-                          (product.price * product.qty * product.dis1) / 100 -
-                          (product.price * product.qty * product.dis2) / 100) *
-                          product.tax) /
-                          100),
-                    0
-                  )
-                  .toFixed(2)}
-              </span>
+              <label className="block font-bold">Quotation No</label>
+              <input
+                type="text"
+                name="quotationNo"
+                className="border p-2 rounded w-full"
+                value={formData.quotationNo}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="customer" className="block font-bold">
+                Select Customer
+              </label>
+              <select
+                id="customer"
+                name="selectedCustomer"
+                value={formData.selectedCustomer}
+                onChange={handleCustomerChange}
+                className="border p-2 rounded w-full"
+              >
+                <option value="">Select Customer</option>
+              </select>
+            </div>
+            <div>
+              <label className="block font-bold">Reverse Charge</label>
+              <select
+                name="reverseCharge"
+                className="border p-2 rounded w-full"
+                value={formData.reverseCharge}
+                onChange={handleInputChange}
+              >
+                <option>select Reverse Charge</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div>
+              <label className="block font-bold">Place of Supply</label>
+              <input
+                type="text"
+                name="placeOfSupply"
+                className="border p-2 rounded w-full"
+                value={formData.placeOfSupply}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label className="block font-bold">Payment Terms</label>
+              <input
+                type="text"
+                name="paymentsTerms"
+                className="border p-2 rounded w-full"
+                value={formData.paymentsTerms}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label className="block font-bold">Due Date</label>
+              <input
+                type="date"
+                name="dueDate"
+                className="border p-2 rounded w-full"
+                value={formData.dueDate}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label className="block font-bold">Tax Type</label>
+              <select
+                name="taxType"
+                className="border p-2 rounded w-full"
+                value={formData.taxType}
+                onChange={handleInputChange}
+              >
+                <option>select Tax Type</option>
+                <option value="sgst/cgst">SGST/CGST</option>
+                <option value="igst">IGST</option>
+              </select>
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-bold">Billing Address</label>
+              <textarea
+                name="billingAddress"
+                className="border p-2 rounded w-full"
+                rows="3"
+                value={formData.billingAddress}
+                onChange={handleInputChange}
+              ></textarea>
+            </div>
+            <div>
+              <label className="block font-bold">Shipping Address</label>
+              <textarea
+                name="shippingAddress"
+                className="border p-2 rounded w-full"
+                rows="3"
+                value={formData.shippingAddress}
+                onChange={handleInputChange}
+              ></textarea>
             </div>
           </div>
         </div>
-      </div>
+
+        <div className="p-4 bg-gray-100 mt-4 overflow-x-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-bold">Product Details</h3>
+          </div>
+          <table className="w-full border ">
+            <thead>
+              <tr>
+                <th className="border p-2">S.No.</th>
+                <th className="border p-2">Itemcode</th>
+                <th className="border p-2">Item Name</th>
+                <th className="border p-2">HSN Code</th>
+                <th className="border p-2">Qty</th>
+                <th className="border p-2">Rate</th>
+                {formData.taxType === "sgst/cgst" && (
+                  <>
+                    <th className="border p-2">CGST</th>
+                    <th className="border p-2">SGST</th>
+                  </>
+                )}
+                {formData.taxType === "igst" && (
+                  <th className="border p-2">IGST</th>
+                )}
+                <th className="border p-2">Total</th>
+                <th className="border p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Items.map((product, index) => (
+                <tr key={product.id}>
+                  <td className="border p-2">{index + 1}</td>
+                  <td className="border p-2">
+                    <input
+                      type="text"
+                      name="itemcode"
+                      className="border p-2 w-full"
+                      value={product.itemcode}
+                      onChange={(e) => handleProductChange(index, e)}
+                    />
+                  </td>
+                  <td className="border p-2">
+                    <input
+                      type="text"
+                      name="itemName"
+                      className="border p-2 w-full"
+                      value={product.itemName}
+                      onChange={(e) => handleProductChange(index, e)}
+                    />
+                  </td>
+                  <td className="border p-2">
+                    <input
+                      type="text"
+                      name="hsnCode"
+                      className="border p-2 w-full"
+                      value={product.hsnCode}
+                      onChange={(e) => handleProductChange(index, e)}
+                    />
+                  </td>
+                  <td className="border p-2">
+                    <input
+                      type="number"
+                      name="qty"
+                      className="border p-2 w-full"
+                      value={product.qty}
+                      onChange={(e) => handleProductChange(index, e)}
+                    />
+                  </td>
+                  <td className="border p-2">
+                    <input
+                      type="number"
+                      name="rate"
+                      className="border p-2 w-full"
+                      value={product.rate}
+                      onChange={(e) => handleProductChange(index, e)}
+                    />
+                  </td>
+                  {formData.taxType === "sgst/cgst" && (
+                    <>
+                      <td className="border p-2">
+                        <input
+                          type="number"
+                          name="cgst"
+                          className="border p-2 w-full"
+                          value={product.cgst}
+                          onChange={(e) => handleProductChange(index, e)}
+                        />
+                      </td>
+                      <td className="border p-2">
+                        <input
+                          type="number"
+                          name="sgst"
+                          className="border p-2 w-full"
+                          value={product.sgst}
+                          onChange={(e) => handleProductChange(index, e)}
+                        />
+                      </td>
+                    </>
+                  )}
+                  {formData.taxType === "igst" && (
+                    <td className="border p-2">
+                      <input
+                        type="number"
+                        name="igst"
+                        className="border p-2 w-full"
+                        value={product.igst}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
+                    </td>
+                  )}
+                  <td className="border p-2">
+                    {(
+                      product.rate * product.qty +
+                      (product.rate * product.qty * product.cgst) / 100 +
+                      (product.rate * product.qty * product.sgst) / 100 +
+                      (product.rate * product.qty * product.igst) / 100
+                    ).toFixed(2)}
+                  </td>
+                  <td className="border p-2 flex gap-2">
+                    <button
+                      className="bg-green-500 text-white rounded-md pl-3 pr-3 pt-0 pb-0 text-2xl"
+                      onClick={() => addProduct(index)}
+                      type="button"
+                    >
+                      +
+                    </button>
+                    <button
+                      className="bg-red-500 text-white rounded-md p-2 pl-3 pr-3 pt-0 pb-0 text-2xl"
+                      onClick={() => removeProduct(product.id)}
+                      type="button"
+                    >
+                      -
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-4 border-t">
+          <div className="flex justify-end bg-gray-100">
+            <div className="flex gap-5 text-right ">
+              <div className="mb-2">
+                <span className="block font-bold mb-4">Tax Total:</span>
+                <span className="block font-bold ">Net Amount:</span>
+              </div>
+              <div>
+                <span className="block mb-4 font-bold">
+                  Rs.{" "}
+                  {Items.reduce(
+                    (acc, product) =>
+                      acc +
+                      (product.rate * product.qty * product.cgst) / 100 +
+                      (product.rate * product.qty * product.sgst) / 100 +
+                      (product.rate * product.qty * product.igst) / 100,
+                    0
+                  ).toFixed(2)}
+                </span>
+                <span className="block font-bold">
+                  Rs.{" "}
+                  {Items.reduce(
+                    (acc, product) =>
+                      acc +
+                      product.rate * product.qty +
+                      (product.rate * product.qty * product.cgst) / 100 +
+                      (product.rate * product.qty * product.sgst) / 100 +
+                      (product.rate * product.qty * product.igst) / 100,
+                    0
+                  ).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 flex justify-between mb-4">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white rounded-md px-4 py-2 hide-on-print"
+            onClick={handleSubmit}
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            className="bg-blue-500 text-white rounded-md px-4 py-2 hide-on-print"
+            onClick={handlePrint}
+          >
+            print
+          </button>
+        </div>
+      </form>
+      <ToastContainer />
     </div>
   );
 };
 
-export default App;
+export default SalesQuotation;

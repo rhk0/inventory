@@ -1,7 +1,11 @@
-import React from "react";
+import React from 'react'
 
 const ManageQuotation = () => {
-  return <div>ManageQuotation</div>;
-};
+  return (
+    <div>
+      
+    </div>
+  )
+}
 
-export default ManageQuotation;
+export default ManageQuotation

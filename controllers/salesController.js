@@ -8,13 +8,13 @@ export const createSalesController = async (req, res) => {
       reverseCharge,
       placeOfSupply,
       paymentsTerms,
-      dueDtae,
+      dueDate,
       taxType,
       billingAddress,
       shippingAddress,
       Items,
       taxAmount,
-      totalAmount
+      totalAmount,
     } = req.body;
 
     // const requiredFields = [
@@ -57,13 +57,13 @@ export const createSalesController = async (req, res) => {
         reverseCharge,
         placeOfSupply,
         paymentsTerms,
-        dueDtae,
+        dueDate,
         taxType,
         billingAddress,
         shippingAddress,
         rows,
         taxAmount,
-        totalAmount
+        totalAmount,
       });
       const savedProduct = await newProduct.save();
       res.status(201).send({
