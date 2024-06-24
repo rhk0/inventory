@@ -128,17 +128,43 @@ export const updateQuotationByIDController = async (req, res) => {
     const { _id } = req.params;
     const updateData = req.body;
 
-    const updatedQuotation = await salesQuotationModel.findByIdAndUpdate(
-      _id,
-      updateData,
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedQuotation) {
+    const quotation = await salesQuotationModel.findById(_id);
+    if (!quotation) {
       return res
         .status(404)
         .send({ success: false, message: "Data not found" });
     }
+
+    // Update fields
+    quotation.date = updateData.date || quotation.date;
+    quotation.quotationNo = updateData.quotationNo || quotation.quotationNo;
+    quotation.selectCustomer = updateData.selectCustomer || quotation.selectCustomer;
+    quotation.reverseCharge = updateData.reverseCharge || quotation.reverseCharge;
+    quotation.placeOfSupply = updateData.placeOfSupply || quotation.placeOfSupply;
+    quotation.paymentsTerms = updateData.paymentsTerms || quotation.paymentsTerms;
+    quotation.dueDtae = updateData.dueDtae || quotation.dueDtae;
+    quotation.taxType = updateData.taxType || quotation.taxType;
+    quotation.billingAddress = updateData.billingAddress || quotation.billingAddress;
+    quotation.shippingAddress = updateData.shippingAddress || quotation.shippingAddress;
+    quotation.taxAmount = updateData.taxAmount || quotation.taxAmount;
+    quotation.totalAmount = updateData.totalAmount || quotation.totalAmount;
+
+    // Update rows array
+    if (updateData.Items) {
+      quotation.rows = updateData.Items.map((rowData) => ({
+        itemCode: rowData.itemCode,
+        itemName: rowData.itemName,
+        hsnCode: rowData.hsnCode,
+        qty: rowData.qty,
+        rate: rowData.rate,
+        cgst: rowData.cgst,
+        sgst: rowData.sgst,
+        igst: rowData.igst,
+        total: rowData.total,
+      }));
+    }
+
+    const updatedQuotation = await quotation.save();
 
     return res.status(200).send({
       success: true,
@@ -152,3 +178,5 @@ export const updateQuotationByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
+
+
