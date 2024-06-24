@@ -75,7 +75,7 @@ const CreateProduct = () => {
     Items: [],
   });
 
-  
+
   const [imgs, setimgs] = useState([]);
 
   const handleChange = (e) => {
@@ -100,12 +100,15 @@ const CreateProduct = () => {
     e.preventDefault();
     console.log(formData, "sdfjd");
     const form = new FormData();
+    
+    
     for (const key in formData) {
       form.append(key, formData[key]);
     }
     for (let i = 0; i < imgs.length; i++) {
       form.append("img", imgs[i]);
     }
+
     form.append("items", JSON.stringify(Items));
 
     try {
@@ -120,8 +123,6 @@ const CreateProduct = () => {
       if (response) {
         toast.success("Product Created Successfully...");
       }
-
-      // clearData();
     } catch (error) {
       console.error(
         "Error creating product:",
@@ -140,7 +141,6 @@ const CreateProduct = () => {
     setPurchasePrice(0);
     setLandingCost(0);
   };
-
   const handleQuantityChange = (e) => {
     const quantity = parseFloat(e.target.value) || 0;
     setFormData((prevFormData) => ({
@@ -181,7 +181,7 @@ const CreateProduct = () => {
   useEffect(() => {
     calculateLandingCost();
   }, [purchasePrice, gstRate]);
-
+  
   useEffect(() => {
     updateTable(options);
   }, [options]);
@@ -204,11 +204,27 @@ const CreateProduct = () => {
   const updateTable = (newOptions) => {
     const tableitemss = newOptions
       .filter((option) => option.values.length > 0)
-      .flatMap((option) => option.values);
+      .flatMap((option) => option.values)
+      .map((variant) => ({
+        variant: variant,
+        productCode: "",
+        productName: "",
+        purchasePrice: "",
+        landingCost: "",
+        mrp: "",
+        retailDiscount: "",
+        retailPrice: "",
+        retailMargin: "",
+        wholesalerDiscount: "",
+        wholesalerPrice: "",
+        wholesaleMargin: "",
+        minimumStock: "",
+        maximumStock: "",
+        openingQty: "",
+      }));
 
     setItems(tableitemss);
   };
-
   const calculateOpeningBalance = () => {
     const quantity = parseFloat(Quantity) || 0;
     const rate = parseFloat(Rate) || 0;
@@ -224,6 +240,7 @@ const CreateProduct = () => {
     const newOptions = [...options];
     newOptions[index].values = newTags;
     setOptions(newOptions);
+    updateTable(newOptions);
   };
 
   const TagInput = ({ index, value }) => {
@@ -681,6 +698,7 @@ const CreateProduct = () => {
           </div>
         </div>
       </div>
+
       <div className="flex justify-start mt-8 px-1">
         <button
           onClick={() => setVarints(!addvarints)}
@@ -689,6 +707,7 @@ const CreateProduct = () => {
           Add Varient
         </button>
       </div>
+
       {addvarints && (
         <>
           <div className="bg-gray-200 p-4 rounded mb-4">
@@ -756,40 +775,14 @@ const CreateProduct = () => {
                 </tr>
               </thead>
               <tbody>
-                {Items.map((items, index) => (
+                {Items.map((item, index) => (
                   <tr key={index} className="mt-1">
                     <td className="border border-gray-300 text-center pt-2 pl-1 pr-1">
-                      {items}
-                    </td>
-                    <td className="border border-gray-300">
                       <input
                         type="text"
+                        name="variant"
+                        value={item.variant}
                         className="w-full border rounded"
-                        value={items.productCode}
-                        onChange={(e) => handleProductChange(index, e)}
-                      />
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input
-                        type="text"
-                        className="w-full border rounded"
-                        value={items.productName}
-                        onChange={(e) => handleProductChange(index, e)}
-                      />
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input
-                        type="text"
-                        className="w-full border rounded"
-                        value={items.purchasePrice}
-                        onChange={(e) => handleProductChange(index, e)}
-                      />
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input
-                        type="text"
-                        className="w-full border rounded"
-                        value={items.landingCost}
                         onChange={(e) => handleProductChange(index, e)}
                       />
                     </td>
@@ -797,37 +790,127 @@ const CreateProduct = () => {
                       <input
                         type="text"
                         className="w-full border rounded"
-                        value={items.mrp}
+                        name="productCode"
+                        value={item.productCode}
                         onChange={(e) => handleProductChange(index, e)}
                       />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
-                    </td>
-
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
-                    </td>
-                    <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="productName"
+                        value={item.productName}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="purchasePrice"
+                        value={item.purchasePrice}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="landingCost"
+                        value={item.landingCost}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
+                    </td>
+                    <td className="border border-gray-300">
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="mrp"
+                        value={item.mrp}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="retailDiscount"
+                        value={item.retailDiscount}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="retailPrice"
+                        value={item.retailPrice}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                     <td className="border border-gray-300 ">
-                      <input type="text" className="w-full border rounded" />
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="retailMargin"
+                        value={item.retailMargin}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 ">
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="wholesalerDiscount"
+                        value={item.wholesalerDiscount}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 ">
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="wholesalerPrice"
+                        value={item.wholesalerPrice}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 ">
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="wholesaleMargin"
+                        value={item.wholesaleMargin}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 ">
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="minimumStock"
+                        value={item.minimumStock}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 ">
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="maximumStock"
+                        value={item.maximumStock}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
+                    </td>
+                    <td className="border border-gray-300 ">
+                      <input
+                        type="text"
+                        className="w-full border rounded"
+                        name="openingQty"
+                        value={item.openingQty}
+                        onChange={(e) => handleProductChange(index, e)}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -848,4 +931,5 @@ const CreateProduct = () => {
     </div>
   );
 };
+
 export default CreateProduct;
