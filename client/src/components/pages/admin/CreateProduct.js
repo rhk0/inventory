@@ -35,7 +35,10 @@ const CreateProduct = () => {
   const [Amount, setAmount] = useState("");
   const [addvarints, setVarints] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [subCategory, setSubCategories] = useState([]);
 
+  const [brand, setBrand] = useState([]);
+  const [subbrand, setSubBrand] = useState([]);
   const initialFormDataState = {
     itemCode: "",
     productName: "",
@@ -86,7 +89,48 @@ const CreateProduct = () => {
       try {
         const response = await axios.get("/api/v1/auth/getcategory");
         setCategories(response.data.data);
-  
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  // Sub category
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/getSubCategory");
+        setSubCategories(response.data.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  //  Brand
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/getBrand");
+        setBrand(response.data.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  //  Brand
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/getSubBrand");
+        setSubBrand(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to fetch categories");
@@ -350,7 +394,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             />{" "}
           </div>
-        
+
           <div>
             <label className="block font-bold">Category</label>
             <select
@@ -374,7 +418,11 @@ const CreateProduct = () => {
               value={formData.subCategory}
               onChange={handleChange}
             >
-              {/* Options go here */}
+              {subCategory.map((subCategory, index) => (
+                <option key={index} value={subCategory.subCategoryName}>
+                  {subCategory.subCategoryName}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -385,7 +433,11 @@ const CreateProduct = () => {
               value={formData.brand}
               onChange={handleChange}
             >
-              {/* Options go here */}
+              {brand.map((brand, index) => (
+                <option key={index} value={brand.BrandName}>
+                  {brand.BrandName}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -396,7 +448,12 @@ const CreateProduct = () => {
               value={formData.subBrand}
               onChange={handleChange}
             >
-              {/* Options go here */}
+            <option value="" >Select Sub Brand </option>
+             {subbrand.map((subbrand, index) => (
+                <option key={index} value={subbrand.SubBrandName}>
+                  {subbrand.SubBrandName}
+                </option>
+              ))}
             </select>
           </div>
           <div>
