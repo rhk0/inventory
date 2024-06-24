@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,7 +35,6 @@ const CreateProduct = () => {
   const [Amount, setAmount] = useState("");
   const [addvarints, setVarints] = useState(false);
   const [categories, setCategories] = useState([]);
-
 
   const initialFormDataState = {
     itemCode: "",
@@ -81,14 +80,13 @@ const CreateProduct = () => {
   const [imgs, setimgs] = useState([]);
   const fileInputRef = useRef(null);
 
-// category\
+  // category\
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/api/v1/auth/getcategory");
-        setCategories(response.data.data.CategoryName
-        ); 
-        console.log(response.data.data,"categories")  
+        setCategories(response.data.data);
+  
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to fetch categories");
@@ -98,7 +96,16 @@ const CreateProduct = () => {
     fetchCategories();
   }, []);
 
-
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (name === "purchasePrice") {
+      setPurchasePrice(value);
+    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   useEffect(() => {
     updateTable(options);
@@ -343,6 +350,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             />{" "}
           </div>
+        
           <div>
             <label className="block font-bold">Category</label>
             <select
@@ -351,7 +359,11 @@ const CreateProduct = () => {
               value={formData.category}
               onChange={handleChange}
             >
-              {/* Options go here */}
+              {categories.map((category, index) => (
+                <option key={index} value={category.CategoryName}>
+                  {category.CategoryName}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -533,20 +545,6 @@ const CreateProduct = () => {
               ref={fileInputRef}
             />
           </div>
-          {/* <div className="mb-3">
-              {Array.isArray(imgs) &&
-                imgs.length > 0 &&
-                imgs.map((selectedimg, index) => (
-                  <div key={index} className="text-center">
-                    <img
-                      src={URL.createObjectURL(selectedimg)}
-                      alt={product_img_${index}}
-                      height={"200px"}
-                      className="img img-responsive"
-                    />
-                  </div>
-                ))}
-            </div> */}
         </div>
       </div>
       <div className="bg-gray-200 p-4 rounded mb-4">
@@ -951,5 +949,4 @@ const CreateProduct = () => {
     </div>
   );
 };
-
 export default CreateProduct;
