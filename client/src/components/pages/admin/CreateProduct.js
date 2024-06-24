@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,7 +35,10 @@ const CreateProduct = () => {
   const [Amount, setAmount] = useState("");
   const [addvarints, setVarints] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [subCategory, setSubCategories] = useState([]);
 
+  const [brand, setBrand] = useState([]);
+  const [subbrand, setSubBrand] = useState([]);
   const initialFormDataState = {
     itemCode: "",
     productName: "",
@@ -80,12 +83,54 @@ const CreateProduct = () => {
   const [imgs, setimgs] = useState([]);
   const fileInputRef = useRef(null);
 
-  // category
+  // category\
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/api/v1/auth/getcategory");
         setCategories(response.data.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  // Sub category
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/getSubCategory");
+        setSubCategories(response.data.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  //  Brand
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/getBrand");
+        setBrand(response.data.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  //  Brand
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/getSubBrand");
+        setSubBrand(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to fetch categories");
@@ -105,6 +150,10 @@ const CreateProduct = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
+  useEffect(() => {
+    updateTable(options);
+  }, [options]);
 
   const handleProductChange = (index, event) => {
     const { name, value } = event.target;
@@ -128,9 +177,7 @@ const CreateProduct = () => {
 
     try {
       const response = await axios.post("/api/v1/auth/createProduct", form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (response) {
@@ -138,10 +185,6 @@ const CreateProduct = () => {
       }
       clearData();
     } catch (error) {
-      console.error(
-        "Error creating product:",
-        error.response ? error.response.data : error.message
-      );
       toast.error(
         `There was an error creating the product: ${
           error.response ? error.response.data.message : error.message
@@ -351,6 +394,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             />{" "}
           </div>
+
           <div>
             <label className="block font-bold">Category</label>
             <select
@@ -359,12 +403,11 @@ const CreateProduct = () => {
               value={formData.category}
               onChange={handleChange}
             >
-              <option value="">Select categories</option>
               {categories.map((category, index) => (
                 <option key={index} value={category.CategoryName}>
                   {category.CategoryName}
                 </option>
-              ))}{" "}
+              ))}
             </select>
           </div>
           <div>
@@ -374,7 +417,13 @@ const CreateProduct = () => {
               name="subCategory"
               value={formData.subCategory}
               onChange={handleChange}
-            ></select>
+            >
+              {subCategory.map((subCategory, index) => (
+                <option key={index} value={subCategory.subCategoryName}>
+                  {subCategory.subCategoryName}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block font-bold">Brand</label>
@@ -384,7 +433,11 @@ const CreateProduct = () => {
               value={formData.brand}
               onChange={handleChange}
             >
-              {/* Options go here */}
+              {brand.map((brand, index) => (
+                <option key={index} value={brand.BrandName}>
+                  {brand.BrandName}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -395,7 +448,12 @@ const CreateProduct = () => {
               value={formData.subBrand}
               onChange={handleChange}
             >
-              {/* Options go here */}
+            <option value="" >Select Sub Brand </option>
+             {subbrand.map((subbrand, index) => (
+                <option key={index} value={subbrand.SubBrandName}>
+                  {subbrand.SubBrandName}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -544,20 +602,6 @@ const CreateProduct = () => {
               ref={fileInputRef}
             />
           </div>
-          {/* <div className="mb-3">
-              {Array.isArray(imgs) &&
-                imgs.length > 0 &&
-                imgs.map((selectedimg, index) => (
-                  <div key={index} className="text-center">
-                    <img
-                      src={URL.createObjectURL(selectedimg)}
-                      alt={product_img_${index}}
-                      height={"200px"}
-                      className="img img-responsive"
-                    />
-                  </div>
-                ))}
-            </div> */}
         </div>
       </div>
       <div className="bg-gray-200 p-4 rounded mb-4">
@@ -737,10 +781,9 @@ const CreateProduct = () => {
           onClick={() => setVarints(!addvarints)}
           className="bg-gray-400 text-black px-4 py-2 rounded-md mb-4 "
         >
-          Add Varient
+          Add Variant
         </button>
       </div>
-
       {addvarints && (
         <>
           <div className="bg-gray-200 p-4 rounded mb-4">
@@ -759,9 +802,7 @@ const CreateProduct = () => {
                     className="border rounded w-full  p-1"
                   />
                 </div>
-
                 <TagInput index={index} value={option.values} />
-
                 <button
                   className="ml-2 mt-7 text-red-400 bg-gray-300 text-center rounded-full border border-red-400 text-3xl w-9 h-8 flex items-center justify-center"
                   onClick={() => handleRemoveOption(index)}
@@ -965,5 +1006,4 @@ const CreateProduct = () => {
     </div>
   );
 };
-
 export default CreateProduct;
