@@ -36,7 +36,6 @@ const CreateProduct = () => {
   const [addvarints, setVarints] = useState(false);
   const [categories, setCategories] = useState([]);
 
-
   const initialFormDataState = {
     itemCode: "",
     productName: "",
@@ -81,14 +80,12 @@ const CreateProduct = () => {
   const [imgs, setimgs] = useState([]);
   const fileInputRef = useRef(null);
 
-// category
+  // category
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/api/v1/auth/getcategory");
-        setCategories(response.data.data.CategoryName
-        ); 
-        console.log(response.data.data,"categories")  
+        setCategories(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to fetch categories");
@@ -97,8 +94,6 @@ const CreateProduct = () => {
 
     fetchCategories();
   }, []);
-
-
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -364,7 +359,12 @@ const CreateProduct = () => {
               value={formData.category}
               onChange={handleChange}
             >
-              {/* Options go here */}
+              <option value="">Select categories</option>
+              {categories.map((category, index) => (
+                <option key={index} value={category.CategoryName}>
+                  {category.CategoryName}
+                </option>
+              ))}{" "}
             </select>
           </div>
           <div>
@@ -374,9 +374,7 @@ const CreateProduct = () => {
               name="subCategory"
               value={formData.subCategory}
               onChange={handleChange}
-            >
-              {/* Options go here */}
-            </select>
+            ></select>
           </div>
           <div>
             <label className="block font-bold">Brand</label>
