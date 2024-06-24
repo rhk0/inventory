@@ -95,12 +95,59 @@ const SalesQuotation = () => {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="responsive-container p-4 bg-white shadow-md rounded-lg">
-      <form onSubmit={handleSubmit}>
-        <h1 className="text-center text-3xl mb-4">Quotation</h1>
-        <div className="p-4 border-b border-gray-300">
-          <div className="grid grid-cols-4 gap-4">
+      <style>
+        {`
+             @media print {
+              @page {
+                size: A4;
+                margin: 0;
+                width:100%;
+              }
+                   
+              @media print {
+                body * {
+                  visibility: hidden;
+                }
+                .responsive-container, .responsive-container * {
+                  visibility: visible;
+                }
+                .responsive-container {
+                  position: absolute;
+                  left: 0;
+                  top: 0;
+                  width: 100%;
+                }
+                .hide-on-print {
+                  display: none !important;
+                }
+                .hide-on-print button{
+                  display: none !important;
+                }
+              }
+              .print-container {
+                display: block;
+                page-break-before: always;
+              }
+
+              html, body {
+                width: 270mm;
+              }
+          
+        `}
+      </style>
+
+      <form className="print">
+        <h1 className="text-center text-3xl mb-4 font-bold bg-gray-200">
+          Quotation
+        </h1>
+        <div className="p-4 border-b border-gray-300 bg-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4  gap-4">
             <div>
               <label className="block font-bold">Date</label>
               <input
@@ -192,7 +239,7 @@ const SalesQuotation = () => {
               </select>
             </div>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-4">
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
             <div>
               <label className="block font-bold">Billing Address</label>
               <textarea
@@ -216,12 +263,11 @@ const SalesQuotation = () => {
           </div>
         </div>
 
-        {/* Product Details */}
-        <div className="p-4">
+        <div className="p-4 bg-gray-100 mt-4 overflow-x-auto">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold">Product Details</h3>
           </div>
-          <table className="w-full border">
+          <table className="w-full border ">
             <thead>
               <tr>
                 <th className="border p-2">S.No.</th>
@@ -355,12 +401,11 @@ const SalesQuotation = () => {
           </table>
         </div>
 
-        {/* Footer Section */}
-        <div className="p-4 border-t border-gray-300">
-          <div className="flex justify-end">
-            <div className="flex gap-5 text-right">
+        <div className="mt-4 border-t">
+          <div className="flex justify-end bg-gray-100">
+            <div className="flex gap-5 text-right ">
               <div className="mb-2">
-                <span className="block font-bold mb-4">Tax Amount:</span>
+                <span className="block font-bold mb-4">Tax Total:</span>
                 <span className="block font-bold ">Net Amount:</span>
               </div>
               <div>
@@ -391,12 +436,20 @@ const SalesQuotation = () => {
             </div>
           </div>
         </div>
-        <div className="p-4">
+        <div className="p-4 flex justify-between mb-4">
           <button
             type="submit"
-            className="bg-blue-500 text-white rounded-md px-4 py-2"
+            className="bg-blue-500 text-white rounded-md px-4 py-2 hide-on-print"
+            onClick={handleSubmit}
           >
-            Submit
+            Save
+          </button>
+          <button
+            type="button"
+            className="bg-blue-500 text-white rounded-md px-4 py-2 hide-on-print"
+            onClick={handlePrint}
+          >
+            print
           </button>
         </div>
       </form>
