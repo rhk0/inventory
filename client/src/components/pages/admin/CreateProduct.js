@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-
 import "react-toastify/dist/ReactToastify.css";
-
 const CreateProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [purchasePrice, setPurchasePrice] = useState(0);
@@ -11,7 +9,7 @@ const CreateProduct = () => {
   const [landingCost, setLandingCost] = useState(0);
   const [options, setOptions] = useState([{ name: "", values: [] }]);
 
-  const [Items, setItems] = useState([
+  const initialItemsState = [
     {
       items: "",
       productCode: "",
@@ -29,14 +27,17 @@ const CreateProduct = () => {
       maximumStock: "",
       openingQty: "",
     },
-  ]);
+  ];
 
+  const [Items, setItems] = useState(initialItemsState);
   const [Quantity, setQuantity] = useState(0);
   const [Rate, setRate] = useState(0);
   const [Amount, setAmount] = useState("");
   const [addvarints, setVarints] = useState(false);
+  const [categories, setCategories] = useState([]);
 
-  const [formData, setFormData] = useState({
+
+  const initialFormDataState = {
     itemCode: "",
     productName: "",
     category: "",
@@ -73,10 +74,31 @@ const CreateProduct = () => {
     units: "",
     amount: 0,
     Items: [],
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormDataState);
 
   const [imgs, setimgs] = useState([]);
+  const fileInputRef = useRef(null);
+
+// category
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/getcategory");
+        setCategories(response.data.data.CategoryName
+        ); 
+        console.log(response.data.data,"categories")  
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -98,10 +120,8 @@ const CreateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData, "sdfjd");
     const form = new FormData();
-    
-    
+
     for (const key in formData) {
       form.append(key, formData[key]);
     }
@@ -118,11 +138,10 @@ const CreateProduct = () => {
         },
       });
 
-      console.log(response, "dsjkfjk");
-
       if (response) {
         toast.success("Product Created Successfully...");
       }
+      clearData();
     } catch (error) {
       console.error(
         "Error creating product:",
@@ -137,10 +156,17 @@ const CreateProduct = () => {
   };
 
   const clearData = () => {
-    setFormData(formData);
+    setFormData(initialFormDataState);
     setPurchasePrice(0);
     setLandingCost(0);
+    setItems(initialItemsState);
+    setimgs([]);
+    setOptions([{ name: "", values: [] }]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
+    }
   };
+
   const handleQuantityChange = (e) => {
     const quantity = parseFloat(e.target.value) || 0;
     setFormData((prevFormData) => ({
@@ -160,28 +186,30 @@ const CreateProduct = () => {
   };
 
   const handleGstRateChange = (e) => {
-    const gstRate = parseFloat(e.target.value) || 0;
+    const gstRate = e.target.value;
+    setGstRate(gstRate);
+    const parsedGstRate = parseFloat(gstRate.replace("%", "")) || 0;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      gstRate,
+      gstRate: parsedGstRate,
     }));
   };
 
   const calculateLandingCost = () => {
     const price = parseFloat(purchasePrice) || 0;
-    const gst = parseFloat(gstRate) / 100 || 0;
-    const cost = price + price * gst;
-    setLandingCost(cost.toFixed(2));
+    const gst = parseFloat(gstRate.replace("%", "")) / 100 || 0;
+    const landingCost = price + price * gst;
+    setLandingCost(landingCost.toFixed(2));
     setFormData((prevFormData) => ({
       ...prevFormData,
-      landingCost: cost.toFixed(2),
+      landingCost: landingCost.toFixed(2),
     }));
   };
 
   useEffect(() => {
     calculateLandingCost();
   }, [purchasePrice, gstRate]);
-  
+
   useEffect(() => {
     updateTable(options);
   }, [options]);
@@ -202,9 +230,12 @@ const CreateProduct = () => {
   };
 
   const updateTable = (newOptions) => {
-    const tableitemss = newOptions
+    const existingVariants = Items.map((item) => item.variant);
+    const newVariants = newOptions
       .filter((option) => option.values.length > 0)
-      .flatMap((option) => option.values)
+      .flatMap((option) => option.values);
+    const tableVariants = newVariants
+      .filter((variant) => !existingVariants.includes(variant))
       .map((variant) => ({
         variant: variant,
         productCode: "",
@@ -222,9 +253,12 @@ const CreateProduct = () => {
         maximumStock: "",
         openingQty: "",
       }));
-
-    setItems(tableitemss);
+    const updatedItems = Items.filter((item) =>
+      newVariants.includes(item.variant)
+    );
+    setItems([...updatedItems, ...tableVariants]);
   };
+
   const calculateOpeningBalance = () => {
     const quantity = parseFloat(Quantity) || 0;
     const rate = parseFloat(Rate) || 0;
@@ -500,7 +534,7 @@ const CreateProduct = () => {
             />
           </div>
           <div>
-            <label className="block font-bold">Product img</label>
+            <label className="block font-bold">Product image</label>
 
             <input
               type="file"
@@ -509,6 +543,7 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               multiple
               onChange={(e) => setimgs(Array.from(e.target.files))}
+              ref={fileInputRef}
             />
           </div>
           {/* <div className="mb-3">
@@ -784,6 +819,7 @@ const CreateProduct = () => {
                         value={item.variant}
                         className="w-full border rounded"
                         onChange={(e) => handleProductChange(index, e)}
+                        readOnly
                       />
                     </td>
                     <td className="border border-gray-300">
