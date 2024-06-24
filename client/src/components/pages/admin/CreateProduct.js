@@ -13,7 +13,7 @@ const CreateProduct = () => {
 
   const [Items, setItems] = useState([
     {
-      variant: "",
+      items: "",
       productCode: "",
       productName: "",
       purchasePrice: "",
@@ -74,6 +74,8 @@ const CreateProduct = () => {
     amount: 0,
     Items: [],
   });
+
+  
   const [imgs, setimgs] = useState([]);
 
   const handleChange = (e) => {
@@ -200,11 +202,11 @@ const CreateProduct = () => {
   };
 
   const updateTable = (newOptions) => {
-    const tableVariants = newOptions
+    const tableitemss = newOptions
       .filter((option) => option.values.length > 0)
       .flatMap((option) => option.values);
 
-    setItems(tableVariants);
+    setItems(tableitemss);
   };
 
   const calculateOpeningBalance = () => {
@@ -245,7 +247,7 @@ const CreateProduct = () => {
 
     return (
       <div className="flex flex-col w-full ">
-        <label className="font-bold ml-3">Variant Value </label>
+        <label className="font-bold ml-3">items Value </label>
         <div className="flex flex-wrap items-center border border-gray-300 rounded ml-3">
           {tags.map((tag, index) => (
             <div
@@ -693,7 +695,7 @@ const CreateProduct = () => {
             {options.map((option, index) => (
               <div key={index} className="flex justify-between mb-2">
                 <div className="mb-2">
-                  <label className="block font-bold">Variant Name</label>
+                  <label className="block font-bold">items Name</label>
 
                   <input
                     type="text"
@@ -728,7 +730,7 @@ const CreateProduct = () => {
             <table className="w-full mt-4 border-collapse border border-gray-300 mb-8">
               <thead>
                 <tr>
-                  <th className="border border-gray-300 p-2">Variant</th>
+                  <th className="border border-gray-300 p-2">items</th>
                   <th className="border border-gray-300 p-2">Product Code</th>
                   <th className="border border-gray-300 p-2">Product Name</th>
                   <th className="border border-gray-300 p-2">Purchase Price</th>
@@ -754,16 +756,16 @@ const CreateProduct = () => {
                 </tr>
               </thead>
               <tbody>
-                {Items.map((variant, index) => (
+                {Items.map((items, index) => (
                   <tr key={index} className="mt-1">
                     <td className="border border-gray-300 text-center pt-2 pl-1 pr-1">
-                      {variant}
+                      {items}
                     </td>
                     <td className="border border-gray-300">
                       <input
                         type="text"
                         className="w-full border rounded"
-                        value={variant.productCode}
+                        value={items.productCode}
                         onChange={(e) => handleProductChange(index, e)}
                       />
                     </td>
@@ -771,7 +773,7 @@ const CreateProduct = () => {
                       <input
                         type="text"
                         className="w-full border rounded"
-                        value={variant.productName}
+                        value={items.productName}
                         onChange={(e) => handleProductChange(index, e)}
                       />
                     </td>
@@ -779,7 +781,7 @@ const CreateProduct = () => {
                       <input
                         type="text"
                         className="w-full border rounded"
-                        value={variant.purchasePrice}
+                        value={items.purchasePrice}
                         onChange={(e) => handleProductChange(index, e)}
                       />
                     </td>
@@ -787,7 +789,7 @@ const CreateProduct = () => {
                       <input
                         type="text"
                         className="w-full border rounded"
-                        value={variant.landingCost}
+                        value={items.landingCost}
                         onChange={(e) => handleProductChange(index, e)}
                       />
                     </td>
@@ -795,7 +797,7 @@ const CreateProduct = () => {
                       <input
                         type="text"
                         className="w-full border rounded"
-                        value={variant.mrp}
+                        value={items.mrp}
                         onChange={(e) => handleProductChange(index, e)}
                       />
                     </td>
