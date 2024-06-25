@@ -15,8 +15,9 @@ const ManageQuotation = () => {
 
   const fetchQuotation = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/getAllSalesQuotation");
-      setQuotation(response.data.data);
+      const response = await axios.get("/api/v1/salesQuationRoute/getAllSalesQuotation");
+      console.log(response,"sdfjk")
+      setQuotation(response.data.response);
     } catch (error) {
       console.error("Error fetching Bank data", error);
     }
@@ -29,7 +30,7 @@ const ManageQuotation = () => {
   const deleteBank = async (_id) => {
     try {
       const response = await axios.delete(
-        `/api/v1/auth/deleteSalesQuotation/${_id}`
+        `/api/v1/salesQuationRoute/deleteSalesQuotation/${_id}`
       );
       setQuotation(Quotation.filter((Bank) => Bank._id !== _id));
 
@@ -62,7 +63,7 @@ const ManageQuotation = () => {
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
-        Manage Quotation
+        View Quotation
       </h1>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300">

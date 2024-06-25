@@ -403,6 +403,8 @@ const CreateProduct = () => {
               value={formData.category}
               onChange={handleChange}
             >
+              <option value="">Select categories </option>
+
               {categories.map((category, index) => (
                 <option key={index} value={category.CategoryName}>
                   {category.CategoryName}
@@ -418,6 +420,8 @@ const CreateProduct = () => {
               value={formData.subCategory}
               onChange={handleChange}
             >
+              <option value="">Select Sub Categories </option>
+
               {subCategory.map((subCategory, index) => (
                 <option key={index} value={subCategory.subCategoryName}>
                   {subCategory.subCategoryName}
@@ -433,6 +437,8 @@ const CreateProduct = () => {
               value={formData.brand}
               onChange={handleChange}
             >
+              <option value="">Select Brand </option>
+
               {brand.map((brand, index) => (
                 <option key={index} value={brand.BrandName}>
                   {brand.BrandName}
