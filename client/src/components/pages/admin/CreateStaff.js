@@ -74,8 +74,6 @@ const indianBanks = [
 
 const initialFormData = {
   photo: null,
-  adharCards: null,
-  panCard: null,
   name: "",
   contact: "",
   address: "",
@@ -98,7 +96,9 @@ const initialFormData = {
 
 const CreateStaff = () => {
   const [formData, setFormData] = useState(initialFormData);
-
+  // const [photo, setPhoto] = useState([]);
+  const [panCard, setPanacard] = useState([]);
+  const [adharCards, setAdharcard] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
 
   const handleChange = (e) => {
@@ -132,7 +132,7 @@ const CreateStaff = () => {
 
     for (const field of requiredFields) {
       if (!formData[field]) {
-        toast.error(`Please fill out the ${field} field.`);
+        toast.error(`Please Enter ${field} .`);
         return;
       }
     }
@@ -142,12 +142,21 @@ const CreateStaff = () => {
       for (let key in formData) {
         formDataToSend.append(key, formData[key]);
       }
+   
+      for (let i = 0; i < adharCards.length; i++) {
+        formDataToSend.append("adharCards", adharCards[i]);
+      }
+      for (let i = 0; i < panCard.length; i++) {
+        formDataToSend.append("panCard", panCard[i]);
+      }
+
+      console.log(formDataToSend, "formDataToSend");
 
       const response = await axios.post(
         "/api/v1/auth/createStaff",
         formDataToSend
       );
-
+      console.log(response, "response");
       if (response) {
         toast.success("Staff Created Successfully...");
       }
@@ -191,10 +200,10 @@ const CreateStaff = () => {
     }));
   };
 
-  const handleAdChange = (e) => {
-    const files = Array.from(e.target.files);
-    setFormData((prevData) => ({ ...prevData, adharCards: files }));
-  };
+  // const handleAdChange = (e) => {
+  //   const files = Array.from(e.target.files);
+  //   setFormData((prevData) => ({ ...prevData, adharCards: files }));
+  // };
 
   const renderStepIndicator = () => (
     <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
@@ -399,14 +408,15 @@ const CreateStaff = () => {
               </label>
               <label className="block mb-2">
                 Aadhar Card:
+             
                 <input
                   type="file"
                   name="adharCards"
                   accept="image/*"
-                  ref={adInputRef}
-                  onChange={handleAdChange}
+                  className="w-full p-1 border rounded"
                   multiple
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                  onChange={(e) => setAdharcard(Array.from(e.target.files))}
+                  // ref={fileInputRef}
                 />
               </label>
 
@@ -416,9 +426,10 @@ const CreateStaff = () => {
                   type="file"
                   name="panCard"
                   accept="image/*"
-                  ref={photoInputRef}
-                  onChange={handlePhotoChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+                  className="w-full p-1 border rounded"
+                  multiple
+                  onChange={(e) => setPanacard(Array.from(e.target.files))}
+                  // ref={fileInputRef}
                 />
               </label>
             </div>

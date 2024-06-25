@@ -37,6 +37,8 @@ import ManageBranches from "../pages/admin/ManageBranches.js";
 import CreateProduct from "../pages/admin/CreateProduct.js";
 import SalesQuotation from "../pages/admin/SalesQuotation.js";
 import ManageQuotation from "../pages/admin/ManageQuotation.js";
+import Invoice from "../pages/admin/Invoice.js";
+import DeliveryChallan from "../pages/admin/DeliveryChallan.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -99,7 +101,8 @@ const AdminRoute = () => {
         <Route path="manageSubBrand" element={<ManageSubBrand />} />
         <Route path="salesQuotation" element={<SalesQuotation />} />
         <Route path="managesalesQuotation" element={<ManageQuotation />} />
-        
+        <Route path="invoice" element={<Invoice />} />
+        <Route path="deliverychallan" element={<DeliveryChallan />} />
       </Routes> 
     </div>
   );

@@ -1,143 +1,118 @@
 import staffModel from "../models/staffModel.js";
 import fs from "fs";
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Convert import.meta.url to __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "./uploads/"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 }, // 1MB file size limit per file
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype && extname) {
+      cb(null, true);
+    } else {
+      cb(new Error("Error: Images Only!"));
+    }
+  },
+}).fields([
+  { name: "photo", maxCount: 10 }, // Adjust maxCount as needed
+  { name: "panCard", maxCount: 10 },
+  { name: "adharCards", maxCount: 10 },
+]);
 
 export const createstaffController = async (req, res) => {
   try {
-    const {
-      name,
-      contact,
-      address,
-      state,
-      fatherName,
-      motherName,
-      email,
-      empId,
-      designation,
-      department,
-      adharCardNo,
-      panNo,
-      drivingLicence,
-      bankName,
-      accountNumber,
-      ifscCode,
-      accountHolderName,
-      salaryAmount,
-    } = req.fields;
-
-    const { photo, panCard } = req.files;
-
-
-    const adharCards = req.files.adharCards;
-    
-    console.log("photo", photo);
-    console.log("pancard", panCard);
-    console.log("adharcards", adharCards);
-    let photoData = null;
-    let pancardData = null;
-    let adharcardData = [];
-
-    if (photo) {
-      photoData = {
-        data: fs.readFileSync(photo.path),
-        contentType: photo.type,
-      };
-    }
-
-    if (panCard) {
-      pancardData = {
-        data: fs.readFileSync(panCard.path),
-        contentType: panCard.type,
-      };
-    }
-
-    // Handling multiple Adhar Card images
-    if (adharCards) {
-      if (Array.isArray(adharCards)) {
-        for (const ad of adharCards) {
-          const data = {
-            data: fs.readFileSync(ad.path),
-            contentType: ad.type,
-          };
-          adharcardData.push(data);
-        }
-        console.log("if data");
-      } else {
-        console.log("else data");
-        const data = {
-          data: fs.readFileSync(adharCards.path),
-          contentType: adharCards.type,
-        };
-        adharcardData.push(data);
+    // Handle file upload
+    upload(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        // A Multer error occurred when uploading
+        return res.status(400).send({ error: "Multer error", message: err.message });
+      } else if (err) {
+        // An unknown error occurred
+        return res.status(500).send({ error: "Server error", message: err.message });
       }
-    }
 
-    const requiredFields = [
-      "name",
-      "contact",
-      "address",
-      "state",
-      "fatherName",
-      "motherName",
-      "email",
-      "empId",
-      "designation",
-      "department",
-      "adharCardNo",
-      "panNo",
-      "drivingLicence",
-      "bankName",
-      "accountNumber",
-      "ifscCode",
-      "accountHolderName",
-      "salaryAmount",
-    ];
+      const {
+        name,
+        contact,
+        address,
+        state,
+        fatherName,
+        motherName,
+        email,
+        empId,
+        designation,
+        department,
+        adharCardNo,
+        panNo,
+        drivingLicence,
+        bankName,
+        accountNumber,
+        ifscCode,
+        accountHolderName,
+        salaryAmount,
+      } = req.body;
 
-    const missingFields = requiredFields.filter((field) => !req.fields[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
+      const photo = req.files.photo ? req.files.photo.map((file) => file.path) : [];
+      const panCard = req.files.panCard ? req.files.panCard.map((file) => file.path) : [];
+      const adharCards = req.files.adharCards ? req.files.adharCards.map((file) => file.path) : [];
+
+      const existingStaff = await staffModel.findOne({
+        $or: [{ email }, { empId }],
       });
-    }
 
-    const existingStaff = await staffModel.findOne({
-      $or: [{ email }, { empId }],
-    });
-    if (existingStaff) {
-      return res.status(400).send({
-        success: false,
-        message: "This staff already exists with the provided email or empId",
+      if (existingStaff) {
+        return res.status(400).send({
+          success: false,
+          message: "This staff already exists with the provided email or empId",
+        });
+      }
+
+      const newStaff = await staffModel.create({
+        photo,
+        panCard,
+        adharCards,
+        name,
+        contact,
+        address,
+        state,
+        fatherName,
+        motherName,
+        email,
+        empId,
+        designation,
+        department,
+        adharCardNo,
+        panNo,
+        drivingLicence,
+        bankName,
+        accountNumber,
+        ifscCode,
+        accountHolderName,
+        salaryAmount,
       });
-    }
-    
-    const newStaff = await staffModel.create({
-      photo: photoData,
-      adharCards: adharcardData,
-      panCard: pancardData,
-      name,
-      contact,
-      address,
-      state,
-      fatherName,
-      motherName,
-      email,
-      empId,
-      designation,
-      department,
-      adharCardNo,
-      panNo,
-      drivingLicence,
-      bankName,
-      accountNumber,
-      ifscCode,
-      accountHolderName,
-      salaryAmount,
-    });
 
-    return res.status(201).send({
-      success: true,
-      message: "Staff created successfully",
-      data: newStaff,
+      return res.status(201).send({
+        success: true,
+        message: "Staff created successfully",
+        data: newStaff,
+      });
     });
   } catch (error) {
     console.error("Error creating staff:", error);
@@ -147,6 +122,7 @@ export const createstaffController = async (req, res) => {
     });
   }
 };
+
 
 export const manageStaffController = async (req, res) => {
   try {
@@ -219,112 +195,3 @@ export const manageSingleStaffController = async (req, res) => {
   }
 };
 
-export const createProductController = async (req, res) => {
-  try {
-    const {
-      pricedata,
-      name,
-      description,
-      price,
-      category,
-      quantity,
-      shipping,
-      color,
-      brand,
-      discount,
-      subcategory,
-      baseCategory,
-      feature,
-      seller_id,
-      serialNo,
-      productId,
-    } = req.fields;
-    const photo = Object.values(req.files);
-    //validation
-
-    switch (true) {
-      case !baseCategory:
-        return res.send({
-          message: "base Category is Required",
-          success: false,
-        });
-      case !category:
-        return res.send({ message: "category is Required", success: false });
-      case !serialNo:
-        return res.send({ message: "serialNo is Required", success: false });
-      case !productId:
-        return res.send({ message: "productId is Required", success: false });
-      case !seller_id:
-        return res.send({ message: "seller id is Required", success: false });
-      case !subcategory:
-        return res.send({ message: "Subcategory is Required", success: false });
-      case !pricedata:
-        return res.send({ message: "priceData is Required", success: false });
-      case !name:
-        return res.send({ message: "Name is Required", success: false });
-      case !description:
-        return res.send({ message: "Description is Required", success: false });
-      case !price:
-        return res.send({ message: "Price is Required", success: false });
-
-      case !discount:
-        return res.send({ message: "Discount is Required", success: false });
-    }
-
-    // //(pricedata,"this is price data which is passing for the purpose of testing ...!")
-
-    const products = new productModel({ ...req.fields, slug: slugify(name) });
-    // if (photo) {
-    //   products.photo.data = fs.readFileSync(photo.path);
-    //   products.photo.contentType = photo.type;
-    // }
-    let photoCount = 0;
-    for (const p of photo) {
-      if (photoCount >= 10) {
-        return res.send({ message: "Maximum 10 photos allowed" });
-      }
-
-      if (p.size > 1000000) {
-        return res
-          .status(500)
-          .send({ message: "Photo should be less than 1MB" });
-      }
-      // Read the image file and set it to the product
-      const imageBuffer = fs.readFileSync(p.path);
-      products.photo.push({ data: imageBuffer, contentType: p.type });
-      photoCount++;
-    }
-
-    await products.save();
-    res.status(201).send({
-      success: true,
-      message: "Product Created Successfully",
-      products,
-    });
-  } catch (error) {
-    //(error);
-    res.status(500).send({
-      success: false,
-      error,
-      message: "Error in crearing product",
-    });
-  }
-};
-
-// get photo
-// export const productPhotoController = async (req, res) => {
-//   try {
-//     const product = await productModel.findById(req.params.pid).select("photo");
-//     if (product.photo) {
-//       res.set("Content-type", product.photo[0].contentType);
-//       return res.status(200).send(product.photo[0].data);
-//     }
-//   } catch (error) {
-//     //(error);
-//     res.status(500).send({
-//       success: false,
-//       message: "Erorr while getting photo",
-//       error,
-//     });
-//   }
-// };

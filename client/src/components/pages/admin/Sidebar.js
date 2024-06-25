@@ -786,7 +786,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/invoice"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
                 >
                   Invoice
@@ -794,7 +794,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/deliverychallan"
                   className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
                 >
                   Delivery challan

@@ -4,7 +4,7 @@ import formidable from "express-formidable"
 
 const router = express.Router();
 
-router.post("/createStaff",formidable(),createstaffController);
+router.post("/createStaff",createstaffController);
 router.get("/manageStaff",manageStaffController)
 router.get("/manageSingleStaff/:_id",manageSingleStaffController)
 router.delete("/deletestaff/:_id", deleteStaffController);
