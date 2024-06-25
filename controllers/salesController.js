@@ -40,7 +40,12 @@ export const createSalesController = async (req, res) => {
 
     const rows = Items.map((rowData) => ({
       itemName: rowData.itemName,
+<<<<<<< HEAD
       itemCode:rowData.itemCode,
+=======
+      itemCode: rowData.itemCode,
+
+>>>>>>> 46bf7deea8ed8e8691d8949e7b9c49314e0e3536
       hsnCode: rowData.hsnCode,
       qty: rowData.qty,
       rate: rowData.rate,
@@ -65,6 +70,7 @@ export const createSalesController = async (req, res) => {
         rows,
         taxAmount,
         totalAmount,
+        
       });
       const savedProduct = await newProduct.save();
       res.status(201).send({
