@@ -8,7 +8,7 @@ const SalesQuotation = () => {
   const [Items, setItems] = useState([
     {
       id: 1,
-      itemcode: "",
+      itemCode: "",
       itemName: "",
       hsnCode: "",
       qty: 0,
@@ -296,9 +296,9 @@ const SalesQuotation = () => {
                   <td className="border p-2">
                     <input
                       type="text"
-                      name="itemcode"
+                      name="itemCode"
                       className="border p-2 w-full"
-                      value={product.itemcode}
+                      value={product.itemCode}
                       onChange={(e) => handleProductChange(index, e)}
                     />
                   </td>

@@ -4,8 +4,8 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import BankViewModal from "./modals/BankViewModel.js";
-import BankEditModal from "./modals/BankEditModel.js";
+import QuotationViewModal from "./modals/QuotationViewModel.js";
+import QuotationEditModal from "./modals/QuotationEditModel.js";
 
 const ManageQuotation = () => {
   const [Quotation, setQuotation] = useState([]);
@@ -15,24 +15,34 @@ const ManageQuotation = () => {
 
   const fetchQuotation = async () => {
     try {
-      const response = await axios.get("/api/v1/salesQuationRoute/getAllSalesQuotation");
-      console.log(response,"sdfjk")
-      setQuotation(response.data.response);
+      const response = await axios.get(
+        "/api/v1/salesQuationRoute/getAllSalesQuotation"
+      );
+
+      // date formatting
+      const formattedData = response.data.response.map((quotation) => ({
+        ...quotation,
+        date: new Date(quotation.date).toLocaleDateString(),
+        dueDate: new Date(quotation.dueDate).toLocaleDateString(),
+      }));
+
+      setQuotation(formattedData);
     } catch (error) {
-      console.error("Error fetching Bank data", error);
+      console.error("Error fetching Quotation data", error);
     }
   };
 
   useEffect(() => {
     fetchQuotation();
   }, []);
+  
 
-  const deleteBank = async (_id) => {
+  const deleteQuotation = async (_id) => {
     try {
       const response = await axios.delete(
         `/api/v1/salesQuationRoute/deleteSalesQuotation/${_id}`
       );
-      setQuotation(Quotation.filter((Bank) => Bank._id !== _id));
+      setQuotation(Quotation.filter((Quotation) => Quotation._id !== _id));
 
       if (response) {
         toast.success(" delete all data Successfully...");
@@ -40,7 +50,7 @@ const ManageQuotation = () => {
         toast.error("error while deleting...");
       }
     } catch (error) {
-      console.log("Error deleting Bank data", error);
+      console.log("Error deleting Quotation data", error);
     }
   };
 
@@ -73,17 +83,25 @@ const ManageQuotation = () => {
                 S.No
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Bank Name
+                Date
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                IFSC Code
+                Quotation No
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Account No
+                Customer Name
               </th>
-
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Opening Balance
+                Place of Supply
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Due Date
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Tax Type
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Shipping Address
               </th>
               <th className="px-6 py-2 text-left text-sm font-medium text-gray-600">
                 Action
@@ -92,38 +110,48 @@ const ManageQuotation = () => {
           </thead>
           <tbody>
             {Quotation.length > 0 ? (
-              Quotation.map((Bank, index) => (
-                <tr key={Bank.id} className="border-b">
+              Quotation.map((quotation, index) => (
+                <tr key={quotation._id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
-                  <td className="px-6 py-2 border-r text-sm">{Bank.name}</td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Bank.ifscCode}
+                    {quotation.date}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Bank.accountNumber}
-                  </td>
-
-                  <td className="px-6 py-2 border-r text-sm">
-                    {Bank.openingBalance}
+                    {quotation.quotationNo}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
+                    {quotation.customerName}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {quotation.placeOfSupply}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {quotation.dueDate}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {quotation.taxType}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {quotation.shippingAddress}
+                  </td>
+                  <td className="px-6 py-2 text-sm">
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => openViewModal(Bank)}
+                      onClick={() => openViewModal(quotation)}
                     >
                       View
-                    </button>{" "}
+                    </button>
                     /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => openEditModal(Bank)}
+                      onClick={() => openEditModal(quotation)}
                     >
                       Edit
-                    </button>{" "}
+                    </button>
                     /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => deleteBank(Bank._id)}
+                      onClick={() => deleteQuotation(quotation._id)}
                     >
                       Delete
                     </button>
@@ -132,22 +160,23 @@ const ManageQuotation = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="px-6 py-2 text-center text-sm">
-                  No Quotation found.
+                <td colSpan="9" className="px-6 py-2 text-center text-sm">
+                  No quotations found.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+
         <Modal
           isOpen={viewModal}
           onRequestClose={closeModal}
           contentLabel="View Item Modal"
           style={{
             content: {
-              width: "80%",
-              height: "50%",
-              maxWidth: "600px",
+              width: "100%",
+              height: "100%",
+              maxWidth: "1400px",
               margin: "auto",
               padding: "5px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -155,7 +184,10 @@ const ManageQuotation = () => {
             },
           }}
         >
-          <BankViewModal closeModal={closeModal} BankData={modalData} />
+          <QuotationViewModal
+            closeModal={closeModal}
+            QuotationData={modalData}
+          />
         </Modal>
 
         <Modal
@@ -174,7 +206,10 @@ const ManageQuotation = () => {
             },
           }}
         >
-          <BankEditModal closeModal={closeModal} BankData={modalData} />
+          <QuotationEditModal
+            closeModal={closeModal}
+            QuotationData={modalData}
+          />
         </Modal>
       </div>
       <ToastContainer />
