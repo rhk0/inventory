@@ -448,8 +448,8 @@ const CreateProduct = () => {
               value={formData.subBrand}
               onChange={handleChange}
             >
-            <option value="" >Select Sub Brand </option>
-             {subbrand.map((subbrand, index) => (
+              <option value="">Select Sub Brand </option>
+              {subbrand.map((subbrand, index) => (
                 <option key={index} value={subbrand.SubBrandName}>
                   {subbrand.SubBrandName}
                 </option>
