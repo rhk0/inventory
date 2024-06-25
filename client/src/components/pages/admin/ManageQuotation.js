@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import QuotationViewModal from "./modals/QuotationViewModel.js";
 import QuotationEditModal from "./modals/QuotationEditModel.js";
-
+import Modal from "react-modal"; // Importing Modal from react-modal
 const ManageQuotation = () => {
   const [Quotation, setQuotation] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
+  const navigate = useNavigate();
 
   const fetchQuotation = async () => {
     try {
@@ -45,9 +45,9 @@ const ManageQuotation = () => {
       setQuotation(Quotation.filter((Quotation) => Quotation._id !== _id));
 
       if (response) {
-        toast.success(" delete all data Successfully...");
+        toast.success("Deleted all data successfully...");
       } else {
-        toast.error("error while deleting...");
+        toast.error("Error while deleting...");
       }
     } catch (error) {
       console.log("Error deleting Quotation data", error);
@@ -62,6 +62,13 @@ const ManageQuotation = () => {
   const openEditModal = (Quotation) => {
     setEditModal(true);
     setModalData(Quotation);
+  };
+
+  const navigateToInvoice = (Quotation) => {
+    navigate("/admin/invoice", { state: { quotation: Quotation } });
+  };
+  const navigateToDeliveryChallan = (Quotation) => {
+    navigate("/admin/deliverychallan", { state: { quotation: Quotation } });
   };
 
   const closeModal = () => {
@@ -134,26 +141,39 @@ const ManageQuotation = () => {
                   <td className="px-6 py-2 border-r text-sm">
                     {quotation.shippingAddress}
                   </td>
-                  <td className="px-6 py-2 text-sm">
+                  <td className="px-6 py-2 text-sm ">
                     <button
-                      className="mx-1 text-blue-600"
+                      className="mx-1 text-white bg-blue-700 p-1 rounded-sm"
                       onClick={() => openViewModal(quotation)}
                     >
                       View
                     </button>
-                    /
+                    
                     <button
-                      className="mx-1 text-blue-600"
+                      className="mx-1  text-black bg-yellow-400 p-1"
                       onClick={() => openEditModal(quotation)}
                     >
                       Edit
                     </button>
-                    /
+                    
                     <button
-                      className="mx-1 text-blue-600"
+                      className="mx-1 text-white bg-red-600 p-1 rounded-sm"
                       onClick={() => deleteQuotation(quotation._id)}
                     >
                       Delete
+                    </button>
+                    
+                    <button
+                      className="mx-1 gap-1 mt-1 mb-1 text-white bg-green-600 p-1 rounded-sm"
+                      onClick={() => navigateToInvoice(quotation)} // Navigate to Invoice
+                    >
+                      Create Invoice
+                    </button>
+                    
+                    <button className="mx-1 text-white bg-purple-600 p-1 rounded-sm"
+                     onClick={() => navigateToDeliveryChallan(quotation)} // Navigate to Invoice
+                    >
+                      Create Delivery Challan
                     </button>
                   </td>
                 </tr>
@@ -174,9 +194,7 @@ const ManageQuotation = () => {
           contentLabel="View Item Modal"
           style={{
             content: {
-              width: "100%",
               height: "100%",
-              maxWidth: "1400px",
               margin: "auto",
               padding: "5px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -193,7 +211,7 @@ const ManageQuotation = () => {
         <Modal
           isOpen={editModal}
           onRequestClose={closeModal}
-          contentLabel="View Item Modal"
+          contentLabel="Edit Item Modal"
           style={{
             content: {
               width: "100%",

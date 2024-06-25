@@ -40,8 +40,7 @@ export const createSalesController = async (req, res) => {
 
     const rows = Items.map((rowData) => ({
       itemName: rowData.itemName,
-      itemCode: rowData.itemCode,
-
+      itemCode:rowData.itemCode,
       hsnCode: rowData.hsnCode,
       qty: rowData.qty,
       rate: rowData.rate,
