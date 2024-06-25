@@ -63,7 +63,7 @@ const QuotationViewModel = ({ closeModal, QuotationData }) => {
             {[
               { label: 'Date', value: QuotationData?.date, type: 'date' },
               { label: 'Quotation No', value: QuotationData?.quotationNo, type: 'text' },
-              { label: 'Select Customer', value: QuotationData?.selectedCustomer, type: 'text' },
+              { label: 'Select Customer', value: QuotationData?.selectCustomer, type: 'text' },
               { label: 'Reverse Charge', value: QuotationData?.reverseCharge, type: 'text' },
               { label: 'Place of Supply', value: QuotationData?.placeOfSupply, type: 'text' },
               { label: 'Payment Terms', value: QuotationData?.paymentsTerms, type: 'text' },
@@ -72,7 +72,7 @@ const QuotationViewModel = ({ closeModal, QuotationData }) => {
             ].map((field, index) => (
               <div key={index}>
                 <label className="block font-bold">{field.label}</label>
-                <span className="border p-2 rounded w-full block">{field.value}</span>
+                <span className="border p-2 rounded w-full block bg-white">{field.value}</span>
               </div>
             ))}
           </div>
@@ -127,7 +127,7 @@ const QuotationViewModel = ({ closeModal, QuotationData }) => {
 
                 
                 <tr key={index}>
-                  <td className="border p-2">{index + 1}</td>
+                  <td className="border p-2 ">{index + 1}</td>
                   <td className="border p-2">{product.itemCode}</td>
                   <td className="border p-2">{product.itemName}</td>
                   <td className="border p-2">{product.hsnCode}</td>

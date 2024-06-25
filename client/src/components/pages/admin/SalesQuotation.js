@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,8 +30,37 @@ const SalesQuotation = () => {
     taxType: "",
     billingAddress: "",
     shippingAddress: "",
+    totalAmount:"",
+    taxAmount:"",
     Items: [],
   });
+
+  useEffect(() => {
+    const updatedItems = Items.map((item) => {
+      const { qty, rate, cgst, sgst, igst } = item;
+      const totalTax = (rate * qty * (cgst + sgst + igst)) / 100;
+      const total = rate * qty + totalTax;
+      return { ...item, total };
+    });
+    setItems(updatedItems);
+
+    const taxAmount = updatedItems.reduce(
+      (acc, item) => acc + (item.rate * item.qty * (item.cgst + item.sgst + item.igst)) / 100,
+      0
+    ).toFixed(2);
+
+    const totalAmount = updatedItems.reduce(
+      (acc, item) => acc + item.total,
+      0
+    ).toFixed(2);
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      taxAmount,
+      totalAmount,
+    }));
+  }, [Items, formData.taxType]);
+
 
   const addProduct = (index) => {
     const newProduct = {
@@ -409,28 +438,11 @@ const SalesQuotation = () => {
                 <span className="block font-bold ">Net Amount:</span>
               </div>
               <div>
-                <span className="block mb-4 font-bold">
-                  Rs.{" "}
-                  {Items.reduce(
-                    (acc, product) =>
-                      acc +
-                      (product.rate * product.qty * product.cgst) / 100 +
-                      (product.rate * product.qty * product.sgst) / 100 +
-                      (product.rate * product.qty * product.igst) / 100,
-                    0
-                  ).toFixed(2)}
+              <span className="block mb-4 font-bold">
+                  Rs. {formData.taxAmount}
                 </span>
                 <span className="block font-bold">
-                  Rs.{" "}
-                  {Items.reduce(
-                    (acc, product) =>
-                      acc +
-                      product.rate * product.qty +
-                      (product.rate * product.qty * product.cgst) / 100 +
-                      (product.rate * product.qty * product.sgst) / 100 +
-                      (product.rate * product.qty * product.igst) / 100,
-                    0
-                  ).toFixed(2)}
+                  Rs. {formData.totalAmount}
                 </span>
               </div>
             </div>

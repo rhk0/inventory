@@ -35,7 +35,7 @@ const ManageQuotation = () => {
   useEffect(() => {
     fetchQuotation();
   }, []);
-  
+
 
   const deleteQuotation = async (_id) => {
     try {
@@ -120,7 +120,7 @@ const ManageQuotation = () => {
                     {quotation.quotationNo}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {quotation.customerName}
+                    {quotation.selectCustomer}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
                     {quotation.placeOfSupply}
@@ -196,9 +196,9 @@ const ManageQuotation = () => {
           contentLabel="View Item Modal"
           style={{
             content: {
-              width: "80%",
-              height: "60%",
-              maxWidth: "800px",
+              width: "100%",
+              height: "100%",
+              maxWidth: "1400px",
               margin: "auto",
               padding: "5px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
