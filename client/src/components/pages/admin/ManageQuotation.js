@@ -6,12 +6,29 @@ import "react-toastify/dist/ReactToastify.css";
 import QuotationViewModal from "./modals/QuotationViewModel.js";
 import QuotationEditModal from "./modals/QuotationEditModel.js";
 import Modal from "react-modal"; // Importing Modal from react-modal
+import {
+  AiFillDelete,
+  AiFillEdit,
+  AiOutlineEye,
+  AiOutlineFileAdd,
+  AiOutlineFileText,
+} from "react-icons/ai";
 const ManageQuotation = () => {
   const [Quotation, setQuotation] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
   const navigate = useNavigate();
+
+  const [hoveredIcon, setHoveredIcon] = useState(null);
+
+  const handleIconHover = (iconName) => {
+    setHoveredIcon(iconName);
+  };
+
+  const handleIconLeave = () => {
+    setHoveredIcon(null);
+  };
 
   const fetchQuotation = async () => {
     try {
@@ -31,12 +48,9 @@ const ManageQuotation = () => {
       console.error("Error fetching Quotation data", error);
     }
   };
-
   useEffect(() => {
     fetchQuotation();
   }, []);
-
-
   const deleteQuotation = async (_id) => {
     try {
       const response = await axios.delete(
@@ -53,24 +67,20 @@ const ManageQuotation = () => {
       console.log("Error deleting Quotation data", error);
     }
   };
-
   const openViewModal = (Quotation) => {
     setViewModal(true);
     setModalData(Quotation);
   };
-
   const openEditModal = (Quotation) => {
     setEditModal(true);
     setModalData(Quotation);
   };
-
   const navigateToInvoice = (Quotation) => {
     navigate("/admin/invoice", { state: { quotation: Quotation } });
   };
   const navigateToDeliveryChallan = (Quotation) => {
     navigate("/admin/deliverychallan", { state: { quotation: Quotation } });
   };
-
   const closeModal = () => {
     fetchQuotation();
     setViewModal(false);
@@ -110,7 +120,7 @@ const ManageQuotation = () => {
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Shipping Address
               </th>
-              <th className="px-6 py-2 text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 text-left text-sm font-medium text-gray-600 text-center">
                 Action
               </th>
             </tr>
@@ -141,40 +151,59 @@ const ManageQuotation = () => {
                   <td className="px-6 py-2 border-r text-sm">
                     {quotation.shippingAddress}
                   </td>
-                  <td className="px-6 py-2 text-sm ">
-                    <button
-                      className="mx-1 text-white bg-blue-700 p-1 rounded-sm"
-                      onClick={() => openViewModal(quotation)}
-                    >
-                      View
-                    </button>
-                    
+                  <td className="  text-sm text-nowrap ">
+                    <a>
+                      <button
+                        className="mx-1 text-white bg-blue-700 p-1 rounded-sm"
+                        onClick={() => openViewModal(quotation)}
+                        onMouseEnter={() => handleIconHover("View")}
+                        onMouseLeave={handleIconLeave}
+                      >
+                        <AiOutlineEye className="text-xl" />
+                      </button>
+                    </a>
+
                     <button
                       className="mx-1  text-black bg-yellow-400 p-1"
+                      onMouseEnter={() => handleIconHover("Edit")}
+                      onMouseLeave={handleIconLeave}
                       onClick={() => openEditModal(quotation)}
                     >
-                      Edit
+                       
+                      <AiFillEdit className="text-xl" />
                     </button>
-                    
+
                     <button
                       className="mx-1 text-white bg-red-600 p-1 rounded-sm"
                       onClick={() => deleteQuotation(quotation._id)}
+                      onMouseEnter={() => handleIconHover("Delete")}
+                      onMouseLeave={handleIconLeave}
                     >
-                      Delete
+                      <AiFillDelete className="text-xl" />
                     </button>
-                    
+
                     <button
                       className="mx-1 gap-1 mt-1 mb-1 text-white bg-green-600 p-1 rounded-sm"
+                      onMouseEnter={() => handleIconHover("Create Invoice")}
+                      onMouseLeave={handleIconLeave}
                       onClick={() => navigateToInvoice(quotation)} // Navigate to Invoice
                     >
-                      Create Invoice
+                      <AiOutlineFileText className="text-xl" />
                     </button>
-                    
-                    <button className="mx-1 text-white bg-purple-600 p-1 rounded-sm"
-                     onClick={() => navigateToDeliveryChallan(quotation)} // Navigate to Invoice
+
+                    <button
+                      className="mx-1 text-white bg-purple-600 p-1 rounded-sm"
+                      onMouseEnter={() => handleIconHover("Create Delivery Challan")}
+                      onMouseLeave={handleIconLeave}
+                      onClick={() => navigateToDeliveryChallan(quotation)} // Navigate to Invoice
                     >
-                      Create Delivery Challan
+                      <AiOutlineFileAdd className="text-xl" />
                     </button>
+                    {hoveredIcon && (
+                    <div className="icon-name bg-black bg-opacity-75 text-white p-2 px-5 rounded-lg absolute ">
+                        {hoveredIcon}
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))

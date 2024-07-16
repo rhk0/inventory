@@ -144,7 +144,7 @@ export const updateQuotationByIDController = async (req, res) => {
     quotation.reverseCharge = updateData.reverseCharge || quotation.reverseCharge;
     quotation.placeOfSupply = updateData.placeOfSupply || quotation.placeOfSupply;
     quotation.paymentsTerms = updateData.paymentsTerms || quotation.paymentsTerms;
-    quotation.dueDtae = updateData.dueDtae || quotation.dueDtae;
+    quotation.dueDate = updateData.dueDtae || quotation.dueDtae;
     quotation.taxType = updateData.taxType || quotation.taxType;
     quotation.billingAddress = updateData.billingAddress || quotation.billingAddress;
     quotation.shippingAddress = updateData.shippingAddress || quotation.shippingAddress;
@@ -152,8 +152,8 @@ export const updateQuotationByIDController = async (req, res) => {
     quotation.totalAmount = updateData.totalAmount || quotation.totalAmount;
 
     // Update rows array
-    if (updateData.Items) {
-      quotation.rows = updateData.Items.map((rowData) => ({
+    if (updateData.rows) {
+      quotation.rows = updateData.rows.map((rowData) => ({
         itemCode: rowData.itemCode,
         itemName: rowData.itemName,
         hsnCode: rowData.hsnCode,

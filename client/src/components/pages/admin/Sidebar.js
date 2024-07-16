@@ -70,12 +70,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     closeAll();
     setBank(!showBankDropdown);
   };
-
   const toggleInventry = () => {
     closeAll();
     setInventory(!showInventory);
   };
-
   const toggleSales = () => {
     closeAll();
     setSales(!showSales);
@@ -155,7 +153,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Dashboard */}
         <li className="sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/dashboard" className="inline-container">
+            <Link to="/admin/dash" className="inline-container">
               <span>Dashboard</span>
             </Link>
           </a>

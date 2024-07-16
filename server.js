@@ -60,6 +60,8 @@ app.use("/api/v1/auth",productRoute)
 app.use("/api/v1/salesQuationRoute",salesQuationRoute)
 app.use("/api/v1/salesInvoiceRoute",salesInvoiceRoute)
 app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
+//change dheeru
+app.use("/uploads",express.static("uploads"));
 app.use(formidable());
 
 
