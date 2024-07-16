@@ -49,7 +49,7 @@ const QuotationViewModel = ({ closeModal, QuotationData }) => {
           }
 
           html, body {
-            width: 210mm;
+            width: 240mm;
           }
         `}
       </style>

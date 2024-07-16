@@ -132,9 +132,7 @@ export const updateQuotationByIDController = async (req, res) => {
 
     const quotation = await salesQuotationModel.findById(_id);
     if (!quotation) {
-      return res
-        .status(404)
-        .send({ success: false, message: "Data not found" });
+      return res.status(404).send({ success: false, message: "Data not found" });
     }
 
     // Update fields
@@ -144,16 +142,16 @@ export const updateQuotationByIDController = async (req, res) => {
     quotation.reverseCharge = updateData.reverseCharge || quotation.reverseCharge;
     quotation.placeOfSupply = updateData.placeOfSupply || quotation.placeOfSupply;
     quotation.paymentsTerms = updateData.paymentsTerms || quotation.paymentsTerms;
-    quotation.dueDtae = updateData.dueDtae || quotation.dueDtae;
+    quotation.dueDate = updateData.dueDate || quotation.dueDate; // Corrected spelling
     quotation.taxType = updateData.taxType || quotation.taxType;
     quotation.billingAddress = updateData.billingAddress || quotation.billingAddress;
     quotation.shippingAddress = updateData.shippingAddress || quotation.shippingAddress;
     quotation.taxAmount = updateData.taxAmount || quotation.taxAmount;
     quotation.totalAmount = updateData.totalAmount || quotation.totalAmount;
 
-    // Update rows array
-    if (updateData.Items) {
-      quotation.rows = updateData.Items.map((rowData) => ({
+    // Update rows array if Items are provided in updateData
+    if (updateData.rows) {
+      quotation.rows = updateData.rows.map((rowData) => ({
         itemCode: rowData.itemCode,
         itemName: rowData.itemName,
         hsnCode: rowData.hsnCode,
@@ -175,10 +173,9 @@ export const updateQuotationByIDController = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .send({ success: false, message: "Internal Server Issue" });
+    return res.status(500).send({ success: false, message: "Internal Server Issue" });
   }
 };
+
 
 

@@ -214,9 +214,7 @@ const ManageQuotation = () => {
           contentLabel="Edit Item Modal"
           style={{
             content: {
-              width: "100%",
               height: "100%",
-              maxWidth: "1400px",
               margin: "auto",
               padding: "5px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",

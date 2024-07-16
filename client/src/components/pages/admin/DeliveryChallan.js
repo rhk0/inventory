@@ -104,7 +104,6 @@ const DeliveryChallan = () => {
 
   return (
     <div className="responsive-container p-4 bg-white shadow-md rounded-lg">
-     
       <style>
         {`
              @media print {

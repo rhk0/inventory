@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,8 +30,8 @@ const SalesQuotation = () => {
     taxType: "",
     billingAddress: "",
     shippingAddress: "",
-    totalAmount:"",
-    taxAmount:"",
+    totalAmount: "",
+    taxAmount: "",
     Items: [],
   });
 
@@ -44,15 +44,18 @@ const SalesQuotation = () => {
     });
     setItems(updatedItems);
 
-    const taxAmount = updatedItems.reduce(
-      (acc, item) => acc + (item.rate * item.qty * (item.cgst + item.sgst + item.igst)) / 100,
-      0
-    ).toFixed(2);
+    const taxAmount = updatedItems
+      .reduce(
+        (acc, item) =>
+          acc +
+          (item.rate * item.qty * (item.cgst + item.sgst + item.igst)) / 100,
+        0
+      )
+      .toFixed(2);
 
-    const totalAmount = updatedItems.reduce(
-      (acc, item) => acc + item.total,
-      0
-    ).toFixed(2);
+    const totalAmount = updatedItems
+      .reduce((acc, item) => acc + item.total, 0)
+      .toFixed(2);
 
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -60,7 +63,6 @@ const SalesQuotation = () => {
       totalAmount,
     }));
   }, [Items, formData.taxType]);
-
 
   const addProduct = (index) => {
     const newProduct = {
@@ -263,8 +265,23 @@ const SalesQuotation = () => {
                 onChange={handleInputChange}
               >
                 <option>select Tax Type</option>
-                <option value="sgst/cgst">SGST/CGST</option>
-                <option value="igst">IGST</option>
+                <option value="G0">SGST/CGST 0%</option>
+                <option value="G3">SGST/CGST 3%</option>
+                <option value="G5">SGST/CGST 5%</option>
+                <option value="G12">SGST/CGST 12%</option>
+                <option value="G18">SGST/CGST 18%</option>
+                <option value="G28">SGST/CGST 28%</option>
+
+
+
+                <option value="I0">IGST 0%</option>
+                <option value="I3">IGST 3%</option>
+                <option value="I5">IGST 5%</option>
+                <option value="I12">IGST 12%</option>
+                <option value="I18">IGST 18%</option>
+                <option value="I28">IGST 28%</option>
+      
+
               </select>
             </div>
           </div>
@@ -438,7 +455,7 @@ const SalesQuotation = () => {
                 <span className="block font-bold ">Net Amount:</span>
               </div>
               <div>
-              <span className="block mb-4 font-bold">
+                <span className="block mb-4 font-bold">
                   Rs. {formData.taxAmount}
                 </span>
                 <span className="block font-bold">
