@@ -7,10 +7,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "./uploads/"));
-  },
-  filename: function (req, file, cb) {
+destination:"./uploads/",
+  filename:  (req, file, cb)=> {
     cb(
       null,
       `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
@@ -117,60 +115,7 @@ export const createProductController = async (req, res) => {
         maximumStock: rowData.maximumStock,
         openingQty: rowData.openingQty,
       }));
-
-      // const requiredFields = [
-      //   "itemCode",
-      //   "productName",
-      //   "category",
-      //   "subCategory",
-      //   "brand",
-      //   "subBrand",
-      //   "uom",
-      //   "gstRate",
-      //   "purchaseTaxInclude",
-      //   "salesTaxInclude",
-      //   "cess",
-      //   "batchNo",
-      //   "expiryDate",
-      //   "manufacture",
-      //   "ingredients",
-      //   "feature",
-      //   "description",
-      //   "newWeight",
-      //   "purchasePrice",
-      //   "landingCost",
-      //   "mrp",
-      //   "retailDiscount",
-      //   "retailPrice",
-      //   "retailMargin",
-      //   "wholesalerDiscount",
-      //   "wholesalerPrice",
-      //   "wholesaleMargin",
-      //   "minimumStock",
-      //   "maximumStock",
-      //   "particular",
-      //   "quantity",
-      //   "rate",
-      //   "units",
-      //   "amount",
-      // ];
-
-      // const missingFields = requiredFields.filter(
-      //   (field) => !req.body[field]
-      // );
-      // if (missingFields.length > 0) {
-      //   return res.status(400).send({
-      //     message: "Required fields are missing",
-      //     missingFields: missingFields,
-      //   });
-      // }
-
       const img = req.files ? req.files.map((file) => file.path) : [];
-
-      // if (!img.length) {
-      //   return res.status(400).send({ error: "Images are required." });
-      // }
-
       try {
         const newProduct = new ProductModel({
           itemCode,

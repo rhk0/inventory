@@ -1,7 +1,6 @@
-import transpoterModel from "../models/transpoterModel.js";
-import fs from "fs";
+import manufacturerModel from "../models/manufacturerModel.js";
 
-export const createtranspoterController = async (req, res) => {
+export const createManufacturerController = async (req, res) => {
   try {
     const {
       name,
@@ -34,14 +33,14 @@ export const createtranspoterController = async (req, res) => {
         missingFields: missingFields,
       });
     }
-    const old = await transpoterModel.findOne({ email });
+    const old = await manufacturerModel.findOne({ email });
     if (old) {
       return res.status(400).send({
         success: false,
-        message: "This transpoter already exists",
+        message: "This manufacturer already exists",
       });
     }
-    const data = await transpoterModel.create({
+    const data = await manufacturerModel.create({
       name,
       address,
       state,
@@ -57,7 +56,7 @@ export const createtranspoterController = async (req, res) => {
     });
     return res.status(201).send({
       success: true,
-      message: "transpoter Create successful",
+      message: "manufacturer Create successful",
       data,
     });
   } catch (error) {
@@ -67,9 +66,9 @@ export const createtranspoterController = async (req, res) => {
       .json({ error: "Internal Server Error", details: error.message });
   }
 };
-export const managetranspoterController = async (req, res) => {
+export const managemanufacturerController = async (req, res) => {
   try {
-    const data = await transpoterModel.find();
+    const data = await manufacturerModel.find();
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -88,10 +87,10 @@ export const managetranspoterController = async (req, res) => {
     });
   }
 };
-export const manageSingletranspoterController = async (req, res) => {
+export const manageSinglemanufacturerController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const data = await transpoterModel.find({ _id });
+    const data = await manufacturerModel.find({ _id });
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -110,20 +109,20 @@ export const manageSingletranspoterController = async (req, res) => {
     });
   }
 };
-export const deletetranspoterController = async (req, res) => {
+export const deletemanufacturerController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const response = await transpoterModel.findByIdAndDelete(_id);
+    const response = await manufacturerModel.findByIdAndDelete(_id);
 
     if (!response) {
       return res
         .status(404)
-        .send({ success: false, message: "transpoter not found" });
+        .send({ success: false, message: "manufacturer not found" });
     }
 
     return res.status(200).send({
       success: true,
-      message: "transpoter deleted successfully",
+      message: "manufacturer deleted successfully",
       response,
     });
   } catch (error) {
@@ -135,7 +134,7 @@ export const deletetranspoterController = async (req, res) => {
     });
   }
 };
-export const updatetranspoterController = async (req, res) => {
+export const updatemanufacturerController = async (req, res) => {
   try {
     const { _id } = req.params;
     const updateData = req.body;
@@ -157,12 +156,9 @@ export const updatetranspoterController = async (req, res) => {
     //   "accountNo",
     //   "accountHolder",
     //   "upiId",
-    //   "dispatchDocNo",
-    //   "dispatchThrough",
-    //   "destination",
-    //   "billOfLading",
-    //   "date",
-    //   "vehicaleNo",
+    //   "itemCategories",
+    //   "discountPercentage",
+    //   "discountAmount",
     //   "openingBalance",
     //   "drCr",
     // ];
@@ -177,26 +173,26 @@ export const updatetranspoterController = async (req, res) => {
     //   });
     // }
 
-    const transpoter = await transpoterModel.findByIdAndUpdate(
+    const manufacturer = await manufacturerModel.findByIdAndUpdate(
       _id,
       updateData,
       {
         new: true,
       }
     );
-    // console.log(transpoter)
+    // console.log(manufacturer)
 
-    if (!transpoter) {
+    if (!manufacturer) {
       return res.status(404).send({
         success: false,
-        message: "transpoter not found",
+        message: "manufacturer not found",
       });
     }
 
     return res.status(200).send({
       success: true,
-      message: "transpoter updated successfully",
-      data: transpoter,
+      message: "manufacturer updated successfully",
+      data: manufacturer,
     });
   } catch (error) {
     console.log(error);

@@ -74,7 +74,6 @@ const indianBanks = [
 
 const initialFormData = {
   photo: null,
-
   businessName: "",
   printName: "",
   businessType: "",

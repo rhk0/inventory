@@ -1,444 +1,276 @@
+
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { toast } from "react-toastify";
 
-const SupplierEditModal = ({ supplierData, closeModal }) => {
-  const [currentStep, setCurrentStep] = useState(1);
+const SupplierUpdateModal = ({ supplierData, closeModal }) => {
   const [formData, setFormData] = useState(supplierData);
 
-  const nextStep = () => {
-    setCurrentStep((prevStep) => prevStep + 1);
-  };
-
-  const prevStep = () => {
-    setCurrentStep((prevStep) => prevStep - 1);
-  };
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleUpdate = async () => {
-    
-    const requiredFields = [
-      "name",
-      "contact",
-      "address",
-      "pinCode",
-      "state",
-      "country",
-      "email",
-      "website",
-      "registrationType",
-      "gstIn",
-      "panNo",
-      "bankName",
-      "ifscCode",
-      "accountNo",
-      "accountHolder",
-      "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
-      "openingBalance",
-      "drCr",
-    ];
-
-    for (const field of requiredFields) {
-      if (!formData[field]) {
-        toast.error(`Please fill out the ${field} field.`);
-        return;
-      }
-    }
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
+      // Make the PUT request to update supplier details
       const response = await axios.put(
         `/api/v1/auth/updateSupplier/${formData._id}`,
         formData
       );
+      console.log(response, "res");
 
-      if (response.data.success) {
-        
-
-        toast.success("Supplier updated successfully...");
+      if (response.status === 200) {
+        toast.success("Supplier updated successfully!");
         closeModal();
       } else {
-        console.error("Failed to update supplier");
+        toast.error("Failed to update supplier.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error updating supplier:", error);
+      toast.error("An error occurred while updating the supplier.");
     }
   };
 
-  const renderStepIndicator = () => (
-    <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
-      {[
-        "Supplier Details",
-        "Statutory Details",
-        "Banking Details",
-        "Discounting",
-        "Opening Balance",
-      ].map((step, index) => (
-        <div
-          key={index}
-          className={`flex items-center px-4 py-2 ${
-            currentStep === index + 1
-              ? "bg-violet-600 text-white underline underline-offset-8"
-              : "bg-gray-300"
-          } rounded-md mx-2 cursor-pointer transition duration-300`}
-          onClick={() => setCurrentStep(index + 1)}
-        >
-          {step}
-        </div>
-      ))}
-    </div>
-  );
-
   return (
-    <div className="max-w-3xl mx-auto md:pl-4 md:pr-4 p-2 responsive-container text-black">
-      <button
-        className="absolute top-2 right-2 p-2 text-gray-700 text-xl hover:text-gray-900 focus:outline-none md:text-2xl md:top-4 md:right-4 border"
-        onClick={closeModal}
-      >
-        <FaTimes />
-      </button>
-      <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800 mt-8">
-        Supplier
-      </h4>
-      {renderStepIndicator()}
-      {currentStep === 1 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <label className="block mb-2">
-              Name:
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-            <label className="block mb-2">
-              Contact:
-              <input
-                type="text"
-                name="contact"
-                value={formData.contact}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
+    <div className="responsive-container px-4 py-1 max-w-7xl">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="font-bold text-center text-gray-700 text-3xl underline">
+            Update Supplier
+          </h1>
+          <button
+            type="button"
+            className="text-gray-500 hover:text-gray-700 border"
+            onClick={closeModal}
+          >
+            <FaTimes size={24} />
+          </button>
+        </div>
 
-            <label className="block mb-2">
-              Address:
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-            <label className="block mb-2">
-              Pin Code:
-              <input
-                type="text"
-                name="pinCode"
-                value={formData.pinCode}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-            <label className="block mb-2">
-              State:
-              <input
-                type="text"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-            <label className="block mb-2">
-              Country:
-              <input
-                type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-            <label className="block mb-2">
-              Website:
-              <input
-                type="text"
-                name="website"
-                value={formData.website}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
+        <form onSubmit={handleSubmit}>
+          {/* Supplier Details */}
+          <div className="mb-6">
+            <h3 className="text-gray-800 font-semibold mb-2">
+              Supplier Details :
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">Name:</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">Address:</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">Country:</label>
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">State:</label>
+                <input
+                  type="text"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">Pin Code:</label>
+                <input
+                  type="text"
+                  name="pinCode"
+                  value={formData.pinCode}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">Contact:</label>
+                <input
+                  type="text"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">Website:</label>
+                <input
+                  type="text"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
+
+          {/* Banking Details */}
+          <div className="mb-6">
+            <h3 className="text-gray-800 font-semibold mb-2">
+              Banking Details :
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">Bank Name:</label>
+                <input
+                  type="text"
+                  name="bankName"
+                  value={formData.bankName}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">
+                  Bank Address:
+                </label>
+                <input
+                  type="text"
+                  name="bankAddress"
+                  value={formData.bankAddress}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">IFSC Code:</label>
+                <input
+                  type="text"
+                  name="ifscCode"
+                  value={formData.ifscCode}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">
+                  Account Holder Name:
+                </label>
+                <input
+                  type="text"
+                  name="accountHolderName"
+                  value={formData.accountHolderName}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">
+                  Account Number:
+                </label>
+                <input
+                  type="text"
+                  name="accountNumber"
+                  value={formData.accountNumber}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+            </div>
           </div>
-        </>
-      )}
 
-      {currentStep === 2 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <label className="block mb-2">
-              Registration Type:
-              <input
-                type="text"
-                name="registrationType"
-                value={formData.registrationType}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              GSTIN:
-              <input
-                type="text"
-                name="gstIn"
-                value={formData.gstIn}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              PAN No:
-              <input
-                type="text"
-                name="panNo"
-                value={formData.panNo}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
+          {/* Statutory Details */}
+          <div className="mb-6">
+            <h3 className="text-gray-800 font-semibold mb-2">
+              Statutory Details :
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">
+                  Registration Type:
+                </label>
+                <select
+                  name="registrationType"
+                  value={formData.registrationType}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                >
+                  <option value="">Select Registration Type</option>
+                  <option value="Composition">Composition</option>
+                  <option value="Regular">Regular</option>
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">GSTIN:</label>
+                <input
+                  type="text"
+                  name="gstin"
+                  value={formData.gstin}
+                  onChange={handleChange}
+                  className="p-2 border rounded bg-gray-100"
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
 
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </>
-      )}
-
-      {currentStep === 3 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <label className="block mb-2">
-              Bank Name:
-              <input
-                type="text"
-                name="bankName"
-                value={formData.bankName}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              Ifsc Code:
-              <input
-                type="text"
-                name="ifscCode"
-                value={formData.ifscCode}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              Account No:
-              <input
-                type="text"
-                name="accountNo"
-                value={formData.accountNo}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              Account Holder:
-              <input
-                type="text"
-                name="accountHolder"
-                value={formData.accountHolder}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              UPI ID:
-              <input
-                type="text"
-                name="upiId"
-                value={formData.upiId}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-          </div>
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </>
-      )}
-
-      {currentStep === 4 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <label className="block mb-2">
-              Item Categories:
-              <input
-                type="text"
-                name="itemCategories"
-                value={formData.itemCategories}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              Discount Percentage:
-              <input
-                type="text"
-                name="discountPercentage"
-                value={formData.discountPercentage}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-
-            <label className="block mb-2">
-              Discount Amount:
-              <input
-                type="text"
-                name="discountAmount"
-                value={formData.discountAmount}
-                onChange={handleChange}
-                className="flex-1 pl-4"
-              />
-            </label>
-          </div>
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </>
-      )}
-
-      {currentStep === 5 && (
-        <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-6">
-            <div>
-              <label className="block mb-2">
-                Opening Balance:
+          {/* Opening Balance */}
+          <div className="mb-6">
+            <h3 className="text-gray-800 font-semibold mb-2">
+              Opening Balance :
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex flex-col">
+                <label className="font-medium text-gray-700">
+                  Opening Balance:
+                </label>
                 <input
                   type="text"
                   name="openingBalance"
                   value={formData.openingBalance}
                   onChange={handleChange}
-                  className="flex-1 pl-4"
+                  className="p-2 border rounded bg-gray-100"
                 />
-              </label>
-            </div>
-            <div>
-              <label className="block flex items-center">
-                Dr. / Cr.:
-                <input
-                  type="text"
-                  name="drCr"
-                  value={formData.drCr}
-                  onChange={handleChange}
-                  className="flex-1 pl-4"
-                />
-              </label>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-between mt-4">
+          <div className="flex justify-end">
             <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              Previous
-            </button>
-            <button
-              onClick={handleUpdate}
-              className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Update
+              Update Supplier
             </button>
           </div>
-        </div>
-      )}
+        </form>
+      <ToastContainer />
     </div>
   );
 };
 
-export default SupplierEditModal;
+export default SupplierUpdateModal;

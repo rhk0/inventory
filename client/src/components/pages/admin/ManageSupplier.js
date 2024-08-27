@@ -3,6 +3,7 @@ import axios from "axios";
 import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 import SupplierViewModal from "./modals/SupplierViewModal";
 import SupplierEditModal from "./modals/SupplierEditModal";
@@ -11,15 +12,15 @@ const ManageSupplier = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-
   const [modalData, setModalData] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const fetchSuppliers = async () => {
     try {
       const response = await axios.get("/api/v1/auth/manageSupplier");
       setSuppliers(response.data.data);
-
-
     } catch (error) {
       console.error("Error fetching supplier data", error);
     }
@@ -60,11 +61,31 @@ const ManageSupplier = () => {
     setEditModal(false);
   };
 
+  // Filter suppliers based on search query
+  const filteredSuppliers = suppliers.filter((supplier) =>
+    supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
         Manage Supplier
       </h1>
+      {/* Search input */}
+      <div className="flex justify-between mb-4">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          className="p-2 border border-gray-300 rounded"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button
+          className="bg-purple-600 text-white px-4 py-2 rounded"
+          onClick={() => navigate("/admin/CreateSupplier")} 
+        >
+          Add Supplier
+        </button>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
@@ -73,16 +94,20 @@ const ManageSupplier = () => {
                 S.No
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Supplier Name
+                Name
               </th>
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Contact Detail
-              </th>
+
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Address
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                GST Number
+                State
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Contact
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                GSTIN
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Opening Balance
@@ -93,21 +118,25 @@ const ManageSupplier = () => {
             </tr>
           </thead>
           <tbody>
-            {suppliers.length > 0 ? (
-              suppliers.map((supplier, index) => (
+            {filteredSuppliers.length > 0 ? (
+              filteredSuppliers.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.name}
                   </td>
-                  <td className="px-6 py-2 border-r text-sm">
-                    {supplier.contact}
-                  </td>
+
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.address}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {supplier.gstIn}
+                    {supplier.state}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.contact}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.gstin}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.openingBalance}

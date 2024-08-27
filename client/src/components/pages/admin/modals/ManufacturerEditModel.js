@@ -5,8 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-const CustomerEditModal = ({ CustomerData, closeModal }) => {
-  const [formData, setFormData] = useState(CustomerData);
+const ManufacturerEditModel = ({ ManufacturerData, closeModal }) => {
+  const [formData, setFormData] = useState(ManufacturerData);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,16 +17,16 @@ const CustomerEditModal = ({ CustomerData, closeModal }) => {
     try {
       // Make the PUT request to update supplier details
       const response = await axios.put(
-        `/api/v1/auth/updateCustomer/${formData._id}`,
+        `/api/v1/auth/updateManufacturer/${formData._id}`,
         formData
       );
       console.log(response, "res");
 
       if (response.status === 200) {
-        toast.success("Customer updated successfully!");
+        toast.success("Manufacturer updated successfully!");
         closeModal();
       } else {
-        toast.error("Failed to update Customer.");
+        toast.error("Failed to update Manufacturer.");
       }
     } catch (error) {
       console.error("Error updating supplier:", error);
@@ -38,7 +38,7 @@ const CustomerEditModal = ({ CustomerData, closeModal }) => {
     <div className="responsive-container px-4 py-1 max-w-7xl">
         <div className="flex justify-between items-center mb-4">
           <h1 className="font-bold text-center text-gray-700 text-3xl underline">
-            Update Customer
+            Update Manufacturer
           </h1>
           <button
             type="button"
@@ -53,7 +53,7 @@ const CustomerEditModal = ({ CustomerData, closeModal }) => {
           {/* Supplier Details */}
           <div className="mb-6">
             <h3 className="text-gray-800 font-semibold mb-2">
-              Customer Details :
+              Manufacturer Details :
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div className="flex flex-col">
@@ -139,71 +139,6 @@ const CustomerEditModal = ({ CustomerData, closeModal }) => {
             </div>
           </div>
 
-          {/* Banking Details */}
-          <div className="mb-6">
-            <h3 className="text-gray-800 font-semibold mb-2">
-              Banking Details :
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="flex flex-col">
-                <label className="font-medium text-gray-700">Bank Name:</label>
-                <input
-                  type="text"
-                  name="bankName"
-                  value={formData.bankName}
-                  onChange={handleChange}
-                  className="p-2 border rounded bg-gray-100"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="font-medium text-gray-700">
-                  Bank Address:
-                </label>
-                <input
-                  type="text"
-                  name="bankAddress"
-                  value={formData.bankAddress}
-                  onChange={handleChange}
-                  className="p-2 border rounded bg-gray-100"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="font-medium text-gray-700">IFSC Code:</label>
-                <input
-                  type="text"
-                  name="ifscCode"
-                  value={formData.ifscCode}
-                  onChange={handleChange}
-                  className="p-2 border rounded bg-gray-100"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="font-medium text-gray-700">
-                  Account Holder Name:
-                </label>
-                <input
-                  type="text"
-                  name="accountHolderName"
-                  value={formData.accountHolderName}
-                  onChange={handleChange}
-                  className="p-2 border rounded bg-gray-100"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="font-medium text-gray-700">
-                  Account Number:
-                </label>
-                <input
-                  type="text"
-                  name="accountNumber"
-                  value={formData.accountNumber}
-                  onChange={handleChange}
-                  className="p-2 border rounded bg-gray-100"
-                />
-              </div>
-            </div>
-          </div>
-
           {/* Statutory Details */}
           <div className="mb-6">
             <h3 className="text-gray-800 font-semibold mb-2">
@@ -277,7 +212,7 @@ const CustomerEditModal = ({ CustomerData, closeModal }) => {
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              Update Customer
+              Update Manufacturer
             </button>
           </div>
         </form>
@@ -286,4 +221,4 @@ const CustomerEditModal = ({ CustomerData, closeModal }) => {
   );
 };
 
-export default CustomerEditModal;
+export default ManufacturerEditModel;

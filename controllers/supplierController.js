@@ -5,38 +5,35 @@ export const createSupplierController = async (req, res) => {
   try {
     const {
       name,
-      contact,
       address,
-      pinCode,
       state,
       country,
+      pinCode,
+      contact,
       email,
       website,
-      registrationType,
-      gstIn,
-      panNo,
       bankName,
+      bankAddress,
       ifscCode,
-      accountNo,
-      accountHolder,
-      upiId,
-      itemCategories,
-      discountPercentage,
-      discountAmount,
+      accountHolderName,
+      accountNumber,
+      registrationType,
+      gstin,
       openingBalance,
-      drCr,
     } = req.body;
     const requiredFields = [
       "name",
-      "contact",
       "address",
-      "pinCode",
       "state",
       "country",
-      "email",
+      "pinCode",
+      "contact",
+      "bankName",
+      "ifscCode",
+      "accountHolderName",
+      "accountNumber",
       "registrationType",
-      "panNo",
-      "drCr",
+      "openingBalance",
     ];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length > 0) {
@@ -54,26 +51,21 @@ export const createSupplierController = async (req, res) => {
     }
     const data = await supplierModel.create({
       name,
-      contact,
       address,
-      pinCode,
       state,
       country,
+      pinCode,
+      contact,
       email,
       website,
-      registrationType,
-      gstIn,
-      panNo,
       bankName,
+      bankAddress,
       ifscCode,
-      accountNo,
-      accountHolder,
-      upiId,
-      itemCategories,
-      discountPercentage,
-      discountAmount,
+      accountHolderName,
+      accountNumber,
+      registrationType,
+      gstin,
       openingBalance,
-      drCr,
     });
     return res.status(201).send({
       success: true,
@@ -155,32 +147,24 @@ export const deleteSupplierController = async (req, res) => {
     });
   }
 };
+
 export const updateSupplierController = async (req, res) => {
   try {
-    const { _id } = req.params; 
+    const { _id } = req.params;
     const updateData = req.body;
     const requiredFields = [
       "name",
-      "contact",
       "address",
-      "pinCode",
       "state",
       "country",
-      "email",
-      "website",
-      "registrationType",
-      "gstIn",
-      "panNo",
+      "pinCode",
+      "contact",
       "bankName",
       "ifscCode",
-      "accountNo",
-      "accountHolder",
-      "upiId",
-      "itemCategories",
-      "discountPercentage",
-      "discountAmount",
+      "accountHolderName",
+      "accountNumber",
+      "registrationType",
       "openingBalance",
-      "drCr",
     ];
     const missingFields = requiredFields.filter(
       (field) => !(field in updateData)
@@ -193,11 +177,10 @@ export const updateSupplierController = async (req, res) => {
       });
     }
 
-   
     const supplier = await supplierModel.findByIdAndUpdate(_id, updateData, {
       new: true,
     });
-    console.log(supplier)
+    console.log(supplier);
 
     if (!supplier) {
       return res.status(404).send({

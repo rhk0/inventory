@@ -54,8 +54,6 @@ if(dauth){
         });
         sessionStorage.setItem("dauth", JSON.stringify(response.data));
 
-
-
         setTimeout(() => {
           navigate("/admin");
         }, 3000);

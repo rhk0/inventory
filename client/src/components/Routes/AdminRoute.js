@@ -39,6 +39,8 @@ import SalesQuotation from "../pages/admin/SalesQuotation.js";
 import ManageQuotation from "../pages/admin/ManageQuotation.js";
 import Invoice from "../pages/admin/Invoice.js";
 import DeliveryChallan from "../pages/admin/DeliveryChallan.js";
+import CreateManufacturer from "../pages/admin/CreateManufacturer.js";
+import ManageManufacturer from "../pages/admin/ManageManufacturer.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -66,13 +68,20 @@ const AdminRoute = () => {
       />
       <Routes>
         <Route path="/" element={<Home />} />
+        {/* <Route path="/dash" element={<Home />} /> */}
+
         <Route path="/*" element={<Test />} />
         {/* rahul routing */}
+
         <Route path="/CreateSupplier" element={<CreateSupplier />} />
         <Route path="/ManageSupplier" element={<ManageSupplier />} />
-        <Route path="/CreateCustomer" element={<CreateCustomer />} />
-        <Route path="/ManageCustomer" element={<ManageCustomer />} />
-        <Route path="/Cash" element={<Cash />} />
+        <Route path="CreateCustomer" element={<CreateCustomer />} />
+        <Route path="ManageCustomer" element={<ManageCustomer />} />
+        <Route path="/CreateManufacturer" element={<CreateManufacturer />} />
+        <Route path="/ManageManufacturer" element={<ManageManufacturer />} />
+
+
+        <Route path="Cash" element={<Cash />} />
         <Route path="BankToBankTransfer" element={<BankToBankTranfer />} />
         <Route path="addcategory" element={<AddCategory />} />
         <Route path="addsubcategory" element={<AddSubCategory />} />
@@ -85,7 +94,7 @@ const AdminRoute = () => {
         <Route path="managesubcategory" element={<ManageSubCategory />} />
         <Route path="createbranch" element={<CreateBranches />} />
         <Route path="managebranches" element={<ManageBranches />} />
-        <Route path="createproduct" element={<CreateProduct/>}/>
+        <Route path="createproduct" element={<CreateProduct />} />
 
         {/* dheerendra routing */}
         <Route path="createtranspoter" element={<CreateTranspoter />} />
@@ -103,7 +112,7 @@ const AdminRoute = () => {
         <Route path="managesalesQuotation" element={<ManageQuotation />} />
         <Route path="invoice" element={<Invoice />} />
         <Route path="deliverychallan" element={<DeliveryChallan />} />
-      </Routes> 
+      </Routes>
     </div>
   );
 };

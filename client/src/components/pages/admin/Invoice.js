@@ -317,7 +317,7 @@ const Invoice = () => {
                           type="text"
                           name="itemcode"
                           className="border p-2 w-full"
-                          value={product.itemcode}
+                          value={product.itemCode}
                           onChange={(e) => handleProductChange(index, e)}
                         />
                       </td>

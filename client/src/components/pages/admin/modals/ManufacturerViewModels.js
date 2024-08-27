@@ -1,12 +1,12 @@
 import React from "react";
 import { FaTimes } from "react-icons/fa";
 
-const TransporterViewModel = ({ TransporterData, closeModal }) => {
+const ManufacturerViewModel = ({ ManufacturerData, closeModal }) => {
   return (
     <div className="responsive-container  ">
       <div className="flex justify-between items-center mb-1">
-        <h1 className="font-bold text-center text-gray-700 text-2xl underline mb-4">
-          View Transporter
+        <h1 className="font-bold text-center text-gray-700 text-2xl underline">
+          View Manufacturer
         </h1>
         <button
           type="button"
@@ -17,50 +17,50 @@ const TransporterViewModel = ({ TransporterData, closeModal }) => {
         </button>
       </div>
 
-      {/* Transporter Details */}
+      {/* Manufacturer Details */}
       <div className="mb-2">
-        <h3 className="text-gray-800 font-semibold mb-1">Transporter Details :</h3>
+        <h3 className="text-gray-800 font-semibold mb-1">Manufacturer Details :</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">Name:</label>
-            <div className="p-2 bg-gray-100 rounded">{TransporterData.name}</div>
+            <div className="p-2 bg-gray-100 rounded">{ManufacturerData.name}</div>
           </div>
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">Address:</label>
             <div className="p-2 bg-gray-100 rounded">
-              {TransporterData.address}
+              {ManufacturerData.address}
             </div>
           </div>
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">Country:</label>
             <div className="p-2 bg-gray-100 rounded">
-              {TransporterData.country}
+              {ManufacturerData.country}
             </div>
           </div>
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">State:</label>
-            <div className="p-2 bg-gray-100 rounded">{TransporterData.state}</div>
+            <div className="p-2 bg-gray-100 rounded">{ManufacturerData.state}</div>
           </div>
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">Pin Code:</label>
             <div className="p-2 bg-gray-100 rounded">
-              {TransporterData.pinCode}
+              {ManufacturerData.pinCode}
             </div>
           </div>
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">Contact:</label>
             <div className="p-2 bg-gray-100 rounded">
-              {TransporterData.contact}
+              {ManufacturerData.contact}
             </div>
           </div>
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">Email:</label>
-            <div className="p-2 bg-gray-100 rounded">{TransporterData.email}</div>
+            <div className="p-2 bg-gray-100 rounded">{ManufacturerData.email}</div>
           </div>
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">Website:</label>
             <div className="p-2 bg-gray-100 rounded">
-              {TransporterData.website}
+              {ManufacturerData.website}
             </div>
           </div>
         </div>
@@ -79,12 +79,12 @@ const TransporterViewModel = ({ TransporterData, closeModal }) => {
               Registration Type:
             </label>
             <div className="p-2 bg-gray-100 rounded">
-              {TransporterData.registrationType}
+              {ManufacturerData.registrationType}
             </div>
           </div>
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">GSTIN:</label>
-            <div className="p-2 bg-gray-100 rounded">{TransporterData.gstin}</div>
+            <div className="p-2 bg-gray-100 rounded">{ManufacturerData.gstin}</div>
           </div>
         </div>
       </div>
@@ -97,14 +97,14 @@ const TransporterViewModel = ({ TransporterData, closeModal }) => {
               Opening Balance:
             </label>
             <div className="p-2 bg-gray-100 rounded">
-              {TransporterData.openingBalance}
+              {ManufacturerData.openingBalance}
             </div>
           </div>
 
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">As on date:</label>
             <div className="p-2 bg-gray-100 rounded">
-              {TransporterData.asOnDate}
+              {ManufacturerData.asOnDate}
             </div>
           </div>
         </div>
@@ -113,4 +113,4 @@ const TransporterViewModel = ({ TransporterData, closeModal }) => {
   );
 };
 
-export default TransporterViewModel;
+export default ManufacturerViewModel;

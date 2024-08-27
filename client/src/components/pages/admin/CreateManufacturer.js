@@ -3,7 +3,7 @@ import axios from "axios";
 import { Country, State } from "country-state-city";
 import { toast, ToastContainer } from "react-toastify";
 
-const CreateSupplier = () => {
+const CreateManufacturer = () => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -17,14 +17,11 @@ const CreateSupplier = () => {
     contact: "",
     email: "",
     website: "",
-    bankName: "",
-    bankAddress: "",
-    ifscCode: "",
-    accountHolderName: "",
-    accountNumber: "",
+
     registrationType: "",
     gstin: "",
     openingBalance: "",
+    asOnDate: "",
   });
 
   useEffect(() => {
@@ -63,14 +60,11 @@ const CreateSupplier = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        await axios.post(
-        "/api/v1/auth/CreateSupplier",
-        formData
-      );
+      await axios.post("/api/v1/auth/CreateManufacturer", formData);
       handleClear();
-      toast.success("Supplier added successfully!");
+      toast.success("Manufacturer added successfully!");
     } catch (error) {
-      console.error("Error adding supplier:", error);
+      console.error("Error adding Manufacturer:", error);
       toast.error(error.response.data.message);
       toast.error(error.response.data.details);
     }
@@ -86,14 +80,10 @@ const CreateSupplier = () => {
       contact: "",
       email: "",
       website: "",
-      bankName: "",
-      bankAddress: "",
-      ifscCode: "",
-      accountHolderName: "",
-      accountNumber: "",
       registrationType: "",
       gstin: "",
       openingBalance: "",
+      asOnDate: "",
     });
     setSelectedCountry("");
     setSelectedState("");
@@ -106,13 +96,13 @@ const CreateSupplier = () => {
         className="mx-auto p-8 border border-gray-300 shadow-lg rounded-lg bg-white"
       >
         <h1 className="font-bold mb-4 text-center text-gray-700 text-3xl underline">
-          Add Supplier
+          Add Manufacturer
         </h1>
 
         {/* Supplier Details */}
         <div className="mb-6">
           <h3 className="text-gray-800 font-semibold mb-2">
-            Supplier Details :
+            Manufacturer Details :
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <input
@@ -194,55 +184,6 @@ const CreateSupplier = () => {
           </div>
         </div>
 
-        {/* Banking Details */}
-        <div className="mb-6">
-          <h3 className="text-gray-800 font-semibold mb-2">
-            Banking Details :
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <input
-              name="bankName"
-              className="p-2 border border-gray-300 rounded"
-              type="text"
-              placeholder="Bank Name"
-              value={formData.bankName}
-              onChange={handleChange}
-            />
-            <input
-              name="bankAddress"
-              className="p-2 border border-gray-300 rounded"
-              type="text"
-              placeholder="Bank Address"
-              value={formData.bankAddress}
-              onChange={handleChange}
-            />
-            <input
-              name="ifscCode"
-              className="p-2 border border-gray-300 rounded"
-              type="text"
-              placeholder="IFSC Code"
-              value={formData.ifscCode}
-              onChange={handleChange}
-            />
-            <input
-              name="accountHolderName"
-              className="p-2 border border-gray-300 rounded"
-              type="text"
-              placeholder="Account Holder Name"
-              value={formData.accountHolderName}
-              onChange={handleChange}
-            />
-            <input
-              name="accountNumber"
-              className="p-2 border border-gray-300 rounded"
-              type="text"
-              placeholder="Account Number"
-              value={formData.accountNumber}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
         {/* Statutory Details */}
         <div className="mb-6">
           <h3 className="text-gray-800 font-semibold mb-2">
@@ -278,14 +219,24 @@ const CreateSupplier = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <input
               name="openingBalance"
-              className="p-2 border border-gray-300 rounded"
+              className="p-2 border border-gray-300 rounded h-10"
               type="text"
               placeholder="Opening Balance"
               value={formData.openingBalance}
               onChange={handleChange}
             />
+            <div>
+              <input
+                name="asOnDate"
+                className="p-2 border border-gray-300 rounded"
+                type="date"
+                placeholder=""
+                value={formData.asOnDate}
+                onChange={handleChange}
+              />
+              <p className="text-sm text-gray-500 mt-1">As on date</p>
+            </div>
           </div>
-          <p className="text-sm text-gray-500 mt-1">as on 1st day of F.Y.</p>
         </div>
 
         {/* Buttons */}
@@ -310,4 +261,4 @@ const CreateSupplier = () => {
   );
 };
 
-export default CreateSupplier;
+export default CreateManufacturer;

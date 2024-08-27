@@ -3,146 +3,172 @@ import axios from "axios";
 import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
-import TranspoterViewModal from "./modals/TransporterViewModel.js";
-import TranspoterEditModal from "./modals/TransporterEditModel.js";
+import TransporterEditModal from "./modals/TransporterEditModel";
+import TransporterViewModel from "./modals/TransporterViewModel";
 
-const ManageTranspoter = () => {
-  const [Transpoters, setTranspoters] = useState([]);
+const ManageTransporter = () => {
+  const [transporter, setTransporter] = useState([]);
   const [viewModal, setViewModal] = useState(false);
-  const [modalData, setModalData] = useState(null);
   const [editModal, setEditModal] = useState(false);
+  const [modalData, setModalData] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    const fetchTranspoters = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageTransport");
-        setTranspoters(response.data.data);
+  const navigate = useNavigate();
 
-        if (response.data.data) {
-          toast.success(" Get Transpoter data Successfully...");
-        }
-      } catch (error) {
-        console.error("Error fetching Transpoter data", error);
-      }
-    };
-
-    fetchTranspoters();
-  }, []);
-
-  const fetchTranspoters = async () => {
+  const fetchTransporter = async () => {
     try {
       const response = await axios.get("/api/v1/auth/manageTransport");
-      setTranspoters(response.data.data);
-
-      if (response.data.data) {
-        toast.success(" Get Transpoter data Successfully...");
-      }
+      setTransporter(response.data.data);
     } catch (error) {
-      console.error("Error fetching Transpoter data", error);
+      console.error("Error fetching Transporter data", error);
     }
   };
 
-  const deleteTranspoter = async (_id) => {
+  useEffect(() => {
+    fetchTransporter();
+  }, []);
+
+  const deleteTransporter = async (_id) => {
     try {
       const response = await axios.delete(
         `/api/v1/auth/deleteTransport/${_id}`
       );
-      console.log(response);
-      setTranspoters(
-        Transpoters.filter((Transpoter) => Transpoter._id !== _id)
-      );
+      setTransporter(transporter.filter((supplier) => supplier._id !== _id));
+
+      if (response) {
+        toast.success(" delete all data Successfully...");
+      } else {
+        toast.error("error while deleting...");
+      }
     } catch (error) {
-      console.log("Error deleting Transpoter data", error);
+      console.log("Error deleting supplier data", error);
     }
   };
 
-  const openViewModal = (Transpoters) => {
+  const openViewModal = (Transporter) => {
     setViewModal(true);
-
-    setModalData(Transpoters);
+    setModalData(Transporter);
   };
 
-  const openEditModal = (suppliers) => {
+  const openEditModal = (Transporter) => {
     setEditModal(true);
-    setModalData(suppliers);
+    setModalData(Transporter);
   };
 
   const closeModal = () => {
-    fetchTranspoters();
+    fetchTransporter();
     setViewModal(false);
     setEditModal(false);
   };
 
+  // Filter Transporter based on search query
+  const filteredTransporter = transporter.filter((supplier) =>
+    supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
-        Manage Transpoter
+        Manage Transporter
       </h1>
+      {/* Search input */}
+      <div className="flex justify-between mb-4">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          className="p-2 border border-gray-300 rounded"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button
+          className="bg-purple-600 text-white px-4 py-2 rounded"
+          onClick={() => navigate("/admin/createtranspoter")}
+        >
+          Add Transporter
+        </button>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100 border-b">
-              <th className="px-6 py-2  text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 S.No
               </th>
-              <th className="px-6 py-2 text-nowrap border-r text-left text-sm font-medium text-gray-600">
-                Transpoter Name
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Name
               </th>
-              <th className="px-6 py-2  text-nowrap border-r text-left text-sm font-medium text-gray-600">
-                Contact Detail
-              </th>
-              <th className="px-6 py-2  text-nowrap border-r text-left text-sm font-medium text-gray-600">
+
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Address
               </th>
-              <th className="px-6 py-2  text-nowrap border-r text-left text-sm font-medium text-gray-600">
-                GST Number
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                State
               </th>
-              <th className="px-6 py-2 border-r  text-nowrap text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Contact
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Registration Type
+              </th>
+
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                GSTIN
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Opening Balance
               </th>
-              <th className="px-6 py-2 text-left  text-nowrap text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 text-left text-sm font-medium text-gray-600">
                 Action
               </th>
             </tr>
           </thead>
           <tbody>
-            {Transpoters.length > 0 ? (
-              Transpoters.map((Transpoter, index) => (
-                <tr key={Transpoter.id} className="border-b">
+            {filteredTransporter.length > 0 ? (
+              filteredTransporter.map((supplier, index) => (
+                <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.name}
+                    {supplier.name}
+                  </td>
+
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.address}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.contact}
+                    {supplier.state}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.address}
+                    {supplier.contact}
+                  </td>
+
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.registrationType}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.gstIn}
+                    {supplier.gstin}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {Transpoter.openingBalance}
+                    {supplier.openingBalance}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => openViewModal(Transpoter)}
+                      onClick={() => openViewModal(supplier)}
                     >
                       View
                     </button>{" "}
+                    /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => openEditModal(Transpoter)}
+                      onClick={() => openEditModal(supplier)}
                     >
                       Edit
                     </button>{" "}
-                    
+                    /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => deleteTranspoter(Transpoter._id)}
+                      onClick={() => deleteTransporter(supplier._id)}
                     >
                       Delete
                     </button>
@@ -152,13 +178,12 @@ const ManageTranspoter = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="px-6 py-2 text-center text-sm">
-                  No Transpoters found.
+                  No Transporter found.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
-
         <Modal
           isOpen={viewModal}
           onRequestClose={closeModal}
@@ -175,11 +200,12 @@ const ManageTranspoter = () => {
             },
           }}
         >
-          <TranspoterViewModal
+          <TransporterViewModel
             closeModal={closeModal}
-            TranspoterData={modalData}
+            TransporterData={modalData}
           />
         </Modal>
+
         <Modal
           isOpen={editModal}
           onRequestClose={closeModal}
@@ -196,9 +222,9 @@ const ManageTranspoter = () => {
             },
           }}
         >
-          <TranspoterEditModal
+          <TransporterEditModal
             closeModal={closeModal}
-            TranspoterData={modalData}
+            TransporterData={modalData}
           />
         </Modal>
       </div>
@@ -207,4 +233,4 @@ const ManageTranspoter = () => {
   );
 };
 
-export default ManageTranspoter;
+export default ManageTransporter;

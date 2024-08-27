@@ -1,282 +1,151 @@
-import React, { useState } from "react";
-import { FaTimes } from 'react-icons/fa';
+import React from "react";
+import { FaTimes } from "react-icons/fa";
 
-
-const CustomerViewModal = ({ customerData, closeModal }) => {
-  const [currentStep, setCurrentStep] = useState(1);
-
-  const nextStep = () => {
-    setCurrentStep((prevStep) => prevStep + 1);
-  };
-
-  const prevStep = () => {
-    setCurrentStep((prevStep) => prevStep - 1);
-  };
-
-  const renderStepIndicator = () => (
-    <div className="flex justify-center px-0 mb-6 text-xs sm:text-md md:text-lg lg:text-lg font-semibold grid grid-cols-2 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-4 gap-1">
-      {[
-        "Customer Details",
-        "Statutory Details",
-        "Banking  Details",
-        "Discounting",
-        "Opening Balance",
-      ].map((step, index) => (
-        <div
-          key={index}
-          className={`flex items-center px-4 py-2 ${
-            currentStep === index + 1
-              ? "bg-violet-600 text-white underline underline-offset-8"
-              : "bg-gray-300"
-          } rounded-md mx-2 cursor-pointer transition duration-300`}
-          onClick={() => setCurrentStep(index + 1)}
-        >
-          {step}
-        </div>
-      ))}
-    </div>
-  );
-
+const CustomerViewModal = ({ CustomerData, closeModal }) => {
   return (
-    <div className=" max-w-3xl mx-auto md:pl-4 md:pr-4 p-2 responsive-container  text-black ">
-      <button
-        className="absolute top-2 right-2 p-2 text-gray-700 text-xl hover:text-gray-900 focus:outline-none md:text-2xl md:top-4 md:right-4 border"
-        onClick={closeModal}
-      >
-        <FaTimes />
-      </button>
-      <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800 mt-8">
-        Customer
-      </h4>
-      {renderStepIndicator()}
-      {currentStep === 1 && (
-        <>
-          {" "}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <label className="block mb-2">
-              Name:
-              <span type="text" name="name" className="flex-1 pl-4">
-                {customerData.name}
-              </span>
-            </label>
-            <label className="block mb-2">
-              Contact:
-              <span type="text" name="contact" className="flex-1 pl-4" />
-              {customerData.contact}
-            </label>
+    <div className="responsive-container  ">
+      <div className="flex justify-between items-center mb-1">
+        <h1 className="font-bold text-center text-gray-700 text-2xl underline">
+          View Customer
+        </h1>
+        <button
+          type="button"
+          className="text-gray-500 hover:text-gray-700 border"
+          onClick={closeModal}
+        >
+          <FaTimes size={24} />
+        </button>
+      </div>
 
-            <label className="block mb-2">
-              Address:
-              <span type="text" name="address" className="flex-1 pl-4" />
-              {customerData.address}
-            </label>
-            <label className="block mb-2">
-              Pin Code:
-              <span type="text" name="pinCode" className="flex-1 pl-4" />
-              {customerData.pinCode}
-            </label>
-            <label className="block mb-2">
-              State:
-              <span type="text" name="accountNo" className="flex-1 pl-4" />
-              {customerData.state}
-            </label>
-            <label className="block mb-2">
-              Country:
-              <span type="text" name="country" className="flex-1 pl-4" />
-              {customerData.country}
-            </label>
-
-            <label className="block mb-2">
-              Email:
-              <span type="email" name="email" className="flex-1 pl-4" />
-              {customerData.email}
-            </label>
-            <label className="block mb-2">
-              Website:
-              <span type="text" name="website" className="flex-1 pl-4" />
-              {customerData.website}
-            </label>
+      {/* Customer Details */}
+      <div className="mb-2">
+        <h3 className="text-gray-800 font-semibold mb-1">Customer Details :</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Name:</label>
+            <div className="p-2 bg-gray-100 rounded">{CustomerData.name}</div>
           </div>
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </>
-      )}
-
-      {currentStep === 2 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <label className="block mb-2">
-              Registration Type:
-              <span
-                type="text"
-                name="registrationType"
-                className="flex-1 pl-4"
-              />
-              {customerData.registrationType}
-            </label>
-
-            <label className="block mb-2">
-              GSTIN:
-              <span type="text" name="gstIn" className="flex-1 pl-4" />
-              {customerData.gstIn}
-            </label>
-
-            <label className="block mb-2">
-              PAN No:
-              <span type="text" name="panNo" className="flex-1 pl-4" />
-              {customerData.panNo}
-            </label>
-          </div>
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </>
-      )}
-
-      {currentStep === 3 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <label className="block mb-2">
-              Bank Name:
-              <span type="text" name="bankName" className="flex-1 pl-4" />
-              {customerData.bankName}
-            </label>
-
-            <label className="block mb-2">
-              Ifsc Code:
-              <span type="text" name="ifscCode" className="flex-1 pl-4" />
-              {customerData.ifscCode}
-            </label>
-
-            <label className="block mb-2">
-              Account No:
-              <span type="text" name="accountNo" className="flex-1 pl-4" />
-              {customerData.accountNo}
-            </label>
-
-            <label className="block mb-2">
-              Account Holder:
-              <span type="text" name="accountHolder" className="flex-1 pl-4" />
-              {customerData.accountHolder}
-            </label>
-
-            <label className="block mb-2">
-              UPI ID:
-              <span type="text" name="upiId" className="flex-1 pl-4" />
-              {customerData.upiId}
-            </label>
-          </div>
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </>
-      )}
-
-      {currentStep === 4 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            <label className="block mb-2">
-              Item Categories
-              <span type="text" name="itemCategories" className="flex-1 pl-4" />
-              {customerData.itemCategories}
-            </label>
-
-            <label className="block mb-2">
-              Discount
-              <span
-                type="text"
-                name="discountPercentage"
-                className="flex-1 pl-4"
-              />
-              {customerData.discountPercentage}%
-            </label>
-
-            <label className="block mb-2">
-              Discount Amount
-              <span type="text" name="discountAmount" className="flex-1 pl-4" />
-              {customerData.discountAmount}
-            </label>
-          </div>
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </>
-      )}
-
-      {currentStep === 5 && (
-        <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-6">
-            <div>
-              <label className="block mb-2">
-                Opening Balance
-                <span type="text" name="openingBalance" className="flex-1 pl-4">
-                  {customerData.openingBalance}
-                </span>
-              </label>
-            </div>
-            <div>
-              <label className="block flex items-center">
-                Dr. / Cr.
-                <span type="text" name="drCr" className="flex-1 pl-4">
-                  {customerData.drCr}
-                </span>
-              </label>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Address:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.address}
             </div>
           </div>
-
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Country:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.country}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">State:</label>
+            <div className="p-2 bg-gray-100 rounded">{CustomerData.state}</div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Pin Code:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.pinCode}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Contact:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.contact}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Email:</label>
+            <div className="p-2 bg-gray-100 rounded">{CustomerData.email}</div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Website:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.website}
+            </div>
           </div>
         </div>
-      )}
-      {/* <ToastContainer /> */}
+      </div>
+
+      {/* Banking Details */}
+      <div className="mb-2">
+        <h3 className="text-gray-800 font-semibold mb-1">Banking Details :</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Bank Name:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.bankName}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Bank Address:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.bankAddress}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">IFSC Code:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.ifscCode}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Account Holder Name:
+            </label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.accountHolderName}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">Account Number:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.accountNumber}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Statutory Details */}
+      <div className="mb-2">
+        <h3 className="text-gray-800 font-semibold mb-1">
+          Statutory Details :
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Registration Type:
+            </label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.registrationType}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">GSTIN:</label>
+            <div className="p-2 bg-gray-100 rounded">{CustomerData.gstin}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Opening Balance */}
+      <div className="mb-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Opening Balance:
+            </label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.openingBalance}
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">As on date:</label>
+            <div className="p-2 bg-gray-100 rounded">
+              {CustomerData.asOnDate}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -23,6 +23,7 @@ import productRoute from "./routes/productRoute.js"
 import salesQuationRoute from "./routes/salesQuationRoute.js"
 import salesInvoiceRoute from "./routes/salesInvoiceRoute.js"
 import deliveryChallanRoute from "./routes/deliveryChallanRoute.js"
+import manufacturerRoute from "./routes/manufacturerRoute.js"
 import formidable from 'express-formidable';
 
 
@@ -57,9 +58,13 @@ app.use("/api/v1/auth",InventroySubBrandRoute)
 app.use("/api/v1/auth",InventoryStockUnitRoute)
 app.use("/api/v1/auth",InventoryCreateBranchesRoute)
 app.use("/api/v1/auth",productRoute)
+app.use("/api/v1/auth",manufacturerRoute)
+
 app.use("/api/v1/salesQuationRoute",salesQuationRoute)
 app.use("/api/v1/salesInvoiceRoute",salesInvoiceRoute)
 app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
+//change dheeru
+app.use("/uploads",express.static("uploads"));
 app.use(formidable());
 
 

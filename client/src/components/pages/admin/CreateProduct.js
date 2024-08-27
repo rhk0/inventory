@@ -366,7 +366,7 @@ const CreateProduct = () => {
   };
 
   return (
-    <div className="p-8 responsive-container">
+    <div className="justify-center p-8 responsive-container">
       <h4 className="text-3xl font-bold mb-4 text-center bg-gray-300">
         Create Product
       </h4>

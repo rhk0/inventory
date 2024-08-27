@@ -8,6 +8,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showParties, setParties] = useState(false);
   const [showTransport, setTransport] = useState(false);
   const [showCustomer, setCustomer] = useState(false);
+
+  const [showManufacture, setManufacture] = useState(false);
+
   const [showStaff, setStaff] = useState(false);
   const [showVendor, setVendor] = useState(false);
   const [showspplier, setSupplier] = useState(false);
@@ -24,22 +27,30 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showInventoryProduct, setInventoryProduct] = useState(false);
   const [showPurches, setPurches] = useState(false);
   const [showSales, setSales] = useState(false);
-  const [showExpenses, setExpenses] = useState(false);
   const [showIncome, setIncome] = useState(false);
   const [showCRM, setCRM] = useState(false);
   const [showReport, setReport] = useState(false);
   const [showSettings, setSettings] = useState(false);
+  const [showBankTransaction, setShowBankTransction] = useState(false);
+  const [showCash, setCash] = useState(false);
+
+  const [showExpenses, setExpenses] = useState(false);
+
+  const [showAccount, SetShowAccount] = useState(false);
   const sidebarRef = useRef(null);
 
   const closeAll = () => {
     setParties(false);
     setTransport(false);
     setCustomer(false);
+    setManufacture(false);
+    SetShowAccount(false);
+    setShowBankTransction(false);
+
     setStaff(false);
     setVendor(false);
     setSupplier(false);
     setBank(false);
-    setBankTransaction(false);
     setInventory(false);
     setInventoryCategory(false);
     setInventorySubCategory(false);
@@ -49,7 +60,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     setInventoryProduct(false);
     setPurches(false);
     setSales(false);
-    setExpenses(false);
+    setCash(false);
     setIncome(false);
     setCRM(false);
     setReport(false);
@@ -65,32 +76,28 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     closeAll();
     setParties(!showParties);
   };
+  const toggleAccount = () => {
+    closeAll();
+    SetShowAccount(!showAccount);
+  };
 
   const toggleBank = () => {
     closeAll();
     setBank(!showBankDropdown);
   };
-
   const toggleInventry = () => {
     closeAll();
     setInventory(!showInventory);
   };
-
   const toggleSales = () => {
     closeAll();
     setSales(!showSales);
   };
 
-  const toggleExpenses = () => {
+  const toggleCash = () => {
     closeAll();
-    setExpenses(!showExpenses);
+    setCash(!showCash);
   };
-
-  const toggleIncome = () => {
-    closeAll();
-    setIncome(!showIncome);
-  };
-
   const toggleCRM = () => {
     closeAll();
     setCRM(!showCRM);
@@ -155,7 +162,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Dashboard */}
         <li className="sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/dashboard" className="inline-container">
+            <Link to="/admin/dash" className="inline-container">
               <span>Dashboard</span>
             </Link>
           </a>
@@ -191,7 +198,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/CreateSupplier"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Create Supplier
+                        Add Supplier
                       </Link>
                     </li>
                     <li>
@@ -199,7 +206,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/ManageSupplier"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Manage Supplier
+                        Supplier List
                       </Link>
                     </li>
                   </ul>
@@ -221,7 +228,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/CreateCustomer"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Create Customer
+                        Add Customer
                       </Link>
                     </li>
                     <li>
@@ -229,72 +236,49 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/ManageCustomer"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Manage Customer
+                        Customer List
                       </Link>
                     </li>
                   </ul>
                 )}
               </li>
-              {/* Transport */}
+
+              {/* Manufacture */}
+
               <li className="">
                 <button
-                  onClick={() => setTransport(!showTransport)}
+                  onClick={() => setManufacture(!showManufacture)}
                   className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
-                  <span>Transport</span>
-                  {!showTransport ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                  <span>Manufacturer</span>
+                  {!showManufacture ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
                 </button>
-                {showTransport && (
+                {showManufacture && (
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/createtranspoter"
+                        to="/admin/CreateManufacturer"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Create Transporter
+                        Add Manufacturer
                       </Link>
                     </li>
                     <li>
                       <Link
-                        to="/admin/managetranspoter"
+                        to="/admin/ManageManufacturer"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Manage Transporter
+                        Manufacturer List
                       </Link>
                     </li>
                   </ul>
                 )}
               </li>
-              {/* Staff */}
-              <li className="">
-                <button
-                  onClick={() => setStaff(!showStaff)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
-                >
-                  <span>Staff</span>
-                  {!showStaff ? <IoIosArrowForward /> : <IoIosArrowDown />}
-                </button>
-                {showStaff && (
-                  <ul className="ml-4">
-                    <li>
-                      <Link
-                        to="/admin/createstaff"
-                        className="flex items-center text-white nesteditem p-1"
-                      >
-                        Create Staff
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/admin/managestaff"
-                        className="flex items-center text-white nesteditem p-1"
-                      >
-                        Manage Staff
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-              </li>
+
               {/* Vendor */}
               <li className="">
                 <button
@@ -325,87 +309,33 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   </ul>
                 )}
               </li>
-            </ul>
-          )}
-        </li>
 
-        {/* Cash */}
-        <li className="sidebar-list-item hover:bg-blue-900">
-          <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/cash" className="inline-container">
-              <span>Cash</span>
-            </Link>
-          </a>
-        </li>
-
-        {/* Bank */}
-        <li className="px-1 py-2 ">
-          <button
-            onClick={() => {
-              setBank(!showBankDropdown);
-              toggleBank();
-            }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
-          >
-            <span className="">Bank</span>
-            {!showBankDropdown ? <IoIosArrowForward /> : <IoIosArrowDown />}
-          </button>
-          {showBankDropdown && (
-            <ul className="ml-4 ">
-              <li className=" ">
-                <Link
-                  to="/admin/addbank"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
-                >
-                  Add Bank
-                </Link>
-              </li>
+              {/* Transport */}
               <li className="">
-                <Link
-                  to="/admin/managebank"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
-                >
-                  Manage Bank
-                </Link>
-              </li>
-
-              <li className="  ">
                 <button
-                  onClick={() => setBankTransaction(!showBankTransction)}
-                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
+                  onClick={() => setTransport(!showTransport)}
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
-                  <span>Bank Transaction</span>
-                  {!showBankTransction ? (
-                    <IoIosArrowForward />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
+                  <span>Transport</span>
+                  {!showTransport ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
-                {showBankTransction && (
-                  <ul className="ml-4  px-1">
-                    <li className=" ">
+                {showTransport && (
+                  <ul className="ml-4">
+                    <li>
                       <Link
-                        to="/admin/BankToBankTransfer"
-                        className="flex items-center text-white nestitemhover"
+                        to="/admin/createtranspoter"
+                        className="flex items-center text-white nesteditem p-1"
                       >
-                        Bank To Bank Transfer
+                        Create Transporter
                       </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/cashdepositintobank"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Cash Deposit Into Bank
-                        </Link>
-                      </li>
-                      <li className=" ">
-                        <Link
-                          to="/admin/cashwithdrawfrombank"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Cash Withdraw From Bank
-                        </Link>
-                      </li>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/managetranspoter"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Manage Transporter
+                      </Link>
                     </li>
                   </ul>
                 )}
@@ -430,330 +360,110 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/stockdetails"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                  to="/admin/addcategory"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Stock Details
+                  Create Category
                 </Link>
+                <li className=" ">
+                  <Link
+                    to="/admin/ManageCategory"
+                    className="flex items-center text-white nestitemhover"
+                  >
+                    Manage Category
+                  </Link>
+                </li>
               </li>
 
-              <li className="  ">
-                <button
-                  onClick={() => setInventoryCategory(!showInventoryCategory)}
-                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
-                >
-                  <span>Category</span>
-                  {!showInventoryCategory ? (
-                    <IoIosArrowForward />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </button>
-                {showInventoryCategory && (
-                  <ul className="ml-4  px-1">
-                    <li className=" ">
-                      <Link
-                        to="/admin/addcategory"
-                        className="flex items-center text-white nestitemhover"
-                      >
-                        Add Category
-                      </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/ManageCategory"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Manage Category
-                        </Link>
-                      </li>
-                    </li>
-                  </ul>
-                )}
-              </li>
-
-              <li className="  ">
-                <button
-                  onClick={() =>
-                    setInventorySubCategory(!showInventorySubCategory)
-                  }
-                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
-                >
-                  <span>Sub Category</span>
-                  {!showInventorySubCategory ? (
-                    <IoIosArrowForward />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </button>
-                {showInventorySubCategory && (
-                  <ul className="ml-4  px-1">
-                    <li className=" ">
-                      <Link
-                        to="/admin/addsubcategory"
-                        className="flex items-center text-white nestitemhover"
-                      >
-                        Add Sub Category
-                      </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/managesubcategory"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Manage Sub Category
-                        </Link>
-                      </li>
-                    </li>
-                  </ul>
-                )}
-              </li>
-
-              <li className="  ">
-                <button
-                  onClick={() => setInventoryBrand(!showInventoryBrand)}
-                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
-                >
-                  <span>Brand</span>
-                  {!showInventoryBrand ? (
-                    <IoIosArrowForward />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </button>
-                {showInventoryBrand && (
-                  <ul className="ml-4  px-1">
-                    <li className=" ">
-                      <Link
-                        to="/admin/addbrand"
-                        className="flex items-center text-white nestitemhover"
-                      >
-                        Add Brand
-                      </Link>
-
-                      <li className=" ">
-                        <Link
-                          to="/admin/manageBrand"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Manage Brand
-                        </Link>
-                      </li>
-                    </li>
-                  </ul>
-                )}
-              </li>
-              <li className="  ">
-                <button
-                  onClick={() => setInventorySubBrand(!showInventorySubBrand)}
-                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
-                >
-                  <span>Sub Brand</span>
-                  {!showInventorySubBrand ? (
-                    <IoIosArrowForward />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </button>
-                {showInventorySubBrand && (
-                  <ul className="ml-4  px-1">
-                    <li className=" ">
-                      <Link
-                        to="/admin/AddSubBrand"
-                        className="flex items-center text-white nestitemhover"
-                      >
-                        Add Sub Brand
-                      </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/manageSubBrand"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Manage Sub Brand
-                        </Link>
-                      </li>
-                    </li>
-                  </ul>
-                )}
-              </li>
-
-              <li className="  ">
-                <button
-                  onClick={() => setInventoryStockUnit(!showInventoryStockUnit)}
-                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
-                >
-                  <span>Stock Unit</span>
-                  {!showInventoryStockUnit ? (
-                    <IoIosArrowForward />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </button>
-                {showInventoryStockUnit && (
-                  <ul className="ml-4  px-1">
-                    <li className=" ">
-                      <Link
-                        to="/admin/addstock"
-                        className="flex items-center text-white nestitemhover"
-                      >
-                        Add Stock Unit
-                      </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/managestockunit"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Manage Stock Unit
-                        </Link>
-                      </li>
-                    </li>
-                  </ul>
-                )}
-              </li>
-
-              <li className="  ">
-                <button
-                  onClick={() => setInventoryBranch(!showInventoryBranch)}
-                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
-                >
-                  <span>Branch</span>
-                  {!showInventoryBranch ? (
-                    <IoIosArrowForward />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </button>
-                {showInventoryBranch && (
-                  <ul className="ml-4  px-1">
-                    <li className=" ">
-                      <Link
-                        to="/admin/createbranch"
-                        className="flex items-center text-white nestitemhover"
-                      >
-                        Add Branch
-                      </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/managebranches"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Manage Branch
-                        </Link>
-                      </li>
-                    </li>
-                  </ul>
-                )}
-              </li>
-
-              <li className="">
-                <button
-                  onClick={() => setInventoryProduct(!showInventoryProduct)}
-                  className="w-full flex items-center nestedlist sidebar-list-item justify-between focus:outline-none text-white "
-                >
-                  <span>Product</span>
-                  {!showInventoryProduct ? (
-                    <IoIosArrowForward />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </button>
-                {showInventoryProduct && (
-                  <ul className="ml-4  px-1">
-                    <li className=" ">
-                      <Link
-                        to="/admin/createproduct"
-                        className="flex items-center text-white nestitemhover"
-                      >
-                        Add Product
-                      </Link>
-                      <li className=" ">
-                        <Link
-                          to="/admin/manageproduct"
-                          className="flex items-center text-white nestitemhover"
-                        >
-                          Manage Product
-                        </Link>
-                      </li>
-                    </li>
-                  </ul>
-                )}
-              </li>
-
-              <li className="">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
-                >
-                  Stock Transfer
-                </Link>
-              </li>
-              <li className="">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
-                >
-                  Stock Verification
-                </Link>
-              </li>
-            </ul>
-          )}
-        </li>
-
-        {/* Purches */}
-        <li className="px-1 py-2 ">
-          <button
-            onClick={() => {
-              setPurches(!showPurches);
-              togglePurches(); // Call togglePurches function
-            }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
-          >
-            <span className="">Purches</span>
-            {!showPurches ? <IoIosArrowForward /> : <IoIosArrowDown />}
-          </button>
-          {showPurches && (
-            <ul className="ml-4">
               <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                  to="/admin/addsubcategory"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Purches Order
+                  Create Sub Category
                 </Link>
+                <li className=" ">
+                  <Link
+                    to="/admin/managesubcategory"
+                    className="flex items-center text-white nestitemhover"
+                  >
+                    Manage Sub Category
+                  </Link>
+                </li>
               </li>
-              <li className="">
+
+              <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  to="/admin/addbrand"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Purches
+                  Create Brand
                 </Link>
+
+                <li className=" ">
+                  <Link
+                    to="/admin/manageBrand"
+                    className="flex items-center text-white nestitemhover"
+                  >
+                    Manage Brand
+                  </Link>
+                </li>
               </li>
-              <li className="">
+
+              <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  to="/admin/AddSubBrand"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Purches Bills
+                  Add Sub Brand
                 </Link>
+                <li className=" ">
+                  <Link
+                    to="/admin/manageSubBrand"
+                    className="flex items-center text-white nestitemhover"
+                  >
+                    Manage Sub Brand
+                  </Link>
+                </li>
               </li>
-              <li className="">
+
+              <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  to="/admin/addstock"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Debit Note
+                  Create Unit
                 </Link>
+                <li className=" ">
+                  <Link
+                    to="/admin/managestockunit"
+                    className="flex items-center text-white nestitemhover"
+                  >
+                    Manage Unit
+                  </Link>
+                </li>
               </li>
-              <li className="">
+
+              <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  to="/admin/createproduct"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Pay Out
+                  Add Product
                 </Link>
+                <li className=" ">
+                  <Link
+                    to="/admin/manageproduct"
+                    className="flex items-center text-white nestitemhover"
+                  >
+                    Manage Product
+                  </Link>
+                </li>
               </li>
             </ul>
           )}
         </li>
+
         {/* Sales */}
         <li className="px-1 py-2 ">
           <button
@@ -770,241 +480,367 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4">
               <li className=" ">
                 <Link
-                  to="/admin/salesQuotation"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                  to=""
+                  className="flex items-center text-white nestitemhover "
                 >
-                  Quotation
+                  Create Sales Estimate
                 </Link>
               </li>
               <li className=" ">
                 <Link
-                  to="/admin/managesalesQuotation"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                  to=""
+                  className="flex items-center text-white nestitemhover "
                 >
-                 Manage Quotation
+                  Sales Estimate List
                 </Link>
               </li>
               <li className="">
                 <Link
                   to="/admin/invoice"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Invoice
+                  create Sales Invoice
                 </Link>
               </li>
+
+              <li className="">
+                <Link
+                  to=""
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Sales Invoice List
+                </Link>
+              </li>
+
               <li className="">
                 <Link
                   to="/admin/deliverychallan"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Delivery challan
+                  create Delivery challan
                 </Link>
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  to=""
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Credit Note
+                  Delivery Challan List
                 </Link>
               </li>
+
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  to=""
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Create Sales Return
+                </Link>
+              </li>
+
+              <li className="">
+                <Link
+                  to=""
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Manage Sales Return
+                </Link>
+              </li>
+
+              <li className="">
+                <Link
+                  to=""
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Point of Sales
+                </Link>
+              </li>
+
+              <li className="">
+                <Link
+                  to=""
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Online Store
+                </Link>
+              </li>
+
+              <li className="">
+                <Link
+                  to=""
+                  className="flex items-center text-white nestitemhover"
                 >
                   Pay In
                 </Link>
               </li>
-            </ul>
-          )}
-        </li>
-        {/* Expenses */}
-        <li className="px-1 py-2 ">
-          <button
-            onClick={() => {
-              setExpenses(!showExpenses);
-              toggleExpenses();
-            }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
-          >
-            <span className="">Expenses</span>
-            {!showExpenses ? <IoIosArrowForward /> : <IoIosArrowDown />}
-          </button>
-          {showExpenses && (
-            <ul className="ml-4   ">
-              <li className=" ">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
-                >
-                  Create Expenses
-                </Link>
-              </li>
+
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  to=""
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Manage Expenses
+                  Manage Pay In
+                </Link>
+              </li>
+
+              <li className="">
+                <Link
+                  to=""
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Total Sales List
                 </Link>
               </li>
             </ul>
           )}
         </li>
 
-        {/* Income */}
+        {/* Purches */}
         <li className="px-1 py-2 ">
           <button
             onClick={() => {
-              setIncome(!showIncome);
-              toggleIncome();
+              setPurches(!showPurches);
+              togglePurches(); // Call togglePurches function
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="">Income</span>
-            {!showIncome ? <IoIosArrowForward /> : <IoIosArrowDown />}
+            <span className="">Purchase</span>
+            {!showPurches ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
-          {showIncome && (
-            <ul className="ml-4   ">
+          {showPurches && (
+            <ul className="ml-4">
               <li className=" ">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                  className="flex items-center text-white nestitemhover "
                 >
-                  Create Income
+                  Create Purchase Order
                 </Link>
               </li>
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Manage Income
+                  Purchase Order List
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Purchase Invoice
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Purchase Invoice List
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Purchase Return
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Purchase Return List
+                </Link>
+              </li>{" "}
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Pay Out
+                </Link>
+              </li>{" "}
+              <li className="">
+                <Link
+                  to="/admin/dashboard/manageperformance"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Manage Pay out
                 </Link>
               </li>
             </ul>
           )}
-        </li>
-        {/* Point Of Sales */}
-        <li className="sidebar-list-item hover:bg-blue-900 ">
-          <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dashboard" class="inline-container">
-              <span> Point Of Sales</span>
-            </Link>
-          </a>
         </li>
 
-        {/* CRM */}
+        {/* cash */}
         <li className="px-1 py-2 ">
           <button
             onClick={() => {
-              setCRM(!showCRM);
-              toggleCRM();
+              setCash(!showCash);
+              toggleCash();
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="">CRM</span>
-            {!showCRM ? <IoIosArrowForward /> : <IoIosArrowDown />}
+            <span className="">cash</span>
+            {!showCash ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
-          {showCRM && (
+          {showCash && (
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                  className="flex items-center text-white nestitemhover "
                 >
-                  Create Coupon
+                  Add cash
                 </Link>
               </li>
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Manage Coupon
+                  Manage Cash
                 </Link>
               </li>
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Add Membership
+                  Add Bank
                 </Link>
-              </li>
+              </li>{" "}
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Manage Membership
-                </Link>
-              </li>
-              <li className="">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
-                >
-                  Discount
+                  Manage Bank
                 </Link>
               </li>
             </ul>
           )}
         </li>
-        {/* Online store  */}
-        <li className="sidebar-list-item hover:bg-blue-900 ">
-          <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dashboard" class="inline-container">
-              <span> Online store </span>
-            </Link>
-          </a>
-        </li>
-        {/* Report */}
-        <li className="px-1 py-2 ">
+        {/* Account */}
+        <li className="px-0 py-2">
           <button
             onClick={() => {
-              setReport(!showReport);
-              toggleReport();
+              setBankTransaction(!showAccount);
+              toggleAccount();
             }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
-            <span className="">Report</span>
-            {!showReport ? <IoIosArrowForward /> : <IoIosArrowDown />}
+            <span className="">Account</span>
+            {!showAccount ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
-          {showReport && (
-            <ul className="ml-4   ">
-              <li className=" ">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+          {showAccount && (
+            <ul className="ml-4">
+              {/* setBankTransaction */}
+              <li className="">
+                <button
+                  onClick={() => setShowBankTransction(!showBankTransaction)}
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
-                  Sales
-                </Link>
+                  <span>Bank Transaction</span>
+                  {!showBankTransaction ? (
+                    <IoIosArrowForward />
+                  ) : (
+                    <IoIosArrowDown />
+                  )}
+                </button>
+                {showBankTransaction && (
+                  <ul className="ml-4">
+                    <li>
+                      <Link
+                        to=""
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Bank to Bank Transfer
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/ManageSupplier"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Cash Deposit Into Bank
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/admin/ManageSupplier"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Cash Withdraw from Bank
+                      </Link>
+                    </li>
+                  </ul>
+                )}
               </li>
               <li className="">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                <button
+                  onClick={() => setExpenses(!showExpenses)}
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
-                  Purchase
-                </Link>
+                  <span>Expenses</span>
+                  {!showExpenses ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                </button>
+                {showExpenses && (
+                  <ul className="ml-4">
+                    <li>
+                      <Link
+                        to=""
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Add Expenses
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to=""
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Expenses List
+                      </Link>
+                    </li>
+                  </ul>
+                )}
               </li>
+
+              {/* income*/}
               <li className="">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                <button
+                  onClick={() => setIncome(!showIncome)}
+                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
-                  Accounts
-                </Link>
-              </li>
-              <li className="">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
-                >
-                  GST
-                </Link>
+                  <span>Income</span>
+                  {!showIncome ? <IoIosArrowForward /> : <IoIosArrowDown />}
+                </button>
+                {showIncome && (
+                  <ul className="ml-4">
+                    <li>
+                      <Link
+                        to=""
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Add Income
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to=""
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Manage Income
+                      </Link>
+                    </li>
+                  </ul>
+                )}
               </li>
             </ul>
           )}
@@ -1027,33 +863,33 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className=" ">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white "
+                  className="flex items-center text-white nestitemhover "
                 >
-                  Profile
+                  Business Details
                 </Link>
               </li>
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Taxes
+                  Add Staff
                 </Link>
               </li>
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  User Role
+                  Change Profile
                 </Link>
               </li>
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
-                  className="w-full sidebar-list-item flex items-center nestedlist justify-between focus:outline-none text-white"
+                  className="flex items-center text-white nestitemhover"
                 >
-                  Term And Conditions
+                  Account Settings
                 </Link>
               </li>
             </ul>

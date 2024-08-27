@@ -3,68 +3,51 @@ import mongoose from "mongoose";
 const vendorSchema = new mongoose.Schema({
   name: {
     type: String,
-    
-  },
-  contact: {
-    type: String,
-    
+    required: true,
   },
   address: {
     type: String,
-    
-  },
-  pinCode: {
-    type: String,
-    
+    required: true,
   },
   state: {
     type: String,
-    
+    required: true,
   },
   country: {
     type: String,
-    
+    required: true,
+  },
+  pinCode: {
+    type: String,
+    required: true,
+  },
+  contact: {
+    type: String,
+    required: true,
   },
   email: {
     type: String,
-
   },
   website: {
     type: String,
   },
+
   registrationType: {
     type: String,
-    
+    required: true,
   },
-  gstIn: {
+  gstin: {
     type: String,
   },
-  panNo: {
-    type: String,
-    
-  },
-  bankName: {
-    type: String,
-  },
-  ifscCode: {
-    type: String,
-  },
-  accountNo: {
-    type: String,
-  },
-  accountHolder: {
-    type: String,
-  },
-  upiId: {
-    type: String,
-  },
+
   openingBalance: {
+    type: Number,
+    required: true,
+  },
+
+  asOnDate: {
     type: String,
   },
-  drCr: {
-    type: String,
-    enum: ['Dr', 'Cr'],
-  }
 }, {
   timestamps: true,
 });

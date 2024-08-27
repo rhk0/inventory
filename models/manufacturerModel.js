@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const transpoterSchema = new mongoose.Schema(
+const ManufacturerSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -55,4 +55,4 @@ const transpoterSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Transpoter", transpoterSchema);
+export default mongoose.model("manufacturer", ManufacturerSchema);
