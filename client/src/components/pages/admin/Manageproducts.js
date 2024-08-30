@@ -59,9 +59,9 @@ const Manageproducts = () => {
     }
   };
 
-  const openViewModal = (Manufacturer) => {
+  const openViewModal = (manufacturer) => {
     setViewModal(true);
-    setModalData(Manufacturer);
+    setModalData(manufacturer);
   };
 
   const openEditModal = (Manufacturer) => {
@@ -140,7 +140,7 @@ const Manageproducts = () => {
             </tr>
           </thead>
           <tbody>
-            {console.log(filteredManufacturer, "filteredManufacturer")}
+            {/* {console.log(filteredManufacturer, "filteredManufacturer")} */}
             {filteredManufacturer.length > 0 ? (
               filteredManufacturer.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
