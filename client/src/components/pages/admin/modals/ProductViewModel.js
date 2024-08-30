@@ -3,27 +3,44 @@ import { toast, ToastContainer } from "react-toastify";
 import { FaTimes } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
 
-const ProductViewModel = ({ productData, closeModal }) => {
+const ProductViewModel = ({ ManufacturerData, closeModal }) => {
   // Initial states and other code
-  const initialItemsState = [
-    {
-      items: "",
-      productCode: "",
-      productName: "",
-      purchasePrice: "",
-      landingCost: "",
-      mrp: "",
-      retailDiscount: "",
-      retailPrice: "",
-      retailMargin: "",
-      wholesalerDiscount: "",
-      wholesalerPrice: "",
-      wholesaleMargin: "",
-      minimumStock: "",
-      maximumStock: "",
-      openingQty: "",
-    },
-  ];
+  const initialItemsState = {
+    amount: ManufacturerData.amount || "",
+    batchNo: ManufacturerData.batchNo || "",
+    brand: ManufacturerData.brand || "",
+    category: ManufacturerData.category || "",
+    cess: ManufacturerData.cess || "",
+    description: ManufacturerData.description || "",
+    expiryDate: ManufacturerData.expiryDate || "",
+    feature: ManufacturerData.feature || "",
+    gstRate: ManufacturerData.gstRate || "",
+    img: ManufacturerData.img || [],
+    itemCode: ManufacturerData.itemCode || "",
+    manufacturer: ManufacturerData.manufacturer || "",
+    maximumStock: ManufacturerData.maximumStock || "",
+    maxmimunRetailPrice: ManufacturerData.maxmimunRetailPrice || "",
+    minimumStock: ManufacturerData.minimumStock || "",
+    newWeight: ManufacturerData.newWeight || "",
+    productName: ManufacturerData.productName || "",
+    purchasePriceExGst: ManufacturerData.purchasePriceExGst || "",
+    purchasePriceInGst: ManufacturerData.purchasePriceInGst || "",
+    purchaseTaxInclude: ManufacturerData.purchaseTaxInclude || "",
+    quantity: ManufacturerData.quantity || "",
+    rate: ManufacturerData.rate || "",
+    retailDiscount: ManufacturerData.retailDiscount || "",
+    retailMargin: ManufacturerData.retailMargin || "",
+    retailPrice: ManufacturerData.retailPrice || "",
+    rows: ManufacturerData.rows || [],
+    salesTaxInclude: ManufacturerData.salesTaxInclude || "",
+    subBrand: ManufacturerData.subBrand || "",
+    subCategory: ManufacturerData.subCategory || "",
+    units: ManufacturerData.units || "",
+    wholesaleMargin: ManufacturerData.wholesaleMargin || "",
+    wholesalerDiscount: ManufacturerData.wholesalerDiscount || "",
+    wholesalerPrice: ManufacturerData.wholesalerPrice || "",
+  };
+  console.log(ManufacturerData,"ManufacturerData")
   
   // State definitions
   const [Items, setItems] = useState(initialItemsState);
@@ -53,14 +70,14 @@ const ProductViewModel = ({ productData, closeModal }) => {
       <div className="bg-gray-200 p-4 rounded mb-4">
         <h2 className="font-bold mb-2 text-xl">Product Information</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
-          {/* Product Information Fields */}
+      {  console.log(ManufacturerData,"itemcode")}
           <div>
             <label className="block font-bold">Item Code</label>
             <input
               type="text"
               name="itemCode"
               className="w-full p-1 border rounded"
-              // //value={productData.itemCode}
+              value={ManufacturerData.itemCode}
             />{" "}
           </div>
           <div>
@@ -69,82 +86,51 @@ const ProductViewModel = ({ productData, closeModal }) => {
               type="text"
               name="productName"
               className="w-full p-1 border rounded"
-              // //value={productData.productName}
+              value={ManufacturerData.productName}
             />{" "}
           </div>
 
           <div>
             <label className="block font-bold">Category</label>
-            <select
+            <input
               name="category"
               className="w-full p-1 border rounded"
-              // //value={productData.category}
-            >
-              <option value="">Select categories </option>
-
-              {/* {categories.map((category, index) => (
-                <option key={index} //value={category.CategoryName}>
-                  {category.CategoryName}
-                </option>
-              ))} */}
-            </select> 
+              value={ManufacturerData.categories}
+            />
+              
           </div>
           <div>
             <label className="block font-bold">Sub Category</label>
-            <select
+            <input
               className="w-full p-1 border rounded"
               name="subCategory"
-              // //value={productData.subCategory}
-            >
-              <option value="">Select Sub Categories </option>
-
-              {/* {subCategory.map((subCategory, index) => (
-                <option key={index} //value={subCategory.subCategoryName}>
-                  {subCategory.subCategoryName}
-                </option>
-              ))} */}
-            </select>
+              value={ManufacturerData.subCategory}
+            />
+            
           </div>
           <div>
             <label className="block font-bold">Brand</label>
-            <select
+            <input
               className="w-full p-1 border rounded"
-              name="brand"
-              // //value={productData.brand}
-            >
-              <option value="">Select Brand </option>
-{/* 
-              {brand.map((brand, index) => (
-                <option key={index} //value={brand.BrandName}>
-                  {brand.BrandName}
-                </option>
-              ))} */}
-            </select>
+              name="subCategory"
+              value={ManufacturerData.brand}
+            />
           </div>
           <div>
             <label className="block font-bold">Sub Brand</label>
-            <select
+            <input
               className="w-full p-1 border rounded"
-              name="subBrand"
-              // //value={productData.subBrand}
-            >
-              <option value="">Select Sub Brand </option>
-              {/* {subbrand.map((subbrand, index) => (
-                <option key={index}              value={subbrand.SubBrandName}>
-                  {subbrand.SubBrandName}
-                </option>
-              ))} */}
-            </select>
+              name="subCategory"
+              value={ManufacturerData.subBrand}
+            />
           </div>
           <div>
             <label className="block font-bold">UOM</label>
-            <select
+            <input
               className="w-full p-1 border rounded"
-              name="uom"
-              //value={productData.uom}
-            >
-              {/* Options go here */}
-            </select>
+              name="subCategory"
+              value={ManufacturerData.uom}
+            />
           </div>
           <div>
             <label className="block font-bold">GST Rate</label>
