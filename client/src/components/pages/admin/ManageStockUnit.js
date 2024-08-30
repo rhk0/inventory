@@ -77,6 +77,9 @@ const ManageStockUnit = () => {
                 S.No
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Unit of Quantity
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Symbol
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
@@ -93,8 +96,12 @@ const ManageStockUnit = () => {
                 <tr key={stockUnit._id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
+                    {stockUnit.unitofquantity}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm text-nowrap">
                     {stockUnit.symbol}
                   </td>
+                  
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
                     {stockUnit.formalName}
                   </td>

@@ -7,8 +7,9 @@ import { useNavigate } from "react-router-dom";
 
 import ManufacturerViewModel from "./modals/ManufacturerViewModels";
 import ManufacturerEditModel from "./modals/ManufacturerEditModel";
+import ProductViewModel from "./modals/ProductViewModel";
 
-const ManageManufacturer = () => {
+const Manageproducts = () => {
   const [manufacturer, setManufacturer] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
@@ -17,12 +18,20 @@ const ManageManufacturer = () => {
 
   const navigate = useNavigate();
 
-
-  
   const fetchManufacturer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/ManageManufacturer");
+      const response = await axios.get("/api/v1/auth//manageproduct");
       setManufacturer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Manufacturer data", error);
+    }
+  };
+
+  const fetchProductAll = async () => {
+    try {
+      const response = await axios.get("/api/v1/auth//manageproduct");
+      console.log(response, "response");
+      //   setManufacturer(response.data.data);
     } catch (error) {
       console.error("Error fetching Manufacturer data", error);
     }
@@ -30,6 +39,7 @@ const ManageManufacturer = () => {
 
   useEffect(() => {
     fetchManufacturer();
+    fetchProductAll();
   }, []);
 
   const deleteManufacturer = async (_id) => {
@@ -67,109 +77,124 @@ const ManageManufacturer = () => {
 
   // Filter Manufacturer based on search query
   const filteredManufacturer = manufacturer.filter((supplier) =>
-    supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
+    supplier.productName.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
-        Manage Manufacturer
+        Manage Products
       </h1>
       {/* Search input */}
       <div className="flex justify-between mb-4">
         <input
           type="text"
-          placeholder="Search by name..."
-          className="p-2 border border-gray-300 rounded"
+          placeholder="Search Product By Name , Item Name "
+          className="p-2 w-1/4 border border-gray-300 rounded"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button
-          className="bg-purple-600 text-white px-4 py-2 rounded"
-          onClick={() => navigate("/admin/CreateManufacturer")}
-        >
-          Add Manufacturer
-        </button>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
-            <tr className="bg-gray-100 border-b">
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                S.No
+            <tr className="bg-gray-100   border-b">
+              <th className=" border-r font-black font-bold text-black text-[10px] font-medium text-gray-600">
+                No
               </th>
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Name
-              </th>
-
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Address
-              </th>
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                State
-              </th>
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Contact
-              </th>
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Registration Type
+              <th className="px-6 py-2 font-black  font-bold text-black font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+                Product Code
               </th>
 
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                GSTIN
+              <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+                Product Name
               </th>
-              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-                Opening Balance
+              <th className="px-6 py-2 font-black border-r text-left text-sm font-medium text-gray-600">
+                Category
               </th>
-              <th className="px-6 py-2 text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 font-black border-r text-left text-sm font-medium text-gray-600">
+                Manufacturer
+              </th>
+              <th className="px-6 py-2 font-black border-r text-left text-sm font-medium text-gray-600">
+                brand
+              </th>
+
+              <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+                Net Weight
+              </th>
+
+              <th className="px-6 py-2 font-black border-r text-left text-sm font-medium text-gray-600">
+                MRP
+              </th>
+              <th className="px-6 font-black text-nowrap py-2 border-r text-left text-sm font-medium text-gray-600">
+                Purchase Price <span className="text-[10px]">( Include GST)</span>
+              </th>
+              <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+                Retail Price
+              </th>
+              <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+                Wholesale Price
+              </th>
+              <th className="text-center font-black px-6 py-2 text-left text-sm font-medium text-gray-600">
                 Action
               </th>
             </tr>
           </thead>
           <tbody>
+            {console.log(filteredManufacturer, "filteredManufacturer")}
             {filteredManufacturer.length > 0 ? (
               filteredManufacturer.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
-                  <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
+                  <td className=" px-1 py-1 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {supplier.name}
+                    {supplier.itemCode}
                   </td>
 
                   <td className="px-6 py-2 border-r text-sm">
-                    {supplier.address}
+                    {supplier.productName}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {supplier.state}
+                    {supplier.category}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {supplier.contact}
+                    {supplier.manufacturer}
                   </td>
 
                   <td className="px-6 py-2 border-r text-sm">
-                    {supplier.registrationType}
+                    {supplier.brand}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
-                    {supplier.gstin}
+                    {supplier.newWeight}
                   </td>
-                  <td className="px-6 py-2 border-r text-sm">
+                  {/* <td className="px-6 py-2 border-r text-sm">
                     {supplier.openingBalance}
+                  </td> */}
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.maxmimunRetailPrice}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
+                    {supplier.purchasePriceInGst}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.retailPrice}
+                  </td>
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.wholesalerPrice}
+                  </td>
+                  <td className="px-1 py-2 border-r text-sm flex">
                     <button
-                      className="mx-1 text-blue-600"
+                      className="mx-1 text-white bg-green-500 pl-3 pr-3 p-1 rounded"
                       onClick={() => openViewModal(supplier)}
                     >
                       View
                     </button>{" "}
-                    /
                     <button
-                      className="mx-1 text-blue-600"
+                      className="mx-1 text-white bg-blue-500 pl-3 pr-3 p-1 rounded"
                       onClick={() => openEditModal(supplier)}
                     >
                       Edit
                     </button>{" "}
-                    /
                     <button
-                      className="mx-1 text-blue-600"
+                      className="mx-1 text-white bg-red-500 pl-3 pr-3 p-1 rounded"
                       onClick={() => deleteManufacturer(supplier._id)}
                     >
                       Delete
@@ -192,17 +217,17 @@ const ManageManufacturer = () => {
           contentLabel="View Item Modal"
           style={{
             content: {
-              width: "80%",
-              height: "80%",
-              maxWidth: "800px",
+              width: "100%",
+              height: "100%",
+              maxWidth: "1200px",
               margin: "auto",
               padding: "5px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
               borderRadius: "5px",
             },
           }}
-        >
-          <ManufacturerViewModel
+        > 
+          <ProductViewModel
             closeModal={closeModal}
             ManufacturerData={modalData}
           />
@@ -235,4 +260,4 @@ const ManageManufacturer = () => {
   );
 };
 
-export default ManageManufacturer;
+export default Manageproducts;

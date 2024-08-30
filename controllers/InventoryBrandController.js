@@ -2,7 +2,7 @@ import InventoryBrandModel from "../models/InventroyBrandModel.js";
 
 export const createInventoryBrandController = async (req, res) => {
   try {
-    const { BrandName } = req.body;
+    const { BrandName,manufacturerName } = req.body;
 
     const requiredFields = ["BrandName"];
 
@@ -16,7 +16,7 @@ export const createInventoryBrandController = async (req, res) => {
     }
 
     const response = await InventoryBrandModel.create({
-      BrandName,
+      BrandName,manufacturerName
     });
 
     if (response) {
@@ -80,49 +80,47 @@ export const deleteInventoryBrandController = async (req, res) => {
   }
 };
 export const updateInventoryBrandController = async (req, res) => {
-    try {
-      const { _id } = req.params;
-      const { BrandName } = req.body;
-  
-      const requiredFields = ["BrandName"];
-      const missingFields = requiredFields.filter(
-        (field) => !(field in req.body)
-      );
-  
-      if (missingFields.length > 0) {
-        return res.status(400).send({
-          message: "Required fields are missing",
-          missingFields: missingFields,
-        });
-      }
-  
-      const Brand = await InventoryBrandModel.findByIdAndUpdate(
-        _id,
-        { BrandName }, // Corrected this line
-        {
-          new: true,
-        }
-      );
-  
-      if (!Brand) {
-        return res.status(404).send({
-          success: false,
-          message: "Brand not found",
-        });
-      }
-  
-      return res.status(200).send({
-        success: true,
-        message: "Brand updated successfully",
-        data: Brand,
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send({
+  try {
+    const { _id } = req.params;
+    console.log(_id,"fjkd")
+    const { BrandName, manufacturerName } = req.body;
+
+    // Check for missing required fields
+    if (!BrandName || !manufacturerName) {
+      return res.status(400).send({
         success: false,
-        message: "Internal Server Error",
-        details: error.message,
+        message: "Required fields are missing",
+        missingFields: !BrandName ? "BrandName" : "manufacturerName",
       });
     }
-  };
+
+    // Find and update the brand
+    const updatedBrand = await InventoryBrandModel.findByIdAndUpdate(
+      _id,
+      { BrandName, manufacturerName },
+      { new: true }
+    );
+
+    if (!updatedBrand) {
+      return res.status(404).send({
+        success: false,
+        message: "Brand not found",
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      message: "Brand updated successfully",
+      data: updatedBrand,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Internal Server Error",
+      details: error.message,
+    });
+  }
+};
+
   

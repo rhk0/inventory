@@ -2,9 +2,9 @@ import inventroySubBrandModel from "../models/inventroySubBrandModel.js";
 
 export const createInventorySubBrandController = async (req, res) => {
   try {
-    const { BrandName, SubBrandName } = req.body;
+    const { BrandName, SubBrandName ,manufacturerName } = req.body;
 
-    const requiredFields = ["BrandName", "SubBrandName"];
+    const requiredFields = ["BrandName", "SubBrandName" ,"manufacturerName"];
 
     const missingFields = requiredFields.filter((field) => !req.body[field]);
 
@@ -18,6 +18,7 @@ export const createInventorySubBrandController = async (req, res) => {
     const response = await inventroySubBrandModel.create({
       BrandName,
       SubBrandName,
+      manufacturerName
     });
 
     if (response) {
@@ -83,9 +84,9 @@ export const deleteInventorySubBrandController = async (req, res) => {
 export const updateInventorySubBrandController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const { BrandName, SubBrandName } = req.body;
+    const { BrandName, SubBrandName ,manufacturerName} = req.body;
 
-    const requiredFields = ["BrandName", "SubBrandName"];
+    const requiredFields = ["BrandName", "SubBrandName" ,"manufacturerName"];
     const missingFields = requiredFields.filter(
       (field) => !(field in req.body)
     );
@@ -99,7 +100,7 @@ export const updateInventorySubBrandController = async (req, res) => {
 
     const SubBrand = await inventroySubBrandModel.findByIdAndUpdate(
       _id,
-      { BrandName, SubBrandName },
+      { BrandName, SubBrandName ,manufacturerName},
       {
         new: true,
       }

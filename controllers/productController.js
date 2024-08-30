@@ -171,7 +171,7 @@ export const createProductController = async (req, res) => {
 
 export const manageProductController = async (req, res) => {
   try {
-    const data = await productModel.find();
+    const data = await ProductModel.find();
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -193,7 +193,7 @@ export const manageProductController = async (req, res) => {
 export const deleteProductController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const response = await productModel.findByIdAndDelete(_id);
+    const response = await ProductModel.findByIdAndDelete(_id);
 
     if (!response) {
       return res

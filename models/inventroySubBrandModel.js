@@ -8,7 +8,11 @@ const SubBrandNameSchema = new mongoose.Schema(
     SubBrandName: {
       type: String,
     },
+    manufacturerName: {
+      type: String,
+    },
   },
+
   {
     timestamps: true,
   }
