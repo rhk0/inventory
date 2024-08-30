@@ -41,18 +41,19 @@ import Invoice from "../pages/admin/Invoice.js";
 import DeliveryChallan from "../pages/admin/DeliveryChallan.js";
 import CreateManufacturer from "../pages/admin/CreateManufacturer.js";
 import ManageManufacturer from "../pages/admin/ManageManufacturer.js";
+import Manageproducts from "../pages/admin/Manageproducts.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
 
-  useEffect(() => {
-    if (auth) {
-      console.log(auth);
-    }
-    if (!auth) {
-      console.log("ho");
-    }
-  });
+  // useEffect(() => {
+  //   if (auth) {
+  //     console.log(auth);
+  //   }
+  //   if (!auth) {
+  //     console.log("ho");
+  //   }
+  // });
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
   const OpenSidebar = () => {
@@ -112,6 +113,7 @@ const AdminRoute = () => {
         <Route path="managesalesQuotation" element={<ManageQuotation />} />
         <Route path="invoice" element={<Invoice />} />
         <Route path="deliverychallan" element={<DeliveryChallan />} />
+        <Route path="ManageProduct" element={<Manageproducts/>} />
       </Routes>
     </div>
   );

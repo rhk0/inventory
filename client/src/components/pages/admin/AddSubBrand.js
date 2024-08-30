@@ -7,13 +7,31 @@ const AddSubCategory = () => {
   const [formData, setFormData] = useState({
     BrandName: "",
     SubBrandName: "",
+    manufacturerName: ""
   });
   const [categories, setCategories] = useState([]);
+  const [manufacturer, setManufacturer] = useState([]);
+
+  // Fetch the manufacturer data from the backend
+  const fetchManufacturer = async () => {
+    try {
+      const response = await axios.get("/api/v1/auth/ManageManufacturer");
+      console.log(response.data.data, "Fetched Manufacturer Data"); // Debug log to check data
+      setManufacturer(response.data.data); // Save the manufacturer data to state
+    } catch (error) {
+      console.error("Error fetching Manufacturer data", error);
+      toast.error("Failed to fetch manufacturer data. Please try again.");
+    }
+  };
 
   useEffect(() => {
+    // Fetch Manufacturer data on component mount
+    fetchManufacturer();
+
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/api/v1/auth/getBrand");
+        console.log(response.data.data, "Fetched Brand Data"); // Debug log to check data
         setCategories(response.data.data); 
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -35,7 +53,7 @@ const AddSubCategory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = ["BrandName", "SubBrandName"];
+    const requiredFields = ["BrandName", "SubBrandName", "manufacturerName"];
     for (const field of requiredFields) {
       if (!formData[field]) {
         toast.error(`Please fill out the ${field} field.`);
@@ -44,11 +62,9 @@ const AddSubCategory = () => {
     }
 
     try {
-      const response = await axios.post(
-        "/api/v1/auth/createSubBrand",
-        formData
-      );
-
+      const response = await axios.post("/api/v1/auth/createSubBrand", formData);
+    
+       console.log(response,"uyfehf")
       if (response) {
         toast.success("Sub Brand Category Added Successfully...");
       }
@@ -64,6 +80,7 @@ const AddSubCategory = () => {
     setFormData({
       BrandName: "",
       SubBrandName: "",
+      manufacturerName: ""
     });
   };
 
@@ -78,15 +95,39 @@ const AddSubCategory = () => {
         </h4>
 
         <div className="flex flex-col gap-4 mb-4">
-          <div className="flex items-center gap-4">
-            <label className="w-1/4">Brand Name:</label>
+          {/* Manufacturer Dropdown */}
+          <div className="px-2">
+            <label className="block">Manufacturer Name: <br /></label>
+            <br />
+            <select
+              name="manufacturerName"
+              value={formData.manufacturerName}
+              onChange={handleChange}
+              className="w-1/2 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+            >
+              <option value="">Select Manufacturer</option>
+              {manufacturer.length > 0 ? (
+                manufacturer.map((item) => (
+                  <option key={item._id} value={item.name}>
+                    {item.name}
+                  </option>
+                ))
+              ) : (
+                <option disabled>No Manufacturer Found</option>
+              )}
+            </select>
+          </div>
+
+          {/* Brand Dropdown */}
+          <div className=" px-2">
+            <label className="block">Brand Name:</label>
             <select
               name="BrandName"
               value={formData.BrandName}
               onChange={handleChange}
-              className="w-1/2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+              className="w-1/2 border py-2 border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
-              <option value="">Select Category</option>
+              <option value="">Select Brand</option>
               {categories.map((category) => (
                 <option key={category.BrandName} value={category.BrandName}>
                   {category.BrandName}
@@ -95,14 +136,15 @@ const AddSubCategory = () => {
             </select>
           </div>
 
-          <div className="flex items-center gap-4">
-            <label className="w-1/4">Sub Brand Name:</label>
+          {/* Sub Brand Name Input */}
+          <div className=" px-2">
+            <label className="block">Sub Brand Name:</label>
             <input
               type="text"
               name="SubBrandName"
               value={formData.SubBrandName}
               onChange={handleChange}
-              className="w-1/2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+              className="w-1/2 border py-2 border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             />
           </div>
         </div>

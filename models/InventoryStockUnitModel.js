@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const StockUnitSchema = new mongoose.Schema(
   {
-    compoundedType:{
+    unitofquantity:{
       type: String,
     },
     symbol: {
@@ -11,15 +11,7 @@ const StockUnitSchema = new mongoose.Schema(
     formalName: {
       type: String,
     },
-    primaryUnit: {
-      type: String,
-    },
-    conversionOf: {
-      type: String,
-    },
-    secondaryUnit: {
-      type: String,
-    },
+
   },
   {
     timestamps: true,

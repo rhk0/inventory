@@ -78,7 +78,14 @@ const ManageSubBrand = () => {
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 S.No
               </th>
+             
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+              Brand Name
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+               Manufacturer Name
+              </th> 
+               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Sub Brand Name
               </th>
               <th className="px-6 py-2 text-left text-sm font-medium text-gray-600">
@@ -92,8 +99,18 @@ const ManageSubBrand = () => {
                 <tr key={SubBrand._id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
+                    {SubBrand.BrandName}
+                  </td>
+
+                  <td className="px-6 py-2 border-r text-sm text-nowrap">
+                    {SubBrand.manufacturerName}
+                  </td>
+                  
+                  <td className="px-6 py-2 border-r text-sm text-nowrap">
                     {SubBrand.SubBrandName}
                   </td>
+                  
+
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
                     <button
                       className="mx-1 text-blue-600"

@@ -2,17 +2,11 @@ import InventoryStockUnitModel from "../models/InventoryStockUnitModel.js";
 
 export const createInventoryStockUnitController = async (req, res) => {
   try {
-    const {compoundedType, symbol, formalName, primaryUnit, conversionOf, secondaryUnit } =
-      req.body;
-   
-
+    const { unitofquantity, symbol, formalName } = req.body;
     const response = await InventoryStockUnitModel.create({
-      compoundedType,
+      unitofquantity,
       symbol,
       formalName,
-      primaryUnit,
-      conversionOf,
-      secondaryUnit,
     });
 
     if (response) {

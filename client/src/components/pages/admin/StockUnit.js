@@ -4,46 +4,30 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const StockUnit = () => {
-  const [compoundedType, setCompoundedType] = useState("singlecompounded");
+  const [unitofquantity, setunitofquantity] = useState("");
   const [symbol, setSymbol] = useState("");
   const [formalName, setFormalName] = useState("");
-  const [primaryUnit, setPrimaryUnit] = useState("");
-  const [conversionOf, setConversionOf] = useState("");
-  const [secondaryUnit, setSecondaryUnit] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(compoundedType,"compoundedType")
+
+      
       const response = await axios.post("/api/v1/auth/createStockUnit", {
-        compoundedType,
+        unitofquantity,
         symbol,
         formalName,
-        primaryUnit,
-        conversionOf,
-        secondaryUnit,
       });
+  
 
       if (response.data.success) {
         toast.success(response.data.message);
-        console.log(response.data)
+        setunitofquantity(" ");
+        setSymbol(" ");
+        setFormalName(" ");
       }
     } catch (error) {
       console.error("Error creating stock unit:", error);
-    }
-  };
-
-  const handleChange = (e) => {
-    setCompoundedType(e.target.value);
-    handleCompoundedTypeChange(e.target.value);
-  };
-
-  const handleCompoundedTypeChange = (value) => {
-    setCompoundedType(value);
-    if (value === "singlecompounded") {
-      setPrimaryUnit("");
-      setConversionOf("");
-      setSecondaryUnit("");
     }
   };
 
@@ -51,108 +35,57 @@ const StockUnit = () => {
     <div className="responsive-container">
       <form className="mx-auto p-8 border border-gray-300 shadow-lg rounded-lg">
         <h4 className="text-3xl font-semibold text-center underline mb-6 text-violet-800">
-          Stock Units
+          Add Units
         </h4>
 
         <div className="flex flex-col gap-4 mb-4">
           <div className="flex items-center gap-4">
-            <label className="w-1/4">Type</label>
+            <label className="w-1/4">Unit Quantity Code</label>
             <select
-              className="w-1/2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
-              name="drCr"
-              value={compoundedType}
-              onChange={handleChange}
+              className="w-1/2 py-2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
+              name="unitofquantity"
+              value={unitofquantity}
+              onChange={(e) => {
+                setunitofquantity(e.target.value);
+              }}
             >
               <option value="">Select</option>
-              <option value="singlecompounded">Single</option>
-              <option value="compounded">Compounded</option>
+              <option value="Length - meter (m)"> Length - meter (m)</option>
+              <option value="Time - second (s)">Time - second (s)</option>
+              <option value="Amount of substance - mole (mol)">
+                Amount of substance - mole (mol)
+              </option>
+              <option value="Electric current - ampere (A)">Electric current - ampere (A)</option>
+              <option value="Temperature - kelvin (K)">Temperature - kelvin (K)</option>
+              <option value="Luminous intensity - candela (cd)">
+                Luminous intensity - candela (cd)
+              </option>
+              <option value="Mass - kilogram (kg)">Mass - kilogram (kg)</option>
             </select>
           </div>
 
-          {compoundedType === "singlecompounded" && (
-            <>
-              <div className="flex items-center gap-4">
-                <label className="w-1/4">Symbol</label>
-                <input
-                  type="text"
-                  name="symbol"
-                  className="w-1/2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
-                  value={symbol}
-                  onChange={(e) => {
-                    setSymbol(e.target.value);
-                  }}
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="w-1/4">Formal name</label>
-                <input
-                  type="text"
-                  name="formalName"
-                  className="w-1/2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
-                  value={formalName}
-                  onChange={(e) => setFormalName(e.target.value)}
-                />
-              </div>
-            </>
-          )}
-          {compoundedType === "compounded" && (
-            <>
-              <div className="flex items-center gap-4">
-                <label className="w-1/4">Symbol</label>
-                <input
-                  type="text"
-                  name="symbol"
-                  className="w-1/2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
-                  value={symbol}
-                  onChange={(e) => {
-                    setSymbol(e.target.value);
-                    setPrimaryUnit(e.target.value); // Set primary unit same as symbol
-                  }}
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="w-1/4">Formal name</label>
-                <input
-                  type="text"
-                  name="formalName"
-                  className="w-1/2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
-                  value={formalName}
-                  onChange={(e) => setFormalName(e.target.value)}
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="w-1/4">Primary Unit</label>
-                <input
-                  type="text"
-                  name="primaryunit"
-                  readOnly
-                  value={primaryUnit}
-                  className="w-1/2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
-                  onChange={(e) => setPrimaryUnit(e.target.value)}
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="w-1/4">Conversion of</label>
-                <input
-                  type="text"
-                  name="conversionof"
-                  className="w-1/2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
-                  value={conversionOf}
-                  onChange={(e) => setConversionOf(e.target.value)}
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="w-1/4">Secondary Unit</label>
-                <input
-                  type="text"
-                  name="secondaryUnit"
-                  className="w-1/2 border border-gray-300 rounded-md focusring-2 focusring-violet-600"
-                  value={secondaryUnit}
-                  onChange={(e) => setSecondaryUnit(e.target.value)}
-                />
-              </div>
-            </>
-          )}
+          <div className="flex items-center gap-4">
+            <label className="w-1/4">Symbol</label>
+            <input
+              type="text"
+              name="symbol"
+              className="w-1/2 border border-gray-300 py-2 rounded-md focusring-2 focusring-violet-600"
+              value={symbol}
+              onChange={(e) => {
+                setSymbol(e.target.value);
+              }}
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <label className="w-1/4">Formal name</label>
+            <input
+              type="text"
+              name="formalName"
+              className="w-1/2 border py-2 border-gray-300 rounded-md focusring-2 focusring-violet-600"
+              value={formalName}
+              onChange={(e) => setFormalName(e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="flex justify-between mt-8">
