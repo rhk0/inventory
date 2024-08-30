@@ -49,11 +49,11 @@ const CreateProduct = () => {
     brand: "",
     subBrand: "",
     unit: "",
-    hsnCode:"",
+    hsnCode: "",
     gstRate: "0%",
     cess: false,
-    description:"",
-    newWeight:"",
+    description: "",
+    newWeight: "",
     purchaseTaxInclude: false,
     salesTaxInclude: false,
     description: "",
@@ -73,7 +73,6 @@ const CreateProduct = () => {
     wholesalerDiscount: 0,
     wholesalerPrice: 0,
     wholesaleMargin: 0,
-
     quantity: 0,
     rate: 0,
     units: "",
@@ -141,7 +140,7 @@ const CreateProduct = () => {
 
     fetchCategories();
   }, []);
-  //  Brand
+  //
   useEffect(() => {
     const fetchCategories = async () => {
       try {
