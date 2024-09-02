@@ -14,7 +14,7 @@ const SalesEstimateSchema = new mongoose.Schema({
   destination: { type: String },
   carrierNameAgent: { type: String },
   billOfLading: { type: String },
-  motorVehicleNo: [{ type: String }],
+  motorVehicleNo: { type: String} ,
   billingAddress: { type: String },
   reverseCharge: { type: String },
   gstType: { type: String },

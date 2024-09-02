@@ -34,6 +34,7 @@ const CreateProduct = () => {
   const [Amount, setAmount] = useState("");
   const [addvarints, setVarints] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [units, setUnits] = useState([]);
   const [subCategory, setSubCategories] = useState([]);
   const [manufacturers, setManufacturer] = useState([]);
 
@@ -49,11 +50,12 @@ const CreateProduct = () => {
     brand: "",
     subBrand: "",
     unit: "",
-    hsnCode:"",
+    hsnCode: "",
     gstRate: "0%",
     cess: false,
-    description:"",
-    newWeight:"",
+
+    description: "",
+    newWeight: "",
     purchaseTaxInclude: false,
     salesTaxInclude: false,
     description: "",
@@ -73,7 +75,6 @@ const CreateProduct = () => {
     wholesalerDiscount: 0,
     wholesalerPrice: 0,
     wholesaleMargin: 0,
-
     quantity: 0,
     rate: 0,
     units: "",
@@ -93,11 +94,25 @@ const CreateProduct = () => {
         setManufacturer(response.data.data);
       } catch (error) {
         console.error("Error fetching manufacturer:", error);
-        toast.error("Failed to fetch manufacturer");
+        // toast.error("Failed to fetch manufacturer");
       }
     };
 
     fetchManufecturer();
+  }, []);
+
+  useEffect(() => {
+    const fetchUnit = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/getStockUnit");
+        setUnits(response.data.data);
+      } catch (error) {
+        console.error("Error fetching manufacturer:", error);
+        // toast.error("Failed to fetch manufacturer");
+      }
+    };
+
+    fetchUnit();
   }, []);
   // category
   useEffect(() => {
@@ -107,7 +122,7 @@ const CreateProduct = () => {
         setCategories(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
-        toast.error("Failed to fetch categories");
+        // toast.error("Failed to fetch categories");
       }
     };
 
@@ -115,45 +130,45 @@ const CreateProduct = () => {
   }, []);
   // Sub category
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchSubCategories = async () => {
       try {
         const response = await axios.get("/api/v1/auth/getSubCategory");
         setSubCategories(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
-        toast.error("Failed to fetch categories");
+        // toast.error("Failed to fetch categories");
       }
     };
-    fetchCategories();
+    fetchSubCategories();
   }, []);
 
   //  Brand
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchBrand = async () => {
       try {
         const response = await axios.get("/api/v1/auth/getBrand");
         setBrand(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
-        toast.error("Failed to fetch categories");
+        // toast.error("Failed to fetch categories");
       }
     };
 
-    fetchCategories();
+    fetchBrand();
   }, []);
-  //  Brand
+  //
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchSubBrand = async () => {
       try {
         const response = await axios.get("/api/v1/auth/getSubBrand");
         setSubBrand(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
-        toast.error("Failed to fetch categories");
+        // toast.error("Failed to fetch categories");
       }
     };
 
-    fetchCategories();
+    fetchSubBrand();
   }, []);
 
   const handleChange = (e) => {
@@ -487,17 +502,22 @@ const CreateProduct = () => {
               value={formData.unit}
               onChange={handleChange}
             >
-              {/* Options go here */}
+              <option value="">select Units </option>
+              {units.map((unit, index) => (
+                <option key={index} value={unit.unitofquantity}>
+                  {unit.unitofquantity}
+                </option>
+              ))}{" "}
             </select>
           </div>
 
           <div>
             <label className="font-bold">HSN Code</label>
             <input
-              type="hsnCode"
+              type="text"
               className="w-full p-1 border rounded"
-              name="purchaseTaxInclude"
-              checked={formData.hsnCode}
+              name="hsnCode"
+              value={formData.hsnCode}
               onChange={handleChange}
             />
           </div>
@@ -564,7 +584,7 @@ const CreateProduct = () => {
               type="text"
               className="w-full p-1 border rounded"
               name="description"
-              checked={formData.description}
+              value={formData.description}
               onChange={handleChange}
             />
           </div>
@@ -604,7 +624,7 @@ const CreateProduct = () => {
           <div>
             <label className="block font-bold">Features</label>
             <input
-              type="date"
+              type="text"
               name="feature"
               className="w-full p-1 border rounded"
               value={formData.feature}

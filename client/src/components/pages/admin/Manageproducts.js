@@ -5,9 +5,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-import ManufacturerViewModel from "./modals/ManufacturerViewModels";
-import ManufacturerEditModel from "./modals/ManufacturerEditModel";
+
 import ProductViewModel from "./modals/ProductViewModel";
+import ProductEditModal from "./modals/ProductEditModal";
 
 const Manageproducts = () => {
   const [manufacturer, setManufacturer] = useState([]);
@@ -20,18 +20,8 @@ const Manageproducts = () => {
 
   const fetchManufacturer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth//manageproduct");
+      const response = await axios.get("/api/v1/auth/manageproduct");
       setManufacturer(response.data.data);
-    } catch (error) {
-      console.error("Error fetching Manufacturer data", error);
-    }
-  };
-
-  const fetchProductAll = async () => {
-    try {
-      const response = await axios.get("/api/v1/auth//manageproduct");
-      console.log(response, "response");
-      //   setManufacturer(response.data.data);
     } catch (error) {
       console.error("Error fetching Manufacturer data", error);
     }
@@ -39,14 +29,11 @@ const Manageproducts = () => {
 
   useEffect(() => {
     fetchManufacturer();
-    fetchProductAll();
   }, []);
 
   const deleteManufacturer = async (_id) => {
     try {
-      const response = await axios.delete(
-        `/api/v1/auth/deleteManufacturer/${_id}`
-      );
+      const response = await axios.delete(`/api/v1/auth/deleteproduct/${_id}`);
       setManufacturer(manufacturer.filter((supplier) => supplier._id !== _id));
 
       if (response) {
@@ -126,7 +113,8 @@ const Manageproducts = () => {
                 MRP
               </th>
               <th className="px-6 font-black text-nowrap py-2 border-r text-left text-sm font-medium text-gray-600">
-                Purchase Price <span className="text-[10px]">( Include GST)</span>
+                Purchase Price{" "}
+                <span className="text-[10px]">( Include GST)</span>
               </th>
               <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
                 Retail Price
@@ -140,7 +128,6 @@ const Manageproducts = () => {
             </tr>
           </thead>
           <tbody>
-            {/* {console.log(filteredManufacturer, "filteredManufacturer")} */}
             {filteredManufacturer.length > 0 ? (
               filteredManufacturer.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
@@ -226,7 +213,7 @@ const Manageproducts = () => {
               borderRadius: "5px",
             },
           }}
-        > 
+        >
           <ProductViewModel
             closeModal={closeModal}
             ManufacturerData={modalData}
@@ -239,9 +226,9 @@ const Manageproducts = () => {
           contentLabel="View Item Modal"
           style={{
             content: {
-              width: "80%",
-              height: "80%",
-              maxWidth: "800px",
+              width: "100%",
+              height: "100%",
+              maxWidth: "1200px",
               margin: "auto",
               padding: "5px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -249,9 +236,10 @@ const Manageproducts = () => {
             },
           }}
         >
-          <ManufacturerEditModel
+          <ProductEditModal
             closeModal={closeModal}
             ManufacturerData={modalData}
+            
           />
         </Modal>
       </div>

@@ -12,8 +12,8 @@ const productSchema = new mongoose.Schema({
   hsnCode: { type: String },
   gstRate: { type: String },
   cess: { type: String },
-  purchaseTaxInclude: { type: String },
-  salesTaxInclude: { type: String },
+  purchaseTaxInclude: { type: Boolean },
+  salesTaxInclude: { type: Boolean },
   img: [
     {
       type: String,
