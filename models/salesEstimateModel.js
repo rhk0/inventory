@@ -34,6 +34,7 @@ const SalesEstimateSchema = new mongoose.Schema({
       totalValue: { type: Number },
     },
   ],
+  narration:{type:String},
   otherChargesDescriptions:{type :String},
   grossAmount:{type :String},
   totalGstAmount:{type :String},
