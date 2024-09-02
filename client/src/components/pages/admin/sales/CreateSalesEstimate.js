@@ -711,6 +711,7 @@ const CreateSalesEstimate = () => {
                   <input
                     type="text"
                     id="other-charges"
+                    value={otherChargesDescriptions}
                     className="border p-2 w-full  rounded"
                   />
                 </div>
