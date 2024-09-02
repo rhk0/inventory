@@ -19,7 +19,7 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 1000000 }, // 1MB file size limit per file
   fileFilter: function (req, file, cb) {
-    const filetypes = /jpeg|jpg|png|gif/;
+    const filetypes = /jpeg|jpg|png|gif|bmp|tiff|tif|webp|heic|heif/;
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase()
     );
@@ -67,7 +67,6 @@ export const createProductController = async (req, res) => {
         batchNo,
         expiryDate,
         feature,
-        openingQty,
         minimumStock,
         maximumStock,
         purchasePriceExGst,
@@ -215,202 +214,156 @@ export const deleteProductController = async (req, res) => {
     });
   }
 };
+
+
+
+
 export const updateProductController = async (req, res) => {
   try {
-    const {
-      itemCode,
-      productName,
-      category,
-      subCategory,
-      brand,
-      subBrand,
-      uom,
-      gstRate,
-      purchaseTaxInclude,
-      salesTaxInclude,
-      cess,
-      batchNo,
-      expiryDate,
-      manufacture,
-      ingredients,
-      feature,
-      description,
-      newWeight,
-      purchasePrice,
-      landingCost,
-      mrp,
-      retailDiscount,
-      retailPrice,
-      retailMargin,
-      wholesalerDiscount,
-      wholesalerPrice,
-      wholesaleMargin,
-      minimumStock,
-      maximumStock,
-      particular,
-      quantity,
-      rate,
-      units,
-      amount,
-      // items,
-    } = req.fields;
-
-    const { productId } = req.params;
-
-    // Parse 'items' if it's a stringified JSON array
-    // let parsedItems;
-    // try {
-    //   parsedItems = JSON.parse(items);
-    // } catch (e) {
-    //   return res.status(400).send({
-    //     message: "Invalid JSON format for items field",
-    //     details: e.message,
-    //   });
-    // }
-
-    const rows = parsedItems.map((rowData) => ({
-      variant: rowData.variant,
-      productCode: rowData.productCode,
-      productName: rowData.productName,
-      purchasePrice: rowData.purchasePrice,
-      landingCost: rowData.landingCost,
-      mrp: rowData.mrp,
-      retailDiscount: rowData.retailDiscount,
-      retailPrice: rowData.retailPrice,
-      retailMargin: rowData.retailMargin,
-      wholesalerDiscount: rowData.wholesalerDiscount,
-      wholesalerPrice: rowData.wholesalerPrice,
-      wholesaleMargin: rowData.wholesaleMargin,
-      minimumStock: rowData.minimumStock,
-      maximumStock: rowData.maximumStock,
-      openingQty: rowData.openingQty,
-    }));
-
-    const photoFiles = Object.values(req.files);
-
-    const requiredFields = [
-      "itemCode",
-      "productName",
-      "category",
-      "subCategory",
-      "brand",
-      "subBrand",
-      "uom",
-      "gstRate",
-      "purchaseTaxInclude",
-      "salesTaxInclude",
-      "cess",
-      "batchNo",
-      "expiryDate",
-      "manufacture",
-      "ingredients",
-      "feature",
-      "description",
-      "newWeight",
-      "purchasePrice",
-      "landingCost",
-      "mrp",
-      "retailDiscount",
-      "retailPrice",
-      "retailMargin",
-      "wholesalerDiscount",
-      "wholesalerPrice",
-      "wholesaleMargin",
-      "minimumStock",
-      "maximumStock",
-      "particular",
-      "quantity",
-      "rate",
-      "units",
-      "amount",
-    ];
-
-    // const missingFields = requiredFields.filter((field) => !req.fields[field]);
-    // if (missingFields.length > 0) {
-    //   return res.status(400).send({
-    //     message: "Required fields are missing",
-    //     missingFields: missingFields,
-    //   });
-    // }
-
-    const product = await productModel.findById(productId);
-    if (!product) {
-      return res.status(404).send({
-        success: false,
-        message: "Product not found",
-      });
-    }
-
-    product.itemCode = itemCode;
-    product.productName = productName;
-    product.category = category;
-    product.subCategory = subCategory;
-    product.brand = brand;
-    product.subBrand = subBrand;
-    product.uom = uom;
-    product.gstRate = gstRate;
-    product.purchaseTaxInclude = purchaseTaxInclude;
-    product.salesTaxInclude = salesTaxInclude;
-    product.cess = cess;
-    product.batchNo = batchNo;
-    product.expiryDate = expiryDate;
-    product.manufacture = manufacture;
-    product.ingredients = ingredients;
-    product.feature = feature;
-    product.description = description;
-    product.newWeight = newWeight;
-    product.purchasePrice = purchasePrice;
-    product.landingCost = landingCost;
-    product.mrp = mrp;
-    product.retailDiscount = retailDiscount;
-    product.retailPrice = retailPrice;
-    product.retailMargin = retailMargin;
-    product.wholesalerDiscount = wholesalerDiscount;
-    product.wholesalerPrice = wholesalerPrice;
-    product.wholesaleMargin = wholesaleMargin;
-    product.minimumStock = minimumStock;
-    product.maximumStock = maximumStock;
-    product.particular = particular;
-    product.quantity = quantity;
-    product.rate = rate;
-    product.units = units;
-    product.amount = amount;
-    product.rows = rows;
-
-    // Handle photo files if any
-    if (photoFiles.length > 0) {
-      product.photo = [];
-      let photoCount = 0;
-      for (const p of photoFiles) {
-        if (photoCount >= 10) {
-          return res.status(400).send({ message: "Maximum 10 photos allowed" });
-        }
-
-        if (p.size > 1000000) {
-          return res
-            .status(400)
-            .send({ message: "Photo should be less than 1MB" });
-        }
-
-        const imageBuffer = fs.readFileSync(p.path);
-        product.photo.push({ data: imageBuffer, contentType: p.type });
-        photoCount++;
+    // Handle file upload
+    upload(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        // A Multer error occurred when uploading
+        return res
+          .status(400)
+          .send({ error: "Multer error", message: err.message });
+      } else if (err) {
+        // An unknown error occurred
+        return res
+          .status(500)
+          .send({ error: "Server error", message: err.message });
       }
-    }
 
-    await product.save();
+      // Files uploaded successfully, proceed to update product
+      const {
+        itemCode,
+        productName,
+        category,
+        subCategory,
+        manufacturer,
+        brand,
+        subBrand,
+        unit,
+        hsnCode,
+        gstRate,
+        cess,
+        purchaseTaxInclude,
+        salesTaxInclude,
+        description,
+        newWeight,
+        batchNo,
+        expiryDate,
+        feature,
+        minimumStock,
+        maximumStock,
+        purchasePriceExGst,
+        purchasePriceInGst,
+        maxmimunRetailPrice,
+        retailDiscount,
+        retailPrice,
+        retailMargin,
+        wholesalerDiscount,
+        wholesalerPrice,
+        wholesaleMargin,
+        quantity,
+        rate,
+        units,
+        amount,
+        items,
+      } = req.body;
 
-    res.status(200).json({
-      success: true,
-      message: "Product Updated Successfully",
-      product,
+      // Validate and parse the items field
+      let parsedItems = [];
+      if (items) {
+        try {
+          parsedItems = JSON.parse(items);
+        } catch (e) {
+          return res.status(400).send({
+            message: "Invalid JSON format for items field",
+            details: e.message,
+          });
+        }
+      }
+
+      const rows = parsedItems.map((rowData) => ({
+        variant: rowData.variant,
+        productCode: rowData.productCode,
+        productName: rowData.productName,
+        purchasePrice: rowData.purchasePrice,
+        landingCost: rowData.landingCost,
+        mrp: rowData.mrp,
+        retailDiscount: rowData.retailDiscount,
+        retailPrice: rowData.retailPrice,
+        retailMargin: rowData.retailMargin,
+        wholesalerDiscount: rowData.wholesalerDiscount,
+        wholesalerPrice: rowData.wholesalerPrice,
+        wholesaleMargin: rowData.wholesaleMargin,
+        minimumStock: rowData.minimumStock,
+        maximumStock: rowData.maximumStock,
+        openingQty: rowData.openingQty,
+      }));
+
+      const img = req.files ? req.files.map((file) => file.path) : [];
+
+      try {
+        const updatedProduct = await ProductModel.findByIdAndUpdate(
+          req.params.id,
+          {
+            itemCode,
+            productName,
+            category,
+            subCategory,
+            manufacturer,
+            brand,
+            subBrand,
+            unit,
+            hsnCode,
+            gstRate,
+            cess,
+            purchaseTaxInclude,
+            salesTaxInclude,
+            description,
+            newWeight,
+            batchNo,
+            expiryDate,
+            feature,
+            minimumStock,
+            maximumStock,
+            purchasePriceExGst,
+            purchasePriceInGst,
+            maxmimunRetailPrice,
+            retailDiscount,
+            retailPrice,
+            retailMargin,
+            wholesalerDiscount,
+            wholesalerPrice,
+            wholesaleMargin,
+            quantity,
+            rate,
+            units,
+            amount,
+            items,
+            img: img.length ? img : undefined, 
+            rows,
+          },
+          { new: true }
+        );
+
+        if (!updatedProduct) {
+          return res.status(404).send({
+            message: "Product not found",
+          });
+        }
+
+        res.status(200).send({
+          message: "Product updated successfully",
+          product: updatedProduct,
+        });
+      } catch (error) {
+        res.status(500).send({ error: "Server error", message: error.message });
+      }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      error: "Error in updating product",
-      details: error.message,
-    });
+    res.status(500).send({ error: "Server error", message: error.message });
   }
 };
