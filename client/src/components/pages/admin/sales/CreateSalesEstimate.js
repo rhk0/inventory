@@ -10,6 +10,7 @@ const CreateSalesEstimate = () => {
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [paymentTerms, setPaymentTerms] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [otherChargesDescriptions,setotherChargesDescriptions]=useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -711,6 +712,7 @@ const CreateSalesEstimate = () => {
                   <input
                     type="text"
                     id="other-charges"
+                    value={otherChargesDescriptions}
                     className="border p-2 w-full  rounded"
                   />
                 </div>
