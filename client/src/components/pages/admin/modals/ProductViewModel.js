@@ -2,6 +2,7 @@ import React from "react";
 import { FaTimes } from "react-icons/fa";
 
 const ProductViewModel = ({ ManufacturerData, closeModal }) => {
+  console.log(ManufacturerData,"sdkjhf")
   return (
     <div className="justify-center p-8 responsive-container">
       <div className="flex justify-between items-center mb-1">
@@ -126,7 +127,7 @@ const ProductViewModel = ({ ManufacturerData, closeModal }) => {
               type="checkbox"
               className="p-1 m-4 border rounded"
               name="purchaseTaxInclude"
-              checked={ManufacturerData.purchaseTaxInclude}
+              checked={ManufacturerData.purchaseTaxInclude === 'true'}
               readOnly
             />
           </div>
@@ -136,7 +137,7 @@ const ProductViewModel = ({ ManufacturerData, closeModal }) => {
               type="checkbox"
               className="p-1 m-4 border rounded"
               name="salesTaxInclude"
-              checked={ManufacturerData.salesTaxInclude}
+              checked={ManufacturerData.salesTaxInclude === 'true'}
               readOnly
             />
           </div>

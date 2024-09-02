@@ -78,38 +78,18 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
   }, [ManufacturerData]);
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, type, checked, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : type === "number"
-          ? parseFloat(value) || 0
-          : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    console.log("Files selected:", files);
-
-    if (files.length > 0) {
-      // Update formData with selected files
-      setFormData((prev) => ({
-        ...prev,
-        img: files,
-      }));
-
-      // Generate previews for the selected files
-      const previews = files.map((file) => URL.createObjectURL(file));
-      console.log("Generated previews:", previews);
-
-      setImagePreviews(previews);
-    } else {
-      // Clear previews if no files are selected
-      setImagePreviews([]);
-    }
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews(previews);
+    setimgs(files);
   };
 
   // Cleanup preview URLs on component unmount
@@ -169,15 +149,14 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
     try {
       const form = new FormData();
 
-      for (const key in formData) {
-        if (key === "img") {
-          formData.img.forEach((file) => {
-            form.append("img", file);
-          });
+      Object.keys(formData).forEach((key) => {
+        if (key === "img" && imgs.length > 0) {
+          // Only append images if they exist
+          imgs.forEach((file) => form.append("img", file));
         } else {
           form.append(key, formData[key]);
         }
-      }
+      });
 
       form.append("items", JSON.stringify(formData.rows));
 
@@ -341,9 +320,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                 className="w-full p-2 border rounded"
                 value={formData.gstRate}
                 onChange={handleInputChange}
-                // min="0"
-                // max="100"
-                // step="0.01"
               />
             </div>
 
@@ -356,9 +332,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                 className="w-full p-2 border rounded"
                 value={formData.cess}
                 onChange={handleInputChange}
-                // min="0"
-                // max="100"
-                // step="0.01"
               />
             </div>
 
@@ -459,18 +432,14 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2">
-                {imagePreviews.length > 0 ? (
-                  imagePreviews.map((src, index) => (
-                    <img
-                      key={index}
-                      src={`/${src}`}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-32 object-cover rounded"
-                    />
-                  ))
-                ) : (
-                  <p>No images selected</p>
-                )}
+                {imagePreviews.map((src, index) => (
+                  <img
+                    key={index}
+                    src={`/${src}`}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-32 object-cover rounded"
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -519,8 +488,7 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
               </label>
               <input
                 type="number"
-                name="maxmimunRetailPrice
-"
+                name="maxmimunRetailPrice"
                 className="w-full p-2 border rounded"
                 value={formData.maxmimunRetailPrice}
                 onChange={handleInputChange}
@@ -540,9 +508,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                 className="w-full p-2 border rounded"
                 value={formData.retailDiscount}
                 onChange={handleInputChange}
-                // min="0"
-                // max="100"
-                // step="0.01"
               />
             </div>
 
@@ -569,9 +534,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                 className="w-full p-2 border rounded"
                 value={formData.retailMargin}
                 onChange={handleInputChange}
-                // min="0"
-                // max="100"
-                // step="0.01"
               />
             </div>
 
@@ -586,9 +548,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                 className="w-full p-2 border rounded"
                 value={formData.wholesalerDiscount}
                 onChange={handleInputChange}
-                // min="0"
-                // max="100"
-                // step="0.01"
               />
             </div>
 
@@ -617,9 +576,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                 className="w-full p-2 border rounded"
                 value={formData.wholesaleMargin}
                 onChange={handleInputChange}
-                // min="0"
-                // max="100"
-                // step="0.01"
               />
             </div>
           </div>
@@ -781,8 +737,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.purchasePrice}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
@@ -792,8 +746,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.landingCost}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
@@ -803,8 +755,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.mrp}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
@@ -814,9 +764,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.retailDiscount}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // max="100"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
@@ -826,8 +773,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.retailPrice}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
@@ -837,9 +782,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.retailMargin}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // max="100"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
@@ -849,9 +791,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.wholesalerDiscount}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // max="100"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
@@ -861,8 +800,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.wholesalerPrice}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
@@ -872,9 +809,6 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
                         className="w-full p-1 border rounded"
                         value={row.wholesaleMargin}
                         onChange={(e) => handleRowChange(index, e)}
-                        // min="0"
-                        // max="100"
-                        // step="0.01"
                       />
                     </td>
                     <td className="py-2 px-4 border">
