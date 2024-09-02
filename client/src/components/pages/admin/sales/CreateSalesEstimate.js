@@ -10,6 +10,7 @@ const CreateSalesEstimate = () => {
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [paymentTerms, setPaymentTerms] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [otherChargesDescriptions,setotherChargesDescriptions]=useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
