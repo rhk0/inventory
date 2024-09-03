@@ -478,7 +478,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </button>
           {showSales && (
             <ul className="ml-4">
-              <li className=" ">
+              <li>
                 <Link
                   to="/admin/CreateSalesEstimate"
                   className="flex items-center text-white nestitemhover "
@@ -486,9 +486,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   Create Sales Estimate
                 </Link>
               </li>
-              <li className=" ">
+              <li>
                 <Link
-                  to=""
+                  to="/admin/ManageSalesEstimate"
                   className="flex items-center text-white nestitemhover "
                 >
                   Sales Estimate List

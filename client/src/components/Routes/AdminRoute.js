@@ -43,18 +43,11 @@ import CreateManufacturer from "../pages/admin/CreateManufacturer.js";
 import ManageManufacturer from "../pages/admin/ManageManufacturer.js";
 import Manageproducts from "../pages/admin/Manageproducts.js";
 import CreateSalesEstimate from "../pages/admin/sales/CreateSalesEstimate.js";
+import ManageSalesEstimate from "../pages/admin/sales/ManageSalesEstimate.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
 
-  // useEffect(() => {
-  //   if (auth) {
-  //     console.log(auth);
-  //   }
-  //   if (!auth) {
-  //     console.log("ho");
-  //   }
-  // });
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
   const OpenSidebar = () => {
@@ -116,6 +109,8 @@ const AdminRoute = () => {
         <Route path="deliverychallan" element={<DeliveryChallan />} />
         <Route path="ManageProduct" element={<Manageproducts/>} />
         <Route path="CreateSalesEstimate" element={<CreateSalesEstimate/>} />
+        <Route path="ManageSalesEstimate" element={<ManageSalesEstimate/>} />
+
       </Routes>
     </div>
   );

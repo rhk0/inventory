@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 const CreateSalesEstimate = () => {
-  // State for form fields
   const [date, setDate] = useState("");
   const [estimateNo, setEstimateNo] = useState("");
   const [salesType, setSalesType] = useState("GST Invoice");
@@ -10,7 +9,7 @@ const CreateSalesEstimate = () => {
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [paymentTerms, setPaymentTerms] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [otherChargesDescriptions,setotherChargesDescriptions]=useState("");
+  const [otherChargesDescriptions, setotherChargesDescriptions] = useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -23,13 +22,10 @@ const CreateSalesEstimate = () => {
   const [reverseCharge, setReverseCharge] = useState("No");
   const [gstType, setGstType] = useState("CGST/SGST");
   const [rows, setRows] = useState([]);
-  // const [date, setDate] = useState('');
   const [paymentTerm, setPaymentTerm] = useState(0);
-  // const [dueDate, setDueDate] = useState('');
   const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
 
-  // Function to handle "Other Charges" button click
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
@@ -41,7 +37,6 @@ const CreateSalesEstimate = () => {
       const selectedDate = new Date(date);
       selectedDate.setDate(selectedDate.getDate() + parseInt(paymentTerm));
 
-      // Format the due date as DD-MMM-YYYY
       const day = String(selectedDate.getDate()).padStart(2, "0");
       const month = selectedDate.toLocaleString("en-US", { month: "short" });
       const year = selectedDate.getFullYear();
@@ -50,10 +45,6 @@ const CreateSalesEstimate = () => {
       setDueDate(formattedDueDate);
     }
   }, [date, paymentTerm]);
-
-  // const [date, setDate] = useState('');
-  // const [paymentTerms, setPaymentTerms] = useState('');
-  // const [dueDate, setDueDate] = useState('');
 
   const handleDateChange = (e) => {
     setDate(e.target.value);
@@ -81,14 +72,11 @@ const CreateSalesEstimate = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
-  // Handlers for each form element
-  // const handleDateChange = (e) => setDate(e.target.value);
   const handleEstimateNoChange = (e) => setEstimateNo(e.target.value);
   const handleSalesTypeChange = (e) => setSalesType(e.target.value);
   const handleCustomerTypeChange = (e) => setCustomerType(e.target.value);
   const handleCustomerNameChange = (e) => setCustomerName(e.target.value);
   const handlePlaceOfSupplyChange = (e) => setPlaceOfSupply(e.target.value);
-  // const handlePaymentTermsChange = (e) => setPaymentTerms(e.target.value);
   const handleDueDateChange = (e) => setDueDate(e.target.value);
   const handleBillingAddressChange = (e) => setBillingAddress(e.target.value);
   const handleReverseChargeChange = (e) => setReverseCharge(e.target.value);
@@ -162,7 +150,6 @@ const CreateSalesEstimate = () => {
 
   const { grossAmount, totalGstAmount, netAmount } = calculateTotals();
 
-  // Function to handle Save
   const handleSave = () => {
     // Implement save functionality
   };
@@ -172,34 +159,6 @@ const CreateSalesEstimate = () => {
     // Implement save and print functionality
   };
 
-  // Function to add a new row
-  // const addRow = () => {
-  //   setRows([
-  //     ...rows,
-  //     {
-  //       itemCode: "",
-  //       productName: "",
-  //       hsnCode: "",
-  //       qty: 0,
-  //       uom: "",
-  //       mrp: 0,
-  //       discount: 0,
-  //       taxableValue: 0,
-  //       cgst: 0,
-  //       sgst: 0,
-  //       igst: 0,
-  //       totalValue: 0,
-  //     },
-  //   ]);
-  // };
-
-  // Function to remove a row
-  // const removeRow = (index) => {
-  //   if (rows.length > 1) {
-  //     setRows(rows.filter((_, i) => i !== index));
-  //   }
-  // };
-
   return (
     <>
       <div
@@ -207,7 +166,7 @@ const CreateSalesEstimate = () => {
         className="p-4 responsive-container"
       >
         {/* Top Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4   gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label>
               Date:
@@ -286,15 +245,12 @@ const CreateSalesEstimate = () => {
               <input
                 type="text"
                 value={dueDate}
-                // onChange={(e) => setPaymentTerm(e.target.value)}
                 className="border p-2 w-full text-black rounded"
               />
             </label>
           </div>
 
-          {/* Transport Details Section */}
           <div className="mb-4">
-            {/* <h4 className="font-bold">Transport Details</h4> */}
             <button
               onClick={() => setIsModalOpen(true)}
               className="bg-blue-500 text-white p-2"
@@ -302,10 +258,8 @@ const CreateSalesEstimate = () => {
               Transport Details
             </button>
           </div>
-          {/* Billing Address Section */}
         </div>
 
-        {/* Modal for Transport Details */}
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
             <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
@@ -614,25 +568,6 @@ const CreateSalesEstimate = () => {
                     />
                   </td>
                   <td className="border p-1 gap-2 flex">
-                    {/* <button
-                      onClick={addRow}
-                      className="bg-green-500 text-white p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-                    >
-                      <svg
-                        xmlns="http//www.w3.org/2000/svg"
-                        className="h-4 w-4 "
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
-                    </button> */}
                     <button
                       onClick={() => removeRow(index)}
                       className="bg-red-500 text-white p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
@@ -748,11 +683,7 @@ const CreateSalesEstimate = () => {
           <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
             <label className="font-semibold">Narration</label>
             <br />
-            <textarea
-              // value={billingAddress}
-              // onChange={handleBillingAddressChange}
-              className="bg-black text-white border p-2 w-full  rounded"
-            />
+            <textarea className="bg-black text-white border p-2 w-full  rounded" />
           </div>
           <div className="w-full lg:w-1/3">
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
@@ -761,7 +692,6 @@ const CreateSalesEstimate = () => {
               </label>
               <input
                 value={grossAmount.toFixed(2)}
-                // onChange={handleBillingAddressChange}
                 className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
               />
             </div>
@@ -772,7 +702,6 @@ const CreateSalesEstimate = () => {
                 </label>
                 <input
                   value={totalGstAmount.toFixed(2)}
-                  // onChange={handleBillingAddressChange}
                   className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
                 />
               </div>
@@ -784,7 +713,6 @@ const CreateSalesEstimate = () => {
               </label>
               <input
                 value={otherCharges}
-                // onChange={handleBillingAddressChange}
                 className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
               />
             </div>
@@ -795,7 +723,6 @@ const CreateSalesEstimate = () => {
               </label>
               <input
                 value={netAmount.toFixed(2)}
-                // onChange={handleBillingAddressChange}
                 className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
               />
             </div>
