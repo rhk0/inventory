@@ -11,12 +11,15 @@ import { AdminProtectedRoute } from "./components/Routes/AdminProtectedRoute.js"
 import AdminRoutes from "./components/Routes/AdminRoute.js";
 import Test from "./components/Routes/Test.js";
 
+import Landing from "./landing/Landing.js";
+
 function App() {
   return (
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />}/>
+        <Route path="/" element={<Landing />}/>
+          <Route path="/login" element={<Login />}/>
           <Route path="/registration" element={<Registraion />} />
           <Route path="/forgetpassword" element={<ForgotPassword />} />
           <Route path="/otpverification" element={<Otpverification />} />

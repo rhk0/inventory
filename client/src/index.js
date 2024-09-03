@@ -4,8 +4,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './components/context/Auth';
+import 'aos/dist/aos.css'; // Import AOS styles
+import AOS from 'aos';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+AOS.init({
+  duration: 1200, // Duration of animations in ms
+  once: true,     // Whether animation should happen only once
+});
+
 root.render(
   <AuthProvider>
     <App />
