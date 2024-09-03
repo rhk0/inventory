@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import AddReceiptModal from "../modals/AddReciptModel";
-
+import Modal from "react-modal";
 const CreateSalesInvoice = () => {
   // State for form fields
+  const [viewModal, setViewModal] = useState(false);
   const [date, setDate] = useState("");
   const [estimateNo, setEstimateNo] = useState("");
   const [salesType, setSalesType] = useState("GST Invoice");
@@ -161,6 +162,15 @@ const CreateSalesInvoice = () => {
     const netAmount = grossAmount + totalGstAmount;
     return { grossAmount, totalGstAmount, netAmount };
   };
+  const openViewModal = (suppliers) => {
+    setViewModal(true);
+    
+  };
+  const closeModal = () => {
+   
+    setViewModal(false);
+  
+  };
 
   const { grossAmount, totalGstAmount, netAmount } = calculateTotals();
 
@@ -205,11 +215,9 @@ const CreateSalesInvoice = () => {
     window.print();
   };
 
-
-
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-  const closeReciptModal = () => setIsReceiptModalOpen(false);
+  // const closeModal = () => setIsModalOpen(false);
+  const closeReceiptModal = () => setIsReceiptModalOpen(false);
   return (
     <>
       <div
@@ -258,12 +266,12 @@ const CreateSalesInvoice = () => {
         </style>
         {/* Top Section */}
         <div className="print">
-          <h1 className="text-center text-3xl bg-gray-500 text-white">
+          <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
             Sales Invoice
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4   gap-4 mb-4">
             <div>
-              <label>
+              <label className="font-bold">
                 Date:
                 <input
                   type="date"
@@ -274,7 +282,7 @@ const CreateSalesInvoice = () => {
               </label>
             </div>
             <div>
-              <label>Estimate No.</label>
+              <label  className="font-bold">Estimate No.</label>
               <input
                 type="text"
                 value={estimateNo}
@@ -283,18 +291,18 @@ const CreateSalesInvoice = () => {
               />
             </div>
             <div>
-              <label>Sales Type</label>
+              <label  className="font-bold" >Sales Type</label>
               <select
                 value={salesType}
                 onChange={handleSalesTypeChange}
-                className="border p-2 w-full  rounded"
+                className="border p-2 w-full   rounded"
               >
                 <option value="GST Invoice">GST Invoice</option>
                 <option value="Bill of Supply">Bill of Supply</option>
               </select>
             </div>
             <div>
-              <label>Customer Type</label>
+              <label  className="font-bold">Customer Type</label>
               <select
                 value={customerType}
                 onChange={handleCustomerTypeChange}
@@ -305,7 +313,7 @@ const CreateSalesInvoice = () => {
               </select>
             </div>
             <div>
-              <label>Customer Name</label>
+              <label  className="font-bold">Customer Name</label>
               <input
                 type="text"
                 value={customerName}
@@ -314,7 +322,7 @@ const CreateSalesInvoice = () => {
               />
             </div>
             <div>
-              <label>Place of Supply</label>
+              <label  className="font-bold">Place of Supply</label>
               <input
                 type="text"
                 value={placeOfSupply}
@@ -323,7 +331,7 @@ const CreateSalesInvoice = () => {
               />
             </div>
             <div>
-              <label>
+              <label  className="font-bold">
                 Payment Term (days):
                 <input
                   type="number"
@@ -335,7 +343,7 @@ const CreateSalesInvoice = () => {
             </div>
 
             <div>
-              <label>
+              <label  className="font-bold">
                 Due Date
                 <input
                   type="text"
@@ -469,7 +477,7 @@ const CreateSalesInvoice = () => {
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-            <div className="mb-4">
+            <div className="mb-4 font-bold">
               <label>Billing Address</label>
               <textarea
                 value={billingAddress}
@@ -479,7 +487,7 @@ const CreateSalesInvoice = () => {
             </div>
             {/* Reverse Charge Section */}
             <div className="mb-4 w-full">
-              <label>Reverse Charge</label>
+              <label className="font-bold"> Reverse Charge</label>
               <select
                 value={reverseCharge}
                 onChange={handleReverseChargeChange}
@@ -493,7 +501,7 @@ const CreateSalesInvoice = () => {
             {/* GST Type Section */}
             {salesType === "GST Invoice" && (
               <div className="mb-4 w-full">
-                <label>GST Type:</label>
+                <label className="font-bold">GST Type:</label>
                 <select
                   value={gstType}
                   onChange={handleGstTypeChange}
@@ -508,33 +516,42 @@ const CreateSalesInvoice = () => {
 
           {/* Items Section */}
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border overflow-x-auto">
+            <table className="w-full border-collapse  overflow-x-auto">
               <thead>
                 <tr>
-                  <th className="border p-2">S.no</th>
-                  <th className="border p-2">Item Code</th>
-                  <th className="border p-2">Product Name</th>
-                  <th className="border p-2">HSN Code</th>
+                  <th className="border p-2">#</th>
+                  <th className="border text-nowrap p-2">Item Code</th>
+                  <th className="border text-nowrap p-2">Product Name</th>
+                  <th className="border text-nowrap p-2">HSN Code</th>
                   <th className="border p-2">Qty</th>
                   <th className="border p-2">UOM</th>
                   <th className="border p-2">MRP</th>
-                  <th className="border p-2">Discount</th>
+                  <th className="border p-2">Discount
+                  <div className="flex"><span className="mr-16">%</span> <span>RS</span></div>
+                  </th>
                   {salesType === "GST Invoice" && (
                     <>
-                      <th className="border p-2">Taxable Value</th>
+                      <th className="border text-nowrap p-2">Taxable Value</th>
                       {gstType === "CGST/SGST" && (
                         <>
-                          <th className="border p-2">CGST</th>
-                          <th className="border p-2">SGST</th>
+                          <th className="border p-2">CGST
+                          <div className="flex"><span className="mr-16">%</span> <span>RS</span></div>
+                          </th>
+                          <th className="border p-2">SGST
+                          <div className="flex"><span className="mr-16">%</span> <span>RS</span></div>
+                          </th>
                         </>
                       )}
                       {gstType === "IGST" && (
-                        <th className="border p-2">IGST</th>
+                        <th className="border p-2">IGST <br/>
+                        
+                         <div className="flex"><span className="mr-16">%</span> <span>RS</span></div>
+                        </th>
                       )}
                     </>
                   )}
-                  <th className="border p-2">Total Value</th>
-                  <th className="border ">Actions</th>
+                  <th className="border text-nowrap p-2">Total Value</th>
+             
                 </tr>
               </thead>
               <tbody>
@@ -619,7 +636,7 @@ const CreateSalesInvoice = () => {
                             <td className="border p-2">
                               <input
                                 type="number"
-                                value={row.cgst}
+                                value={`${row.cgst} RS`}
                                 onChange={(e) =>
                                   handleRowChange(index, "cgst", e.target.value)
                                 }
@@ -650,15 +667,17 @@ const CreateSalesInvoice = () => {
                             />
                           </td>
                         )}
-                        <td className="border p-2">
-                          <input
+                        <td className="border p-2 text-nowrap gap-2">
+                          {/* <input
                             type="number"
                             value={row.igst}
                             onChange={(e) =>
                               handleRowChange(index, "igst", e.target.value)
                             }
                             className="w-full"
-                          />
+                          /> */}
+                          <span> {row.igst} </span>
+                         <span> {row.igst} </span>
                         </td>
                       </>
                     )}
@@ -672,7 +691,7 @@ const CreateSalesInvoice = () => {
                         className="w-full"
                       />
                     </td>
-                    <td className="border p-1 gap-2 flex">
+                    <td className=" p-1 gap-2 flex">
                       {/* <button
                       onClick={addRow}
                       className="bg-green-500 text-white p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
@@ -694,7 +713,7 @@ const CreateSalesInvoice = () => {
                     </button> */}
                       <button
                         onClick={() => removeRow(index)}
-                        className="bg-red-500 text-white p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+                        className="bg-red-500 text-white  p-1 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
                       >
                         <svg
                           xmlns="http//www.w3.org/2000/svg"
@@ -785,7 +804,7 @@ const CreateSalesInvoice = () => {
                     />
                   </div>
                 </div>
-               
+
                 <div className="flex justify-end">
                   <button
                     onClick={() => setIsModalOtherChargesOpen(false)}
@@ -806,69 +825,90 @@ const CreateSalesInvoice = () => {
 
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
             <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
-              <label className="font-semibold">Narration</label>
+              <label className="font-bold">Narration</label>
               <br />
               <textarea
                 // value={billingAddress}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-2 w-full  rounded"
+                className="bg-black text-white border p-1 w-full  rounded"
               />
             </div>
             <div className="w-full lg:w-1/3">
               <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-                <label className="font-semibold lg:w-1/2 text-nowrap">
+                <label className=" font-bold lg:w-1/2 text-nowrap">
                   Gross Amount
                 </label>
                 <input
                   value={grossAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
-                  className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
               {salesType === "GST Invoice" && (
                 <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-                  <label className="font-semibold lg:w-1/2 text-nowrap">
+                  <label className=" font-bold lg:w-1/2 text-nowrap">
                     GST Amount
                   </label>
                   <input
                     value={totalGstAmount.toFixed(2)}
                     // onChange={handleBillingAddressChange}
-                    className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                    className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                   />
                 </div>
               )}
 
-              <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-                <label className="font-semibold lg:w-1/2 text-nowrap">
+              <div className="flex flex-col  lg:flex-row lg:justify-between mb-4">
+                <label className="font-bold lg:w-1/2 text-nowrap">
                   Other Charge
                 </label>
                 <input
-                  value={otherCharges}
+                  value={otherCharges.toFixed(2)}
                   // onChange={handleBillingAddressChange}
-                  className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
 
               <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-                <label className="font-semibold lg:w-1/2 text-nowrap">
+                <label className=" font-bold lg:w-1/2 text-nowrap">
                   Net Amount
                 </label>
                 <input
                   value={netAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
-                  className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
             </div>
           </div>
           <div className="mt-8 flex justify-center">
-          <button
-          onClick={openModal}
-          className="bg-orange-500 pl-4 pr-4 hover:bg-sky-700 text-white p-2 mr-2"
-        >
-          Add Receipt
-        </button>
-            <AddReceiptModal isOpen={isReceiptModalOpen} onClose={closeReciptModal}  />
+            <button
+              type="button"
+              onClick={() => openViewModal()}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Add Receipt
+            </button>
+          
+            <Modal
+              isOpen={viewModal}
+              onRequestClose={closeModal}
+              contentLabel="View Item Modal"
+              style={{
+                content: {
+                  width: "80%",
+                  height: "90%",
+                  maxWidth: "800px",
+                  margin: "auto",
+                  padding: "5px",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  borderRadius: "5px",
+                },
+              }}
+            >
+              <AddReceiptModal
+                closeModal={closeModal}
+              />
+            </Modal>
           </div>
 
           {/* Buttons for saving and printing */}

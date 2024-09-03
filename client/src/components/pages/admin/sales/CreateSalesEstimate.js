@@ -209,18 +209,18 @@ const CreateSalesEstimate = () => {
         {/* Top Section */}
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4   gap-4 mb-4">
           <div>
-            <label>
+            <label className="font-bold">
               Date:
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="border p-2 w-full  rounded"
+                className="border p-2 w-full   rounded"
               />
             </label>
           </div>
           <div>
-            <label>Estimate No.</label>
+            <label className="font-bold">Estimate No.</label>
             <input
               type="text"
               value={estimateNo}
@@ -229,7 +229,7 @@ const CreateSalesEstimate = () => {
             />
           </div>
           <div>
-            <label>Sales Type</label>
+            <label className="font-bold">Sales Type</label>
             <select
               value={salesType}
               onChange={handleSalesTypeChange}
@@ -240,7 +240,7 @@ const CreateSalesEstimate = () => {
             </select>
           </div>
           <div>
-            <label>Customer Type</label>
+            <label className="font-bold">Customer Type</label>
             <select
               value={customerType}
               onChange={handleCustomerTypeChange}
@@ -251,7 +251,7 @@ const CreateSalesEstimate = () => {
             </select>
           </div>
           <div>
-            <label>Customer Name</label>
+            <label className="font-bold">Customer Name</label>
             <input
               type="text"
               value={customerName}
@@ -260,7 +260,7 @@ const CreateSalesEstimate = () => {
             />
           </div>
           <div>
-            <label>Place of Supply</label>
+            <label className="font-bold">Place of Supply</label>
             <input
               type="text"
               value={placeOfSupply}
@@ -269,7 +269,7 @@ const CreateSalesEstimate = () => {
             />
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Payment Term (days):
               <input
                 type="number"
@@ -281,7 +281,7 @@ const CreateSalesEstimate = () => {
           </div>
 
           <div>
-            <label>
+            <label className="font-bold">
               Due Date
               <input
                 type="text"
@@ -413,7 +413,7 @@ const CreateSalesEstimate = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div className="mb-4">
-            <label>Billing Address</label>
+            <label className="font-bold">Billing Address</label>
             <textarea
               value={billingAddress}
               onChange={handleBillingAddressChange}
@@ -422,7 +422,7 @@ const CreateSalesEstimate = () => {
           </div>
           {/* Reverse Charge Section */}
           <div className="mb-4 w-full">
-            <label>Reverse Charge</label>
+            <label className="font-bold">Reverse Charge</label>
             <select
               value={reverseCharge}
               onChange={handleReverseChargeChange}
@@ -436,7 +436,7 @@ const CreateSalesEstimate = () => {
           {/* GST Type Section */}
           {salesType === "GST Invoice" && (
             <div className="mb-4 w-full">
-              <label>GST Type:</label>
+              <label className="font-bold">GST Type:</label>
               <select
                 value={gstType}
                 onChange={handleGstTypeChange}
@@ -451,10 +451,10 @@ const CreateSalesEstimate = () => {
 
         {/* Items Section */}
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse border overflow-x-auto">
+          <table className="w-full border-collapse  overflow-x-auto">
             <thead>
               <tr>
-                <th className="border p-2">S.no</th>
+                <th className="border p-2">#</th>
                 <th className="border p-2">Item Code</th>
                 <th className="border p-2">Product Name</th>
                 <th className="border p-2">HSN Code</th>
@@ -475,7 +475,7 @@ const CreateSalesEstimate = () => {
                   </>
                 )}
                 <th className="border p-2">Total Value</th>
-                <th className="border ">Actions</th>
+              
               </tr>
             </thead>
             <tbody>
@@ -613,29 +613,10 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-1 gap-2 flex">
-                    {/* <button
-                      onClick={addRow}
-                      className="bg-green-500 text-white p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-                    >
-                      <svg
-                        xmlns="http//www.w3.org/2000/svg"
-                        className="h-4 w-4 "
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
-                    </button> */}
+                  <td className=" p-1 gap-2 flex">
                     <button
                       onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+                      className="bg-red-500 text-white p-1 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
                     >
                       <svg
                         xmlns="http//www.w3.org/2000/svg"
@@ -712,7 +693,7 @@ const CreateSalesEstimate = () => {
                   <input
                     type="text"
                     id="other-charges"
-                    value={otherChargesDescriptions}
+                    // value={otherChargesDescriptions}
                     className="border p-2 w-full  rounded"
                   />
                 </div>
@@ -746,57 +727,57 @@ const CreateSalesEstimate = () => {
 
         <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
           <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
-            <label className="font-semibold">Narration</label>
+            <label className="font-bold">Narration</label>
             <br />
             <textarea
               // value={billingAddress}
               // onChange={handleBillingAddressChange}
-              className="bg-black text-white border p-2 w-full  rounded"
+              className="bg-black text-white border p-1 w-full  rounded"
             />
           </div>
           <div className="w-full lg:w-1/3">
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-semibold lg:w-1/2 text-nowrap">
+              <label className="font-bold lg:w-1/2 text-nowrap">
                 Gross Amount
               </label>
               <input
                 value={grossAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
             {salesType === "GST Invoice" && (
               <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-                <label className="font-semibold lg:w-1/2 text-nowrap">
+                <label className="font-bold lg:w-1/2 text-nowrap">
                   GST Amount
                 </label>
                 <input
                   value={totalGstAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
-                  className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
             )}
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-semibold lg:w-1/2 text-nowrap">
+              <label className="font-bold lg:w-1/2 text-nowrap">
                 Other Charge
               </label>
               <input
                 value={otherCharges}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-semibold lg:w-1/2 text-nowrap">
+              <label className="font-bold lg:w-1/2 text-nowrap">
                 Net Amount
               </label>
               <input
                 value={netAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
           </div>
