@@ -480,7 +480,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4">
               <li className=" ">
                 <Link
-                  to=""
+                  to="/admin/CreateSalesEstimate"
                   className="flex items-center text-white nestitemhover "
                 >
                   Create Sales Estimate

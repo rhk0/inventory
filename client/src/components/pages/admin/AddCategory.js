@@ -60,13 +60,13 @@ const AddCategory = () => {
           Add Categories
         </h4>
         <div className="px-2 flex gap-5">
-          <label className="block mb-2 ">Categorie Name:</label>
+          <label className="block mb-2 text-lg ">Categorie Name :</label>
           <input
             type="text"
             name="CategoryName"
             value={formData.CategoryName}
             onChange={handleChange}
-            className=" w-1/2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+            className=" w-1/2 border border-gray-300 py-2  rounded-md focus:ring-2 focus:ring-violet-600"
           />
         </div>
 

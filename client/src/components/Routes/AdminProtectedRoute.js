@@ -14,7 +14,7 @@ export const AdminProtectedRoute = () => {
     const authCheck = async () => {
       try {
         const response = await axios.get("/api/v1/auth/Admin-auth");
-        console.log(response, "res");
+        // console.log(response, "res");
 
         if (response.data.ok) {
           setOk(true);
