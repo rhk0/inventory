@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddReceiptModal from "../modals/AddReciptModel";
 import Modal from "react-modal";
-const CreateSalesInvoice = () => {
+const CreateSalesReturn = () => {
   // State for form fields
   const [viewModal, setViewModal] = useState(false);
   const [date, setDate] = useState("");
@@ -177,427 +177,8 @@ const CreateSalesInvoice = () => {
   };
 
   // Function to handle Save and Print
-  // Function to handle Save and Print
-  const handlePrintOnly = () => {
-    const printWindow = window.open("", "_blank");
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 10px;
-            }
-            .header, .section-header, .table th {
-              color: red;
-              font-weight: bold;
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 20px;
-              font-size: 24px;
-            }
-            .receipt-details .section-header {
-              color: green;
-              font-size: 16px;
-            }
-            .customer-details .section-header {
-              color: green;
-              font-size: 16px;
-            }
-            .sales-estimate .section-header {
-              color: blue;
-              font-size: 16px;
-            }
-            .transport-details .section-header, .amount-details .section-header {
-              color: blue;
-              font-size: 16px;
-            }
-            .terms .section-header {
-              color: red;
-            }
-            .table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-            }
-            .table th, .table td {
-              border: 1px solid black;
-              padding: 5px;
-              text-align: center;
-              font-size: 12px;
-            }
-            .table th {
-              background-color: #ff0000; /* Red header */
-              color: black;
-            }
-            .details {
-              font-size: 12px;
-              margin-bottom: 5px;
-            }
-            .signature {
-              text-align: right;
-              margin-top: 50px;
-              font-size: 12px;
-            }
-            .heades {
-              text-align: center;
-              color: blue;
-              font-size: 24px;
-            }
-          </style>
-
-        </head>
-        <body>
-         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
-          <div class="header">
-          
-            <div class="business-name">Business Name</div>
-            <div>Address: Your Address Here</div>
-            <div>GSTIN: Your GSTIN Here</div>
-          </div>
-  
-          <table class="table">
-             <tr>
-                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    Sales Invoice
-                  </th>
-              </tr>
-
-
-         
-            <tr>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>John Doe</span></div>
-                  <div class="details">Address: <span>123 Main St, City</span></div>
-                  <div class="details">Contact: <span>9876543210</span></div>
-                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
-                </div>
-              </td>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header"> Estimate Details</div>
-                  <div class="details">Invoice No: <span>12345</span></div>
-                  <div class="details">Invoice Date: <span>01-Jan-2024</span></div>
-                  <div class="details">Place of Supply: <span>City Name</span></div>
-                </div>
-              </td>
-              <td style="width: 40%;">
-                <div style="text-align:left;" class="transport-details">
-                  <div class="section-header">Transport Details</div>
-                  <div class="details">Receipt Doc No.: <span>6789</span></div>
-                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
-                  <div class="details">Agent Name: <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
-                </div>
-              </td>
-            </tr>
-          </table>
-  
-          <table class="table">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Product Name</th>
-                <th>HSN Code</th>
-                <th>QTY</th>
-                <th>UOM</th>
-                <th>MRP</th>
-                <th>Disc.</th>
-                <th>Rate</th>
-                <th>Taxable Value</th>
-                <th>CGST</th>
-                <th>SGST</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Add your product rows here -->
-              <tr>
-                <td>1</td>
-                <td>Product Name</td>
-                <td>1234</td>
-                <td>10</td>
-                <td>KG</td>
-                <td>500</td>
-                <td>10%</td>
-                <td>450</td>
-                <td>4500</td>
-                <td>9%</td>
-                <td>9%</td>
-                <td>5310</td>
-              </tr>
-            </tbody>
-          </table>
-  
-            <table class="table">
-              <tr>
-                <td style="width: 33.33%; text-align: left;">
-                  <div class="banking-details">
-                    <div class="section-header">Banking Details</div>
-                    <div class="details">Bank Name: XYZ Bank</div>
-                    <div class="details">IFSC Code: XYZ1234</div>
-                    <div class="details">Account No: 1234567890</div>
-                    <div class="details">Account Holder Name: John Doe</div>
-                    <div class="details">UPI ID: john@upi</div>
-                  </div>
-                </td>
-                <td style="width: 33.33%; text-align: left;">
-                  <div class="receipt-details">
-                    <div class="section-header">Receipt Mode</div>
-                    <div class="details">Bank Name: XYZ Bank</div>
-                    <div class="details">Transaction date: XYZ1234</div>
-                    <div class="details">Transaction /cheque No: 1234567890</div>
-                    <div class="details">Total Amount: John Doe</div>
-                    <div class="details">Advance Received:1000</div>
-                    <div class="details">Amount Received:1000</div>
-                    <div class="details">Balance Amount:1000</div>
-                  </div>
-                </td>
-                <td style="width: 33.33%; text-align: left;">
-                  <div class="amount-details">
-                    <div class="section-header">Amount Details</div>
-                    <div class="details">Gross Total: ₹10000</div>
-                    <div class="details">GST Amount: ₹1800</div>
-                    <div class="details">Additional Charges: ₹200</div>
-                    <div class="details">Net Total: ₹12000</div>
-                    <div class="details">Amount in Words: Twelve Thousand Only</div>
-                  </div>
-                </td>
-              </tr>
-            </table>
-
-             <div style="margin-top:100px" class="mt-10">
-                  <div class="section-header">Terms & Condition</div>
-                  <div class="details">Your terms and conditions go here...</div>
-                </div>
-  
-          <div  class="signature">
-         
-          
-            <div>For (Business Name)</div>
-            <div style="margin-top: 20px;">Signature</div>
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    printWindow.print();
-    printWindow.close();
-  };
-
-  const handlePrintOnlyWithoutGST = () => {
-    const printWindow = window.open("", "_blank");
-
-    printWindow.document.write(`
-      <html>
-        <head>
-              <style>
-        body {
-          font-family: Arial, sans-serif;
-          padding: 10px;
-        }
-        .header, .section-header, .table th {
-          color: red;
-          font-weight: bold;
-        }
-        .header {
-          text-align: center;
-          margin-bottom: 20px;
-          font-size: 24px;
-        }
-        .receipt-details .section-header {
-          color: green;
-          font-size: 16px;
-        }
-        .customer-details .section-header {
-          color: green;
-          font-size: 16px;
-        }
-        .sales-estimate .section-header {
-          color: blue;
-          font-size: 16px;
-        }
-        .transport-details .section-header, .amount-details .section-header {
-          color: blue;
-          font-size: 16px;
-        }
-        .terms .section-header {
-          color: red;
-        }
-        .table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-        }
-        .table th, .table td {
-          border: 1px solid black;
-          padding: 5px;
-          text-align: center;
-          font-size: 12px;
-        }
-        .table th {
-          background-color: #ff0000; /* Red header */
-          color: black;
-        }
-        .details {
-          font-size: 12px;
-          margin-bottom: 5px;
-        }
-        .signature {
-          text-align: right;
-          margin-top: 50px;
-          font-size: 12px;
-        }
-        .heades {
-          text-align: center;
-          color: blue;
-          font-size: 24px;
-        }
-      </style>
-        </head>
-        <body>
-         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
-          <div class="header">
-          
-            <div class="business-name">Business Name</div>
-            <div>Address: Your Address Here</div>
-            <div>GSTIN: Your GSTIN Here</div>
-          </div>
-  
-          <table class="table">
-             <tr>
-                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    Sales Invoice
-                  </th>
-              </tr>
-
-
-         
-            <tr>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>John Doe</span></div>
-                  <div class="details">Address: <span>123 Main St, City</span></div>
-                  <div class="details">Contact: <span>9876543210</span></div>
-                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
-                </div>
-              </td>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header"> Invoice Details</div>
-                  <div class="details">Invoice No: <span>12345</span></div>
-                  <div class="details">Invoice Date: <span>01-Jan-2024</span></div>
-                  <div class="details">Place of Supply: <span>City Name</span></div>
-                </div>
-              </td>
-              <td style="width: 40%;">
-                <div style="text-align:left;" class="transport-details">
-                  <div class="section-header">Transport Details</div>
-                  <div class="details">Receipt Doc No.: <span>6789</span></div>
-                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
-                  <div class="details">Agent Name: <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
-                </div>
-              </td>
-            </tr>
-          </table>
-  
-          <table class="table">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Product Name</th>
-                <th>HSN Code</th>
-                <th>QTY</th>
-                <th>UOM</th>
-                <th>MRP</th>
-                <th>Disc.</th>
-                <th>Rate</th>
-               
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Add your product rows here -->
-              <tr>
-                <td>1</td>
-                <td>Product Name</td>
-                <td>1234</td>
-                <td>10</td>
-                <td>KG</td>
-                <td>500</td>
-                <td>10%</td>
-                <td>450</td>
-                
-                <td>5310</td>
-              </tr>
-            </tbody>
-          </table>
-  
-<table class="table">
-              <tr>
-                <td style="width: 33.33%; text-align: left;">
-                  <div class="banking-details">
-                    <div class="section-header">Banking Details</div>
-                    <div class="details">Bank Name: XYZ Bank</div>
-                    <div class="details">IFSC Code: XYZ1234</div>
-                    <div class="details">Account No: 1234567890</div>
-                    <div class="details">Account Holder Name: John Doe</div>
-                    <div class="details">UPI ID: john@upi</div>
-                  </div>
-                </td>
-                <td style="width: 33.33%; text-align: left;">
-                  <div class="receipt-details">
-                    <div class="section-header">Receipt Mode</div>
-                    <div class="details">Bank Name: XYZ Bank</div>
-                    <div class="details">Transaction date: XYZ1234</div>
-                    <div class="details">Transaction /cheque No: 1234567890</div>
-                    <div class="details">Total Amount: John Doe</div>
-                    <div class="details">Advance Received:1000</div>
-                    <div class="details">Amount Received:1000</div>
-                    <div class="details">Balance Amount:1000</div>
-                  </div>
-                </td>
-                <td style="width: 33.33%; text-align: left;">
-                  <div class="amount-details">
-                    <div class="section-header">Amount Details</div>
-                    <div class="details">Gross Total: ₹10000</div>
-                    <div class="details">GST Amount: ₹1800</div>
-                    <div class="details">Additional Charges: ₹200</div>
-                    <div class="details">Net Total: ₹12000</div>
-                    <div class="details">Amount in Words: Twelve Thousand Only</div>
-                  </div>
-                </td>
-              </tr>
-            </table>
-             <div style="margin-top:100px" class="mt-10">
-                  <div class="section-header">Terms & Condition</div>
-                  <div class="details">Your terms and conditions go here...</div>
-                </div>
-  
-          <div  class="signature">
-         
-          
-            <div>For (Business Name)</div>
-            <div style="margin-top: 20px;">Signature</div>
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    printWindow.print();
-    printWindow.close();
+  const handleSaveAndPrint = () => {
+    // Implement save and print functionality
   };
 
   // Function to add a new row
@@ -683,7 +264,7 @@ const CreateSalesInvoice = () => {
         {/* Top Section */}
         <div className="print">
           <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
-            Sales Invoice
+            Create Sales Return
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4   gap-4 mb-4">
             <div>
@@ -698,15 +279,6 @@ const CreateSalesInvoice = () => {
               </label>
             </div>
             <div>
-              <label className="font-bold">Invoice No.</label>
-              <input
-                type="text"
-                value={estimateNo}
-                onChange={handleEstimateNoChange}
-                className="border p-2 w-full  rounded"
-              />
-            </div>
-            <div>
               <label className="font-bold">Sales Type</label>
               <select
                 value={salesType}
@@ -718,15 +290,13 @@ const CreateSalesInvoice = () => {
               </select>
             </div>
             <div>
-              <label className="font-bold">Customer Type</label>
-              <select
-                value={customerType}
-                onChange={handleCustomerTypeChange}
+              <label className="font-bold">Credit Note No</label>
+              <input
+                type="text"
+                value={estimateNo}
+                onChange={handleEstimateNoChange}
                 className="border p-2 w-full  rounded"
-              >
-                <option value="Retailer">Retailer</option>
-                <option value="Wholesaler">Wholesaler</option>
-              </select>
+              />
             </div>
             <div>
               <label className="font-bold">Customer Name</label>
@@ -770,17 +340,17 @@ const CreateSalesInvoice = () => {
               </label>
             </div>
 
-            {/* Transport Details Section */}
-            <div className="mb-4">
-              {/* <h4 className="font-bold">Transport Details</h4> */}
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-blue-500 text-white p-2"
-              >
-                Transport Details
-              </button>
-            </div>
             {/* Billing Address Section */}
+          </div>
+          {/* Transport Details Section */}
+          <div className="mb-4">
+            {/* <h4 className="font-bold">Transport Details</h4> */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white p-2"
+            >
+              Transport Details
+            </button>
           </div>
 
           {/* Modal for Transport Details */}
@@ -789,20 +359,6 @@ const CreateSalesInvoice = () => {
               <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
                 <h4 className="font-bold mb-4">Transport Details</h4>
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label>Receipt Doc No.</label>
-                    <input
-                      type="text"
-                      value={transportDetails.receiptDocNo}
-                      onChange={(e) =>
-                        handleTransportDetailChange(
-                          "receiptDocNo",
-                          e.target.value
-                        )
-                      }
-                      className="border p-2 w-full  rounded"
-                    />
-                  </div>
                   <div>
                     <label>Dispatched Through</label>
                     <input
@@ -859,20 +415,6 @@ const CreateSalesInvoice = () => {
                       className="border p-2 w-full  rounded"
                     />
                   </div>
-                  <div>
-                    <label>Motor Vehicle No.</label>
-                    <input
-                      type="text"
-                      value={transportDetails.motorVehicleNo}
-                      onChange={(e) =>
-                        handleTransportDetailChange(
-                          "motorVehicleNo",
-                          e.target.value
-                        )
-                      }
-                      className="border p-2 w-full  rounded"
-                    />
-                  </div>
                 </div>
                 <div className="flex justify-end">
                   <button
@@ -892,7 +434,7 @@ const CreateSalesInvoice = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
             <div className="mb-4 font-bold">
               <label>Billing Address</label>
               <textarea
@@ -928,6 +470,14 @@ const CreateSalesInvoice = () => {
                 </select>
               </div>
             )}
+            <div className="mb-4 font-bold">
+              <label>Reason for Return </label>
+              <input
+                value={billingAddress}
+                onChange={handleBillingAddressChange}
+                className="border p-2 w-full  rounded"
+              />
+            </div>
           </div>
 
           {/* Items Section */}
@@ -1182,7 +732,7 @@ const CreateSalesInvoice = () => {
             </svg>
             Add New Row
           </button>
-
+          {salesType !== "GST Invoice" && (
           <button
             onClick={() => setIsModalOtherChargesOpen(true)}
             className=" text-blue-800 mt-8 text-md p-2 hide-on-print mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
@@ -1203,6 +753,7 @@ const CreateSalesInvoice = () => {
             </svg>
             Add Other Charges
           </button>
+          )}
 
           {isModalOtherChargesOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -1270,29 +821,30 @@ const CreateSalesInvoice = () => {
                   className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
-              {salesType === "GST Invoice" && (
-                <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-                  <label className=" font-bold lg:w-1/2 text-nowrap">
-                    GST Amount
+
+              <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+                <label className=" font-bold lg:w-1/2 text-nowrap">
+                  GST Amount
+                </label>
+                <input
+                  value={totalGstAmount.toFixed(2)}
+                  // onChange={handleBillingAddressChange}
+                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                />
+              </div>
+
+              {salesType !== "GST Invoice" && (
+                <div className="flex flex-col  lg:flex-row lg:justify-between mb-4">
+                  <label className="font-bold lg:w-1/2 text-nowrap">
+                    Other Charge
                   </label>
                   <input
-                    value={totalGstAmount.toFixed(2)}
+                    value={otherCharges.toFixed(2)}
                     // onChange={handleBillingAddressChange}
                     className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                   />
                 </div>
               )}
-
-              <div className="flex flex-col  lg:flex-row lg:justify-between mb-4">
-                <label className="font-bold lg:w-1/2 text-nowrap">
-                  Other Charge
-                </label>
-                <input
-                  value={otherCharges.toFixed(2)}
-                  // onChange={handleBillingAddressChange}
-                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
-                />
-              </div>
 
               <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
                 <label className=" font-bold lg:w-1/2 text-nowrap">
@@ -1306,35 +858,6 @@ const CreateSalesInvoice = () => {
               </div>
             </div>
           </div>
-          <div className="mt-8 flex justify-center">
-            <button
-              type="button"
-              onClick={() => openViewModal()}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Add Receipt
-            </button>
-
-            <Modal
-              isOpen={viewModal}
-              onRequestClose={closeModal}
-              contentLabel="View Item Modal"
-              style={{
-                content: {
-                  width: "80%",
-                  height: "90%",
-                  maxWidth: "800px",
-                  margin: "auto",
-                  padding: "5px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  borderRadius: "5px",
-                },
-              }}
-            >
-              <AddReceiptModal closeModal={closeModal} />
-            </Modal>
-          </div>
-
           {/* Buttons for saving and printing */}
           <div className="mt-8 flex justify-center">
             <button
@@ -1343,22 +866,12 @@ const CreateSalesInvoice = () => {
             >
               Save
             </button>
-            {salesType === "GST Invoice" && (
-              <button
-                onClick={handlePrintOnly}
-                className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
-              >
-                Save and Print
-              </button>
-            )}
-            {salesType !== "GST Invoice" && (
-              <button
-                onClick={handlePrintOnlyWithoutGST}
-                className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
-              >
-                Save and Print
-              </button>
-            )}
+            <button
+              onClick={handlePrint}
+              className="bg-blue-700 pl-4 pr-4 hoverbg-sky-700 text-white p-2 hide-on-print"
+            >
+              Save and Print
+            </button>
           </div>
         </div>
       </div>
@@ -1366,4 +879,4 @@ const CreateSalesInvoice = () => {
   );
 };
 
-export default CreateSalesInvoice;
+export default CreateSalesReturn;

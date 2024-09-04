@@ -44,6 +44,8 @@ import ManageManufacturer from "../pages/admin/ManageManufacturer.js";
 import Manageproducts from "../pages/admin/Manageproducts.js";
 import CreateSalesEstimate from "../pages/admin/sales/CreateSalesEstimate.js";
 import CreateSalesInvoice from "../pages/admin/sales/CreateSalesInvoice.js";
+import CreateDeliveryChallan from "../pages/admin/sales/CreateDeliveryChallan.js";
+import CreateSalesReturn from "../pages/admin/sales/CreateSalesReturn.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -116,7 +118,11 @@ const AdminRoute = () => {
         {/* <Route path="invoice" element={<Invoice />} /> */}
         <Route path="invoice" element={<CreateSalesInvoice />} />
        
-        <Route path="deliverychallan" element={<DeliveryChallan />} />
+        {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
+        <Route path="deliverychallan" element={<CreateDeliveryChallan />} />
+        <Route path="salesreturn" element={<CreateSalesReturn />} />
+        
+
         <Route path="ManageProduct" element={<Manageproducts/>} />
         <Route path="CreateSalesEstimate" element={<CreateSalesEstimate/>} />
       </Routes>
