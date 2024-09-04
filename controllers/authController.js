@@ -195,6 +195,7 @@ export const verificationController = async (req, res) => {
 };
 
 export const loginController = async (req, res) => {
+  console.log("hit");
   try {
     const { email, password } = req.body;
     if (!email || !password) {

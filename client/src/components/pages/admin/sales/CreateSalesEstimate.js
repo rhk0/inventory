@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const CreateSalesEstimate = () => {
   const [date, setDate] = useState("");
@@ -7,9 +8,7 @@ const CreateSalesEstimate = () => {
   const [customerType, setCustomerType] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
-  const [paymentTerms, setPaymentTerms] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [otherChargesDescriptions, setotherChargesDescriptions] = useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -46,24 +45,6 @@ const CreateSalesEstimate = () => {
     }
   }, [date, paymentTerm]);
 
-  const handleDateChange = (e) => {
-    setDate(e.target.value);
-    updateDueDate(e.target.value, paymentTerms);
-  };
-
-  const handlePaymentTermsChange = (e) => {
-    setPaymentTerms(e.target.value);
-    updateDueDate(date, e.target.value);
-  };
-
-  const updateDueDate = (selectedDate, terms) => {
-    if (selectedDate && terms) {
-      const dateObj = new Date(selectedDate);
-      dateObj.setDate(dateObj.getDate() + parseInt(terms, 10));
-      const formattedDueDate = dateObj.toISOString().split("T")[0];
-      setDueDate(formattedDueDate);
-    }
-  };
   const handleGstTypeChange = (e) => {
     setGstType(e.target.value);
   };
@@ -77,7 +58,6 @@ const CreateSalesEstimate = () => {
   const handleCustomerTypeChange = (e) => setCustomerType(e.target.value);
   const handleCustomerNameChange = (e) => setCustomerName(e.target.value);
   const handlePlaceOfSupplyChange = (e) => setPlaceOfSupply(e.target.value);
-  const handleDueDateChange = (e) => setDueDate(e.target.value);
   const handleBillingAddressChange = (e) => setBillingAddress(e.target.value);
   const handleReverseChargeChange = (e) => setReverseCharge(e.target.value);
 
@@ -117,7 +97,7 @@ const CreateSalesEstimate = () => {
         productName: "",
         hsnCode: "",
         qty: 0,
-        uom: "",
+        units: "",
         mrp: 0,
         discount: 0,
         taxableValue: 0,
@@ -150,13 +130,51 @@ const CreateSalesEstimate = () => {
 
   const { grossAmount, totalGstAmount, netAmount } = calculateTotals();
 
-  const handleSave = () => {
-    // Implement save functionality
-  };
-
-  // Function to handle Save and Print
   const handleSaveAndPrint = () => {
     // Implement save and print functionality
+  };
+
+  const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageproduct");
+        if (response.data && Array.isArray(response.data.data)) {
+          setProducts(response.data.data);
+        } else {
+          console.error("Unexpected response structure:", response.data);
+        }
+        console.log(response, "API Response");
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        // toast.error("Failed to fetch products. Please try again.");
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const handleProductSelect = (rowIndex, selectedProductName) => {
+    const selectedProduct = products.find(
+      (product) => product.productName === selectedProductName
+    );
+
+    if (selectedProduct) {
+      const updatedRows = [...rows];
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice,
+        quantity: selectedProduct.quantity,
+        // Add any other fields you want to auto-fill here
+      };
+
+      setRows(updatedRows);
+    }
   };
 
   return (
@@ -168,18 +186,18 @@ const CreateSalesEstimate = () => {
         {/* Top Section */}
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
-            <label>
+            <label className="font-bold">
               Date:
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="border p-2 w-full  rounded"
+                className="border p-2 w-full   rounded"
               />
             </label>
           </div>
           <div>
-            <label>Estimate No.</label>
+            <label className="font-bold">Estimate No.</label>
             <input
               type="text"
               value={estimateNo}
@@ -188,7 +206,7 @@ const CreateSalesEstimate = () => {
             />
           </div>
           <div>
-            <label>Sales Type</label>
+            <label className="font-bold">Sales Type</label>
             <select
               value={salesType}
               onChange={handleSalesTypeChange}
@@ -199,7 +217,7 @@ const CreateSalesEstimate = () => {
             </select>
           </div>
           <div>
-            <label>Customer Type</label>
+            <label className="font-bold">Customer Type</label>
             <select
               value={customerType}
               onChange={handleCustomerTypeChange}
@@ -210,7 +228,7 @@ const CreateSalesEstimate = () => {
             </select>
           </div>
           <div>
-            <label>Customer Name</label>
+            <label className="font-bold">Customer Name</label>
             <input
               type="text"
               value={customerName}
@@ -219,7 +237,7 @@ const CreateSalesEstimate = () => {
             />
           </div>
           <div>
-            <label>Place of Supply</label>
+            <label className="font-bold">Place of Supply</label>
             <input
               type="text"
               value={placeOfSupply}
@@ -228,7 +246,7 @@ const CreateSalesEstimate = () => {
             />
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Payment Term (days):
               <input
                 type="number"
@@ -240,7 +258,7 @@ const CreateSalesEstimate = () => {
           </div>
 
           <div>
-            <label>
+            <label className="font-bold">
               Due Date
               <input
                 type="text"
@@ -367,7 +385,7 @@ const CreateSalesEstimate = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div className="mb-4">
-            <label>Billing Address</label>
+            <label className="font-bold">Billing Address</label>
             <textarea
               value={billingAddress}
               onChange={handleBillingAddressChange}
@@ -376,7 +394,7 @@ const CreateSalesEstimate = () => {
           </div>
           {/* Reverse Charge Section */}
           <div className="mb-4 w-full">
-            <label>Reverse Charge</label>
+            <label className="font-bold">Reverse Charge</label>
             <select
               value={reverseCharge}
               onChange={handleReverseChargeChange}
@@ -390,7 +408,7 @@ const CreateSalesEstimate = () => {
           {/* GST Type Section */}
           {salesType === "GST Invoice" && (
             <div className="mb-4 w-full">
-              <label>GST Type:</label>
+              <label className="font-bold">GST Type:</label>
               <select
                 value={gstType}
                 onChange={handleGstTypeChange}
@@ -405,31 +423,46 @@ const CreateSalesEstimate = () => {
 
         {/* Items Section */}
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse border overflow-x-auto">
+          <table className="w-full border-collapse  overflow-x-auto">
             <thead>
               <tr>
-                <th className="border p-2">S.no</th>
+                <th className="border p-2">#</th>
                 <th className="border p-2">Item Code</th>
                 <th className="border p-2">Product Name</th>
                 <th className="border p-2">HSN Code</th>
                 <th className="border p-2">Qty</th>
-                <th className="border p-2">UOM</th>
+                <th className="border p-2">units</th>
                 <th className="border p-2">MRP</th>
-                <th className="border p-2">Discount</th>
+                <th className="border p-2">
+                  Discount{" "}
+                  <div className="flex justify-between">
+                    <span className="mr-16">%</span> <span>RS</span>
+                  </div>
+                </th>
+
                 {salesType === "GST Invoice" && (
                   <>
                     <th className="border p-2">Taxable Value</th>
                     {gstType === "CGST/SGST" && (
                       <>
-                        <th className="border p-2">CGST</th>
-                        <th className="border p-2">SGST</th>
+                        <th className="border p-2">
+                          CGST{" "}
+                          <div className="flex justify-between">
+                            <span className="mr-16">%</span> <span>RS</span>
+                          </div>
+                        </th>
+                        <th className="border p-2">
+                          SGST{" "}
+                          <div className="flex justify-between">
+                            <span className="mr-16">%</span> <span>RS</span>
+                          </div>
+                        </th>
                       </>
                     )}
                     {gstType === "IGST" && <th className="border p-2">IGST</th>}
                   </>
                 )}
                 <th className="border p-2">Total Value</th>
-                <th className="border ">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -447,14 +480,24 @@ const CreateSalesEstimate = () => {
                     />
                   </td>
                   <td className="border p-2">
-                    <input
-                      type="text"
-                      value={row.productName}
+                    <select
+                      id="product-select"
                       onChange={(e) =>
-                        handleRowChange(index, "productName", e.target.value)
+                        handleProductSelect(index, e.target.value)
                       }
                       className="w-full"
-                    />
+                    >
+                      <option value="">Select a Product</option>
+                      {products.length > 0 ? (
+                        products.map((product) => (
+                          <option key={product._id} value={product.productName}>
+                            {product.productName}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="">Loading...</option>
+                      )}
+                    </select>
                   </td>
                   <td className="border p-2">
                     <input
@@ -469,7 +512,7 @@ const CreateSalesEstimate = () => {
                   <td className="border p-2">
                     <input
                       type="number"
-                      value={row.qty}
+                      value={row.quantity}
                       onChange={(e) =>
                         handleRowChange(index, "qty", e.target.value)
                       }
@@ -479,9 +522,9 @@ const CreateSalesEstimate = () => {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={row.uom}
+                      value={row.units}
                       onChange={(e) =>
-                        handleRowChange(index, "uom", e.target.value)
+                        handleRowChange(index, "units", e.target.value)
                       }
                       className="w-full"
                     />
@@ -489,14 +532,27 @@ const CreateSalesEstimate = () => {
                   <td className="border p-2">
                     <input
                       type="number"
-                      value={row.mrp}
+                      value={row.maxmimunRetailPrice}
                       onChange={(e) =>
-                        handleRowChange(index, "mrp", e.target.value)
+                        handleRowChange(
+                          index,
+                          "maxmimunRetailPrice",
+                          e.target.value
+                        )
                       }
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-2">
+                  <td className="border p-2 flex gap-2">
+                    <input
+                      type="number"
+                      value={row.discount}
+                      onChange={(e) =>
+                        handleRowChange(index, "discount", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                    <td className="border "></td>
                     <input
                       type="number"
                       value={row.discount}
@@ -514,14 +570,27 @@ const CreateSalesEstimate = () => {
                           <td className="border p-2">
                             <input
                               type="number"
-                              value={row.cgst}
+                              value={row.taxableValue}
                               onChange={(e) =>
-                                handleRowChange(index, "cgst", e.target.value)
+                                handleRowChange(
+                                  index,
+                                  "taxableValue",
+                                  e.target.value
+                                )
                               }
                               className="w-full"
                             />
                           </td>
-                          <td className="border p-2">
+                          <td className="border p-2 flex  gap-2">
+                            <input
+                              type="number"
+                              value={row.sgst}
+                              onChange={(e) =>
+                                handleRowChange(index, "sgst", e.target.value)
+                              }
+                              className="w-full"
+                            />
+                            <td className="border"></td>
                             <input
                               type="number"
                               value={row.sgst}
@@ -567,10 +636,10 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-1 gap-2 flex">
+                  <td className=" p-1 gap-2 flex">
                     <button
                       onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+                      className="bg-red-500 text-white p-1 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
                     >
                       <svg
                         xmlns="http//www.w3.org/2000/svg"
@@ -647,7 +716,7 @@ const CreateSalesEstimate = () => {
                   <input
                     type="text"
                     id="other-charges"
-                    value={otherChargesDescriptions}
+                    // value={otherChargesDescriptions}
                     className="border p-2 w-full  rounded"
                   />
                 </div>
@@ -681,49 +750,57 @@ const CreateSalesEstimate = () => {
 
         <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
           <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
-            <label className="font-semibold">Narration</label>
+            <label className="font-bold">Narration</label>
             <br />
-            <textarea className="bg-black text-white border p-2 w-full  rounded" />
+            <textarea
+              // value={billingAddress}
+              // onChange={handleBillingAddressChange}
+              className="bg-black text-white border p-1 w-full  rounded"
+            />
           </div>
           <div className="w-full lg:w-1/3">
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-semibold lg:w-1/2 text-nowrap">
+              <label className="font-bold lg:w-1/2 text-nowrap">
                 Gross Amount
               </label>
               <input
                 value={grossAmount.toFixed(2)}
-                className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                // onChange={handleBillingAddressChange}
+                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
             {salesType === "GST Invoice" && (
               <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-                <label className="font-semibold lg:w-1/2 text-nowrap">
+                <label className="font-bold lg:w-1/2 text-nowrap">
                   GST Amount
                 </label>
                 <input
                   value={totalGstAmount.toFixed(2)}
-                  className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                  // onChange={handleBillingAddressChange}
+                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
             )}
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-semibold lg:w-1/2 text-nowrap">
+              <label className="font-bold lg:w-1/2 text-nowrap">
                 Other Charge
               </label>
               <input
                 value={otherCharges}
-                className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                // onChange={handleBillingAddressChange}
+                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-semibold lg:w-1/2 text-nowrap">
+              <label className="font-bold lg:w-1/2 text-nowrap">
                 Net Amount
               </label>
               <input
                 value={netAmount.toFixed(2)}
-                className="bg-black text-white border p-2 w-full  rounded lg:w-2/3"
+                // onChange={handleBillingAddressChange}
+                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
           </div>
@@ -732,7 +809,7 @@ const CreateSalesEstimate = () => {
         {/* Buttons for saving and printing */}
         <div className="mt-8 flex justify-center">
           <button
-            onClick={handleSave}
+            // onClick={}
             className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-white p-2 mr-2"
           >
             Save
