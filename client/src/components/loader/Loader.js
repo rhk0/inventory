@@ -2,7 +2,7 @@ import React from 'react'
 import "./loader.css"
 const Loader = () => {
   return (
-<div className="loader">
+<div className="loader flex justify-center items-center">
     <div className="bar1"></div>
     <div className="bar2"></div>
     <div className="bar3"></div>
@@ -16,6 +16,7 @@ const Loader = () => {
     <div className="bar11"></div>
     <div className="bar12"></div>
 </div>
+
   )
 }
 

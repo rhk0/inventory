@@ -542,7 +542,7 @@ const CreateSalesInvoice = () => {
             </tbody>
           </table>
   
-<table class="table">
+      <table class="table">
               <tr>
                 <td style="width: 33.33%; text-align: left;">
                   <div class="banking-details">
@@ -991,7 +991,7 @@ const CreateSalesInvoice = () => {
                         onChange={(e) =>
                           handleRowChange(index, "itemCode", e.target.value)
                         }
-                        className="w-full"
+                        className=""
                       />
                     </td>
                     <td className="border p-2">

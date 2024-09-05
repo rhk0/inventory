@@ -46,6 +46,8 @@ import CreateSalesEstimate from "../pages/admin/sales/CreateSalesEstimate.js";
 import CreateSalesInvoice from "../pages/admin/sales/CreateSalesInvoice.js";
 import CreateDeliveryChallan from "../pages/admin/sales/CreateDeliveryChallan.js";
 import CreateSalesReturn from "../pages/admin/sales/CreateSalesReturn.js";
+import Pos from "../pages/admin/sales/Pos.js";
+import PayIn from "../pages/admin/sales/PayIn.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -117,6 +119,8 @@ const AdminRoute = () => {
         <Route path="managesalesQuotation" element={<ManageQuotation />} />
         {/* <Route path="invoice" element={<Invoice />} /> */}
         <Route path="invoice" element={<CreateSalesInvoice />} />
+        <Route path="pos" element={<Pos />} />
+        <Route path="payin" element={<PayIn />} />
        
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />

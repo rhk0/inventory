@@ -4,11 +4,11 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-
-
+import { MdRateReview } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 import ProductViewModel from "./modals/ProductViewModel";
 import ProductEditModal from "./modals/ProductEditModal";
-
+import { MdDelete } from "react-icons/md";
 const Manageproducts = () => {
   const [manufacturer, setManufacturer] = useState([]);
   const [viewModal, setViewModal] = useState(false);
@@ -82,47 +82,45 @@ const Manageproducts = () => {
         />
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300">
+        <table className="min-w-full bg-white border font-bold border-gray-300">
           <thead>
             <tr className="bg-gray-100   border-b">
-              <th className=" border-r font-black font-bold text-black text-[10px] font-medium text-gray-600">
-                No
-              </th>
-              <th className="px-6 py-2 font-black  font-bold text-black font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              <th className=" border-r font-bold   text-[10px]  ">No</th>
+              <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 Product Code
               </th>
 
-              <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 Product Name
               </th>
-              <th className="px-6 py-2 font-black border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 Category
               </th>
-              <th className="px-6 py-2 font-black border-r text-left text-sm font-medium text-gray-600">
+              {/* <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 Manufacturer
-              </th>
-              <th className="px-6 py-2 font-black border-r text-left text-sm font-medium text-gray-600">
+              </th> */}
+              <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 brand
               </th>
 
-              <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              {/* <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 Net Weight
-              </th>
+              </th> */}
 
-              <th className="px-6 py-2 font-black border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 MRP
               </th>
-              <th className="px-6 font-black text-nowrap py-2 border-r text-left text-sm font-medium text-gray-600">
+              {/* <th className="px-6 font-black text-nowrap py-2 border-r text-left text-sm font-medium text-gray-600">
                 Purchase Price{" "}
                 <span className="text-[10px]">( Include GST)</span>
-              </th>
-              <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              </th> */}
+              <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 Retail Price
               </th>
-              <th className="px-6 py-2 font-black text-nowrap border-r text-left text-sm font-medium text-gray-600">
+              <th className="px-6 py-2 font-black  text-nowrap border-r text-left font-bold">
                 Wholesale Price
               </th>
-              <th className="text-center font-black px-6 py-2 text-left text-sm font-medium text-gray-600">
+              <th className=" py-2 font-black  text-nowrap border-r  font-bold">
                 Action
               </th>
             </tr>
@@ -142,49 +140,49 @@ const Manageproducts = () => {
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.category}
                   </td>
-                  <td className="px-6 py-2 border-r text-sm">
+                  {/* <td className="px-6 py-2 border-r text-sm">
                     {supplier.manufacturer}
-                  </td>
+                  </td> */}
 
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.brand}
                   </td>
-                  <td className="px-6 py-2 border-r text-sm">
+                  {/* <td className="px-6 py-2 border-r text-sm">
                     {supplier.newWeight}
-                  </td>
+                  </td> */}
                   {/* <td className="px-6 py-2 border-r text-sm">
                     {supplier.openingBalance}
                   </td> */}
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.maxmimunRetailPrice}
                   </td>
-                  <td className="px-6 py-2 border-r text-sm">
+                  {/* <td className="px-6 py-2 border-r text-sm">
                     {supplier.purchasePriceInGst}
-                  </td>
+                  </td> */}
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.retailPrice}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.wholesalerPrice}
                   </td>
-                  <td className="px-1 py-2 border-r text-sm flex">
+                  <td className=" py-2 ml-5 text-sm flex text-center">
                     <button
-                      className="mx-1 text-white bg-green-500 pl-3 pr-3 p-1 rounded"
+                      className="mx-1 text-white bg-green-500 rounded p-2"
                       onClick={() => openViewModal(supplier)}
                     >
-                      View
-                    </button>{" "}
+                      <MdRateReview className="text-xl" />
+                    </button>
                     <button
                       className="mx-1 text-white bg-blue-500 pl-3 pr-3 p-1 rounded"
                       onClick={() => openEditModal(supplier)}
                     >
-                      Edit
+                      <FiEdit className="text-xl" />
                     </button>{" "}
                     <button
                       className="mx-1 text-white bg-red-500 pl-3 pr-3 p-1 rounded"
                       onClick={() => deleteManufacturer(supplier._id)}
                     >
-                      Delete
+                     <MdDelete className="text-xl" />
                     </button>
                   </td>
                 </tr>
@@ -239,7 +237,6 @@ const Manageproducts = () => {
           <ProductEditModal
             closeModal={closeModal}
             ManufacturerData={modalData}
-            
           />
         </Modal>
       </div>
