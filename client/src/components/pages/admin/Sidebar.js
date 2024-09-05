@@ -757,7 +757,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to=""
+                        to="/admin/bankTobankTransfer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Bank to Bank Transfer
