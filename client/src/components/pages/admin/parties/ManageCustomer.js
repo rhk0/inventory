@@ -5,11 +5,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-import VendorViewModel from "./modals/VendorViewModel";
-import VendorEditModel from "./modals/VenderEditModel";
+import CustomerViewModal from "../../admin/modals/CustomerViewModal";
+import CustomerEditModal from "../../admin/modals/CustomerEditModal";
 
-const ManageVendor = () => {
-  const [vendor, setVendor] = useState([]);
+const ManageCustomer = () => {
+  const [customer, setCustomer] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -17,23 +17,23 @@ const ManageVendor = () => {
 
   const navigate = useNavigate();
 
-  const fetchVendor = async () => {
+  const fetchCustomer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/ManageVendor");
-      setVendor(response.data.data);
+      const response = await axios.get("/api/v1/auth/manageCustomer");
+      setCustomer(response.data.data);
     } catch (error) {
-      console.error("Error fetching Vendor data", error);
+      console.error("Error fetching Customer data", error);
     }
   };
 
   useEffect(() => {
-    fetchVendor();
+    fetchCustomer();
   }, []);
 
-  const deleteVendor = async (_id) => {
+  const deleteCustomer = async (_id) => {
     try {
-      const response = await axios.delete(`/api/v1/auth/deleteVendor/${_id}`);
-      setVendor(vendor.filter((supplier) => supplier._id !== _id));
+      const response = await axios.delete(`/api/v1/auth/deleteCustomer/${_id}`);
+      setCustomer(customer.filter((supplier) => supplier._id !== _id));
 
       if (response) {
         toast.success(" delete all data Successfully...");
@@ -45,30 +45,30 @@ const ManageVendor = () => {
     }
   };
 
-  const openViewModal = (Vendor) => {
+  const openViewModal = (Customer) => {
     setViewModal(true);
-    setModalData(Vendor);
+    setModalData(Customer);
   };
 
-  const openEditModal = (Vendor) => {
+  const openEditModal = (Customer) => {
     setEditModal(true);
-    setModalData(Vendor);
+    setModalData(Customer);
   };
 
   const closeModal = () => {
-    fetchVendor();
+    fetchCustomer();
     setViewModal(false);
     setEditModal(false);
   };
 
-  // Filter Vendor based on search query
-  const filteredVendor = vendor.filter((supplier) =>
+  // Filter Customer based on search query
+  const filteredCustomer = customer.filter((supplier) =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
-        Manage Vendor
+        Manage Customer
       </h1>
       {/* Search input */}
       <div className="flex justify-between mb-4">
@@ -81,9 +81,9 @@ const ManageVendor = () => {
         />
         <button
           className="bg-purple-600 text-white px-4 py-2 rounded"
-          onClick={() => navigate("/admin/CreateVendors")}
+          onClick={() => navigate("/admin/CreateCustomer")}
         >
-          Add Vendor
+          Add Customer
         </button>
       </div>
       <div className="overflow-x-auto">
@@ -122,8 +122,8 @@ const ManageVendor = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredVendor.length > 0 ? (
-              filteredVendor.map((supplier, index) => (
+            {filteredCustomer.length > 0 ? (
+              filteredCustomer.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">
@@ -166,7 +166,7 @@ const ManageVendor = () => {
                     /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => deleteVendor(supplier._id)}
+                      onClick={() => deleteCustomer(supplier._id)}
                     >
                       Delete
                     </button>
@@ -176,7 +176,7 @@ const ManageVendor = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="px-6 py-2 text-center text-sm">
-                  No Vendor found.
+                  No Customer found.
                 </td>
               </tr>
             )}
@@ -198,7 +198,7 @@ const ManageVendor = () => {
             },
           }}
         >
-          <VendorViewModel closeModal={closeModal} VendorData={modalData} />
+          <CustomerViewModal closeModal={closeModal} CustomerData={modalData} />
         </Modal>
 
         <Modal
@@ -217,7 +217,7 @@ const ManageVendor = () => {
             },
           }}
         >
-          <VendorEditModel closeModal={closeModal} VendorData={modalData} />
+          <CustomerEditModal closeModal={closeModal} CustomerData={modalData} />
         </Modal>
       </div>
       <ToastContainer />
@@ -225,4 +225,4 @@ const ManageVendor = () => {
   );
 };
 
-export default ManageVendor;
+export default ManageCustomer;

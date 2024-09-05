@@ -5,11 +5,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-import CustomerViewModal from "./modals/CustomerViewModal";
-import CustomerEditModal from "./modals/CustomerEditModal";
+import ManufacturerViewModel from "../../admin/modals/ManufacturerViewModels";
+import ManufacturerEditModel from "../../admin/modals/ManufacturerEditModel";
 
-const ManageCustomer = () => {
-  const [customer, setCustomer] = useState([]);
+const ManageManufacturer = () => {
+  const [manufacturer, setManufacturer] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -17,23 +17,27 @@ const ManageCustomer = () => {
 
   const navigate = useNavigate();
 
-  const fetchCustomer = async () => {
+
+  
+  const fetchManufacturer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
-      setCustomer(response.data.data);
+      const response = await axios.get("/api/v1/auth/ManageManufacturer");
+      setManufacturer(response.data.data);
     } catch (error) {
-      console.error("Error fetching Customer data", error);
+      console.error("Error fetching Manufacturer data", error);
     }
   };
 
   useEffect(() => {
-    fetchCustomer();
+    fetchManufacturer();
   }, []);
 
-  const deleteCustomer = async (_id) => {
+  const deleteManufacturer = async (_id) => {
     try {
-      const response = await axios.delete(`/api/v1/auth/deleteCustomer/${_id}`);
-      setCustomer(customer.filter((supplier) => supplier._id !== _id));
+      const response = await axios.delete(
+        `/api/v1/auth/deleteManufacturer/${_id}`
+      );
+      setManufacturer(manufacturer.filter((supplier) => supplier._id !== _id));
 
       if (response) {
         toast.success(" delete all data Successfully...");
@@ -45,30 +49,30 @@ const ManageCustomer = () => {
     }
   };
 
-  const openViewModal = (Customer) => {
+  const openViewModal = (Manufacturer) => {
     setViewModal(true);
-    setModalData(Customer);
+    setModalData(Manufacturer);
   };
 
-  const openEditModal = (Customer) => {
+  const openEditModal = (Manufacturer) => {
     setEditModal(true);
-    setModalData(Customer);
+    setModalData(Manufacturer);
   };
 
   const closeModal = () => {
-    fetchCustomer();
+    fetchManufacturer();
     setViewModal(false);
     setEditModal(false);
   };
 
-  // Filter Customer based on search query
-  const filteredCustomer = customer.filter((supplier) =>
+  // Filter Manufacturer based on search query
+  const filteredManufacturer = manufacturer.filter((supplier) =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
-        Manage Customer
+        Manage Manufacturer
       </h1>
       {/* Search input */}
       <div className="flex justify-between mb-4">
@@ -81,9 +85,9 @@ const ManageCustomer = () => {
         />
         <button
           className="bg-purple-600 text-white px-4 py-2 rounded"
-          onClick={() => navigate("/admin/CreateCustomer")}
+          onClick={() => navigate("/admin/CreateManufacturer")}
         >
-          Add Customer
+          Add Manufacturer
         </button>
       </div>
       <div className="overflow-x-auto">
@@ -122,8 +126,8 @@ const ManageCustomer = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredCustomer.length > 0 ? (
-              filteredCustomer.map((supplier, index) => (
+            {filteredManufacturer.length > 0 ? (
+              filteredManufacturer.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">
@@ -166,7 +170,7 @@ const ManageCustomer = () => {
                     /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => deleteCustomer(supplier._id)}
+                      onClick={() => deleteManufacturer(supplier._id)}
                     >
                       Delete
                     </button>
@@ -176,7 +180,7 @@ const ManageCustomer = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="px-6 py-2 text-center text-sm">
-                  No Customer found.
+                  No Manufacturer found.
                 </td>
               </tr>
             )}
@@ -198,7 +202,10 @@ const ManageCustomer = () => {
             },
           }}
         >
-          <CustomerViewModal closeModal={closeModal} CustomerData={modalData} />
+          <ManufacturerViewModel
+            closeModal={closeModal}
+            ManufacturerData={modalData}
+          />
         </Modal>
 
         <Modal
@@ -217,7 +224,10 @@ const ManageCustomer = () => {
             },
           }}
         >
-          <CustomerEditModal closeModal={closeModal} CustomerData={modalData} />
+          <ManufacturerEditModel
+            closeModal={closeModal}
+            ManufacturerData={modalData}
+          />
         </Modal>
       </div>
       <ToastContainer />
@@ -225,4 +235,4 @@ const ManageCustomer = () => {
   );
 };
 
-export default ManageCustomer;
+export default ManageManufacturer;
