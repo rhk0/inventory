@@ -5,8 +5,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-import CustomerViewModal from "./modals/CustomerViewModal";
-import CustomerEditModal from "./modals/CustomerEditModal";
+import CustomerViewModal from "../../admin/modals/CustomerViewModal";
+import CustomerEditModal from "../../admin/modals/CustomerEditModal";
 
 const ManageCustomer = () => {
   const [customer, setCustomer] = useState([]);

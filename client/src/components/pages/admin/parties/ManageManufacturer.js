@@ -5,8 +5,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-import ManufacturerViewModel from "./modals/ManufacturerViewModels";
-import ManufacturerEditModel from "./modals/ManufacturerEditModel";
+import ManufacturerViewModel from "../../admin/modals/ManufacturerViewModels";
+import ManufacturerEditModel from "../../admin/modals/ManufacturerEditModel";
 
 const ManageManufacturer = () => {
   const [manufacturer, setManufacturer] = useState([]);
