@@ -693,20 +693,20 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/cash"
                   className="flex items-center text-white nestitemhover "
                 >
-                  Add cash
+                  Manage cash
                 </Link>
               </li>
-              <li className="">
+              {/* <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Cash
                 </Link>
-              </li>
+              </li> 
               <li className="">
                 <Link
                   to="/admin/dashboard/manageperformance"
@@ -714,10 +714,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 >
                   Add Bank
                 </Link>
-              </li>{" "}
+              </li>{" "} */}
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/addbank"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Bank

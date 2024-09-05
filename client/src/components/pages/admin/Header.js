@@ -15,7 +15,7 @@ function Header({ OpenSidebar }) {
     setIsMenuOpen(false);
   };
   return (
-    <header style={{ backgroundColor: " #042961" }} className="header">
+    <header  className="header">
       <div className="menu-icon">
         <BsJustify className="icon text-white" onClick={OpenSidebar} />
       </div>
