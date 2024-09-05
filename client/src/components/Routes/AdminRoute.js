@@ -43,25 +43,19 @@ import CreateManufacturer from "../pages/admin/parties/CreateManufacturer.js";
 import ManageManufacturer from "../pages/admin/parties/ManageManufacturer.js";
 import Manageproducts from "../pages/admin/inventory/Manageproducts.js";
 import CreateSalesEstimate from "../pages/admin/sales/CreateSalesEstimate.js";
+import ManageSalesEstimate from "../pages/admin/sales/ManageSalesEstimate.js";
 import CreateSalesInvoice from "../pages/admin/sales/CreateSalesInvoice.js";
 import CreateDeliveryChallan from "../pages/admin/sales/CreateDeliveryChallan.js";
 import CreateSalesReturn from "../pages/admin/sales/CreateSalesReturn.js";
-import Pos from "../pages/admin/sales/Pos.js";
-import PayIn from "../pages/admin/sales/PayIn.js";
-import ManagePayIn from "../pages/admin/sales/ManagePayIn.js";
-import TotalSalesList from "../pages/admin/sales/TotalSalesList.js";
+import AddExpense from "../pages/admin/accounts/expenses/AddExpense.js";
+import ManageExpense from "../pages/admin/accounts/expenses/ManageExpense.js";
+import AddIncome from "../pages/admin/accounts/income/AddIncome.js";
+import ManageIncome from "../pages/admin/accounts/income/ManageIncome.js";
+
 
 const AdminRoute = () => {
   const [auth] = useAuth();
 
-  // useEffect(() => {
-  //   if (auth) {
-  //     console.log(auth);
-  //   }
-  //   if (!auth) {
-  //     console.log("ho");
-  //   }
-  // });
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
   const OpenSidebar = () => {
@@ -135,6 +129,14 @@ const AdminRoute = () => {
 
         <Route path="ManageProduct" element={<Manageproducts/>} />
         <Route path="CreateSalesEstimate" element={<CreateSalesEstimate/>} />
+        <Route path="ManageSalesEstimate" element={<ManageSalesEstimate/>} />
+        <Route path="AddExpense" element={<AddExpense/>} />
+        <Route path="ManageExpense" element={<ManageExpense/>} />
+        <Route path="AddIncome" element={<AddIncome/>} />
+        <Route path="ManageIncome" element={<ManageIncome/>} />
+
+
+
       </Routes>
     </div>
   );

@@ -478,7 +478,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </button>
           {showSales && (
             <ul className="ml-4">
-              <li className=" ">
+              <li>
                 <Link
                   to="/admin/CreateSalesEstimate"
                   className="flex items-center text-white nestitemhover "
@@ -486,9 +486,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   Create Sales Estimate
                 </Link>
               </li>
-              <li className=" ">
+              <li>
                 <Link
-                  to=""
+                  to="/admin/ManageSalesEstimate"
                   className="flex items-center text-white nestitemhover "
                 >
                   Sales Estimate List
@@ -794,7 +794,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to=""
+                        to="/admin/AddExpense"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Expenses
@@ -802,7 +802,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to=""
+                        to="/admin/ManageExpense"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Expenses List
@@ -822,10 +822,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   {!showIncome ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showIncome && (
-                  <ul className="ml-4">
+                  <ul className="ml-4">ruza qde
                     <li>
                       <Link
-                        to=""
+                        to="/admin/AddIncome"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Income
@@ -833,7 +833,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to=""
+                        to="/admin/ManageIncome"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Income
