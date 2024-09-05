@@ -18,7 +18,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-        <Route path="/" element={<Landing />}/>
+        {/* <Route path="/" element={<Landing />}/> */}
           <Route path="/login" element={<Login />}/>
           <Route path="/registration" element={<Registraion />} />
           <Route path="/forgetpassword" element={<ForgotPassword />} />
@@ -26,7 +26,7 @@ function App() {
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/CompanyRegistration" element={<CompanyRegistration />} />
           
-          {/* Admin protected routes */}
+         
           <Route path="/admin/*" element={<AdminProtectedRoute />}>
             <Route path="*" element={<AdminRoutes />} />
           

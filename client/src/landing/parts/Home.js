@@ -1,46 +1,35 @@
-// Home.js
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, IconButton } from '@mui/material';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import React from 'react';
+import { Box, Typography, Button } from '@mui/material';
 import landingImg from '../assets/invenoty.png';
 import Typewriter from 'react-typewriter-effect';
 import Carousel from 'react-material-ui-carousel';
 
 const Home = () => {
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  const handleScroll = () => {
-    setShowScrollTop(window.scrollY > 300);
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <div style={{ width: '100%', overflowX: 'hidden' }}>
-      {/* Carousel at the top with full width */}
+    <div style={{ width: '100%', overflowX: 'hidden', }}> {/* Added paddingTop */}
+      {/* Carousel at the top with responsive styles */}
       <Carousel 
         autoPlay
         interval={3000}
         indicators={false}
-        sx={{ paddingTop: "30px", paddingBottom: "30px", width: '100%', height: '90px', backgroundColor: '#f5f5f5' }}
+        sx={{ 
+          width: '100%', 
+          paddingTop: '50px',
+          height: { xs: '150px', sm:'200px', md: '90px' }, // Adjust height for different screen sizes
+          backgroundColor: '#f5f5f5',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adding shadow
+          '& .MuiTypography-root': {
+            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, // Adjust text size for different screen sizes
+          }
+        }}
       >
-        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center', px: 2 }}>
           Optimize Your Stock and Streamline Operations
         </Typography>
-        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center', px: 2 }}>
           Efficiently Manage Inventory and Orders from One Platform
         </Typography>
-        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center', px: 2 }}>
           Elevate Your Inventory Management with Advanced Tools
         </Typography>
       </Carousel>
@@ -65,6 +54,9 @@ const Home = () => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
+            alignItems: 'flex-start',
+            position: 'relative',
+            zIndex: 1,
           }}
         >
           <Typography variant="h2" component="h1" gutterBottom className="typewriter-text">
@@ -99,6 +91,7 @@ const Home = () => {
             alignItems: 'center',
             padding: { xs: '1rem', md: '2rem' },
             position: 'relative',
+            zIndex: 0,
           }}
         >
           <img
@@ -106,31 +99,12 @@ const Home = () => {
             alt="Inventory"
             style={{
               maxWidth: '100%',
-              height: '100%',
+              height: 'auto', // Ensure image scales proportionally
               animation: 'rotate 8s linear infinite',
             }}
           />
         </Box>
       </Box>
-
-      {/* Scroll-to-top button */}
-      {showScrollTop && (
-        <IconButton
-          onClick={scrollToTop}
-          sx={{
-            position: 'fixed',
-            bottom: 100,
-            right: 20,
-            backgroundColor: '#007BFF',
-            color: '#FFFFFF',
-            '&:hover': {
-              backgroundColor: '#0056b3',
-            },
-          }}
-        >
-          <ArrowUpwardIcon />
-        </IconButton>
-      )}
 
       <style>
         {`

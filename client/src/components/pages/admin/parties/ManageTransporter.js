@@ -5,35 +5,37 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-import SupplierViewModal from "./modals/SupplierViewModal";
-import SupplierEditModal from "./modals/SupplierEditModal";
+import TransporterEditModal from "../modals/TransporterEditModel";
+import TransporterViewModel from "../modals/TransporterViewModel";
 
-const ManageSupplier = () => {
-  const [suppliers, setSuppliers] = useState([]);
+const ManageTransporter = () => {
+  const [transporter, setTransporter] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
-  const fetchSuppliers = async () => {
+  const fetchTransporter = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageSupplier");
-      setSuppliers(response.data.data);
+      const response = await axios.get("/api/v1/auth/manageTransport");
+      setTransporter(response.data.data);
     } catch (error) {
-      console.error("Error fetching supplier data", error);
+      console.error("Error fetching Transporter data", error);
     }
   };
 
   useEffect(() => {
-    fetchSuppliers();
+    fetchTransporter();
   }, []);
 
-  const deleteSupplier = async (_id) => {
+  const deleteTransporter = async (_id) => {
     try {
-      const response = await axios.delete(`/api/v1/auth/deletesupplier/${_id}`);
-      setSuppliers(suppliers.filter((supplier) => supplier._id !== _id));
+      const response = await axios.delete(
+        `/api/v1/auth/deleteTransport/${_id}`
+      );
+      setTransporter(transporter.filter((supplier) => supplier._id !== _id));
 
       if (response) {
         toast.success(" delete all data Successfully...");
@@ -45,30 +47,30 @@ const ManageSupplier = () => {
     }
   };
 
-  const openViewModal = (suppliers) => {
+  const openViewModal = (Transporter) => {
     setViewModal(true);
-    setModalData(suppliers);
+    setModalData(Transporter);
   };
 
-  const openEditModal = (suppliers) => {
+  const openEditModal = (Transporter) => {
     setEditModal(true);
-    setModalData(suppliers);
+    setModalData(Transporter);
   };
 
   const closeModal = () => {
-    fetchSuppliers();
+    fetchTransporter();
     setViewModal(false);
     setEditModal(false);
   };
 
-  // Filter suppliers based on search query
-  const filteredSuppliers = suppliers.filter((supplier) =>
+  // Filter Transporter based on search query
+  const filteredTransporter = transporter.filter((supplier) =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
-        Manage Supplier
+        Manage Transporter
       </h1>
       {/* Search input */}
       <div className="flex justify-between mb-4">
@@ -81,9 +83,9 @@ const ManageSupplier = () => {
         />
         <button
           className="bg-purple-600 text-white px-4 py-2 rounded"
-          onClick={() => navigate("/admin/CreateSupplier")} 
+          onClick={() => navigate("/admin/createtranspoter")}
         >
-          Add Supplier
+          Add Transporter
         </button>
       </div>
       <div className="overflow-x-auto">
@@ -107,6 +109,10 @@ const ManageSupplier = () => {
                 Contact
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Registration Type
+              </th>
+
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 GSTIN
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
@@ -118,8 +124,8 @@ const ManageSupplier = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredSuppliers.length > 0 ? (
-              filteredSuppliers.map((supplier, index) => (
+            {filteredTransporter.length > 0 ? (
+              filteredTransporter.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">
@@ -134,6 +140,10 @@ const ManageSupplier = () => {
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.contact}
+                  </td>
+
+                  <td className="px-6 py-2 border-r text-sm">
+                    {supplier.registrationType}
                   </td>
                   <td className="px-6 py-2 border-r text-sm">
                     {supplier.gstin}
@@ -158,7 +168,7 @@ const ManageSupplier = () => {
                     /
                     <button
                       className="mx-1 text-blue-600"
-                      onClick={() => deleteSupplier(supplier._id)}
+                      onClick={() => deleteTransporter(supplier._id)}
                     >
                       Delete
                     </button>
@@ -168,7 +178,7 @@ const ManageSupplier = () => {
             ) : (
               <tr>
                 <td colSpan="7" className="px-6 py-2 text-center text-sm">
-                  No suppliers found.
+                  No Transporter found.
                 </td>
               </tr>
             )}
@@ -190,7 +200,10 @@ const ManageSupplier = () => {
             },
           }}
         >
-          <SupplierViewModal closeModal={closeModal} supplierData={modalData} />
+          <TransporterViewModel
+            closeModal={closeModal}
+            TransporterData={modalData}
+          />
         </Modal>
 
         <Modal
@@ -209,7 +222,10 @@ const ManageSupplier = () => {
             },
           }}
         >
-          <SupplierEditModal closeModal={closeModal} supplierData={modalData} />
+          <TransporterEditModal
+            closeModal={closeModal}
+            TransporterData={modalData}
+          />
         </Modal>
       </div>
       <ToastContainer />
@@ -217,4 +233,4 @@ const ManageSupplier = () => {
   );
 };
 
-export default ManageSupplier;
+export default ManageTransporter;

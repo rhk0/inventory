@@ -6,42 +6,42 @@ import Home from "../pages/admin/Home";
 import Sidebar from "../pages/admin/Sidebar";
 import Test from "./Test";
 import { useAuth } from "../context/Auth";
-import CreateSupplier from "../pages/admin/CreateSupplier.js";
-import ManageSupplier from "../pages/admin/ManageSupplier.js";
-import CreateTranspoter from "../pages/admin/CreateTransporter.js";
-import ManageTranspoter from "../pages/admin/ManageTransporter.js";
-import CreateCustomer from "../pages/admin/CreateCustomer.js";
-import ManageCustomer from "../pages/admin/ManageCustomer.js";
-import Cash from "../pages/admin/Cash.js";
-import CreateVendors from "../pages/admin/CreateVendors.js";
-import ManageVendor from "../pages/admin/ManageVendor.js";
+import CreateSupplier from "../pages/admin/parties/CreateSupplier.js";
+import ManageSupplier from "../pages/admin/parties/ManageSupplier.js";
+import CreateTranspoter from "../pages/admin/parties/CreateTransporter.js";
+import ManageTranspoter from "../pages/admin/parties/ManageTransporter.js";
+import CreateCustomer from "../pages/admin/parties/CreateCustomer.js";
+import ManageCustomer from "../pages/admin/parties/ManageCustomer.js";
+import Cash from "../pages/admin/cash/Cash.js"
+import CreateVendors from "../pages/admin/parties/CreateVendors.js";
+import ManageVendor from "../pages/admin/parties/ManageVendor.js";
 import CreateStaff from "../pages/admin/CreateStaff.js";
-import BankToBankTranfer from "../pages/admin/BankToBankTransfer.js";
-import AddBank from "../pages/admin/AddBank.js";
-import ManageBank from "../pages/admin/ManageBank.js";
-import AddCategory from "../pages/admin/AddCategory.js";
-import AddSubCategory from "../pages/admin/AddSubCategory.js";
-import AddBrand from "../pages/admin/AddBrand.js";
-import StockUnit from "../pages/admin/StockUnit.js";
-import CashWithDrawFromBank from "../pages/admin/CashWithDrawFromBank.js";
-import CashDepositIntoBank from "../pages/admin/CashDepositIntoBank.js";
-import StockDetails from "../pages/admin/StockDetails.js";
-import AddSubBrand from "../pages/admin/AddSubBrand.js";
-import ManageCategory from "../pages/admin/ManageCategory.js";
-import ManageSubCategory from "../pages/admin/ManageSubCategory.js";
-import ManageStockUnit from "../pages/admin/ManageStockUnit.js";
-import ManageBrand from "../pages/admin/ManageBrand.js";
-import ManageSubBrand from "../pages/admin/ManageSubBrand.js";
+import BankToBankTranfer from "../pages/admin/accounts/banktransaction/BankToBankTransfer.js";
+import AddBank from "../pages/admin/cash/AddBank.js";
+
+import AddCategory from "../pages/admin/inventory/AddCategory.js";
+import AddSubCategory from "../pages/admin/inventory/AddSubCategory.js";
+import AddBrand from "../pages/admin/inventory/AddBrand.js";
+import StockUnit from "../pages/admin/inventory/StockUnit.js";
+import CashWithDrawFromBank from "../pages/admin/accounts/banktransaction/CashWithDrawFromBank.js";
+import CashDepositIntoBank from "../pages/admin/accounts/banktransaction/CashDepositIntoBank.js";
+import StockDetails from "../pages/admin/inventory/StockDetails.js";
+import AddSubBrand from "../pages/admin/inventory/AddSubBrand.js";
+import ManageCategory from "../pages/admin/inventory/ManageCategory.js";
+import ManageSubCategory from "../pages/admin/inventory/ManageSubCategory.js";
+import ManageStockUnit from "../pages/admin/inventory/ManageStockUnit.js";
+import ManageBrand from "../pages/admin/inventory/ManageBrand.js";
+import ManageSubBrand from "../pages/admin/inventory/ManageSubBrand.js";
 import CreateBranches from "../pages/admin/CreateBranches.js";
 import ManageBranches from "../pages/admin/ManageBranches.js";
-import CreateProduct from "../pages/admin/CreateProduct.js";
+import CreateProduct from "../pages/admin/inventory/CreateProduct.js";
 import SalesQuotation from "../pages/admin/SalesQuotation.js";
 import ManageQuotation from "../pages/admin/ManageQuotation.js";
-import Invoice from "../pages/admin/Invoice.js";
-import DeliveryChallan from "../pages/admin/DeliveryChallan.js";
-import CreateManufacturer from "../pages/admin/CreateManufacturer.js";
-import ManageManufacturer from "../pages/admin/ManageManufacturer.js";
-import Manageproducts from "../pages/admin/Manageproducts.js";
+
+
+import CreateManufacturer from "../pages/admin/parties/CreateManufacturer.js";
+import ManageManufacturer from "../pages/admin/parties/ManageManufacturer.js";
+import Manageproducts from "../pages/admin/inventory/Manageproducts.js";
 import CreateSalesEstimate from "../pages/admin/sales/CreateSalesEstimate.js";
 import CreateSalesInvoice from "../pages/admin/sales/CreateSalesInvoice.js";
 import CreateDeliveryChallan from "../pages/admin/sales/CreateDeliveryChallan.js";
@@ -91,7 +91,7 @@ const AdminRoute = () => {
 
 
         <Route path="Cash" element={<Cash />} />
-        <Route path="BankToBankTransfer" element={<BankToBankTranfer />} />
+        <Route path="bankTobankTransfer" element={<BankToBankTranfer />} />
         <Route path="addcategory" element={<AddCategory />} />
         <Route path="addsubcategory" element={<AddSubCategory />} />
         <Route path="addbrand" element={<AddBrand />} />
@@ -112,7 +112,7 @@ const AdminRoute = () => {
         <Route path="manageVendor" element={<ManageVendor />} />
         <Route path="createstaff" element={<CreateStaff />} />
         <Route path="addbank" element={<AddBank />} />
-        <Route path="managebank" element={<ManageBank />} />
+       
         <Route path="stockdetails" element={<StockDetails />} />
         <Route path="managestockunit" element={<ManageStockUnit />} />
         <Route path="manageBrand" element={<ManageBrand />} />
