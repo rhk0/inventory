@@ -26,7 +26,7 @@ function App() {
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/CompanyRegistration" element={<CompanyRegistration />} />
           
-          {/* Admin protected routes */}
+         
           <Route path="/admin/*" element={<AdminProtectedRoute />}>
             <Route path="*" element={<AdminRoutes />} />
           

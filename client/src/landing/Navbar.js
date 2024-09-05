@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import mLogo from './assets/m_logo.png';
+import mLogo from './assets/manasvilogo.png';
 
 // Include the Oswald font from Google Fonts
 const oswaldFont = 'https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap';
@@ -36,7 +36,7 @@ const navItems = [
 
 const Navbar = (props) => {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -68,7 +68,7 @@ const Navbar = (props) => {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', p: 2 }}>
-      <Box component="img" src={mLogo} alt="Logo" sx={{ width: 50, my: 2 }} />
+      <Box component="img" src={mLogo} alt="Logo" sx={{ width: "50%", my: 2 }} />
       <Divider />
       <List>
         {navItems.map((item) => (
@@ -124,11 +124,12 @@ const Navbar = (props) => {
           boxShadow: '2px 4px 8px rgba(0, 0, 0, 0.2)',
           fontFamily: 'Roboto, sans-serif',
           height: '70px',
-          justifyContent: 'center',
           top: 0,
           left: 0,
           right: 0,
           zIndex: 1300,
+          padding: 0, // Remove extra padding
+          marginBottom: { xs: 0, md: '20px' }, // Add margin bottom on larger screens
           '& link': {
             fontFamily: 'Oswald, sans-serif',
           },
@@ -136,22 +137,36 @@ const Navbar = (props) => {
       >
         <link href={oswaldFont} rel="stylesheet" />
         <Toolbar sx={{ justifyContent: 'space-between', minHeight: '70px', px: 2 }}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ display: { xs: 'block', sm: 'block', md: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', mx: 'auto' }}>
+          {/* Mobile view logo and menu icon */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center' }}>
             <Box
               component="img"
               src={mLogo}
               alt="Logo"
-              sx={{ width: 100, height: 'auto', display: { xs: 'block', sm: 'block' }, mr: 2 }}
+              sx={{ width: 200, height: 'auto', mr: 4 }}
+            />
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="end"
+              onClick={handleDrawerToggle}
+              sx={{ mr:4,
+                backgroundColor: 'transparent',
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                },
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box
+              component="img"
+              src={mLogo}
+              alt="Logo"
+              sx={{ width: 100, height: 'auto', display: { xs: 'none', md: 'block' }, mr: 2 }}
             />
           </Box>
 
@@ -208,10 +223,10 @@ const Navbar = (props) => {
               borderRadius: '20px',
               textTransform: 'none',
               px: 3,
+              display: { xs: 'none', md: 'block' },
               '&:hover': {
                 backgroundColor: '#0056b3',
               },
-              display: { xs: 'none', md: 'block' },
             }}
           >
             Book a Demo

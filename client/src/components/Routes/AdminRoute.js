@@ -12,12 +12,12 @@ import CreateTranspoter from "../pages/admin/CreateTransporter.js";
 import ManageTranspoter from "../pages/admin/ManageTransporter.js";
 import CreateCustomer from "../pages/admin/CreateCustomer.js";
 import ManageCustomer from "../pages/admin/ManageCustomer.js";
-import Cash from "../pages/admin/Cash.js";
+import Cash from "../pages/admin/cash/Cash.js"
 import CreateVendors from "../pages/admin/CreateVendors.js";
 import ManageVendor from "../pages/admin/ManageVendor.js";
 import CreateStaff from "../pages/admin/CreateStaff.js";
-import BankToBankTranfer from "../pages/admin/BankToBankTransfer.js";
-import AddBank from "../pages/admin/AddBank.js";
+import BankToBankTranfer from "../pages/admin/accounts/banktransaction/BankToBankTransfer.js";
+import AddBank from "../pages/admin/cash/AddBank.js";
 import ManageBank from "../pages/admin/ManageBank.js";
 import AddCategory from "../pages/admin/AddCategory.js";
 import AddSubCategory from "../pages/admin/AddSubCategory.js";
