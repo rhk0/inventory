@@ -85,7 +85,7 @@ const AdminRoute = () => {
 
 
         <Route path="Cash" element={<Cash />} />
-        <Route path="BankToBankTransfer" element={<BankToBankTranfer />} />
+        <Route path="bankTobankTransfer" element={<BankToBankTranfer />} />
         <Route path="addcategory" element={<AddCategory />} />
         <Route path="addsubcategory" element={<AddSubCategory />} />
         <Route path="addbrand" element={<AddBrand />} />
