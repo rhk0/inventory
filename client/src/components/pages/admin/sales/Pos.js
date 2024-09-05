@@ -14,83 +14,89 @@ const Pos = () => {
       cgstRs: "",
       sgstPercent: "",
       sgstRs: "",
+      igstPercent: "",
+      igstRs: "",
     },
   ]);
+
+  const handleChange = (index, field, value) => {
+    const newRows = [...rows];
+    newRows[index][field] = value;
+    setRows(newRows);
+  };
 
   const addRow = () => {
     setRows([
       ...rows,
       {
-        id: rows.length + 1,
-        code: "",
-        name: "",
-        qty: "",
-        mrp: "",
-        retailPrice: "",
-        taxableValue: "",
-        cgstPercent: "",
-        cgstRs: "",
-        sgstPercent: "",
-        sgstRs: "",
+        itemCode: "",
+        productName: "",
+        hsnCode: "",
+        qty: 0,
+        uom: "",
+        mrp: 0,
+        discount: 0,
+        taxableValue: 0,
+        cgst: 0,
+        sgst: 0,
+        igst: 0,
+        totalValue: 0,
       },
     ]);
   };
 
-  const removeRow = (id) => {
+  const removeRow = (index) => {
     if (rows.length > 1) {
-      setRows(rows.filter((row) => row.id !== id));
+      setRows(rows.filter((_, i) => i !== index));
     }
   };
-  const print=()=>{
+
+  const print = () => {
     window.print();
-  }
+  };
 
   return (
     <div
       style={{ backgroundColor: "pink" }}
-      className="responsive-container bg-pink-200 p-4  rounded-md w-full mx-auto"
+      className="responsive-container bg-pink-200 p-4 rounded-md w-full mx-auto"
     >
-              <style>
+      <style>
         {`
              @media print {
               @page {
                 size: A4;
                 margin: 0;
-                width:100%;
+                width: 100%;
               }
                    
-              @media print {
-                body * {
-                  visibility: hidden;
-                }
-                .responsive-container, .responsive-container * {
-                  visibility: visible;
-                }
-                .responsive-container {
-                  position: absolute;
-                  left: 0;
-                  top: 0;
-                  width: 100%;
-                }
-                .hide-on-print {
-                  display: none !important;
-                }
-                  .cucolor {
-                  color: red;
-                }
-                .hide-on-print button{
-                  display: none !important;
-                }
+              body * {
+                visibility: hidden;
+              }
+              .responsive-container, .responsive-container * {
+                visibility: visible;
+              }
+              .responsive-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+              }
+              .hide-on-print {
+                display: none !important;
+              }
+              .cucolor {
+                color: red;
+              }
+              .hide-on-print button {
+                display: none !important;
               }
               .print-container {
                 display: block;
                 page-break-before: always;
               }
-
               html, body {
                 width: 270mm;
               }
-          
         `}
       </style>
       <h1 className="text-center text-3xl bg-gray-500 text-white cucolor">
@@ -126,13 +132,12 @@ const Pos = () => {
           <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
             <option value="Cash">Cash</option>
             <option value="Online">Online</option>
-            {/* Add more options here if needed */}
           </select>
         </div>
       </div>
 
       <div className="overflow-x-auto mt-5">
-        <table className="w-full border-collapse  overflow-x-auto">
+        <table className="w-full border-collapse overflow-x-auto">
           <thead>
             <tr>
               <th className="border border-gray-500 p-1">#</th>
@@ -142,25 +147,29 @@ const Pos = () => {
               </th>
               <th className="border border-gray-500 p-1">Qty</th>
               <th className="border border-gray-500 p-1">MRP</th>
-              <th className="border border-gray-500 p-1 text-nowrap">Retail Price</th>
-              <th className="border border-gray-500 p-1 text-nowrap">Taxable Value</th>
+              <th className="border border-gray-500 p-1 text-nowrap">
+                Retail Price
+              </th>
+              <th className="border border-gray-500 p-1 text-nowrap">
+                Taxable Value
+              </th>
               <th className="border border-gray-500 p-1 text-xs">
                 CGST
-                <span className="mt-1 gap-10  flex text-center justify-center">
+                <span className="mt-1 gap-10 flex text-center justify-center">
                   <span>%</span>
                   <span>RS</span>
                 </span>
               </th>
               <th className="border border-gray-500 p-1 text-xs">
-                CGST
-                <span className="mt-1 gap-10  flex text-center justify-center">
+                SGST
+                <span className="mt-1 gap-10 flex text-center justify-center">
                   <span>%</span>
                   <span>RS</span>
                 </span>
               </th>
               <th className="border border-gray-500 p-1 text-xs">
                 IGST
-                <span className="mt-1 gap-10  flex text-center justify-center">
+                <span className="mt-1 gap-10 flex text-center justify-center">
                   <span>%</span>
                   <span>RS</span>
                 </span>
@@ -168,46 +177,36 @@ const Pos = () => {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {rows.map((row, index) => (
               <tr key={row.id}>
                 <td className="border border-gray-500 p-1 text-center">
-                  {row.id}
+                  {index + 1} {/* Serial Number */}
                 </td>
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"
                     value={row.code}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).code =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
+                    onChange={(e) =>
+                      handleChange(index, "code", e.target.value)
+                    }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
-                <td className="border border-gray-500 ml-5 mr-5 p-1">
+                <td className="border border-gray-500 p-1">
                   <input
                     type="text"
                     value={row.name}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).name =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
-                    className="w-full  p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleChange(index, "name", e.target.value)
+                    }
+                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"
                     value={row.qty}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).qty = e.target.value;
-                      setRows(newRows);
-                    }}
+                    onChange={(e) => handleChange(index, "qty", e.target.value)}
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
@@ -215,11 +214,7 @@ const Pos = () => {
                   <input
                     type="text"
                     value={row.mrp}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).mrp = e.target.value;
-                      setRows(newRows);
-                    }}
+                    onChange={(e) => handleChange(index, "mrp", e.target.value)}
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
@@ -227,12 +222,9 @@ const Pos = () => {
                   <input
                     type="text"
                     value={row.retailPrice}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).retailPrice =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
+                    onChange={(e) =>
+                      handleChange(index, "retailPrice", e.target.value)
+                    }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
@@ -240,131 +232,110 @@ const Pos = () => {
                   <input
                     type="text"
                     value={row.taxableValue}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).taxableValue =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
+                    onChange={(e) =>
+                      handleChange(index, "taxableValue", e.target.value)
+                    }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
                 <td className="border border-gray-500 p-1">
-                <div className="flex space-x-1">
-                  <input
-                    type="text"
-                    value={row.cgstPercent}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).cgstPercent =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
-                    className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="text"
-                    value={row.cgstPercent}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).cgstPercent =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
-                    className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="flex space-x-1">
+                    <input
+                      type="text"
+                      value={row.cgstPercent}
+                      onChange={(e) =>
+                        handleChange(index, "cgstPercent", e.target.value)
+                      }
+                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <input
+                      type="text"
+                      value={row.cgstRs}
+                      onChange={(e) =>
+                        handleChange(index, "cgstRs", e.target.value)
+                      }
+                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                   </div>
                 </td>
                 <td className="border border-gray-500 p-1">
-                <div className="flex space-x-1">
-                  <input
-                    type="text"
-                    value={row.cgstRs}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).cgstRs =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
-                    className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="text"
-                    value={row.cgstRs}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).cgstRs =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
-                    className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  </div>
-                </td>
-                <td className="border border-gray-500 p-1 mr-1">
                   <div className="flex space-x-1">
                     <input
                       type="text"
                       value={row.sgstPercent}
-                      onChange={(e) => {
-                        const newRows = [...rows];
-                        newRows.find((r) => r.id === row.id).sgstPercent =
-                          e.target.value;
-                        setRows(newRows);
-                      }}
+                      onChange={(e) =>
+                        handleChange(index, "sgstPercent", e.target.value)
+                      }
                       className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                       type="text"
-                      value={row.sgstPercent}
-                      onChange={(e) => {
-                        const newRows = [...rows];
-                        newRows.find((r) => r.id === row.id).sgstPercent =
-                          e.target.value;
-                        setRows(newRows);
-                      }}
+                      value={row.sgstRs}
+                      onChange={(e) =>
+                        handleChange(index, "sgstRs", e.target.value)
+                      }
                       className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </td>
-
-                <td className="p-1 text-center hide-on-print flex gap-1 items-center justify-center">
+                <td className="border border-gray-500 p-1">
+                  <div className="flex space-x-1">
+                    <input
+                      type="text"
+                      value={row.igstPercent}
+                      onChange={(e) =>
+                        handleChange(index, "igstPercent", e.target.value)
+                      }
+                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <input
+                      type="text"
+                      value={row.igstRs}
+                      onChange={(e) =>
+                        handleChange(index, "igstRs", e.target.value)
+                      }
+                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </td>
+                <td className="p-1 text-center hide-on-print flex gap-2 items-center justify-center">
                   <button
                     onClick={addRow}
-                    className="bg-green-500 text-white rounded p-1 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="bg-green-500 text-white rounded p-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="Add row"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-5 h-4"
-                      fill="none"
                       viewBox="0 0 24 24"
+                      className="h-5 w-4"
+                      fill="none"
                       stroke="currentColor"
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
-                        d="M12 4v16m8-8H4"
+                        d="M12 5v14m7-7H5"
                       />
                     </svg>
                   </button>
-
                   <button
-                    onClick={() => removeRow(row.id)}
-                    className="bg-red-500 text-white rounded p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onClick={() => removeRow(index)}
+                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="Remove row"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-6 h-4"
-                      fill="none"
                       viewBox="0 0 24 24"
+                      className="h-5 w-4"
+                      fill="none"
                       stroke="currentColor"
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
-                        d="M4 12h16"
+                        d="M6 18L18 6M6 6l12 12"
                       />
                     </svg>
                   </button>
@@ -376,21 +347,37 @@ const Pos = () => {
       </div>
 
       <div className="mt-4 flex justify-end">
-        <div className="text-left mr-2">
-          <p className="font-bold p-2">Gross Amount</p>
-          <p className="font-bold p-2">GST Amount</p>
-          <p className="font-bold p-2">Net Amount</p>
+        <div className="flex flex-col mr-8">
+          <label className="text-md font-bold text-black">Gross Amount</label>
+          <input
+            type="text"
+            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
+            placeholder="Gross Amount"
+          />
         </div>
-
-        <div className="text-right  text-white p-1 min-w-[100px]">
-          <input className="flex bg-black text-white border p-1 w-full  rounded " />
-          <input className="flex bg-black text-white border p-1 w-full  rounded " />
-          <input className="flex bg-black text-white border p-1 w-full  rounded " />
+        <div className="flex flex-col mr-8">
+          <label className="text-md font-bold text-black">GST Amount</label>
+          <input
+            type="text"
+            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
+            placeholder="GST Amount"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-md font-bold text-black">Net Amount</label>
+          <input
+            type="text"
+            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
+            placeholder="Net Amount"
+          />
         </div>
       </div>
 
       <div className="text-center mt-8">
-        <button onClick={print} className="bg-black hide-on-print text-white py-2 px-8 text-xl font-bold hover:bg-gray-700">
+        <button
+          onClick={print}
+          className="bg-black hide-on-print text-white py-2 rounded px-10 text-xl font-bold hover:bg-gray-700"
+        >
           Save & Print
         </button>
       </div>

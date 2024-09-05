@@ -576,7 +576,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to=""
+                  to="/admin/ManagePayIn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Pay In
@@ -585,7 +585,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to=""
+                  to="/admin/TotalSalesList"
                   className="flex items-center text-white nestitemhover"
                 >
                   Total Sales List

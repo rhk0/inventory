@@ -48,6 +48,8 @@ import CreateDeliveryChallan from "../pages/admin/sales/CreateDeliveryChallan.js
 import CreateSalesReturn from "../pages/admin/sales/CreateSalesReturn.js";
 import Pos from "../pages/admin/sales/Pos.js";
 import PayIn from "../pages/admin/sales/PayIn.js";
+import ManagePayIn from "../pages/admin/sales/ManagePayIn.js";
+import TotalSalesList from "../pages/admin/sales/TotalSalesList.js";
 
 const AdminRoute = () => {
   const [auth] = useAuth();
@@ -121,6 +123,10 @@ const AdminRoute = () => {
         <Route path="invoice" element={<CreateSalesInvoice />} />
         <Route path="pos" element={<Pos />} />
         <Route path="payin" element={<PayIn />} />
+        <Route path="ManagePayIn" element={<ManagePayIn />} />
+        <Route path="TotalSalesList" element={<TotalSalesList />} />
+
+        
        
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />

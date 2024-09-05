@@ -4,34 +4,28 @@ const PayIn = () => {
   const [rows, setRows] = useState([
     {
       id: 1,
-      code: "",
-      name: "",
-      qty: "",
-      mrp: "",
-      retailPrice: "",
-      taxableValue: "",
-      cgstPercent: "",
-      cgstRs: "",
-      sgstPercent: "",
-      sgstRs: "",
+      billNo: "",
+      billAmount: "",
+      receivedAmount: "",
+      balanceAmount: "",
     },
   ]);
+
+  const handleChange = (index, field, value) => {
+    const newRows = [...rows];
+    newRows[index][field] = value;
+    setRows(newRows);
+  };
 
   const addRow = () => {
     setRows([
       ...rows,
       {
-        id: rows.length + 1,
-        code: "",
-        name: "",
-        qty: "",
-        mrp: "",
-        retailPrice: "",
-        taxableValue: "",
-        cgstPercent: "",
-        cgstRs: "",
-        sgstPercent: "",
-        sgstRs: "",
+        id: rows.length ? Math.max(...rows.map((row) => row.id)) + 1 : 1,
+        billNo: "",
+        billAmount: "",
+        receivedAmount: "",
+        balanceAmount: "",
       },
     ]);
   };
@@ -47,7 +41,7 @@ const PayIn = () => {
   return (
     <div
       style={{ backgroundColor: "#41B3A2" }}
-      className="responsive-container bg-pink-200 p-4  rounded-md w-full mx-auto"
+      className="responsive-container bg-pink-200 p-4 rounded-md w-full mx-auto"
     >
       <h1 className="text-center text-3xl bg-gray-500 text-white cucolor">
         Pay In
@@ -72,8 +66,8 @@ const PayIn = () => {
             Select Customer
           </label>
           <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
-            <option value="Cash"></option>
-            <option value="Online"></option>
+            <option value="Customer1">Customer1</option>
+            <option value="Customer2">Customer2</option>
             {/* Add more options here if needed */}
           </select>
         </div>
@@ -97,16 +91,16 @@ const PayIn = () => {
                 Select Bank
               </label>
               <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
-                <option value="Cash"></option>
-                <option value="Online"></option>
+                <option value="Bank1">Bank1</option>
+                <option value="Bank2">Bank2</option>
                 {/* Add more options here if needed */}
               </select>
             </div>
             <div className="flex flex-col">
               <label className="text-md font-bold text-black">Method</label>
               <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
-                <option value="Cash">Online</option>
-                <option value="Online">Cheque</option>
+                <option value="Online">Online</option>
+                <option value="Cheque">Cheque</option>
                 {/* Add more options here if needed */}
               </select>
             </div>
@@ -124,112 +118,101 @@ const PayIn = () => {
       </div>
 
       <div className="overflow-x-auto mt-5">
-        <table className="w-full border-collapse  overflow-x-auto">
+        <table className="w-full border-collapse">
           <thead>
             <tr>
               <th className="border border-gray-500 p-1">#</th>
               <th className="border border-gray-500 p-1">Bill NO</th>
-              <th className="border border-gray-500 p-1 text-nowrap pl-16 pr-16">
-                Bill Amount
-              </th>
+              <th className="border border-gray-500 p-1">Bill Amount</th>
               <th className="border border-gray-500 p-1">Received Amount</th>
               <th className="border border-gray-500 p-1">Balance Amount</th>
+              
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {rows.map((row, index) => (
               <tr key={row.id}>
                 <td className="border border-gray-500 p-1 text-center">
-                  {row.id}
+                  {index + 1}
                 </td>
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"
-                    value={row.code}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).code =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 ml-5 mr-5 p-1">
-                  <input
-                    type="text"
-                    value={row.name}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).name =
-                        e.target.value;
-                      setRows(newRows);
-                    }}
-                    className="w-full  p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.qty}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).qty = e.target.value;
-                      setRows(newRows);
-                    }}
+                    value={row.billNo}
+                    onChange={(e) =>
+                      handleChange(index, "billNo", e.target.value)
+                    }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"
-                    value={row.mrp}
-                    onChange={(e) => {
-                      const newRows = [...rows];
-                      newRows.find((r) => r.id === row.id).mrp = e.target.value;
-                      setRows(newRows);
-                    }}
+                    value={row.billAmount}
+                    onChange={(e) =>
+                      handleChange(index, "billAmount", e.target.value)
+                    }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
-
-                <td className="p-1 text-center hide-on-print flex gap-1 items-center justify-center">
+                <td className="border border-gray-500 p-1">
+                  <input
+                    type="text"
+                    value={row.receivedAmount}
+                    onChange={(e) =>
+                      handleChange(index, "receivedAmount", e.target.value)
+                    }
+                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </td>
+                <td className="border border-gray-500 p-1">
+                  <input
+                    type="text"
+                    value={row.balanceAmount}
+                    onChange={(e) =>
+                      handleChange(index, "balanceAmount", e.target.value)
+                    }
+                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </td>
+                <td className="  text-center flex gap-2 pl-1">
                   <button
                     onClick={addRow}
-                    className="bg-green-500 text-white rounded p-1 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2 bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="Add row"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-5 h-4"
-                      fill="none"
                       viewBox="0 0 24 24"
+                      className="h-5 w-4 text-white"
+                      fill="none"
                       stroke="currentColor"
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
-                        d="M12 4v16m8-8H4"
+                        d="M12 5v14m7-7H5"
                       />
                     </svg>
                   </button>
-
                   <button
                     onClick={() => removeRow(row.id)}
-                    className="bg-red-500 text-white rounded p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-2 bg-red-500 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="Remove row"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-6 h-4"
-                      fill="none"
                       viewBox="0 0 24 24"
+                      className="h-5 w-4 text-white"
+                      fill="none"
                       stroke="currentColor"
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
-                        d="M4 12h16"
+                        d="M6 18L18 6M6 6l12 12"
                       />
                     </svg>
                   </button>
@@ -239,16 +222,15 @@ const PayIn = () => {
           </tbody>
         </table>
       </div>
-      <div className="flex flex-row justify-end items-center  gap-5 lg:mr-28 mt-10">
+      <div className="flex flex-row justify-end items-center gap-5 lg:mr-28 mt-10">
         <label className="text-2xl font-bold text-black mr-2">Total</label>
         <input
           type="text"
           className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
         />
       </div>
-      <div className="flex flex-row justify-left  gap-5  mt-10">
+      <div className="flex flex-row justify-left gap-5 mt-10">
         <label className="text-2xl font-bold text-black mr-2">Narration</label>
-        <br/>
         <textarea
           type="text"
           className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
@@ -256,7 +238,7 @@ const PayIn = () => {
       </div>
 
       <div className="text-center mt-8">
-        <button className="bg-black hide-on-print text-white py-2 px-8 text-xl font-bold hover:bg-gray-700">
+        <button className="bg-black text-white py-2 px-16 rounded text-xl font-bold hover:bg-gray-700">
           Save
         </button>
       </div>
