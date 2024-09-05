@@ -6,8 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 
-import ProductViewModel from "./modals/ProductViewModel";
-import ProductEditModal from "./modals/ProductEditModal";
+import ProductViewModel from "../modals/ProductViewModel";
+import ProductEditModal from "../modals/ProductEditModal";
 
 const Manageproducts = () => {
   const [manufacturer, setManufacturer] = useState([]);
