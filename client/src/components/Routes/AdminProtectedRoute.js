@@ -19,7 +19,7 @@ export const AdminProtectedRoute = () => {
         if (response.data.ok) {
           setOk(true);
         } else {
-          navigate("/"); // Redirect to a "No Access" page or another appropriate action
+          setOk(false); // Redirect to a "No Access" page or another appropriate action
         }
       } catch (error) {
         console.error("Error during authentication check", error);
@@ -45,6 +45,6 @@ export const AdminProtectedRoute = () => {
     );
   }
 
-  return ok ? <Outlet /> : navigate("/");
+  return ok ? <Outlet /> : <Loader path="" />;
 };
 // done every thing
