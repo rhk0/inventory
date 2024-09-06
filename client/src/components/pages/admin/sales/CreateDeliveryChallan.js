@@ -179,9 +179,430 @@ const CreateDeliveryChallan = () => {
     // Implement save functionality
   };
 
-  // Function to handle Save and Print
-  const handleSaveAndPrint = () => {
-    // Implement save and print functionality
+  const handlePrintOnly = () => {
+    const printWindow = window.open("", "_blank");
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 10px;
+            }
+            .header, .section-header, .table th {
+              color: red;
+              font-weight: bold;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              font-size: 24px;
+            }
+            .receipt-details .section-header {
+              color: green;
+              font-size: 16px;
+            }
+            .customer-details .section-header {
+              color: green;
+              font-size: 16px;
+            }
+            .sales-estimate .section-header {
+              color: blue;
+              font-size: 16px;
+            }
+            .transport-details .section-header, .amount-details .section-header {
+              color: blue;
+              font-size: 16px;
+            }
+            .terms .section-header {
+              color: red;
+            }
+            .table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+            .table th, .table td {
+              border: 1px solid black;
+              padding: 5px;
+              text-align: center;
+              font-size: 12px;
+            }
+            .table th {
+              background-color: #ff0000; /* Red header */
+              color: black;
+            }
+            .details {
+              font-size: 12px;
+              margin-bottom: 5px;
+            }
+            .signature {
+              text-align: right;
+              margin-top: 50px;
+              font-size: 12px;
+            }
+            .heades {
+              text-align: center;
+              color: blue;
+              font-size: 24px;
+            }
+          </style>
+
+        </head>
+        <body>
+         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
+          <div class="header">
+          
+            <div class="business-name">Business Name</div>
+            <div>Address: Your Address Here</div>
+            <div>GSTIN: Your GSTIN Here</div>
+          </div>
+  
+          <table class="table">
+             <tr>
+                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
+                  Delivery Challan
+                  </th>
+              </tr>
+
+
+         
+            <tr>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="customer-details">
+                  <div class="section-header">Customer Details</div>
+                  <div class="details">Name: <span>John Doe</span></div>
+                  <div class="details">Address: <span>123 Main St, City</span></div>
+                  <div class="details">Contact: <span>9876543210</span></div>
+                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
+                </div>
+              </td>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="sales-estimate">
+                  <div class="section-header"> Challan Details</div>
+                  <div class="details">Challan No: <span>12345</span></div>
+                  <div class="details">Challan Date: <span>01-Jan-2024</span></div>
+                  <div class="details">Place of Supply: <span>City Name</span></div>
+                   <div class="details">Due Date: <span>City Name</span></div>
+                </div>
+              </td>
+              <td style="width: 40%;">
+                <div style="text-align:left;" class="transport-details">
+                  <div class="section-header">Transport Details</div>
+                  <div class="details">Receipt Doc No.: <span>6789</span></div>
+                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
+                   <div class="details">Agent Name: <span>John Smith</span></div>
+                   <div class="details">Bill of lading : <span>John Smith</span></div>
+                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
+                </div>
+              </td>
+            </tr>
+          </table>
+  
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Product Name</th>
+                <th>HSN Code</th>
+                <th>QTY</th>
+                <th>UOM</th>
+                <th>MRP</th>
+                <th>Disc.</th>
+                <th>Rate</th>
+                <th>Taxable Value</th>
+                <th>CGST</th>
+                <th>SGST</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Add your product rows here -->
+              <tr>
+                <td>1</td>
+                <td>Product Name</td>
+                <td>1234</td>
+                <td>10</td>
+                <td>KG</td>
+                <td>500</td>
+                <td>10%</td>
+                <td>450</td>
+                <td>4500</td>
+                <td>9%</td>
+                <td>9%</td>
+                <td>5310</td>
+              </tr>
+            </tbody>
+          </table>
+  
+            <table class="table">
+              <tr>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="banking-details">
+                    <div class="section-header">Banking Details</div>
+                    <div class="details">Bank Name: XYZ Bank</div>
+                    <div class="details">IFSC Code: XYZ1234</div>
+                    <div class="details">Account No: 1234567890</div>
+                    <div class="details">Account Holder Name: John Doe</div>
+                    <div class="details">UPI ID: john@upi</div>
+                  </div>
+                </td>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="receipt-details">
+                    <div class="section-header">Receipt Mode</div>
+                    <div class="details">Bank Name: XYZ Bank</div>
+                    <div class="details">Transaction date: XYZ1234</div>
+                    <div class="details">Transaction /cheque No: 1234567890</div>
+                    <div class="details">Total Amount: John Doe</div>
+                    <div class="details">Advance Received:1000</div>
+                    <div class="details">Amount Received:1000</div>
+                    <div class="details">Balance Amount:1000</div>
+                  </div>
+                </td>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="amount-details">
+                    <div class="section-header">Amount Details</div>
+                    <div class="details">Gross Total: ₹10000</div>
+                    <div class="details">GST Amount: ₹1800</div>
+                    <div class="details">Additional Charges: ₹200</div>
+                    <div class="details">Net Total: ₹12000</div>
+                    <div class="details">Amount in Words: Twelve Thousand Only</div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+
+             <div style="margin-top:100px" class="mt-10">
+                  <div class="section-header">Terms & Condition</div>
+                  <div class="details">Your terms and conditions go here...</div>
+                </div>
+  
+          <div  class="signature">
+         
+          
+            <div>For (Business Name)</div>
+            <div style="margin-top: 20px;">Signature</div>
+          </div>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    printWindow.print();
+    printWindow.close();
+  };
+
+  const handlePrintOnlyWithoutGST = () => {
+    const printWindow = window.open("", "_blank");
+
+    printWindow.document.write(`
+      <html>
+        <head>
+              <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 10px;
+        }
+        .header, .section-header, .table th {
+          color: red;
+          font-weight: bold;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 20px;
+          font-size: 24px;
+        }
+        .receipt-details .section-header {
+          color: green;
+          font-size: 16px;
+        }
+        .customer-details .section-header {
+          color: green;
+          font-size: 16px;
+        }
+        .sales-estimate .section-header {
+          color: blue;
+          font-size: 16px;
+        }
+        .transport-details .section-header, .amount-details .section-header {
+          color: blue;
+          font-size: 16px;
+        }
+        .terms .section-header {
+          color: red;
+        }
+        .table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+        .table th, .table td {
+          border: 1px solid black;
+          padding: 5px;
+          text-align: center;
+          font-size: 12px;
+        }
+        .table th {
+          background-color: #ff0000; /* Red header */
+          color: black;
+        }
+        .details {
+          font-size: 12px;
+          margin-bottom: 5px;
+        }
+        .signature {
+          text-align: right;
+          margin-top: 50px;
+          font-size: 12px;
+        }
+        .heades {
+          text-align: center;
+          color: blue;
+          font-size: 24px;
+        }
+      </style>
+        </head>
+        <body>
+         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
+          <div class="header">
+          
+            <div class="business-name">Business Name</div>
+            <div>Address: Your Address Here</div>
+            <div>GSTIN: Your GSTIN Here</div>
+          </div>
+  
+                   <table class="table">
+             <tr>
+                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
+                  Delivery Challan
+                  </th>
+              </tr>
+
+
+         
+            <tr>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="customer-details">
+                  <div class="section-header">Customer Details</div>
+                  <div class="details">Name: <span>John Doe</span></div>
+                  <div class="details">Address: <span>123 Main St, City</span></div>
+                  <div class="details">Contact: <span>9876543210</span></div>
+                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
+                </div>
+              </td>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="sales-estimate">
+                  <div class="section-header"> Challan Details</div>
+                  <div class="details">Challan No: <span>12345</span></div>
+                  <div class="details">Challan Date: <span>01-Jan-2024</span></div>
+                  <div class="details">Place of Supply: <span>City Name</span></div>
+                   <div class="details">Due Date: <span>City Name</span></div>
+                </div>
+              </td>
+              <td style="width: 40%;">
+                <div style="text-align:left;" class="transport-details">
+                  <div class="section-header">Transport Details</div>
+                  <div class="details">Receipt Doc No.: <span>6789</span></div>
+                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
+                   <div class="details">Agent Name: <span>John Smith</span></div>
+                   <div class="details">Bill of lading : <span>John Smith</span></div>
+                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
+                </div>
+              </td>
+            </tr>
+          </table>
+  
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Product Name</th>
+                <th>HSN Code</th>
+                <th>QTY</th>
+                <th>UOM</th>
+                <th>MRP</th>
+                <th>Disc.</th>
+                <th>Rate</th>
+               
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Add your product rows here -->
+              <tr>
+                <td>1</td>
+                <td>Product Name</td>
+                <td>1234</td>
+                <td>10</td>
+                <td>KG</td>
+                <td>500</td>
+                <td>10%</td>
+                <td>450</td>
+                
+                <td>5310</td>
+              </tr>
+            </tbody>
+          </table>
+  
+      <table class="table">
+              <tr>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="banking-details">
+                    <div class="section-header">Banking Details</div>
+                    <div class="details">Bank Name: XYZ Bank</div>
+                    <div class="details">IFSC Code: XYZ1234</div>
+                    <div class="details">Account No: 1234567890</div>
+                    <div class="details">Account Holder Name: John Doe</div>
+                    <div class="details">UPI ID: john@upi</div>
+                  </div>
+                </td>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="receipt-details">
+                    <div class="section-header">Receipt Mode</div>
+                    <div class="details">Bank Name: XYZ Bank</div>
+                    <div class="details">Transaction date: XYZ1234</div>
+                    <div class="details">Transaction /cheque No: 1234567890</div>
+                    <div class="details">Total Amount: John Doe</div>
+                    <div class="details">Advance Received:1000</div>
+                    <div class="details">Amount Received:1000</div>
+                    <div class="details">Balance Amount:1000</div>
+                  </div>
+                </td>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="amount-details">
+                    <div class="section-header">Amount Details</div>
+                    <div class="details">Gross Total: ₹10000</div>
+                    <div class="details">GST Amount: ₹1800</div>
+                    <div class="details">Additional Charges: ₹200</div>
+                    <div class="details">Net Total: ₹12000</div>
+                    <div class="details">Amount in Words: Twelve Thousand Only</div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+             <div style="margin-top:100px" class="mt-10">
+                  <div class="section-header">Terms & Condition</div>
+                  <div class="details">Your terms and conditions go here...</div>
+                </div>
+  
+          <div  class="signature">
+         
+          
+            <div>For (Business Name)</div>
+            <div style="margin-top: 20px;">Signature</div>
+          </div>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    printWindow.print();
+    printWindow.close();
   };
 
   // Function to add a new row
@@ -886,12 +1307,22 @@ const CreateDeliveryChallan = () => {
             >
               Save
             </button>
-            <button
-              onClick={handlePrint}
-              className="bg-blue-700 pl-4 pr-4 hoverbg-sky-700 text-white p-2 hide-on-print"
-            >
-              Save and Print
-            </button>
+            {salesType === "GST Invoice" && (
+              <button
+                onClick={handlePrintOnly}
+                className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
+              >
+                Save and Print
+              </button>
+            )}
+            {salesType !== "GST Invoice" && (
+              <button
+                onClick={handlePrintOnlyWithoutGST}
+                className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
+              >
+                Save and Print
+              </button>
+            )}
           </div>
         </div>
       </div>

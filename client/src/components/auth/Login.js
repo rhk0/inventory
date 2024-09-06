@@ -73,7 +73,7 @@ if(dauth){
           <Loader/>
         ) : (
       <div className="p-10 hover:scale-95 shadow-2xl rounded-lg login-card p-8 w-full max-w-md flex flex-col">
-        <div className="header mb-12">
+        <div className=" mb-12">
           <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-4 bg-white bg-opacity-10">
             <div className="text-white text-6xl">
               <FaUserAlt />

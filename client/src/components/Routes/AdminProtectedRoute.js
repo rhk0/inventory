@@ -45,6 +45,6 @@ export const AdminProtectedRoute = () => {
     );
   }
 
-  return ok ? <Outlet /> : <Loader path="" />;
+  return ok ? <Outlet /> : "#";
 };
 // done every thing
