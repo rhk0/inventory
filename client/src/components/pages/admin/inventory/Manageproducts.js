@@ -4,8 +4,9 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-
-
+import { MdRateReview } from 'react-icons/md';
+import { FiEdit } from 'react-icons/fi';
+import { MdDelete } from 'react-icons/md';
 import ProductViewModel from "../modals/ProductViewModel";
 import ProductEditModal from "../modals/ProductEditModal";
 

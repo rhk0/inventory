@@ -6,17 +6,9 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-<<<<<<< HEAD
-    "@material-ui/core": "^4.12.4",
-    "@mui/icons-material": "^6.0.1",
-    "@mui/material": "^6.0.1",
-    "@mui/styles": "^6.0.2",
-    "@mui/system": "^6.0.1",
-=======
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
     "@mui/system": "^6.0.2",
->>>>>>> 31934ef23d4d4126306c0741a4d5090ff04675e6
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
