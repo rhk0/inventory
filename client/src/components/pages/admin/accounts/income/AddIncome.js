@@ -26,9 +26,8 @@ const AddIncome = () => {
           <div>
             <label className="block font-semibold mb-1">Income Type</label>
             <select className="w-full p-2 border border-gray-300 rounded">
-              <option value="office">Office</option>
-              <option value="travel">Travel</option>
-              <option value="other">Other</option>
+              <option value="GST">GST</option>
+              <option value="Non GST">Non GST</option>
             </select>
           </div>
 

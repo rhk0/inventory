@@ -822,7 +822,8 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   {!showIncome ? <IoIosArrowForward /> : <IoIosArrowDown />}
                 </button>
                 {showIncome && (
-                  <ul className="ml-4">ruza qde
+                  <ul className="ml-4">
+                    ruza qde
                     <li>
                       <Link
                         to="/admin/AddIncome"
