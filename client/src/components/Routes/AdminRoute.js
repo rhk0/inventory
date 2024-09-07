@@ -85,12 +85,14 @@ const AdminRoute = () => {
         <Route path="/ManageManufacturer" element={<ManageManufacturer />} />
         <Route path="Cash" element={<Cash />} />
         <Route path="bankTobankTransfer" element={<BankToBankTranfer />} />
+        <Route path="cashwithdrawfrombank" element={<CashWithDrawFromBank />} />
+        <Route path="CashDepositIntoBank" element={<CashDepositIntoBank />} />
+
         <Route path="addcategory" element={<AddCategory />} />
         <Route path="addsubcategory" element={<AddSubCategory />} />
         <Route path="addbrand" element={<AddBrand />} />
         <Route path="addstock" element={<StockUnit />} />
-        <Route path="cashwithdrawfrombank" element={<CashWithDrawFromBank />} />
-        <Route path="CashDepositIntoBank" element={<CashDepositIntoBank />} />
+       
         <Route path="AddSubBrand" element={<AddSubBrand />} />
         <Route path="ManageCategory" element={<ManageCategory />} />
         <Route path="managesubcategory" element={<ManageSubCategory />} />

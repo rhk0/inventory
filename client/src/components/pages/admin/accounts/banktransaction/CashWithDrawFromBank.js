@@ -2,13 +2,26 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Box,
+} from "@mui/material";
 
-function CashDepositeIntoBank() {
+function CashWithdrawFromBank() {
   const [formData, setFormData] = useState({
     date: "",
     contraNo: "",
     fromAccount: "",
     amount: "",
+  
     toAccount: "",
   });
 
@@ -45,7 +58,7 @@ function CashDepositeIntoBank() {
       );
 
       if (response) {
-        toast.success("cash withdraw from bank Created Successfully...");
+        toast.success("Cash withdraw from bank created successfully.");
       }
 
       clearData();
@@ -65,91 +78,92 @@ function CashDepositeIntoBank() {
   };
 
   return (
-    <div className="p-6 bg-white responsive-container">
-      <h3 className="text-center text-2xl sm:text-3xl font-bold text-purple-600 mb-6 underline">
-        Cash withdraw From Bank
-      </h3>
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-col md:flex-row mt-4 justify-start space-y-4 md:space-y-0 md:space-x-4">
-          <div className="w-full md:w-auto">
-            <label className="block text-purple-600 font-semibold">Date</label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className="w-full md:w-auto border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600 mt-1 p-2"
-            />
-          </div>
-          <div className="w-full md:w-auto">
-            <label className="block text-purple-600 font-semibold">
-              Contra No
-            </label>
-            <input
-              type="text"
-              name="contraNo"
-              value={formData.contraNo}
-              onChange={handleChange}
-              className="w-full md:w-auto border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600 mt-1 p-2"
-            />
-          </div>
-        </div>
-        <div className="mt-6 bg-green-100 p-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-4 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-purple-600 font-semibold">
-                From Account
-              </label>
-              <select
-                name="fromAccount"
-                value={formData.fromAccount}
+    <Container maxWidth="lg" className="responsive-container" data-aos="fade-left">
+      <Box p={4} bgcolor="white" borderRadius={2} boxShadow={2}>
+        <Typography variant="h4" align="center" color="primary" gutterBottom>
+          Cash Withdraw From Bank
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Date"
+                type="date"
+                name="date"
+                value={formData.date}
                 onChange={handleChange}
-                className="mx-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600 mt-1 p-2  w-full"
-              >
-                <option value="">Select Bank</option>
-                <option value="BankA">Bank A</option>
-                <option value="BankB">Bank B</option>
-              </select>
-              <span className="mx-3">Current Balance -</span>
-            </div>
-            <div>
-              <label className="block text-purple-600 font-semibold">
-                Amount
-              </label>
-              <input
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Contra No"
+                type="text"
+                name="contraNo"
+                value={formData.contraNo}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel sx={{  background:"white"}}>From Account</InputLabel>
+                <Select
+                  name="fromAccount"
+                  value={formData.fromAccount}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="">Select Bank</MenuItem>
+                  <MenuItem value="BankA">Bank A</MenuItem>
+                  <MenuItem value="BankB">Bank B</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Amount"
                 type="text"
                 name="amount"
                 value={formData.amount}
                 onChange={handleChange}
-                className="mx-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600 mt-1 p-2  w-full"
+                fullWidth
               />
-            </div>
-            <div>
-              <label className="block text-purple-600 font-semibold">To</label>
-              <select
-                name="toAccount"
-                value={formData.toAccount}
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel sx={{  background:"white"}}>To Account</InputLabel>
+                <Select
+                  name="toAccount"
+                  value={formData.toAccount}
+                  onChange={handleChange}
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  <MenuItem value="Cash">Cash</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label=" To Amount"
+                type="text"
+                name="Toamount"
+                value={formData.toAmount}
                 onChange={handleChange}
-                className="mx-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600 mt-1 p-2  w-full"
-              >
-                <option value="">select</option>
-
-                <option value="Cash">Cash</option>
-              </select>
-              <span className="mx-3">Current Balance -</span>
-            </div>
-          </div>
-        </div>
-        <button
-          type="submit"
-          className="mt-4 bg-purple-600 text-white p-2 rounded-md"
-        >
-          Submit
-        </button>
-      </form>
-      <ToastContainer />
-    </div>
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+          <Box display="flex" justifyContent="center" sx={{ mt: 4 }}>
+            <Button type="submit" variant="contained" color="primary">
+              Submit
+            </Button>
+          </Box>
+        </form>
+        <ToastContainer />
+      </Box>
+    </Container>
   );
 }
 
-export default CashDepositeIntoBank;
+export default CashWithdrawFromBank;

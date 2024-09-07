@@ -23,6 +23,7 @@ import {
 const initialFormData = {
   name: "",
   openingBalance: "",
+  date: "", // Added date field
 };
 
 const Cash = () => {
@@ -56,7 +57,7 @@ const Cash = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = ["name", "openingBalance"];
+    const requiredFields = ["name", "openingBalance", "date"];
     for (const field of requiredFields) {
       if (!formData[field]) {
         toast.error(`Please fill out the ${field} field.`);
@@ -136,7 +137,7 @@ const Cash = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 responsive-container uppercase">
+    <div className="container mx-auto p-4 responsive-container uppercase" data-aos="flip-up">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
         Manage Cash
       </h1>
@@ -156,6 +157,7 @@ const Cash = () => {
               <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>S.No</TableCell>
               <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>Name</TableCell>
               <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>Opening Balance</TableCell>
+              <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>Date</TableCell> {/* Added Date column */}
               <TableCell sx={{ fontWeight: "bold", textAlign: "start", fontSize: "1.2rem" }}>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -167,6 +169,7 @@ const Cash = () => {
                   <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                   <TableCell>{cash.name}</TableCell>
                   <TableCell>{cash.openingBalance}</TableCell>
+                  <TableCell>{cash.date}</TableCell> {/* Display Date */}
                   <TableCell>
                     <Button color="primary" onClick={() => openViewModal(cash)}>View</Button>
                     <Button color="secondary" onClick={() => openEditModal(cash)}>Edit</Button>
@@ -193,6 +196,16 @@ const Cash = () => {
       <Dialog open={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
         <DialogTitle>Add Cash</DialogTitle>
         <DialogContent>
+          <TextField
+            label="Date"
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            margin="dense"
+          />
           <TextField
             label="Name"
             name="name"
@@ -226,6 +239,7 @@ const Cash = () => {
           <DialogContent>
             <Typography variant="body1"><strong>Name:</strong> {modalData?.name}</Typography>
             <Typography variant="body1"><strong>Opening Balance:</strong> {modalData?.openingBalance}</Typography>
+            <Typography variant="body1"><strong>Date:</strong> {modalData?.date}</Typography> {/* Display Date */}
           </DialogContent>
           <DialogActions>
             <Button onClick={closeModal} color="secondary">Close</Button>
@@ -237,6 +251,16 @@ const Cash = () => {
         <Dialog open={isEditModalOpen} onClose={closeModal}>
           <DialogTitle>Edit Cash Entry</DialogTitle>
           <DialogContent>
+            <TextField
+              label="Date"
+              type="date"
+              name="date"
+              value={modalData?.date}
+              onChange={handleModalChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              margin="dense"
+            />
             <TextField
               label="Name"
               name="name"
