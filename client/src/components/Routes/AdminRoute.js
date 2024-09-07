@@ -12,7 +12,7 @@ import CreateTranspoter from "../pages/admin/parties/CreateTransporter.js";
 import ManageTranspoter from "../pages/admin/parties/ManageTransporter.js";
 import CreateCustomer from "../pages/admin/parties/CreateCustomer.js";
 import ManageCustomer from "../pages/admin/parties/ManageCustomer.js";
-import Cash from "../pages/admin/cash/Cash.js"
+import Cash from "../pages/admin/cash/Cash.js";
 import CreateVendors from "../pages/admin/parties/CreateVendors.js";
 import ManageVendor from "../pages/admin/parties/ManageVendor.js";
 import CreateStaff from "../pages/admin/CreateStaff.js";
@@ -47,10 +47,13 @@ import AddExpense from "../pages/admin/accounts/expenses/AddExpense.js";
 import ManageExpense from "../pages/admin/accounts/expenses/ManageExpense.js";
 import AddIncome from "../pages/admin/accounts/income/AddIncome.js";
 import ManageIncome from "../pages/admin/accounts/income/ManageIncome.js";
-import Pos from "../pages/admin/sales/Pos.js"
-import PayIn from "../pages/admin/sales/PayIn.js"
-import ManagePayIn from "../pages/admin/sales/ManagePayIn.js"
-import TotalSalesList from "../pages/admin/sales/TotalSalesList.js"
+import Pos from "../pages/admin/sales/Pos.js";
+import PayIn from "../pages/admin/sales/PayIn.js";
+import ManagePayIn from "../pages/admin/sales/ManagePayIn.js";
+import TotalSalesList from "../pages/admin/sales/TotalSalesList.js";
+import CreatePurchaseOrder from "../pages/admin/purchase/CreatePurchaseOrder.js";
+import PayOut from "../pages/admin/purchase/PayOut.js";
+import ManagePayOut from "../pages/admin/purchase/ManagePayOut.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -81,7 +84,6 @@ const AdminRoute = () => {
         <Route path="/CreateManufacturer" element={<CreateManufacturer />} />
         <Route path="/ManageManufacturer" element={<ManageManufacturer />} />
 
-
         <Route path="Cash" element={<Cash />} />
         <Route path="bankTobankTransfer" element={<BankToBankTranfer />} />
         <Route path="cashwithdrawfrombank" element={<CashWithDrawFromBank />} />
@@ -106,7 +108,7 @@ const AdminRoute = () => {
         <Route path="manageVendor" element={<ManageVendor />} />
         <Route path="createstaff" element={<CreateStaff />} />
         <Route path="addbank" element={<AddBank />} />
-       
+
         <Route path="stockdetails" element={<StockDetails />} />
         <Route path="managestockunit" element={<ManageStockUnit />} />
         <Route path="manageBrand" element={<ManageBrand />} />
@@ -119,24 +121,20 @@ const AdminRoute = () => {
         <Route path="ManagePayIn" element={<ManagePayIn />} />
         <Route path="TotalSalesList" element={<TotalSalesList />} />
 
-        
-       
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />
         <Route path="salesreturn" element={<CreateSalesReturn />} />
-        
-   
 
-        <Route path="ManageProduct" element={<Manageproducts/>} />
-        <Route path="CreateSalesEstimate" element={<CreateSalesEstimate/>} />
-        <Route path="ManageSalesEstimate" element={<ManageSalesEstimate/>} />
-        <Route path="AddExpense" element={<AddExpense/>} />
-        <Route path="ManageExpense" element={<ManageExpense/>} />
-        <Route path="AddIncome" element={<AddIncome/>} />
-        <Route path="ManageIncome" element={<ManageIncome/>} />
-
-
-
+        <Route path="ManageProduct" element={<Manageproducts />} />
+        <Route path="CreateSalesEstimate" element={<CreateSalesEstimate />} />
+        <Route path="ManageSalesEstimate" element={<ManageSalesEstimate />} />
+        <Route path="AddExpense" element={<AddExpense />} />
+        <Route path="ManageExpense" element={<ManageExpense />} />
+        <Route path="AddIncome" element={<AddIncome />} />
+        <Route path="ManageIncome" element={<ManageIncome />} />
+        <Route path="CreatePurchaseOrder" element={<CreatePurchaseOrder />} />
+        <Route path="PayOut" element={<PayOut />} />
+        <Route path="ManagePayOut" element={<ManagePayOut />} />
       </Routes>
     </div>
   );

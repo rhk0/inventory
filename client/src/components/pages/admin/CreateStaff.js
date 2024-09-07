@@ -142,7 +142,7 @@ const CreateStaff = () => {
       for (let key in formData) {
         formDataToSend.append(key, formData[key]);
       }
-   
+
       for (let i = 0; i < adharCards.length; i++) {
         formDataToSend.append("adharCards", adharCards[i]);
       }
@@ -408,7 +408,6 @@ const CreateStaff = () => {
               </label>
               <label className="block mb-2">
                 Aadhar Card:
-             
                 <input
                   type="file"
                   name="adharCards"
