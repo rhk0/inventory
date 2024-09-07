@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const CreateSalesEstimate = () => {
+const CreatePurchaseOrder = () => {
   const [date, setDate] = useState("");
-  const [estimateNo, setEstimateNo] = useState("");
-  const [salesType, setSalesType] = useState("GST Invoice");
-  const [customerType, setCustomerType] = useState("");
-  const [customerName, setCustomerName] = useState("");
+  const [orderNo, setorderNo] = useState("");
+  const [purchaseType, setpurchaseType] = useState("GST Invoice");
+  const [supplierType, setsupplierType] = useState("");
+  const [supplierName, setsupplierName] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [transportDetails, setTransportDetails] = useState({
@@ -53,10 +53,10 @@ const CreateSalesEstimate = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
-  const handleEstimateNoChange = (e) => setEstimateNo(e.target.value);
-  const handleSalesTypeChange = (e) => setSalesType(e.target.value);
-  const handleCustomerTypeChange = (e) => setCustomerType(e.target.value);
-  const handleCustomerNameChange = (e) => setCustomerName(e.target.value);
+  const handleorderNoChange = (e) => setorderNo(e.target.value);
+  const handlepurchaseTypeChange = (e) => setpurchaseType(e.target.value);
+  const handlesupplierTypeChange = (e) => setsupplierType(e.target.value);
+  const handlesupplierNameChange = (e) => setsupplierName(e.target.value);
   const handlePlaceOfSupplyChange = (e) => setPlaceOfSupply(e.target.value);
   const handleBillingAddressChange = (e) => setBillingAddress(e.target.value);
   const handleReverseChargeChange = (e) => setReverseCharge(e.target.value);
@@ -151,11 +151,11 @@ const CreateSalesEstimate = () => {
               margin-bottom: 20px;
               font-size: 24px;
             }
-            .customer-details .section-header {
+            .supplier-details .section-header {
               color: green;
                font-size: 16px;
             }
-            .sales-estimate .section-header {
+            .purchase-order .section-header {
               color: blue;
                font-size: 16px;
             }
@@ -209,7 +209,7 @@ const CreateSalesEstimate = () => {
           <table class="table">
              <tr>
                   <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    Sales Estimate
+                    purchase order
                   </th>
               </tr>
 
@@ -217,8 +217,8 @@ const CreateSalesEstimate = () => {
          
             <tr>
               <td style="width: 30%;">
-                <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
+                <div style="text-align:left;" class="supplier-details">
+                  <div class="section-header">supplier Details</div>
                   <div class="details">Name: <span>John Doe</span></div>
                   <div class="details">Address: <span>123 Main St, City</span></div>
                   <div class="details">Contact: <span>9876543210</span></div>
@@ -226,10 +226,10 @@ const CreateSalesEstimate = () => {
                 </div>
               </td>
               <td style="width: 30%;">
-                <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header"> Estimate Details</div>
-                  <div class="details">Estimate No: <span>12345</span></div>
-                  <div class="details">Estimate Date: <span>01-Jan-2024</span></div>
+                <div style="text-align:left;" class="purchase-order">
+                  <div class="section-header"> order Details</div>
+                  <div class="details">order No: <span>12345</span></div>
+                  <div class="details">order Date: <span>01-Jan-2024</span></div>
                   <div class="details">Place of Supply: <span>City Name</span></div>
                 </div>
               </td>
@@ -351,11 +351,11 @@ const CreateSalesEstimate = () => {
               margin-bottom: 20px;
               font-size: 24px;
             }
-            .customer-details .section-header {
+            .supplier-details .section-header {
               color: green;
                font-size: 16px;
             }
-            .sales-estimate .section-header {
+            .purchase-order .section-header {
               color: blue;
                font-size: 16px;
             }
@@ -409,7 +409,7 @@ const CreateSalesEstimate = () => {
           <table class="table">
              <tr>
                   <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    Sales Estimate
+                    purchase order
                   </th>
               </tr>
 
@@ -417,8 +417,8 @@ const CreateSalesEstimate = () => {
          
             <tr>
               <td style="width: 30%;">
-                <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
+                <div style="text-align:left;" class="supplier-details">
+                  <div class="section-header">supplier Details</div>
                   <div class="details">Name: <span>John Doe</span></div>
                   <div class="details">Address: <span>123 Main St, City</span></div>
                   <div class="details">Contact: <span>9876543210</span></div>
@@ -426,10 +426,10 @@ const CreateSalesEstimate = () => {
                 </div>
               </td>
               <td style="width: 30%;">
-                <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header"> Estimate Details</div>
-                  <div class="details">Estimate No: <span>12345</span></div>
-                  <div class="details">Estimate Date: <span>01-Jan-2024</span></div>
+                <div style="text-align:left;" class="purchase-order">
+                  <div class="section-header"> order Details</div>
+                  <div class="details">order No: <span>12345</span></div>
+                  <div class="details">order Date: <span>01-Jan-2024</span></div>
                   <div class="details">Place of Supply: <span>City Name</span></div>
                 </div>
               </td>
@@ -587,30 +587,30 @@ const CreateSalesEstimate = () => {
             </label>
           </div>
           <div>
-            <label className="font-bold">Estimate No.</label>
+            <label className="font-bold">Order No.</label>
             <input
               type="text"
-              value={estimateNo}
-              onChange={handleEstimateNoChange}
+              value={orderNo}
+              onChange={handleorderNoChange}
               className="border p-2 w-full  rounded"
             />
           </div>
           <div>
-            <label className="font-bold">Sales Type</label>
+            <label className="font-bold">Purchase Type</label>
             <select
-              value={salesType}
-              onChange={handleSalesTypeChange}
+              value={purchaseType}
+              onChange={handlepurchaseTypeChange}
               className="border p-2 w-full  rounded"
             >
-              <option value="GST Invoice">GST Invoice</option>
-              <option value="Bill of Supply">Bill of Supply</option>
+              <option value="GST ">GST </option>
+              <option value="Non GST">Non GST</option>
             </select>
           </div>
           <div>
-            <label className="font-bold">Customer Type</label>
+            <label className="font-bold">supplier Name</label>
             <select
-              value={customerType}
-              onChange={handleCustomerTypeChange}
+              value={supplierType}
+              onChange={handlesupplierTypeChange}
               className="border p-2 w-full  rounded"
             >
               <option value="Retailer">Retailer</option>
@@ -618,11 +618,11 @@ const CreateSalesEstimate = () => {
             </select>
           </div>
           <div>
-            <label className="font-bold">Customer Name</label>
+            <label className="font-bold">supplier Name</label>
             <input
               type="text"
-              value={customerName}
-              onChange={handleCustomerNameChange}
+              value={supplierName}
+              onChange={handlesupplierNameChange}
               className="border p-2 w-full  rounded"
             />
           </div>
@@ -637,7 +637,7 @@ const CreateSalesEstimate = () => {
           </div>
           <div>
             <label className="font-bold">
-              Payment Term (days):
+              Payment Term:
               <input
                 type="number"
                 value={paymentTerm}
@@ -796,7 +796,7 @@ const CreateSalesEstimate = () => {
           </div>
 
           {/* GST Type Section */}
-          {salesType === "GST Invoice" && (
+          {purchaseType === "GST Invoice" && (
             <div className="mb-4 w-full">
               <label className="font-bold">GST Type:</label>
               <select
@@ -820,17 +820,18 @@ const CreateSalesEstimate = () => {
                 <th className="border p-2">Item Code</th>
                 <th className="border p-2">Product Name</th>
                 <th className="border p-2">HSN Code</th>
+
                 <th className="border p-2">Qty</th>
-                <th className="border p-2">units</th>
+                <th className="border p-2">UOM</th>
                 <th className="border p-2">MRP</th>
-                <th className="border p-2">
+                {/* <th className="border p-2">
                   Discount{" "}
                   <div className="flex justify-between">
                     <span className="mr-16">%</span> <span>RS</span>
                   </div>
-                </th>
+                </th> */}
 
-                {salesType === "GST Invoice" && (
+                {purchaseType === "GST Invoice" && (
                   <>
                     <th className="border p-2">Taxable Value</th>
                     {gstType === "CGST/SGST" && (
@@ -940,7 +941,7 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border ">
+                  {/* <td className="border ">
                     <div className="p-1 flex gap-1">
                       <input
                         type="number"
@@ -964,9 +965,9 @@ const CreateSalesEstimate = () => {
                         className="w-full"
                       />
                     </div>
-                  </td>
+                  </td> */}
 
-                  {salesType === "GST Invoice" && (
+                  {purchaseType === "GST Invoice" && (
                     <>
                       {gstType === "CGST/SGST" && (
                         <>
@@ -1185,7 +1186,7 @@ const CreateSalesEstimate = () => {
                 className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
-            {salesType === "GST Invoice" && (
+            {purchaseType === "GST Invoice" && (
               <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
                 <label className="font-bold lg:w-1/2 text-nowrap">
                   GST Amount
@@ -1230,7 +1231,7 @@ const CreateSalesEstimate = () => {
           >
             Save
           </button>
-          {salesType === "GST Invoice" && (
+          {purchaseType === "GST Invoice" && (
             <button
               onClick={handlePrintOnly}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
@@ -1238,7 +1239,7 @@ const CreateSalesEstimate = () => {
               Save and Print
             </button>
           )}
-          {salesType !== "GST Invoice" && (
+          {purchaseType !== "GST Invoice" && (
             <button
               onClick={handlePrintOnlyWithoutGST}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
@@ -1252,4 +1253,4 @@ const CreateSalesEstimate = () => {
   );
 };
 
-export default CreateSalesEstimate;
+export default CreatePurchaseOrder;
