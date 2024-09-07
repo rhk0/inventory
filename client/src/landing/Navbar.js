@@ -216,12 +216,13 @@ const Navbar = (props) => {
           </Box>
 
           <Button
-            variant="contained"
+            
             sx={{
-              backgroundColor: '#007BFF',
+              backgroundColor: '#6A1B9A',
               color: '#FFFFFF',
-              borderRadius: '20px',
+              borderRadius: '10px',
               textTransform: 'none',
+              fontSize:"20px",
               px: 3,
               display: { xs: 'none', md: 'block' },
               '&:hover': {

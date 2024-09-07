@@ -9,7 +9,7 @@ import Benefits from './parts/Benefits';
 import Client from './parts/Client';
 import Contact from './parts/Contact';
 import Pricing from './parts/Pricing';
-
+import DemoForm from './DemoForm';
 const Section = ({ id, children, aos }) => {
   return (
     <div
@@ -61,13 +61,15 @@ const Landing = () => {
         onContactClick={() => scrollToSection('contact')}
         onPricingClick={() => scrollToSection('pricing')}
         onBenefitsClick={() => scrollToSection('benefits')}
+        
       />
 
       {/* Home Section */}
       <Section id="home" aos="flip-right">
         <Home />
+        
       </Section>
-
+ 
       {/* Other sections */}
       <Section id="about" aos="flip-right">
         <About />

@@ -6,7 +6,7 @@ import NodeCache from "node-cache";
 import JWT from "jsonwebtoken";
 
 const node_cache = new NodeCache({ stdTTL: 120 });
-
+    
 export const userRegisterController = async (req, res) => {
   try {
     const {
@@ -195,7 +195,7 @@ export const verificationController = async (req, res) => {
 };
 
 export const loginController = async (req, res) => {
-  console.log("hit");
+  
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -372,3 +372,4 @@ export const resetPasswordController = async (req, res) => {
       .send({ success: false, message: "internal server issue...!" });
   }
 };
+   
