@@ -160,9 +160,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
       <ul className="sidebar-list">
         {/* Dashboard */}
-        <li className="sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1">
+        <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dash" className="inline-container">
+            <Link to="/admin/dash" className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white ">
               <span>Dashboard</span>
             </Link>
           </a>
@@ -176,8 +176,8 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               toggleParties();
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
-          >
-            <span className="">Parties</span>
+          >Parties
+            {/* <span className="">Parties</span> */}
             {!showParties ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showParties && (
@@ -186,7 +186,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setSupplier(!showspplier)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center nestedlist innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Supplier</span>
                   {!showspplier ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -216,7 +216,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setCustomer(!showCustomer)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center nestedlist innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Customer</span>
                   {!showCustomer ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -248,7 +248,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setManufacture(!showManufacture)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center nestedlist innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Manufacturer</span>
                   {!showManufacture ? (
@@ -283,7 +283,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setVendor(!showVendor)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center innerlist sidebar-list-item nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Vendor</span>
                   {!showVendor ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -343,7 +343,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             </ul>
           )}
         </li>
-
+     
         {/* Inventory */}
         <li className="px-1 py-2 ">
           <button
@@ -351,7 +351,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               setInventory(!showInventory);
               toggleInventry();
             }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white "
           >
             <span className="">Inventory</span>
             {!showInventory ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -765,7 +765,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageSupplier"
+                        to="/admin/CashDepositIntoBank"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Cash Deposit Into Bank
@@ -773,7 +773,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageSupplier"
+                        to="/admin/cashwithdrawfrombank"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Cash Withdraw from Bank

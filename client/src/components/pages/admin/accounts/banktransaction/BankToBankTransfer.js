@@ -15,7 +15,7 @@ import {
   Box,
 } from "@mui/material";
 
-function CashDepositeIntoBank() {
+function BankToBankTransfer() {
   const [formData, setFormData] = useState({
     date: "",
     contraNo: "",
@@ -65,10 +65,11 @@ function CashDepositeIntoBank() {
       console.error("Error submitting form:", error);
     }
   };
-                
+
   const clearData = () => {
     setFormData({
       date: "",
+      ToAmount:"",
       contraNo: "",
       fromAccount: "",
       amount: "",
@@ -77,7 +78,7 @@ function CashDepositeIntoBank() {
   };
 
   return (
-    <Container maxWidth="lg" className="responsive-container">
+    <Container maxWidth="lg" className="responsive-container" data-aos="fade-up">
       <Box p={4} bgcolor="white" borderRadius={2} boxShadow={2}>
         <Typography variant="h4" align="center" color="primary" gutterBottom>
           Bank To Bank Transfer
@@ -107,11 +108,19 @@ function CashDepositeIntoBank() {
             </Grid>
             <Grid item xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel>From Account</InputLabel>
+                <InputLabel sx={{  background:"white"}}>From Account</InputLabel>
                 <Select
                   name="fromAccount"
                   value={formData.fromAccount}
                   onChange={handleChange}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 200, // Adjust the height of the dropdown
+                        top: 56, // Adjust the top position to align properly
+                      },
+                    },
+                  }}
                 >
                   <MenuItem value="">Select Bank</MenuItem>
                   <MenuItem value="BankA">Bank A</MenuItem>
@@ -131,11 +140,19 @@ function CashDepositeIntoBank() {
             </Grid>
             <Grid item xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel>To Account</InputLabel>
+                <InputLabel sx={{  background:"white"}}>To Account</InputLabel>
                 <Select
                   name="toAccount"
                   value={formData.toAccount}
                   onChange={handleChange}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 200, // Adjust the height of the dropdown
+                        top: 56, // Adjust the top position to align properly
+                      },
+                    },
+                  }}
                 >
                   <MenuItem value="">Select Bank</MenuItem>
                   <MenuItem value="BankA">Bank A</MenuItem>
@@ -143,17 +160,26 @@ function CashDepositeIntoBank() {
                 </Select>
               </FormControl>
             </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="To Amount"
+                type="text"
+                name="Toamount"
+                value={formData.ToAmount}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
           </Grid>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            className="mt-4"
-            sx={{ mt: 4 }}
-          >
-            Submit
-          </Button>
+          <Box display="flex" justifyContent="center" sx={{ mt: 4 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+            >
+              Submit
+            </Button>
+          </Box>
         </form>
         <ToastContainer />
       </Box>
@@ -161,4 +187,4 @@ function CashDepositeIntoBank() {
   );
 }
 
-export default CashDepositeIntoBank;
+export default BankToBankTransfer;
