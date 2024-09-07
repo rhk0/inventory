@@ -35,29 +35,25 @@ import ManageSubBrand from "../pages/admin/inventory/ManageSubBrand.js";
 import CreateBranches from "../pages/admin/CreateBranches.js";
 import ManageBranches from "../pages/admin/ManageBranches.js";
 import CreateProduct from "../pages/admin/inventory/CreateProduct.js";
-import SalesQuotation from "../pages/admin/SalesQuotation.js";
-import ManageQuotation from "../pages/admin/ManageQuotation.js";
-
-
 import CreateManufacturer from "../pages/admin/parties/CreateManufacturer.js";
 import ManageManufacturer from "../pages/admin/parties/ManageManufacturer.js";
 import Manageproducts from "../pages/admin/inventory/Manageproducts.js";
 import CreateSalesEstimate from "../pages/admin/sales/CreateSalesEstimate.js";
+import ManageSalesEstimate from "../pages/admin/sales/ManageSalesEstimate.js";
 import CreateSalesInvoice from "../pages/admin/sales/CreateSalesInvoice.js";
 import CreateDeliveryChallan from "../pages/admin/sales/CreateDeliveryChallan.js";
 import CreateSalesReturn from "../pages/admin/sales/CreateSalesReturn.js";
-
+import AddExpense from "../pages/admin/accounts/expenses/AddExpense.js";
+import ManageExpense from "../pages/admin/accounts/expenses/ManageExpense.js";
+import AddIncome from "../pages/admin/accounts/income/AddIncome.js";
+import ManageIncome from "../pages/admin/accounts/income/ManageIncome.js";
+import Pos from "../pages/admin/sales/Pos.js"
+import PayIn from "../pages/admin/sales/PayIn.js"
+import ManagePayIn from "../pages/admin/sales/ManagePayIn.js"
+import TotalSalesList from "../pages/admin/sales/TotalSalesList.js"
 const AdminRoute = () => {
   const [auth] = useAuth();
 
-  // useEffect(() => {
-  //   if (auth) {
-  //     console.log(auth);
-  //   }
-  //   if (!auth) {
-  //     console.log("ho");
-  //   }
-  // });
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
   const OpenSidebar = () => {
@@ -115,18 +111,32 @@ const AdminRoute = () => {
         <Route path="managestockunit" element={<ManageStockUnit />} />
         <Route path="manageBrand" element={<ManageBrand />} />
         <Route path="manageSubBrand" element={<ManageSubBrand />} />
-        <Route path="salesQuotation" element={<SalesQuotation />} />
-        <Route path="managesalesQuotation" element={<ManageQuotation />} />
+
         {/* <Route path="invoice" element={<Invoice />} /> */}
         <Route path="invoice" element={<CreateSalesInvoice />} />
+        <Route path="pos" element={<Pos />} />
+        <Route path="payin" element={<PayIn />} />
+        <Route path="ManagePayIn" element={<ManagePayIn />} />
+        <Route path="TotalSalesList" element={<TotalSalesList />} />
+
+        
        
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />
         <Route path="salesreturn" element={<CreateSalesReturn />} />
         
+   
 
         <Route path="ManageProduct" element={<Manageproducts/>} />
         <Route path="CreateSalesEstimate" element={<CreateSalesEstimate/>} />
+        <Route path="ManageSalesEstimate" element={<ManageSalesEstimate/>} />
+        <Route path="AddExpense" element={<AddExpense/>} />
+        <Route path="ManageExpense" element={<ManageExpense/>} />
+        <Route path="AddIncome" element={<AddIncome/>} />
+        <Route path="ManageIncome" element={<ManageIncome/>} />
+
+
+
       </Routes>
     </div>
   );
