@@ -51,6 +51,9 @@ import Pos from "../pages/admin/sales/Pos.js"
 import PayIn from "../pages/admin/sales/PayIn.js"
 import ManagePayIn from "../pages/admin/sales/ManagePayIn.js"
 import TotalSalesList from "../pages/admin/sales/TotalSalesList.js"
+import PurchesReturn from "../pages/admin/purchase/PurchesReturn.js";
+import CompanyRegistration from "../auth/CompanyRegistration.js";
+import PurchesInvoice from "../pages/admin/purchase/PurchesInvoice.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -72,16 +75,14 @@ const AdminRoute = () => {
         {/* <Route path="/dash" element={<Home />} /> */}
 
         <Route path="/*" element={<Test />} />
-        {/* rahul routing */}
-
+        {/* rahul routing */}      
+        <Route path="/companyregistration" element={<CompanyRegistration />} />
         <Route path="/CreateSupplier" element={<CreateSupplier />} />
         <Route path="/ManageSupplier" element={<ManageSupplier />} />
         <Route path="CreateCustomer" element={<CreateCustomer />} />
         <Route path="ManageCustomer" element={<ManageCustomer />} />
         <Route path="/CreateManufacturer" element={<CreateManufacturer />} />
         <Route path="/ManageManufacturer" element={<ManageManufacturer />} />
-
-
         <Route path="Cash" element={<Cash />} />
         <Route path="bankTobankTransfer" element={<BankToBankTranfer />} />
         <Route path="addcategory" element={<AddCategory />} />
@@ -104,7 +105,7 @@ const AdminRoute = () => {
         <Route path="manageVendor" element={<ManageVendor />} />
         <Route path="createstaff" element={<CreateStaff />} />
         <Route path="addbank" element={<AddBank />} />
-       
+        <Route path="purchesInvoice" element={<PurchesInvoice />} />
         <Route path="stockdetails" element={<StockDetails />} />
         <Route path="managestockunit" element={<ManageStockUnit />} />
         <Route path="manageBrand" element={<ManageBrand />} />
@@ -117,6 +118,7 @@ const AdminRoute = () => {
         <Route path="ManagePayIn" element={<ManagePayIn />} />
         <Route path="TotalSalesList" element={<TotalSalesList />} />
 
+        <Route path="purchasereturn" element={<PurchesReturn />} />
         
        
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}

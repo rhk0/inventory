@@ -239,380 +239,308 @@ const CompanyRegistration = () => {
   );
 
   return (
-    <form className="max-w-3xl mx-auto p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
+    <form className="responsive-container  p-8 border border-gray-300 shadow-lg rounded-lg bg-white">
       <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
         Set Up Business
       </h4>
-      {renderStepIndicator()}
-      {currentStep === 1 && (
-        <div>
-          <label className="block mb-2">
-            Logo:
-            <input
-              type="file"
-              name="photo"
-              accept="image/*"
-              ref={photoInputRef}
-              onChange={handlePhotoChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
+      <div className="font-bold underline">Business Information </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        <label className="block mb-2">
+          Logo:
+          <input
+            type="file"
+            name="photo"
+            accept="image/*"
+            ref={photoInputRef}
+            onChange={handlePhotoChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
 
-          <label className="block mb-2">
-            Business Name:
-            <input
-              type="text"
-              name="businessName"
-              value={formData.businessName}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Print Name:
-            <input
-              type="text"
-              name="printName"
-              value={formData.printName}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Business Type:
-            <select
-              name="businessType"
-              value={formData.businessType}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select</option>
-              <option value="grocery">Grocery</option>
-              <option value="manufacturing">Manufacturing</option>
-            </select>
-          </label>
-          <label className="block mb-2">
-            Address:
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            State:
-            <select
-              name="b_state"
-              value={formData.b_state}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select State</option>
-              {indianStates.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block mb-2">
-            Country:
-            <input
-              type="text"
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Pin Code:
-            <input
-              type="text"
-              name="pinCode"
-              value={formData.pinCode}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Contact:
-            <input
-              type="text"
-              name="contact"
-              value={formData.contact}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Website:
-            <input
-              type="text"
-              name="website"
-              value={formData.website}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Financial Year:
-            <input
-              type="text"
-              name="financialYear"
-              value={formData.financialYear}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <label className="block mb-2">
-            Book From:
-            <input
-              type="date"
-              name="bookFrom"
-              value={formData.bookFrom}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+        <label className="block mb-2">
+          Business Name
+          <input
+            type="text"
+            name="businessName"
+            value={formData.businessName}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          Address
+          <textarea
+            type="text"
+            name="printName"
+            value={formData.address}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          Pin code
+          <input
+            type="text"
+            name="printName"
+            value={formData.pinCode}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+      
+        <label className="block mb-2">
+          State
+          <select
+            name="b_state"
+            value={formData.b_state}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          >
+            <option value="">Select State</option>
+            {indianStates.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block mb-2">
+          Country
+          <input
+            type="text"
+            name="country"
+            value={formData.country}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          Email Id
+          <input
+            type="text"
+            name="pinCode"
+            value={formData.pinCode}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          Website
+          <input
+            type="text"
+            name="pinCode"
+            value={formData.website}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          Phone number
+          <input
+            type="text"
+            name="contact"
+            value={formData.contact}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          financialYear
+          <input
+            type="email"
+            name="email"
+            value={formData.financialYear}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          Books Begining From
+          <input
+            type="text"
+            name="website"
+            value={formData.bookFrom}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+      </div>
+      <div className="font-bold underline">Statutory Details </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        <label className="block mb-2">
+          Enable GST
+          <input
+            type="text"
+            name="financialYear"
+            value={formData.financialYear}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          State
+          <input
+            type="date"
+            name="bookFrom"
+            value={formData.bookFrom}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
 
-      {currentStep === 2 && (
-        <div>
-          <label className="block mb-2">
-            Enable Bill Wise Entry:
-            <select
-              name="e_way_bill"
-              value={formData.e_way_bill}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </label>
+        <label className="block mb-2">
+          Registration Type 
+          <select
+            name="e_way_bill"
+            value={formData.e_way_bill}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          >
+            <option value="">Select</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </label>
 
-          {/* new field */}
+        <label className="block mb-2">
+          Tax Rate
+          <select
+            name="enableBatch"
+            value={formData.enableBatch}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          >
+            <option value="">Select</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </label>
 
-          <label className="block mb-2">
-            Enable Batch:
-            <select
-              name="enableBatch"
-              value={formData.enableBatch}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </label>
+        <label className="block mb-2">
+          GSTIN
+          <select
+            name="enableExpire"
+            value={formData.enableExpire}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          >
+            <option value="">Select</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </label>
 
-          <label className="block mb-2">
-            Enable Expire Date:
-            <select
-              name="enableExpire"
-              value={formData.enableExpire}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </label>
+        {/* end */}
 
-          {/* end */}
+        <label className="block mb-2">
+          Drug Licence No.
+          <select
+            name="enable_gst"
+            value={formData.enable_gst}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          >
+            <option value="">Select</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </label>
 
-          <label className="block mb-2">
-            Enable GST:
-            <select
-              name="enable_gst"
-              value={formData.enable_gst}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </label>
-          {formData.enable_gst === "true" && (
-            <>
-              <label className="block mb-2">
-                Registration Type:
-                <select
-                  name="registration_Type"
-                  value={formData.registration_Type}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                >
-                  <option value="">Select</option>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </label>
-              {formData.registration_Type === "true" && (
-                <>
-                  <label className="block mb-2">
-                    Tax Rate:
-                    <input
-                      type="text"
-                      name="tax_Rate"
-                      value={formData.tax_Rate}
-                      onChange={handleChange}
-                      className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                    />
-                  </label>
-                </>
-              )}
-              <label className="block mb-2">
-                GSTIN:
-                <input
-                  type="text"
-                  name="gstIn"
-                  value={formData.gstIn}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                />
-              </label>
+        <label className="block mb-2">
+          Other Tax
+          <select
+            name="registration_Type"
+            value={formData.registration_Type}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          >
+            <option value="">Select</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </label>
 
-              <label className="block mb-2">
-                Return Type:
-                <select
-                  name="periodicalReturn"
-                  value={formData.periodicalReturn}
-                  onChange={handleChange}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-                >
-                  <option value="">Select</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="quarterly">Quarterly</option>
-                </select>
-              </label>
-            </>
-          )}
+        <label className="block mb-2">
+          Tax Name
+          <input
+            type="text"
+            name="tax_Rate"
+            value={formData.tax_Rate}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+ 
+        <label className="block mb-2">
+          Number:
+          <input
+            type="text"
+            name="gstIn"
+            value={formData.gstIn}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+      </div>
 
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
+      <div className="font-bold underline">Bank Details</div>
 
-            <button
-              onClick={nextStep}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        <label className="block mb-2">
+          Bank Name
+          <input
+            type="text"
+            name="irfcCode"
+            value={formData.selectBank}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
 
-      {currentStep === 3 && (
-        <div>
-          <label className="block mb-2">
-            Select Bank:
-            <select
-              name="selectBank"
-              value={formData.selectBank}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              <option value="">Select</option>
-              {indianBanks.map((bank) => (
-                <option key={bank} value={bank}>
-                  {bank}
-                </option>
-              ))}
-            </select>
-          </label>
+        <label className="block mb-2">
+          Bank Address
+          <textarea
+            type="text"
+            name="accountName"
+            value={formData.address}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
 
-          <label className="block mb-2">
-            Account Name:
-            <input
-              type="text"
-              name="accountName"
-              value={formData.accountName}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
+        <label className="block mb-2">
+          IRFC Code
+          <input
+            type="text"
+            name="irfcCode"
+            value={formData.irfcCode}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
 
-          <label className="block mb-2">
-            Account Number:
-            <input
-              type="text"
-              name="accountNumber"
-              value={formData.accountNumber}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
+        <label className="block mb-2">
+          Account Holder Name
+          <input
+            type="text"
+            name="upiId"
+            value={formData.accountName}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+        <label className="block mb-2">
+          Account Number
+          <input
+            type="text"
+            name="upiId"
+            value={formData.accountNumber}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+      </div>
 
-          <label className="block mb-2">
-            IRFC Code:
-            <input
-              type="text"
-              name="irfcCode"
-              value={formData.irfcCode}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <label className="block mb-2">
-            UPI ID:
-            <input
-              type="text"
-              name="upiId"
-              value={formData.upiId}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-            />
-          </label>
-
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={prevStep}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Previous
-            </button>
-
-            <button
-              onClick={handleSubmit}
-              className="bg-green-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-violet-600"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      )}
       <ToastContainer />
     </form>
   );
