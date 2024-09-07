@@ -91,65 +91,66 @@ const PayOut = () => {
           </div>
         </div>
       )}
-
-      <table className="w-full border-collapse border border-gray-300">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="border border-gray-300 p-2">No.</th>
-            <th className="border border-gray-300 p-2">Invoice No.</th>
-            <th className="border border-gray-300 p-2">Invoice Amount</th>
-            <th className="border border-gray-300 p-2">Payment Amount</th>
-            <th className="border border-gray-300 p-2">Balance Amount</th>
-            <th className="border border-gray-300 p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, index) => (
-            <tr key={index}>
-              <td className="border border-gray-300 p-2">{index + 1}</td>
-              <td className="border border-gray-300 p-2">
-                <input
-                  type="text"
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </td>
-              <td className="border border-gray-300 p-2">
-                <input
-                  type="text"
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </td>
-              <td className="border border-gray-300 p-2">
-                <input
-                  type="text"
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </td>
-              <td className="border border-gray-300 p-2">
-                <input
-                  type="text"
-                  className="w-full p-2 border border-gray-300 rounded"
-                />
-              </td>
-
-              <td className="border border-gray-300 p-2 flex space-x-2 justify-center">
-                <button
-                  className="bg-red-500 text-white p-1 rounded"
-                  onClick={() => removeRow(index)}
-                >
-                  ✖
-                </button>
-                <button
-                  className="bg-green-500 text-white p-1 rounded"
-                  onClick={addRow}
-                >
-                  ➕
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border border-gray-300 ">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="border border-gray-300 p-2">No.</th>
+              <th className="border border-gray-300 p-2">Invoice No.</th>
+              <th className="border border-gray-300 p-2">Invoice Amount</th>
+              <th className="border border-gray-300 p-2">Payment Amount</th>
+              <th className="border border-gray-300 p-2">Balance Amount</th>
+              <th className="border border-gray-300 p-2">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((row, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 p-2">{index + 1}</td>
+                <td className="border border-gray-300 p-2">
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </td>
+                <td className="border border-gray-300 p-2">
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </td>
+                <td className="border border-gray-300 p-2">
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </td>
+                <td className="border border-gray-300 p-2">
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded"
+                  />
+                </td>
+
+                <td className="border border-gray-300 p-2 flex space-x-2 justify-center">
+                  <button
+                    className="bg-red-500 text-white p-1 rounded"
+                    onClick={() => removeRow(index)}
+                  >
+                    ✖
+                  </button>
+                  <button
+                    className="bg-green-500 text-white p-1 rounded"
+                    onClick={addRow}
+                  >
+                    ➕
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <div className="mt-4">
         <label className="block">Total</label>

@@ -576,6 +576,17 @@ const CreatePurchaseOrder = () => {
         {/* Top Section */}
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
+            <label className="font-bold">Purchase Type</label>
+            <select
+              value={purchaseType}
+              onChange={handlepurchaseTypeChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="GST ">GST </option>
+              <option value="Non GST">Non GST</option>
+            </select>
+          </div>
+          <div>
             <label className="font-bold">
               Date:
               <input
@@ -595,28 +606,8 @@ const CreatePurchaseOrder = () => {
               className="border p-2 w-full  rounded"
             />
           </div>
-          <div>
-            <label className="font-bold">Purchase Type</label>
-            <select
-              value={purchaseType}
-              onChange={handlepurchaseTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="GST ">GST </option>
-              <option value="Non GST">Non GST</option>
-            </select>
-          </div>
-          <div>
-            <label className="font-bold">supplier Name</label>
-            <select
-              value={supplierType}
-              onChange={handlesupplierTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Retailer">Retailer</option>
-              <option value="Wholesaler">Wholesaler</option>
-            </select>
-          </div>
+
+
           <div>
             <label className="font-bold">supplier Name</label>
             <input

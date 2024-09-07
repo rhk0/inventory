@@ -30,6 +30,16 @@ const ManagePayOut = () => {
     setRows(newRows);
   };
 
+  const addRow = () => {
+    setRows([...rows, { invoiceNo: "", paymentAmount: "", balanceAmount: "" }]);
+  };
+
+  const removeRow = (index) => {
+    const newRows = [...rows];
+    newRows.splice(index, 1);
+    setRows(newRows);
+  };
+
   return (
     <div className="responsive-container bg-pink-200 p-4 rounded-md w-full mx-auto">
       <h1 className="text-center text-3xl bg-gray-100 text-black cucolor">
@@ -164,49 +174,52 @@ const ManagePayOut = () => {
               />
             </div>
           </div>
-
-          <table className="w-full border-collapse border border-gray-300">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="border border-gray-300 p-2">No.</th>
-                <th className="border border-gray-300 p-2">Invoice No.</th>
-                <th className="border border-gray-300 p-2">Invoice Amount</th>
-                <th className="border border-gray-300 p-2">Payment Amount</th>
-                <th className="border border-gray-300 p-2">Balance Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-300 p-2">{index + 1}</td>
-                  <td className="border border-gray-300 p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                  </td>
+          <div className="overflow-x-auto">
+            {" "}
+            <table className="w-full border-collapse border border-gray-300">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="border border-gray-300 p-2">No.</th>
+                  <th className="border border-gray-300 p-2">Invoice No.</th>
+                  <th className="border border-gray-300 p-2">Invoice Amount</th>
+                  <th className="border border-gray-300 p-2">Payment Amount</th>
+                  <th className="border border-gray-300 p-2">Balance Amount</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rows.map((row, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 p-2">{index + 1}</td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        cd
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="mt-4">
             <label className="block">Total</label>
@@ -312,49 +325,66 @@ const ManagePayOut = () => {
               />
             </div>
           </div>
-
-          <table className="w-full border-collapse border border-gray-300">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="border border-gray-300 p-2">No.</th>
-                <th className="border border-gray-300 p-2">Invoice No.</th>
-                <th className="border border-gray-300 p-2">Invoice Amount</th>
-                <th className="border border-gray-300 p-2">Payment Amount</th>
-                <th className="border border-gray-300 p-2">Balance Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-300 p-2">{index + 1}</td>
-                  <td className="border border-gray-300 p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    <input
-                      type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
-                    />
-                  </td>
+          <div className="overflow-x-auto">
+            {" "}
+            <table className="w-full border-collapse border border-gray-300">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="border border-gray-300 p-2">No.</th>
+                  <th className="border border-gray-300 p-2">Invoice No.</th>
+                  <th className="border border-gray-300 p-2">Invoice Amount</th>
+                  <th className="border border-gray-300 p-2">Payment Amount</th>
+                  <th className="border border-gray-300 p-2">Balance Amount</th>
+                  <th className="border border-gray-300 p-2">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rows.map((row, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 p-2">{index + 1}</td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                    </td>
+                    <td className="border border-gray-300 p-2 flex space-x-2 justify-center">
+                      <button
+                        className="bg-red-500 text-white p-1 rounded"
+                        onClick={() => removeRow(index)}
+                      >
+                        ✖
+                      </button>
+                      <button
+                        className="bg-green-500 text-white p-1 rounded"
+                        onClick={addRow}
+                      >
+                        ➕
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="mt-4">
             <label className="block">Total</label>
@@ -368,16 +398,17 @@ const ManagePayOut = () => {
             <label className="block">Narration</label>
             <textarea className="w-1/2 p-2 border border-gray-300 rounded"></textarea>
           </div>
-
-          <button className="mt-4 bg-blue-500 text-white p-2 rounded">
-            Save
-          </button>
-          <button
-            className="mt-4 px-4 py-2 bg-gray-600 text-white rounded"
-            onClick={closeModals}
-          >
-            Close
-          </button>
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 mt-4">
+            <button className="bg-blue-500 text-white p-2 rounded w-full md:w-auto">
+              Save
+            </button>
+            <button
+              className="px-4 py-2 bg-gray-600 text-white rounded w-full md:w-auto"
+              onClick={closeModals}
+            >
+              Close
+            </button>
+          </div>
         </div>
       </Modal>
     </div>
