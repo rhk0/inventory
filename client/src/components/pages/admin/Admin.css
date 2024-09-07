@@ -33,7 +33,7 @@
 /* Header  */
 .header {
   
-  background-color: #FFFFFF;
+  background-color: #515156;
   grid-area: header;
   height: 60px;
   display: flex;
@@ -54,7 +54,7 @@
   height: 100%;
   background-color:#515156;
   overflow-y: auto;
-  color:black;
+  
   transition: all 0.5s;
   -webkit-transition: all 0.5s;
   scrollbar-width: 10px;
@@ -91,17 +91,6 @@
 }
 
 
-.sidebar-list {
-  color:rgb(241, 229, 229);
-  padding: 0;
-  list-style-type: none;
-}
-
-.sidebar-list-item {
-  padding: 0px 1px 7px 10px;
-  font-size: 18px;
-  color: white;
-}
 
 .nestedlist{
   padding: 0px 29px 0px 14px;
@@ -117,16 +106,40 @@
   font-family: Mongolian Baliti;
 }
 
+.sidebar-list-item{
+  display: flex;
+  width: full;
+  justify-items: center;
+}
+.sidebar-list-item {
+  position: relative; /* Required for positioning the pseudo-element */
+}
+
 .sidebar-list-item:hover {
   background-color: #60207d;
   cursor: pointer;
   font-weight: bolder;
   border-radius: 5px;
-  font-family: Mongolian Baliti;
+  font-family: "Mongolian Baiti"; /* Correcting font family name */
 }
 
-.nesteditem:hover{
-  background-color: #60207d;
+.sidebar-list-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px; /* Height of the underline */
+  background-color: rgb(108, 159, 236);
+  transition: width 0.3s ease; /* Duration and timing of the transition */
+}
+
+.sidebar-list-item:hover::after {
+  width: 100%; /* Full width on hover to create the underline animation */
+}
+.nesteditem:hover{ 
+ 
+  /* background-color: #60207d; */
   cursor: pointer;
   font-weight: bolder;
   border-radius: 5px;
@@ -135,17 +148,10 @@
 
 /* .sidebar-list-item > a {
   text-decoration: none;
-  color: aliceblue;
-  changes by dharmendra
-} */
+ 
 
-.sidebar-list-item > a {
-  text-decoration: none;
-  color: black; /* Default text color */
-  position: relative;
-  font-weight: normal; /* Default font weight */
   transition: color 0.3s ease;
-}
+} */
 
 .sidebar-list-item > a::after {
   content: "";
@@ -170,7 +176,7 @@
 .sidebar-list-item > a :hover {
   text-decoration: none;
   color:  #eadeeb;
-  font-size: large;
+  /* font-size: large; */
 }
 .innerlist{
   font-size: 28px;
@@ -179,7 +185,7 @@
 .innerlist :hover {
   text-decoration: none;
   color: #eadeeb;
-  font-size: large;
+  font-size: 28px;
 }
 
 .sidebar-responsive {

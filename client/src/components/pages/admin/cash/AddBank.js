@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import {
   Button,
   TextField,
@@ -21,6 +21,7 @@ import {
   MenuItem,
   TablePagination,
   Typography,
+  Grid,
 } from "@mui/material";
 
 const initialFormData = {
@@ -29,6 +30,7 @@ const initialFormData = {
   accountNumber: "",
   openingBalance: "",
   drCr: "",
+  date: "", // Added date field
 };
 
 const AddBank = () => {
@@ -63,7 +65,7 @@ const AddBank = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = ["name", "ifscCode", "accountNumber", "openingBalance", "drCr"];
+    const requiredFields = ["name", "ifscCode", "accountNumber", "openingBalance", "drCr", "date"];
 
     for (const field of requiredFields) {
       if (!formData[field]) {
@@ -127,7 +129,7 @@ const AddBank = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 responsive-container uppercase">
+    <div className="container mx-auto p-4 responsive-container uppercase " data-aos="flip-up">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
         Manage Bank
       </h1>
@@ -149,7 +151,7 @@ const AddBank = () => {
               <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>IFSC Code</TableCell>
               <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>Account No</TableCell>
               <TableCell sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>Opening Balance</TableCell>
-              <TableCell sx={{ fontWeight: "bold",textAlign:"center", fontSize: "1.2rem" }}>Action</TableCell>
+              <TableCell sx={{ fontWeight: "bold", textAlign: "center", fontSize: "1.2rem" }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -188,6 +190,16 @@ const AddBank = () => {
         <DialogTitle>Add Bank</DialogTitle>
         <DialogContent>
           <TextField
+            label="Date"
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            margin="dense"
+          />
+          <TextField
             label="Name"
             name="name"
             value={formData.name}
@@ -225,6 +237,7 @@ const AddBank = () => {
             value={formData.drCr}
             onChange={handleChange}
             fullWidth
+            margin="dense"
           >
             <MenuItem value="">Select</MenuItem>
             <MenuItem value="Dr">Dr</MenuItem>
@@ -245,6 +258,7 @@ const AddBank = () => {
         <Dialog open={viewModal} onClose={closeModal}>
           <DialogTitle>View Bank</DialogTitle>
           <DialogContent>
+            <Typography variant="body1"><strong>Date:</strong> {modalData.date}</Typography>
             <Typography variant="body1"><strong>Name:</strong> {modalData.name}</Typography>
             <Typography variant="body1"><strong>IFSC Code:</strong> {modalData.ifscCode}</Typography>
             <Typography variant="body1"><strong>Account Number:</strong> {modalData.accountNumber}</Typography>
@@ -261,6 +275,16 @@ const AddBank = () => {
           <DialogTitle>Edit Bank</DialogTitle>
           <DialogContent>
             <TextField
+              label="Date"
+              type="date"
+              name="date"
+              value={modalData.date}
+              onChange={handleChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              margin="dense"
+            />
+            <TextField
               label="Name"
               name="name"
               value={modalData.name}
@@ -268,7 +292,42 @@ const AddBank = () => {
               fullWidth
               margin="dense"
             />
-            {/* Other fields for editing */}
+            <TextField
+              label="IFSC Code"
+              name="ifscCode"
+              value={modalData.ifscCode}
+              onChange={handleChange}
+              fullWidth
+              margin="dense"
+            />
+            <TextField
+              label="Account Number"
+              name="accountNumber"
+              value={modalData.accountNumber}
+              onChange={handleChange}
+              fullWidth
+              margin="dense"
+            />
+            <TextField
+              label="Opening Balance"
+              name="openingBalance"
+              value={modalData.openingBalance}
+              onChange={handleChange}
+              fullWidth
+              margin="dense"
+            />
+            <Select
+              label="Dr/Cr"
+              name="drCr"
+              value={modalData.drCr}
+              onChange={handleChange}
+              fullWidth
+              margin="dense"
+            >
+              <MenuItem value="">Select</MenuItem>
+              <MenuItem value="Dr">Dr</MenuItem>
+              <MenuItem value="Cr">Cr</MenuItem>
+            </Select>
           </DialogContent>
           <DialogActions>
             <Button onClick={closeModal} color="secondary">Cancel</Button>
