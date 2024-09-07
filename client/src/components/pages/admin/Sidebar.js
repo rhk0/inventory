@@ -549,7 +549,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                 to="/admin/pos"
+                  to="/admin/pos"
                   className="flex items-center text-white nestitemhover"
                 >
                   Point of Sales
@@ -611,7 +611,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4">
               <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/CreatePurchaseOrder"
                   className="flex items-center text-white nestitemhover "
                 >
                   Create Purchase Order
@@ -659,7 +659,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>{" "}
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/PayOut"
                   className="flex items-center text-white nestitemhover"
                 >
                   Pay Out
@@ -667,7 +667,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>{" "}
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/ManagePayOut"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Pay out
