@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddReceiptModal from "../modals/AddReciptModel";
 import Modal from "react-modal";
+import PurchesInvoiceModel from "../modals/PurchesInvoiceModel";
 const PurchesInvoice = () => {
   // State for form fields
   const [viewModal, setViewModal] = useState(false);
@@ -131,9 +132,12 @@ const PurchesInvoice = () => {
         itemCode: "",
         productName: "",
         hsnCode: "",
-        qty: 0,
         uom: "",
+        qty: 0,
+        freeQty: 0,
         mrp: 0,
+        unitcost: 0,
+        schememargin: 0,
         discount: 0,
         taxableValue: 0,
         cgst: 0,
@@ -259,7 +263,7 @@ const PurchesInvoice = () => {
           <table class="table">
              <tr>
                   <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    Sales Invoice
+                    Purchase Invoice
                   </th>
               </tr>
 
@@ -277,10 +281,12 @@ const PurchesInvoice = () => {
               </td>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header"> Estimate Details</div>
+                  <div class="section-header"> Invoice Details</div>
                   <div class="details">Invoice No: <span>12345</span></div>
                   <div class="details">Invoice Date: <span>01-Jan-2024</span></div>
+                   <div class="details">Supplier Date: <span>01-Jan-2024</span></div>
                   <div class="details">Place of Supply: <span>City Name</span></div>
+                    <div class="details">Due Date: <span>01-Jan-2024</span></div>
                 </div>
               </td>
               <td style="width: 40%;">
@@ -289,7 +295,7 @@ const PurchesInvoice = () => {
                   <div class="details">Receipt Doc No.: <span>6789</span></div>
                   <div class="details">Dispatch Through: <span>Courier Service</span></div>
                   <div class="details">Agent Name: <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
+                  <div class="details">Vehicle Text: <span>MH12AB1234</span></div>
                 </div>
               </td>
             </tr>
@@ -301,11 +307,13 @@ const PurchesInvoice = () => {
                 <th>No.</th>
                 <th>Product Name</th>
                 <th>HSN Code</th>
+                  <th>UOM</th>
                 <th>QTY</th>
-                <th>UOM</th>
+                <th>Free QTY</th>
                 <th>MRP</th>
-                <th>Disc.</th>
-                <th>Rate</th>
+                <th>Unit Cost</th>
+                <th>Scheme Margin</th>
+                <th>Discount</th>
                 <th>Taxable Value</th>
                 <th>CGST</th>
                 <th>SGST</th>
@@ -319,6 +327,8 @@ const PurchesInvoice = () => {
                 <td>Product Name</td>
                 <td>1234</td>
                 <td>10</td>
+                 <td>10</td>
+                  <td>10</td>
                 <td>KG</td>
                 <td>500</td>
                 <td>10%</td>
@@ -502,7 +512,7 @@ const PurchesInvoice = () => {
                   <div class="details">Receipt Doc No.: <span>6789</span></div>
                   <div class="details">Dispatch Through: <span>Courier Service</span></div>
                   <div class="details">Agent Name: <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
+                  <div class="details">Vehicle Text: <span>MH12AB1234</span></div>
                 </div>
               </td>
             </tr>
@@ -610,7 +620,7 @@ const PurchesInvoice = () => {
             Purches Invoice
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4   gap-4 mb-4">
-          <div>
+            <div>
               <label className="font-bold">Purchase Type</label>
               <select
                 value={salesType}
@@ -661,26 +671,7 @@ const PurchesInvoice = () => {
                 <option value="Bill of Supply"></option>
               </select>
             </div>
-            <div>
-              <label className="font-bold">Customer Type</label>
-              <select
-                value={customerType}
-                onChange={handleCustomerTypeChange}
-                className="border p-2 w-full  rounded"
-              >
-                <option value="Retailer">Retailer</option>
-                <option value="Wholesaler">Wholesaler</option>
-              </select>
-            </div>
-            <div>
-              <label className="font-bold">Customer Name</label>
-              <input
-                type="text"
-                value={customerName}
-                onChange={handleCustomerNameChange}
-                className="border p-2 w-full  rounded"
-              />
-            </div>
+
             <div>
               <label className="font-bold">Place of Supply</label>
               <input
@@ -694,7 +685,7 @@ const PurchesInvoice = () => {
               <label className="font-bold">
                 Payment Term (days):
                 <input
-                  type="number"
+                  type="text"
                   value={paymentTerm}
                   onChange={(e) => setPaymentTerm(e.target.value)}
                   className="border p-2 w-full  rounded"
@@ -883,9 +874,13 @@ const PurchesInvoice = () => {
                   <th className="border text-nowrap p-2">Item Code</th>
                   <th className="border text-nowrap p-2">Product Name</th>
                   <th className="border text-nowrap p-2">HSN Code</th>
-                  <th className="border p-2">Qty</th>
+
                   <th className="border p-2">UOM</th>
+                  <th className="border p-2">Qty</th>
+                  <th className="border p-2">Free Qty</th>
                   <th className="border p-2">MRP</th>
+                  <th className="border p-2">Unit Cost</th>
+                  <th className="border p-2">Scheme Margin</th>
                   <th className="border p-2">
                     Discount
                     <div className="flex">
@@ -958,16 +953,7 @@ const PurchesInvoice = () => {
                         className="w-full"
                       />
                     </td>
-                    <td className="border p-2">
-                      <input
-                        type="number"
-                        value={row.qty}
-                        onChange={(e) =>
-                          handleRowChange(index, "qty", e.target.value)
-                        }
-                        className="w-full"
-                      />
-                    </td>
+
                     <td className="border p-2">
                       <input
                         type="text"
@@ -980,7 +966,27 @@ const PurchesInvoice = () => {
                     </td>
                     <td className="border p-2">
                       <input
-                        type="number"
+                        type="text"
+                        value={row.qty}
+                        onChange={(e) =>
+                          handleRowChange(index, "qty", e.target.value)
+                        }
+                        className="w-full"
+                      />
+                    </td>
+                    <td className="border p-2">
+                      <input
+                        type="text"
+                        value={row.freeQty}
+                        onChange={(e) =>
+                          handleRowChange(index, "freeQty", e.target.value)
+                        }
+                        className="w-full"
+                      />
+                    </td>
+                    <td className="border p-2">
+                      <input
+                        type="text"
                         value={row.mrp}
                         onChange={(e) =>
                           handleRowChange(index, "mrp", e.target.value)
@@ -990,7 +996,27 @@ const PurchesInvoice = () => {
                     </td>
                     <td className="border p-2">
                       <input
-                        type="number"
+                        type="text"
+                        value={row.unitcost}
+                        onChange={(e) =>
+                          handleRowChange(index, "unitcost", e.target.value)
+                        }
+                        className="w-full"
+                      />
+                    </td>
+                    <td className="border p-2">
+                      <input
+                        type="text"
+                        value={row.schememargin}
+                        onChange={(e) =>
+                          handleRowChange(index, "schememargin", e.target.value)
+                        }
+                        className="w-full"
+                      />
+                    </td>
+                    <td className="border p-2">
+                      <input
+                        type="text"
                         value={row.discount}
                         onChange={(e) =>
                           handleRowChange(index, "discount", e.target.value)
@@ -1005,7 +1031,7 @@ const PurchesInvoice = () => {
                           <>
                             <td className="border p-2">
                               <input
-                                type="number"
+                                type="text"
                                 value={`${row.cgst} RS`}
                                 onChange={(e) =>
                                   handleRowChange(index, "cgst", e.target.value)
@@ -1015,7 +1041,7 @@ const PurchesInvoice = () => {
                             </td>
                             <td className="border p-2">
                               <input
-                                type="number"
+                                type="text"
                                 value={row.sgst}
                                 onChange={(e) =>
                                   handleRowChange(index, "sgst", e.target.value)
@@ -1028,7 +1054,7 @@ const PurchesInvoice = () => {
                         {gstType === "IGST" && (
                           <td className="border p-2">
                             <input
-                              type="number"
+                              type="text"
                               value={row.igst}
                               onChange={(e) =>
                                 handleRowChange(index, "igst", e.target.value)
@@ -1045,7 +1071,7 @@ const PurchesInvoice = () => {
                     )}
                     <td className="border p-2">
                       <input
-                        type="number"
+                        type="text"
                         value={row.totalValue}
                         onChange={(e) =>
                           handleRowChange(index, "totalValue", e.target.value)
@@ -1100,26 +1126,53 @@ const PurchesInvoice = () => {
             Add New Row
           </button>
 
-          <button
-            onClick={() => setIsModalOtherChargesOpen(true)}
-            className=" text-blue-800 mt-8 text-md p-2 hide-on-print mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-          >
-            <svg
-              xmlns="http//www.w3.org/2000/svg"
-              className="h-4 w-4 "
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="flex gap-5 item-center justify-center">
+            {" "}
+            <button
+              onClick={() => setIsModalOtherChargesOpen(true)}
+              className=" text-white mt-8 text-md p-2 mt-2 p-2 mt-2 rounded bg-blue-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            Add Other Charges
-          </button>
+              <svg
+                xmlns="http//www.w3.org/2000/svg"
+                className="h-4 w-4 "
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add Other Charges
+            </button>
+            <div className="gap-2">
+              <label className=" text-white mt-8 text-md p-2 mt-2 p-2 mt-2 rounded bg-blue-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center">
+                <svg
+                  xmlns="http//www.w3.org/2000/svg"
+                  className="h-4 w-4 "
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>{" "}
+                Upload Document
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => console.log(e.target.files[0])}
+                />
+              </label>
+            </div>
+          </div>
 
           {isModalOtherChargesOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -1248,7 +1301,7 @@ const PurchesInvoice = () => {
                 },
               }}
             >
-              <AddReceiptModal closeModal={closeModal} />
+              <PurchesInvoiceModel closeModal={closeModal} />
             </Modal>
           </div>
 
