@@ -627,7 +627,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/purchesInvoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Invoice
@@ -643,7 +643,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/purchasereturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Return
@@ -823,6 +823,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 </button>
                 {showIncome && (
                   <ul className="ml-4">
+                    
                     <li>
                       <Link
                         to="/admin/AddIncome"
@@ -862,7 +863,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/companyregistration"
                   className="flex items-center text-white nestitemhover "
                 >
                   Business Details
@@ -870,7 +871,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/createstaff"
                   className="flex items-center text-white nestitemhover"
                 >
                   Add Staff
