@@ -275,7 +275,7 @@ const CreateSupplier = () => {
           <h3 className="text-gray-800 font-semibold mb-2">
             Opening Balance :
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="flex grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <input
               name="openingBalance"
               className="p-2 border border-gray-300 rounded"
@@ -284,8 +284,9 @@ const CreateSupplier = () => {
               value={formData.openingBalance}
               onChange={handleChange}
             />
+             <input type="date"/>
           </div>
-          <p className="text-sm text-gray-500 mt-1">as on 1st day of F.Y.</p>
+        
         </div>
 
         {/* Buttons */}

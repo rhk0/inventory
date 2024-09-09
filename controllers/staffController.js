@@ -70,8 +70,7 @@ export const createstaffController = async (req, res) => {
       } = req.body;
 
       const photo = req.files.photo ? req.files.photo.map((file) => file.path) : [];
-      const panCard = req.files.panCard ? req.files.panCard.map((file) => file.path) : [];
-      const adharCards = req.files.adharCards ? req.files.adharCards.map((file) => file.path) : [];
+   
 
       const existingStaff = await staffModel.findOne({
         $or: [{ email }, { empId }],

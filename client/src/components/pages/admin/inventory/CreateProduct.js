@@ -580,7 +580,7 @@ const CreateProduct = () => {
 
           <div>
             <label className="font-bold">Description</label>
-            <input
+            <textarea
               type="text"
               className="w-full p-1 border rounded"
               name="description"
@@ -623,7 +623,7 @@ const CreateProduct = () => {
 
           <div>
             <label className="block font-bold">Features</label>
-            <input
+            <textarea
               type="text"
               name="feature"
               className="w-full p-1 border rounded"
@@ -652,7 +652,7 @@ const CreateProduct = () => {
         <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4  gap-4">
           <div>
             <label className="block font-bold">Purchase Price</label>
-            <p>( exclude GST)</p>
+           
             <input
               type="number"
               name="purchasePriceExGst"
@@ -662,8 +662,8 @@ const CreateProduct = () => {
             />
           </div>
           <div>
-            <label className="block font-bold">Purchase Price</label>
-            <p>( Include GST)</p>
+            <label className="block font-bold">Landing cost</label> 
+            {/* // change   purches price to landing cost */}
             <input
               type="number"
               name="purchasePriceInGst"
@@ -673,8 +673,8 @@ const CreateProduct = () => {
             />
           </div>
           <div>
-            <label className="block font-bold">Maximum Retail Price </label>
-            <p>(MRP)</p>
+            <label className="block font-bold">Maximum Retail Price <span className="text-xs">(MRP)</span> </label> 
+           
             <input
               type="number"
               name="maxmimunRetailPrice"
@@ -684,8 +684,7 @@ const CreateProduct = () => {
             />
           </div>
           <div>
-            <label className="block font-bold">Retail Discount</label>
-            <p>(in %)</p>
+            <label className="block font-bold">Retail Discount  <span className="text-xs">(in %)</span></label>
             <input
               type="number"
               name="retailDiscount"
@@ -695,8 +694,8 @@ const CreateProduct = () => {
             />{" "}
           </div>
           <div>
-            <label className="block font-bold">Retail Price</label>
-            <p>(in Rs)</p>
+            <label className="block font-bold">Retail Price <span className="text-xs">(in RS)</span></label>
+            {/* <p>(in Rs)</p> */}
             <input
               type="number"
               name="retailPrice"
@@ -706,8 +705,8 @@ const CreateProduct = () => {
             />{" "}
           </div>
           <div>
-            <label className="block font-bold">Retail Margin</label>
-            <p>(in %)</p>
+            <label className="block font-bold">Retail Margin <span className="text-xs">(in %)</span></label>
+            {/* <p>(in %)</p> */}
             <input
               type="number"
               name="retailMargin"
@@ -717,8 +716,8 @@ const CreateProduct = () => {
             />{" "}
           </div>
           <div>
-            <label className="block font-bold">Wholesaler Discount</label>
-            <p>(in %)</p>
+            <label className="block font-bold">Wholesaler Discount <span className="text-xs">(in %)</span></label>
+            {/* <p>(in %)</p> */}
             <input
               type="number"
               name="wholesalerDiscount"
@@ -728,8 +727,8 @@ const CreateProduct = () => {
             />{" "}
           </div>
           <div>
-            <label className="block font-bold">Wholesaler Price</label>
-            <p>(in Rs)</p>
+            <label className="block font-bold">Wholesaler Price <span className="text-xs">(in RS)</span></label>
+            {/* <p>(in Rs)</p> */}
             <input
               type="number"
               name="wholesalerPrice"
@@ -739,8 +738,8 @@ const CreateProduct = () => {
             />{" "}
           </div>
           <div>
-            <label className="block font-bold">Wholesale Margin</label>
-            <p>(in %)</p>
+            <label className="block font-bold">Wholesale Margin <span className="text-xs">(in %)</span></label>
+            {/* <p>(in %)</p> */}
             <input
               type="number"
               name="wholesaleMargin"

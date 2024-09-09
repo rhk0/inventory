@@ -60,7 +60,7 @@ const AddCategory = () => {
           Add Categories
         </h4>
         <div className="px-2 flex gap-5">
-          <label className="block mb-2 text-lg ">Categorie Name :</label>
+          <label className="block mb-2 text-lg ">Category Name :</label>
           <input
             type="text"
             name="CategoryName"

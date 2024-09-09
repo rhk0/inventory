@@ -1,112 +1,114 @@
-import mongoose from "mongoose";
+  import mongoose from "mongoose";
 
-const CompanySchema = new mongoose.Schema(
-  {
+  const CompanySchema = new mongoose.Schema(
+    {
 
-    photo: {
-      data: Buffer,
-      contentType: String,
-    },
-    
-    businessName: {
-      type: String,
-      required: true,
-    },
-    printName: {
-      type: String,
-      required: true,
-    },
-    businessType: {
-      type: String,
-      required: true,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
-    b_state: {
-      type: String,
-      required: true,
-    },
-    country: {
-      type: String,
-      required: true,
-    },
-    pinCode: {
-      type: String,
-      required: true,
-    },
-    contact: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-    },
-    website: {
-      type: String,
-      required: true,
-    },
-    financialYear: {
-      type: String,
-      required: true,
-    },
-    bookFrom: {
-      type: Date,
-      required: true,
-    },
-    // s_state: {
-    //   type: String,
-    //   // required: true,
-    // },
-    tax_Rate: {
-      type: String,
-      // required: true,
-    },
-    gstIn: {
-      type: String,
-      // required: true,
-    },
-    e_way_bill: {
-      type: String,
-      required: true,
-    },
-    periodicalReturn: {
-      type: String,
-      // required: true,
-    },
+      photo: [
+        {
+          type: String,
+        },
+      ],
+      
+      businessName: {   
+        type: String,
+      
+      },
+      address: {
+        type: String,
+      
+      },
+      country: {
+        type: String,
+      
+      },
+      state: {
+        type: String,
+      
+      },
+      pinCode: {
+        type: String,
+      
+      },
+      email: {
+        type: String,
+      
+      },
+      website: {
+        type: String,
+      
+      },
+      contact: {
+        type: String,
+      
+      },
+      financialYear: {
+        type: Date,
+      
+      },
+      bookFrom: {
+        type: String,
 
-    selectBank: {
-      type: String,
-      required: true,
-    },
-    accountName: {
-      type: String,
-      required: true,
-    },
-    accountNumber: {
-      type: String,
-      required: true,
-    },
-    irfcCode: {
-      type: String,
-      required: true,
-    },
-    upiId: {
-      type: String,
-      required: true,
-    },
-    enableBatch: {
-      type: String,
-      required: true,
-    },
-    enableExpire: {
-      type: String,
-      required: true,
-    },
-  },
-  { timestamps: true }
-);
+      },
 
-export default mongoose.model("Company", CompanySchema);
+      enable_gst: {
+        type: String,
+
+      },
+      s_state: {
+        type: String,
+      
+      },
+      registration_Type: {
+      },
+
+      tax_Rate: {
+        type: String,
+      
+      },
+      gstIn: {
+        type: String,
+      
+      },
+      drug_licence_no: {
+        type: String,
+      
+      },
+      othertax: {
+        type: String,
+      
+      },  
+      tax_name: {
+        type: String,
+      
+      },
+      number: {
+        type: String,
+      
+      },
+      bank_name: {
+        type: String,
+      
+      },
+
+      bank_addess: {
+        type: String,
+      
+      },
+      ifce_code: {
+        type: String,
+      
+      },
+      account_holder_name: {
+        type: String,
+      
+      },
+      accountNumber: {
+        type: String,
+      
+      },
+
+    },
+    { timestamps: true }
+  );
+
+  export default mongoose.model("Company", CompanySchema);
