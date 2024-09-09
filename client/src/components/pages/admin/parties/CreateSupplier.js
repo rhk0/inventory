@@ -63,10 +63,7 @@ const CreateSupplier = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        await axios.post(
-        "/api/v1/auth/CreateSupplier",
-        formData
-      );
+      await axios.post("/api/v1/auth/CreateSupplier", formData);
       handleClear();
       toast.success("Supplier added successfully!");
     } catch (error) {
