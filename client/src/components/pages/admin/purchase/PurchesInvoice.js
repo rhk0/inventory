@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AddReceiptModal from "../modals/AddReciptModel";
+import axios from "axios";
 import Modal from "react-modal";
 import PurchesInvoiceModel from "../modals/PurchesInvoiceModel";
 const PurchesInvoice = () => {
@@ -32,6 +32,27 @@ const PurchesInvoice = () => {
   const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
 
+  const [suppliers, setSuppliers] = useState([]); // State to store supplier data
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageSupplier");
+        console.log(response, "djkgh");
+        setSuppliers(response.data.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    };
+
+    fetchSuppliers();
+  }, []);
+
+  const handleSupplierChange = (e) => {
+    setSelectedSupplier(e.target.value);
+  };
+
   // Function to handle "Other Charges" button click
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
@@ -53,10 +74,6 @@ const PurchesInvoice = () => {
       setDueDate(formattedDueDate);
     }
   }, [date, paymentTerm]);
-
-  // const [date, setDate] = useState('');
-  // const [paymentTerms, setPaymentTerms] = useState('');
-  // const [dueDate, setDueDate] = useState('');
 
   const handleDateChange = (e) => {
     setDate(e.target.value);
@@ -663,12 +680,16 @@ const PurchesInvoice = () => {
             <div>
               <label className="font-bold">Supplier Name</label>
               <select
-                value={salesType}
-                onChange={handleSalesTypeChange}
-                className="border p-2 w-full   rounded"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selectedSupplier}
+                onChange={handleSupplierChange}
               >
-                <option value="GST Invoice"></option>
-                <option value="Bill of Supply"></option>
+                <option value="">Select Supplier</option>
+                {suppliers.map((supplier) => (
+                  <option key={supplier._id} value={supplier._id}>
+                    {supplier.name}
+                  </option>
+                ))}
               </select>
             </div>
 

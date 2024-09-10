@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const PayOut = () => {
-  const [suppliers, setSuppliers] = useState([]); // State to store supplier data
+  const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState("");
 
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageSupplier");
-        console.log(response, "djkgh");
         setSuppliers(response.data.data);
       } catch (error) {
         console.error("Error fetching suppliers:", error);

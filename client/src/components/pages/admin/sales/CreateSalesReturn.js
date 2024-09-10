@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddReceiptModal from "../modals/AddReciptModel";
 import Modal from "react-modal";
+import axios from "axios";
 const CreateSalesReturn = () => {
   // State for form fields
   const [viewModal, setViewModal] = useState(false);
@@ -30,6 +31,25 @@ const CreateSalesReturn = () => {
   // const [dueDate, setDueDate] = useState('');
   const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
+
+  const [customer, setCustomer] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageCustomer");
+        setCustomer(response.data.data);
+      } catch (error) {
+        console.error("Error fetching customer:", error);
+      }
+    };
+    fetchCustomer();
+  }, []);
+
+  const handleCustomerChange = (e) => {
+    setSelectedCustomer(e.target.value);
+  };
 
   // Function to handle "Other Charges" button click
   const handleOtherChargesChange = (event) => {
@@ -642,12 +662,18 @@ const CreateSalesReturn = () => {
             </div>
             <div>
               <label className="font-bold">Customer Name</label>
-              <input
-                type="text"
-                value={customerName}
-                onChange={handleCustomerNameChange}
-                className="border p-2 w-full  rounded"
-              />
+              <select
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selectedCustomer}
+                onChange={handleCustomerChange}
+              >
+                <option value="">Select Customer</option>
+                {customer.map((customer) => (
+                  <option key={customer._id} value={customer._id}>
+                    {customer.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="font-bold">Place of Supply</label>
@@ -1075,26 +1101,26 @@ const CreateSalesReturn = () => {
             Add New Row
           </button>
           {salesType !== "GST Invoice" && (
-          <button
-            onClick={() => setIsModalOtherChargesOpen(true)}
-            className=" text-blue-800 mt-8 text-md p-2 hide-on-print mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-          >
-            <svg
-              xmlns="http//www.w3.org/2000/svg"
-              className="h-4 w-4 "
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <button
+              onClick={() => setIsModalOtherChargesOpen(true)}
+              className=" text-blue-800 mt-8 text-md p-2 hide-on-print mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            Add Other Charges
-          </button>
+              <svg
+                xmlns="http//www.w3.org/2000/svg"
+                className="h-4 w-4 "
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add Other Charges
+            </button>
           )}
 
           {isModalOtherChargesOpen && (

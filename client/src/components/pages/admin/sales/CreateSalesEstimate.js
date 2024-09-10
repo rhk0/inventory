@@ -25,6 +25,27 @@ const CreateSalesEstimate = () => {
   const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
 
+  const [customer, setCustomer] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageCustomer");
+        console.log(response, "ksdjfkj");
+        setCustomer(response.data.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    };
+
+    fetchCustomer();
+  }, []);
+
+  const handleSupplierChange = (e) => {
+    setSelectedCustomer(e.target.value);
+  };
+
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
@@ -537,7 +558,6 @@ const CreateSalesEstimate = () => {
         } else {
           console.error("Unexpected response structure:", response.data);
         }
-        console.log(response, "API Response");
       } catch (error) {
         console.error("Error fetching products:", error);
         // toast.error("Failed to fetch products. Please try again.");
@@ -619,12 +639,18 @@ const CreateSalesEstimate = () => {
           </div>
           <div>
             <label className="font-bold">Customer Name</label>
-            <input
-              type="text"
-              value={customerName}
-              onChange={handleCustomerNameChange}
-              className="border p-2 w-full  rounded"
-            />
+            <select
+              className="w-full p-2 border border-gray-300 rounded"
+              value={selectedCustomer}
+              onChange={handleSupplierChange}
+            >
+              <option value="">Select Customer</option>
+              {customer.map((customer) => (
+                <option key={customer._id} value={customer._id}>
+                  {customer.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="font-bold">Place of Supply</label>
