@@ -94,7 +94,7 @@
 
 .nestedlist{
   padding: 0px 29px 0px 14px;
-  font-size: 18px;
+  font-size: 10px;
 
 }
 
@@ -179,13 +179,14 @@
   /* font-size: large; */
 }
 .innerlist{
-  font-size: 28px;
+  font-size: 20px;
+  margin-top: 15px;
 }
 
 .innerlist :hover {
   text-decoration: none;
   color: #eadeeb;
-  font-size: 28px;
+  font-size: 20px;
 }
 
 .sidebar-responsive {

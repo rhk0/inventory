@@ -137,7 +137,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
     <aside
       ref={sidebarRef}
       id="sidebar"
-      className={openSidebarToggle ? "sidebar-responsive " : " p-2"}
+      className={openSidebarToggle ? "sidebar-responsive " : " p-2 "}
     >
       <div className="sidebar-title">
         <div className="flex justify-between items-center gap-5">
@@ -160,79 +160,82 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
 
       <ul className="sidebar-list">
         {/* Dashboard */}
+        <Link
+              to="/superadmin/dash"
+              className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white "
+            >
         <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/superadmin/dash" className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white ">
+          
               <span className="text-nowrap">Dashboard</span>
-            </Link>
+           
           </a>
         </li>
-
-        <li
-          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
-          onClick={closeSidebar}
-        >
-          <Link to="/superadmin/log-out" class="">
-            <span>View All Users</span>
-          </Link>
-        </li>
-        <li
-          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
-          onClick={closeSidebar}
-        >
-          <Link to="/superadmin/log-out" class="">
-            <span>View  All Staff By Users</span>
-          </Link>
-        </li>
-        <li
-          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
-          onClick={closeSidebar}
-        >
-          <Link to="/superadmin/log-out" class="">
-            <span>Create Subscription Plans</span>
-          </Link>
-        </li>
-
-        <li
-          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
-          onClick={closeSidebar}
-        >
-          <Link to="/superadmin/log-out" class="">
-            <span>View Subscribed Users</span>
-          </Link>
-        </li>   <li
-          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
-          onClick={closeSidebar}
-        >
-          <Link to="/superadmin/log-out" class="">
-            <span>View Free Trial Users</span>
-          </Link>
-        </li>
+        </Link>
         <Link to="/superadmin/log-out" class="">
         <li
           className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
         
-            <span>Active Users InActive Users </span>
-         
+            <span>View All Users</span>
+        
         </li>
         </Link>
-
-       
-        {/* Logout */}
+        <Link to="/superadmin/log-out" class="">
         <li
           className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
-          <Link to="/superadmin/log-out" class="">
-            <span>Log Out</span>
-          </Link>
+         
+            <span>View All Staff By Users</span>
+          
         </li>
+        </Link>
+        <Link to="/superadmin/log-out" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>Create Subscription Plans</span>
+          </li>{" "}
+        </Link>
+        <Link to="/superadmin/log-out" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>View Subscribed Users</span>
+          </li>{" "}
+        </Link>
+        <Link to="/superadmin/log-out" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>View Free Trial Users</span>
+          </li>
+        </Link>
+        <Link to="/superadmin/log-out" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>Active Users InActive Users </span>
+          </li>
+        </Link>
+        <Link to="/superadmin/log-out" class="">
+          {/* Logout */}
+          <li
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>Log Out</span>
+          </li>
+        </Link>
       </ul>
     </aside>
   );
 }
 
 export default SuperAdminSideBar;
-
