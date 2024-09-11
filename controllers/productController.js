@@ -31,6 +31,8 @@ const upload = multer({
     }
   },
 }).array("img", 10); // 'img' corresponds to the field name in your form data, 10 is the max count
+
+
 export const createProductController = async (req, res) => {
   try {
     // Handle file upload

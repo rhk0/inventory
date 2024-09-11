@@ -54,6 +54,7 @@ import TotalSalesList from "../pages/admin/sales/TotalSalesList.js";
 import PurchesReturn from "../pages/admin/purchase/PurchesReturn.js";
 import CompanyRegistration from "../auth/CompanyRegistration.js";
 import PurchesInvoice from "../pages/admin/purchase/PurchesInvoice.js";
+
 import CreatePurchaseOrder from "../pages/admin/purchase/CreatePurchaseOrder.js";
 import PayOut from "../pages/admin/purchase/PayOut.js";
 import ManagePayOut from "../pages/admin/purchase/ManagePayOut.js";

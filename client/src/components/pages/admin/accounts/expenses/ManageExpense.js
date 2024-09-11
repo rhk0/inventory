@@ -60,10 +60,11 @@ const ManageExpense = () => {
     try {
       await axios.delete(`/api/v1/expensesRoute/delete/${_id}`);
       toast.success("Expense deleted successfully");
-      fetchExpenses();
-      // window.reload();
+
+      setExpenses(expenses.filter((expense) => expense._id !== _id));
     } catch (error) {
       console.error("Error deleting expense:", error);
+      toast.error("Error deleting expense");
     }
   };
 
