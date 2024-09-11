@@ -161,68 +161,64 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
       <ul className="sidebar-list">
         {/* Dashboard */}
         <Link
-              to="/superadmin/dash"
-              className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white "
-            >
-        <li className="">
-          <a href="../src/pages/Dharma.js" className="w-full">
-          
+          to="/superadmin/dash"
+          className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white "
+        >
+          <li className="">
+            <a href="../src/pages/Dharma.js" className="w-full">
               <span className="text-nowrap">Dashboard</span>
-           
-          </a>
-        </li>
-        </Link>
-        <Link to="/superadmin/log-out" class="">
-        <li
-          className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
-          onClick={closeSidebar}
-        >
-        
-            <span>View All Users</span>
-        
-        </li>
-        </Link>
-        <Link to="/superadmin/log-out" class="">
-        <li
-          className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
-          onClick={closeSidebar}
-        >
-         
-            <span>View All Staff By Users</span>
-          
-        </li>
-        </Link>
-        <Link to="/superadmin/log-out" class="">
-          <li
-            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
-            onClick={closeSidebar}
-          >
-            <span>Create Subscription Plans</span>
-          </li>{" "}
-        </Link>
-        <Link to="/superadmin/log-out" class="">
-          <li
-            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
-            onClick={closeSidebar}
-          >
-            <span>View Subscribed Users</span>
-          </li>{" "}
-        </Link>
-        <Link to="/superadmin/log-out" class="">
-          <li
-            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
-            onClick={closeSidebar}
-          >
-            <span>View Free Trial Users</span>
+            </a>
           </li>
         </Link>
-        <Link to="/superadmin/log-out" class="">
+        <Link to="/superadmin/" class="">
           <li
             className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
             onClick={closeSidebar}
           >
-            <span>Active Users InActive Users </span>
+            <span>Subscription Plans</span>
+          </li>{" "}
+        </Link>
+        <Link to="/superadmin/" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>Users</span>
           </li>
+        </Link>
+       
+       
+        <Link to="/superadmin/" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>Subscribed Users</span>
+          </li>{" "}
+        </Link>
+        <Link to="/superadmin/" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>Free Trial Users</span>
+          </li>
+        </Link>
+        <Link to="/superadmin/" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>Active Users</span>
+          </li>
+        </Link>
+        <Link to="/superadmin/" class="">
+          <li
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
+            onClick={closeSidebar}
+          >
+            <span>InACtive Users</span>
+          </li>{" "}
         </Link>
         <Link to="/superadmin/log-out" class="">
           {/* Logout */}
