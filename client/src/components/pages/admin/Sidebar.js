@@ -163,7 +163,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
             <Link to="/admin/dash" className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white ">
-              <span>Dashboard</span>
+              <span>Admin Dashboard</span>
             </Link>
           </a>
         </li>
@@ -901,7 +901,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
-          <Link to="/admin/dashboard/log-out" class="">
+          <Link to="/admin/log-out" class="">
             <span>Log Out</span>
           </Link>
         </li>

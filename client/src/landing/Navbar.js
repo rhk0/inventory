@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -15,10 +14,12 @@ import {
   Button,
   Typography,
   MenuItem,
+  Modal,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import mLogo from './assets/manasvilogo.png';
+import DemoForm from './DemoForm'; // Import your DemoForm component
 
 // Include the Oswald font from Google Fonts
 const oswaldFont = 'https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap';
@@ -32,12 +33,15 @@ const navItems = [
   { label: 'Pricing', id: 'pricing' },
   { label: 'Benefits', id: 'benefits' },
   { label: 'Contact', id: 'contact' },
-];
+  {label:'Free Trial',href:'/registration'},
+  { label: 'Login', href: '/login' },
+];  
 
 const Navbar = (props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -58,6 +62,14 @@ const Navbar = (props) => {
     });
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     // Ensure window is defined before adding event listener
     if (typeof window !== 'undefined') {
@@ -68,7 +80,7 @@ const Navbar = (props) => {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', p: 2 }}>
-      <Box component="img" src={mLogo} alt="Logo" sx={{ width: "50%", my: 2 }} />
+      <Box component="img" src={mLogo} alt="Logo" sx={{ width: '50%', my: 2 }} />
       <Divider />
       <List>
         {navItems.map((item) => (
@@ -93,6 +105,7 @@ const Navbar = (props) => {
         ))}
         <Button
           variant="contained"
+          onClick={handleOpenModal} // Open modal on button click
           sx={{
             mt: 2,
             backgroundColor: '#007BFF',
@@ -128,29 +141,21 @@ const Navbar = (props) => {
           left: 0,
           right: 0,
           zIndex: 1300,
-          padding: 0, // Remove extra padding
-          marginBottom: { xs: 0, md: '20px' }, // Add margin bottom on larger screens
-          '& link': {
-            fontFamily: 'Oswald, sans-serif',
-          },
+          padding: 0,
+          marginBottom: { xs: 0, md: '20px' },
         }}
       >
         <link href={oswaldFont} rel="stylesheet" />
         <Toolbar sx={{ justifyContent: 'space-between', minHeight: '70px', px: 2 }}>
-          {/* Mobile view logo and menu icon */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center' }}>
-            <Box
-              component="img"
-              src={mLogo}
-              alt="Logo"
-              sx={{ width: 200, height: 'auto', mr: 4 }}
-            />
+            <Box component="img" src={mLogo} alt="Logo" sx={{ width: 200, height: 'auto', mr: 3 }} />
             <IconButton
               color="inherit"
               aria-label="open drawer"
               edge="end"
               onClick={handleDrawerToggle}
-              sx={{ mr:4,
+              sx={{
+                mr: 4,
                 backgroundColor: 'transparent',
                 '&:hover': {
                   backgroundColor: 'transparent',
@@ -166,7 +171,7 @@ const Navbar = (props) => {
               component="img"
               src={mLogo}
               alt="Logo"
-              sx={{ width: 100, height: 'auto', display: { xs: 'none', md: 'block' }, mr: 2 }}
+              sx={{ width: 270, height: 'auto', display: { xs: 'none', md: 'block' }, mr: 2 }}
             />
           </Box>
 
@@ -175,14 +180,15 @@ const Navbar = (props) => {
               flexGrow: 1,
               display: { xs: 'none', md: 'flex' },
               justifyContent: 'center',
-              gap: 5,
+              gap: 2,
               position: 'relative',
             }}
           >
             {navItems.map((item) => (
               <Button
                 key={item.label}
-                href={`#${item.id}`}
+                // href={`#${item.id}`}
+                href={item.href ? item.href : `#${item.id}`} 
                 sx={{
                   fontFamily: 'Oswald, sans-serif',
                   fontSize: '21px',
@@ -210,27 +216,27 @@ const Navbar = (props) => {
                   },
                 }}
               >
-                {item.label}
+               <span className='text-nowrap'> {item.label}</span>
               </Button>
             ))}
           </Box>
 
           <Button
-            
+            onClick={handleOpenModal} // Open modal on button click
             sx={{
               backgroundColor: '#6A1B9A',
               color: '#FFFFFF',
               borderRadius: '10px',
               textTransform: 'none',
-              fontSize:"20px",
-              px: 3,
+              fontSize: '15px',
+              // px: 6,
               display: { xs: 'none', md: 'block' },
               '&:hover': {
                 backgroundColor: '#0056b3',
               },
             }}
           >
-            Book a Demo
+           <span className='text-nowrap'> Book Demo</span>
           </Button>
         </Toolbar>
       </AppBar>
@@ -253,10 +259,7 @@ const Navbar = (props) => {
         </Drawer>
       </nav>
 
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, ml: 2 }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, ml: 2 }}>
         <Toolbar />
         <Typography>
           <Box>{/* Content will be rendered here based on the route */}</Box>
@@ -264,7 +267,7 @@ const Navbar = (props) => {
       </Box>
 
       {/* Scroll-to-top button */}
-      {showScrollTop && (
+      {/* {showScrollTop && (
         <IconButton
           onClick={scrollToTop}
           sx={{
@@ -280,7 +283,26 @@ const Navbar = (props) => {
         >
           <ArrowUpwardIcon />
         </IconButton>
-      )}
+      )} */}
+
+      {/* Modal with DemoForm */}
+      <Modal open={isModalOpen} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: { xs: '90%', md: 400 },
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <DemoForm />
+        </Box>
+      </Modal>
     </Box>
   );
 };

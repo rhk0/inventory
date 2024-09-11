@@ -12,6 +12,9 @@ import AdminRoutes from "./components/Routes/AdminRoute.js";
 import Test from "./components/Routes/Test.js";
 
 import Landing from "./landing/Landing.js";
+import FreeTriel from "./landing/FreeTriel.js";
+import { SuperAdminProtectedRoute } from "./components/Routes/SuperAdminProtectedRoute.js";
+import SuperAdminRoute from "./components/Routes/SuperAdminRoute.js";
 
 function App() {
   return (
@@ -19,7 +22,7 @@ function App() {
       <BrowserRouter>
         <Routes>
         <Route path="/" element={<Landing />}/>
-        
+           <Route path="/freeTriel" element={<FreeTriel/>}/>
           <Route path="/login" element={<Login />}/>
           <Route path="/registration" element={<Registraion />} />
           <Route path="/forgetpassword" element={<ForgotPassword />} />
@@ -32,6 +35,10 @@ function App() {
             <Route path="*" element={<AdminRoutes />} />
           
           </Route>
+          <Route path="/superadmin/*" element={<SuperAdminProtectedRoute />}>
+            <Route path="*" element={<SuperAdminRoute />} />
+          
+          </Route>
           <Route path="/*" element={<Test />} />
 
          
@@ -40,5 +47,7 @@ function App() {
     </div>
   );
 }
+
+
 
 export default App;

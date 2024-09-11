@@ -3,6 +3,11 @@ import mongoose from "mongoose";
 
 const staffSchema = new mongoose.Schema(
   {
+    photo: [
+      {
+        type: String,
+      },
+    ],
     name: {
       type: String,
     },
@@ -12,72 +17,22 @@ const staffSchema = new mongoose.Schema(
     address: {
       type: String,
     },
+    pinCode: {
+      type: String,
+    },
     state: {
       type: String,
     },
     fatherName: {
       type: String,
     },
-    motherName: {
-      type: String,
-    },
-    empId: {
-      type: String,
-
-      unique: true,
-    },
     email: {
       type: String,
-
-      unique: true,
     },
-    designation: {
+    password: {
       type: String,
     },
-    department: {
-      type: String,
-    },
-    adharCardNo: {
-      type: String,
-    },
-    panNo: {
-      type: String,
-    },
-    drivingLicence: {
-      type: String,
-    },
-    photo: [
-      {
-        type: String,
-      },
-    ],
-    panCard: [
-      {
-        type: String,
-      },
-    ],
-
-    adharCards: [
-      {
-        type: String,
-      },
-    ],
-
-    bankName: {
-      type: String,
-    },
-    ifscCode: {
-      type: String,
-    },
-    accountNumber: {
-      type: String,
-    },
-    accountHolderName: {
-      type: String,
-    },
-    salaryAmount: {
-      type: String,
-    },
+   
   },
   {
     timestamps: true,

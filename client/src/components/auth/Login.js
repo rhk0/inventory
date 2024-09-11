@@ -3,30 +3,27 @@ import { FaUserAlt, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for Toastify
 import Loader from "../loader/Loader.js"; // Import the Loader component
 import { useAuth } from "../context/Auth.js";
 
 const Login = () => {
   const navigate = useNavigate();
- const [auth,setAuth]=useAuth()
-const [dauth]=useAuth();
- useEffect(()=>{
-
-if(dauth){
-  if(dauth.AccessToken){
-    navigate('/admin')
-  }
-}
-
- })
+  const [auth, setAuth] = useAuth();
+  const [dauth] = useAuth();
+  useEffect(() => {
+    if (dauth) {
+      if (dauth.AccessToken) {
+        navigate("/admin");
+      }
+    }
+  });
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
   const [loading, setLoading] = useState(false); // Loading state
- 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,13 +35,11 @@ if(dauth){
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true before the request
-
+    setLoading(true);
     try {
       const response = await axios.post("/api/v1/auth/login", formData);
 
       if (response.data.success) {
-     
         toast.success(response.data.message);
 
         setAuth({
@@ -53,10 +48,13 @@ if(dauth){
           AccessToken: response.data.AccessToken,
         });
         sessionStorage.setItem("dauth", JSON.stringify(response.data));
-
-        setTimeout(() => {
+        console.log(response, "user login role");
+        if (response.data.user.role === 1) {
           navigate("/admin");
-        }, 3000);
+        }
+        if (response.data.user.role === 2) {
+          navigate("/superadmin");
+        }
       } else {
         toast.error(response.data.message);
       }
@@ -70,17 +68,17 @@ if(dauth){
   return (
     <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center text-white font-montserrat">
       {loading ? (
-          <Loader/>
-        ) : (
-      <div className="p-10 hover:scale-95 shadow-2xl rounded-lg login-card p-8 w-full max-w-md flex flex-col">
-        <div className=" mb-12">
-          <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-4 bg-white bg-opacity-10">
-            <div className="text-white text-6xl">
-              <FaUserAlt />
+        <Loader />
+      ) : (
+        <div className="p-10 hover:scale-95 shadow-2xl rounded-lg login-card p-8 w-full max-w-md flex flex-col">
+          <div className=" mb-12">
+            <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-4 bg-white bg-opacity-10">
+              <div className="text-white text-6xl">
+                <FaUserAlt />
+              </div>
             </div>
           </div>
-        </div>
-       
+
           <form>
             <div className="form-field email relative mb-6">
               <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
@@ -117,27 +115,26 @@ if(dauth){
               Login
             </button>
           </form>
-       
-        <div className="text-white text-center">
-          Don't have an account?
-          <Link
-            to="/registration"
-            className="font-bold hover:text-yellow-400 text-blue-500"
-          >
-            Sign Up
-          </Link>
+
+          <div className="text-white text-center">
+            Don't have an account?
+            <Link
+              to="/registration"
+              className="font-bold hover:text-yellow-400 text-blue-500"
+            >
+              Sign Up
+            </Link>
+          </div>
+          <div className="text-white text-center">
+            <Link
+              to="/forgetpassword"
+              className="text-red-500 font-bold hover:text-yellow-400"
+            >
+              Forgot password?
+            </Link>
+          </div>
         </div>
-        <div className="text-white text-center">
-          <Link
-            to="/forgetpassword"
-            className="text-red-500 font-bold hover:text-yellow-400"
-          >
-            Forgot password?
-          </Link>
-        </div>
-      </div>
-      
-        )}
+      )}
       <ToastContainer />
     </div>
   );
