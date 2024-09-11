@@ -179,11 +179,22 @@
   /* font-size: large; */
 }
 .innerlist{
+  font-size: 28px;
+
+}
+
+.innerlist :hover {
+  text-decoration: none;
+  color: #eadeeb;
+  font-size: 28px;
+}
+
+.innerlistsuperadmin{
   font-size: 20px;
   margin-top: 15px;
 }
 
-.innerlist :hover {
+.innerlistsuperadmin :hover {
   text-decoration: none;
   color: #eadeeb;
   font-size: 20px;

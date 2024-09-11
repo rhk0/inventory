@@ -314,7 +314,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setTransport(!showTransport)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Transport</span>
                   {!showTransport ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -324,7 +324,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     <li>
                       <Link
                         to="/admin/createtranspoter"
-                        className="flex items-center text-white nesteditem p-1"
+                        className="flex items-center text-white nesteditem  p-1"
                       >
                         Create Transporter
                       </Link>
@@ -733,7 +733,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               setBankTransaction(!showAccount);
               toggleAccount();
             }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
+            className="w-full sidebar-list-item flex items-center innerlist sidebar-list-item justify-between focus:outline-none text-white p-1"
           >
             <span className="">Account</span>
             {!showAccount ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -744,9 +744,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setShowBankTransction(!showBankTransaction)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center  innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
-                  <span>Bank Transaction</span>
+                  <span className="text-nowrap">Bank Transaction</span>
                   {!showBankTransaction ? (
                     <IoIosArrowForward />
                   ) : (
@@ -758,7 +758,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     <li>
                       <Link
                         to="/admin/bankTobankTransfer"
-                        className="flex items-center text-white nesteditem p-1"
+                        className="flex items-center  text-white nesteditem p-1"
                       >
                         Bank to Bank Transfer
                       </Link>
@@ -785,7 +785,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setExpenses(!showExpenses)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center nestedlist innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Expenses</span>
                   {!showExpenses ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -816,7 +816,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setIncome(!showIncome)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center nestedlist innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Income</span>
                   {!showIncome ? <IoIosArrowForward /> : <IoIosArrowDown />}

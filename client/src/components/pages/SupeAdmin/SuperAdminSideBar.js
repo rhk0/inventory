@@ -162,7 +162,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         {/* Dashboard */}
         <Link
               to="/superadmin/dash"
-              className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white "
+              className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white "
             >
         <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
@@ -174,7 +174,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         </Link>
         <Link to="/superadmin/log-out" class="">
         <li
-          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+          className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
         
@@ -184,7 +184,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         </Link>
         <Link to="/superadmin/log-out" class="">
         <li
-          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+          className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
          
@@ -194,7 +194,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         </Link>
         <Link to="/superadmin/log-out" class="">
           <li
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
             onClick={closeSidebar}
           >
             <span>Create Subscription Plans</span>
@@ -202,7 +202,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         </Link>
         <Link to="/superadmin/log-out" class="">
           <li
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
             onClick={closeSidebar}
           >
             <span>View Subscribed Users</span>
@@ -210,7 +210,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         </Link>
         <Link to="/superadmin/log-out" class="">
           <li
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
             onClick={closeSidebar}
           >
             <span>View Free Trial Users</span>
@@ -218,7 +218,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         </Link>
         <Link to="/superadmin/log-out" class="">
           <li
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
             onClick={closeSidebar}
           >
             <span>Active Users InActive Users </span>
@@ -227,7 +227,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         <Link to="/superadmin/log-out" class="">
           {/* Logout */}
           <li
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+            className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
             onClick={closeSidebar}
           >
             <span>Log Out</span>
