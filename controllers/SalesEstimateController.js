@@ -22,16 +22,24 @@ export const createSalesEstimateController = async (req, res) => {
       reverseCharge,
       gstType,
       rows,
-      otherChargesDescriptions,
+      otherChargesDiscount,
+      othercharges,
       narration,
       grossAmount,
-      totalGstAmount,
-      otherCharges,
+      GstAmount,
       netAmount,
     } = req.body;
 
     // Validate required fields (basic validation example)
-    if (!date || !estimateNo || !customerName || !billingAddress) {
+    const requiredFields = [
+      date,
+      estimateNo,
+      customerName,
+      billingAddress,
+      rows,
+    ];
+    
+    if (requiredFields.some(field => !field)) {
       return res.status(400).json({
         success: false,
         message: "Required fields are missing",
@@ -58,11 +66,11 @@ export const createSalesEstimateController = async (req, res) => {
       reverseCharge,
       gstType,
       rows,
-      otherChargesDescriptions,
+      otherChargesDiscount,
+      othercharges,
       narration,
       grossAmount,
-      totalGstAmount,
-      otherCharges,
+      GstAmount,
       netAmount,
     });
 
