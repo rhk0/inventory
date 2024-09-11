@@ -188,8 +188,8 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
           className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
-          <Link to="/superadmin/log-out" class="">
-            <span>Create Subscription Plans</span>
+          <Link to="/superadmin/subscriptionPlans" class="">
+            <span>Subscription Plans</span>
           </Link>
         </li>
 
