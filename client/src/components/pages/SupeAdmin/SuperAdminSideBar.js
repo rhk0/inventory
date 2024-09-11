@@ -4,7 +4,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 
-function Sidebar({ openSidebarToggle, OpenSidebar }) {
+function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
   const [showParties, setParties] = useState(false);
   const [showTransport, setTransport] = useState(false);
   const [showCustomer, setCustomer] = useState(false);
@@ -162,8 +162,8 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Dashboard */}
         <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dash" className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white ">
-              <span>Admin Dashboard</span>
+            <Link to="/superadmin/dash" className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white ">
+              <span>Super Superadmin Dashboard</span>
             </Link>
           </a>
         </li>
@@ -195,7 +195,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/CreateSupplier"
+                        to="/superadmin/CreateSupplier"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Supplier
@@ -203,7 +203,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageSupplier"
+                        to="/superadmin/ManageSupplier"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Supplier List
@@ -225,7 +225,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/CreateCustomer"
+                        to="/superadmin/CreateCustomer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Customer
@@ -233,7 +233,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageCustomer"
+                        to="/superadmin/ManageCustomer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Customer List
@@ -261,7 +261,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/CreateManufacturer"
+                        to="/superadmin/CreateManufacturer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Manufacturer
@@ -269,7 +269,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageManufacturer"
+                        to="/superadmin/ManageManufacturer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manufacturer List
@@ -292,7 +292,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/createvendors"
+                        to="/superadmin/createvendors"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Vendor
@@ -300,7 +300,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/manageVendor"
+                        to="/superadmin/manageVendor"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Vendor
@@ -323,7 +323,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/createtranspoter"
+                        to="/superadmin/createtranspoter"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Transporter
@@ -331,7 +331,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/managetranspoter"
+                        to="/superadmin/managetranspoter"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Transporter
@@ -360,14 +360,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/addcategory"
+                  to="/superadmin/addcategory"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Category
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/ManageCategory"
+                    to="/superadmin/ManageCategory"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Category
@@ -377,14 +377,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/addsubcategory"
+                  to="/superadmin/addsubcategory"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Sub Category
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/managesubcategory"
+                    to="/superadmin/managesubcategory"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Sub Category
@@ -394,7 +394,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/addbrand"
+                  to="/superadmin/addbrand"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Brand
@@ -402,7 +402,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
                 <li className=" ">
                   <Link
-                    to="/admin/manageBrand"
+                    to="/superadmin/manageBrand"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Brand
@@ -412,14 +412,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/AddSubBrand"
+                  to="/superadmin/AddSubBrand"
                   className="flex items-center text-white nestitemhover"
                 >
                   Add Sub Brand
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/manageSubBrand"
+                    to="/superadmin/manageSubBrand"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Sub Brand
@@ -429,14 +429,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/addstock"
+                  to="/superadmin/addstock"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Unit
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/managestockunit"
+                    to="/superadmin/managestockunit"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Unit
@@ -446,14 +446,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/createproduct"
+                  to="/superadmin/createproduct"
                   className="flex items-center text-white nestitemhover"
                 >
                   Add Product
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/manageproduct"
+                    to="/superadmin/manageproduct"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Product
@@ -480,7 +480,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4">
               <li>
                 <Link
-                  to="/admin/CreateSalesEstimate"
+                  to="/superadmin/CreateSalesEstimate"
                   className="flex items-center text-white nestitemhover "
                 >
                   Create Sales Estimate
@@ -488,7 +488,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li>
                 <Link
-                  to="/admin/ManageSalesEstimate"
+                  to="/superadmin/ManageSalesEstimate"
                   className="flex items-center text-white nestitemhover "
                 >
                   Sales Estimate List
@@ -496,7 +496,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/invoice"
+                  to="/superadmin/invoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   create Sales Invoice
@@ -514,7 +514,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/deliverychallan"
+                  to="/superadmin/deliverychallan"
                   className="flex items-center text-white nestitemhover"
                 >
                   create Delivery challan
@@ -531,7 +531,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/salesreturn"
+                  to="/superadmin/salesreturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Sales Return
@@ -549,7 +549,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/pos"
+                  to="/superadmin/pos"
                   className="flex items-center text-white nestitemhover"
                 >
                   Point of Sales
@@ -567,7 +567,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/payin"
+                  to="/superadmin/payin"
                   className="flex items-center text-white nestitemhover"
                 >
                   Pay In
@@ -576,7 +576,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/ManagePayIn"
+                  to="/superadmin/ManagePayIn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Pay In
@@ -585,7 +585,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/TotalSalesList"
+                  to="/superadmin/TotalSalesList"
                   className="flex items-center text-white nestitemhover"
                 >
                   Total Sales List
@@ -611,7 +611,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4">
               <li className=" ">
                 <Link
-                  to="/admin/CreatePurchaseOrder"
+                  to="/superadmin/CreatePurchaseOrder"
                   className="flex items-center text-white nestitemhover "
                 >
                   Create Purchase Order
@@ -619,7 +619,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/superadmin/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Order List
@@ -627,7 +627,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/purchesInvoice"
+                  to="/superadmin/purchesInvoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Invoice
@@ -635,7 +635,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/superadmin/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Invoice List
@@ -643,7 +643,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/purchasereturn"
+                  to="/superadmin/purchasereturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Return
@@ -651,7 +651,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/superadmin/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Return List
@@ -659,7 +659,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>{" "}
               <li className="">
                 <Link
-                  to="/admin/PayOut"
+                  to="/superadmin/PayOut"
                   className="flex items-center text-white nestitemhover"
                 >
                   Pay Out
@@ -667,7 +667,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>{" "}
               <li className="">
                 <Link
-                  to="/admin/ManagePayOut"
+                  to="/superadmin/ManagePayOut"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Pay out
@@ -693,7 +693,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/cash"
+                  to="/superadmin/cash"
                   className="flex items-center text-white nestitemhover "
                 >
                   Manage cash
@@ -701,7 +701,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               {/* <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/superadmin/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Cash
@@ -709,7 +709,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li> 
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/superadmin/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Add Bank
@@ -717,7 +717,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>{" "} */}
               <li className="">
                 <Link
-                  to="/admin/addbank"
+                  to="/superadmin/addbank"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Bank
@@ -757,7 +757,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/bankTobankTransfer"
+                        to="/superadmin/bankTobankTransfer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Bank to Bank Transfer
@@ -765,7 +765,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/CashDepositIntoBank"
+                        to="/superadmin/CashDepositIntoBank"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Cash Deposit Into Bank
@@ -773,7 +773,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/cashwithdrawfrombank"
+                        to="/superadmin/cashwithdrawfrombank"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Cash Withdraw from Bank
@@ -794,7 +794,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/AddExpense"
+                        to="/superadmin/AddExpense"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Expenses
@@ -802,7 +802,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageExpense"
+                        to="/superadmin/ManageExpense"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Expenses List
@@ -826,7 +826,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     
                     <li>
                       <Link
-                        to="/admin/AddIncome"
+                        to="/superadmin/AddIncome"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Income
@@ -834,7 +834,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageIncome"
+                        to="/superadmin/ManageIncome"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Income
@@ -863,7 +863,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/companyregistration"
+                  to="/superadmin/companyregistration"
                   className="flex items-center text-white nestitemhover "
                 >
                   Business Details
@@ -871,7 +871,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/createstaff"
+                  to="/superadmin/createstaff"
                   className="flex items-center text-white nestitemhover"
                 >
                   Add Staff
@@ -879,7 +879,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/superadmin/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Change Profile
@@ -887,7 +887,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/superadmin/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Account Settings
@@ -901,7 +901,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
-          <Link to="/admin/dashboard/log-out" class="">
+          <Link to="/superadmin/dashboard/log-out" class="">
             <span>Log Out</span>
           </Link>
         </li>
@@ -910,4 +910,5 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   );
 }
 
-export default Sidebar;
+export default SuperAdminSideBar;
+

@@ -38,8 +38,7 @@ if(dauth){
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true before the request
-
+    setLoading(true); 
     try {
       const response = await axios.post("/api/v1/auth/login", formData);
 
@@ -53,10 +52,20 @@ if(dauth){
           AccessToken: response.data.AccessToken,
         });
         sessionStorage.setItem("dauth", JSON.stringify(response.data));
-
+       console.log(response,"user login role")
+       if(response.data.user.role===1)
+       {
         setTimeout(() => {
           navigate("/admin");
         }, 3000);
+       }else if(response.data.user.role===2)
+       {
+        setTimeout(() => {
+          navigate("/superadmin");
+        }, 3000);
+       }
+      
+        
       } else {
         toast.error(response.data.message);
       }

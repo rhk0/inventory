@@ -8,103 +8,84 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Ensure the upload directory exists
+const uploadDir = path.join(__dirname, "./uploads/");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configure Multer storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "./uploads/"));
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+    cb(
+      null,
+      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
+    );
   },
 });
 
+// Initialize Multer upload
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1000000 }, // 1MB file size limit per file
+  limits: { fileSize: 1000000 },
   fileFilter: function (req, file, cb) {
     const filetypes = /jpeg|jpg|png|gif/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
     const mimetype = filetypes.test(file.mimetype);
     if (mimetype && extname) {
-      cb(null, true);
+      return cb(null, true);
     } else {
-      cb(new Error("Error: Images Only!"));
+      cb(
+        new Error(
+          `Error: Invalid file type! Only images are allowed. Your file type: ${file.mimetype}`
+        )
+      );
     }
   },
-}).fields([
-  { name: "photo", maxCount: 10 }, // Adjust maxCount as needed
-  { name: "panCard", maxCount: 10 },
-  { name: "adharCards", maxCount: 10 },
-]);
+}).single("photo"); // Ensure this matches the name attribute in the frontend
 
+// Create Staff Controller
 export const createstaffController = async (req, res) => {
   try {
     // Handle file upload
     upload(req, res, async function (err) {
       if (err instanceof multer.MulterError) {
-        // A Multer error occurred when uploading
-        return res.status(400).send({ error: "Multer error", message: err.message });
+        return res
+          .status(400)
+          .send({ error: "Multer error", message: err.message });
       } else if (err) {
-        // An unknown error occurred
-        return res.status(500).send({ error: "Server error", message: err.message });
+        return res
+          .status(400)
+          .send({ error: "File upload error", message: err.message });
       }
-
       const {
         name,
         contact,
         address,
+        pinCode,
         state,
         fatherName,
-        motherName,
         email,
-        empId,
-        designation,
-        department,
-        adharCardNo,
-        panNo,
-        drivingLicence,
-        bankName,
-        accountNumber,
-        ifscCode,
-        accountHolderName,
-        salaryAmount,
+        password,
       } = req.body;
 
-      const photo = req.files.photo ? req.files.photo.map((file) => file.path) : [];
-   
-
-      const existingStaff = await staffModel.findOne({
-        $or: [{ email }, { empId }],
-      });
-
-      if (existingStaff) {
-        return res.status(400).send({
-          success: false,
-          message: "This staff already exists with the provided email or empId",
-        });
-      }
-
+      const photo = req.file ? req.file.path.replace(`${uploadDir}`, "") : null;
+      // Create new staff member
       const newStaff = await staffModel.create({
         photo,
-        panCard,
-        adharCards,
         name,
         contact,
         address,
+        pinCode,
         state,
         fatherName,
-        motherName,
         email,
-        empId,
-        designation,
-        department,
-        adharCardNo,
-        panNo,
-        drivingLicence,
-        bankName,
-        accountNumber,
-        ifscCode,
-        accountHolderName,
-        salaryAmount,
+        password,
       });
 
       return res.status(201).send({
@@ -121,7 +102,6 @@ export const createstaffController = async (req, res) => {
     });
   }
 };
-
 
 export const manageStaffController = async (req, res) => {
   try {
@@ -193,4 +173,3 @@ export const manageSingleStaffController = async (req, res) => {
     });
   }
 };
-

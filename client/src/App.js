@@ -12,6 +12,8 @@ import AdminRoutes from "./components/Routes/AdminRoute.js";
 import Test from "./components/Routes/Test.js";
 
 import Landing from "./landing/Landing.js";
+import { SuperAdminProtectedRoute } from "./components/Routes/SuperAdminProtectedRoute.js";
+import SuperAdminRoute from "./components/Routes/SuperAdminRoute.js";
 
 function App() {
   return (
@@ -30,6 +32,10 @@ function App() {
          
           <Route path="/admin/*" element={<AdminProtectedRoute />}>
             <Route path="*" element={<AdminRoutes />} />
+          
+          </Route>
+          <Route path="/superadmin/*" element={<SuperAdminProtectedRoute />}>
+            <Route path="*" element={<SuperAdminRoute />} />
           
           </Route>
           <Route path="/*" element={<Test />} />

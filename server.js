@@ -60,7 +60,6 @@ app.use("/api/v1/auth",InventoryStockUnitRoute)
 app.use("/api/v1/auth",InventoryCreateBranchesRoute)
 app.use("/api/v1/auth",productRoute)
 app.use("/api/v1/auth",manufacturerRoute)
-
 app.use("/api/v1/salesQuationRoute",salesQuationRoute)
 app.use("/api/v1/salesInvoiceRoute",salesInvoiceRoute)
 app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
@@ -68,8 +67,6 @@ app.use("/api/v1/salesEstimateRoute",salesEstimateRoute)
 //change dheeru
 app.use("/uploads",express.static("uploads"));
 app.use(formidable());
-
-
 app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)
 })

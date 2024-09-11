@@ -4,7 +4,7 @@ import { useAuth } from "../context/Auth.js";
 import axios from "axios";
 import Loader from "../loader/Loader.js";
 
-export const AdminProtectedRoute = () => {
+export const SuperAdminProtectedRoute = () => {
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(true);
   const [auth] = useAuth();
@@ -13,7 +13,7 @@ export const AdminProtectedRoute = () => {
   useEffect(() => {
     const authCheck = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/Admin-auth");
+        const response = await axios.get("/api/v1/auth/superAdmin-auth");
         // console.log(response, "res");
 
         if (response.data.ok) {
