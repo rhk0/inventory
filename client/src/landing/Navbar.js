@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   AppBar,
   Box,
@@ -15,27 +15,28 @@ import {
   Typography,
   MenuItem,
   Modal,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import mLogo from './assets/manasvilogo.png';
-import DemoForm from './DemoForm'; // Import your DemoForm component
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import mLogo from "./assets/manasvilogo.png";
+import DemoForm from "./DemoForm"; // Import your DemoForm component
 
 // Include the Oswald font from Google Fonts
-const oswaldFont = 'https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap';
+const oswaldFont =
+  "https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap";
 
 const drawerWidth = 170;
 
 const navItems = [
-  { label: 'Home', id: 'home' },
-  { label: 'About', id: 'about' },
-  { label: 'Client', id: 'client' },
-  { label: 'Pricing', id: 'pricing' },
-  { label: 'Benefits', id: 'benefits' },
-  { label: 'Contact', id: 'contact' },
-  {label:'Free Trial',href:'/registration'},
-  { label: 'Login', href: '/login' },
-];  
+  { label: "Home", id: "home" },
+  { label: "About", id: "about" },
+  { label: "Client", id: "client" },
+  { label: "Pricing", id: "pricing" },
+  { label: "Benefits", id: "benefits" },
+  { label: "Contact", id: "contact" },
+  { label: "Free Trial", href: "/registration" },
+  { label: "Login", href: "/login" },
+];
 
 const Navbar = (props) => {
   const { window } = props;
@@ -58,7 +59,7 @@ const Navbar = (props) => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
   };
 
@@ -72,15 +73,20 @@ const Navbar = (props) => {
 
   useEffect(() => {
     // Ensure window is defined before adding event listener
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
     }
   }, []);
 
   const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', p: 2 }}>
-      <Box component="img" src={mLogo} alt="Logo" sx={{ width: '50%', my: 2 }} />
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center", p: 2 }}>
+      <Box
+        component="img"
+        src={mLogo}
+        alt="Logo"
+        sx={{ width: "50%", my: 2 }}
+      />
       <Divider />
       <List>
         {navItems.map((item) => (
@@ -88,14 +94,14 @@ const Navbar = (props) => {
             <ListItemButton
               href={`#${item.id}`}
               sx={{
-                textAlign: 'left',
-                fontSize: '14px',
-                fontFamily: 'Oswald, sans-serif',
-                fontWeight: 'bold',
-                color: '#333333',
+                textAlign: "left",
+                fontSize: "14px",
+                fontFamily: "Oswald, sans-serif",
+                fontWeight: "bold",
+                color: "#333333",
                 mx: 0.5,
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
+                "&:hover": {
+                  backgroundColor: "#f5f5f5",
                 },
               }}
             >
@@ -108,12 +114,12 @@ const Navbar = (props) => {
           onClick={handleOpenModal} // Open modal on button click
           sx={{
             mt: 2,
-            backgroundColor: '#007BFF',
-            color: '#FFFFFF',
-            borderRadius: '20px',
-            textTransform: 'none',
-            '&:hover': {
-              backgroundColor: '#0056b3',
+            backgroundColor: "#007BFF",
+            color: "#FFFFFF",
+            borderRadius: "20px",
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "#0056b3",
             },
           }}
         >
@@ -123,42 +129,57 @@ const Navbar = (props) => {
     </Box>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         component="nav"
         position="fixed"
         sx={{
-          backgroundColor: '#FFFFFF',
-          color: '#000000',
-          boxShadow: '2px 4px 8px rgba(0, 0, 0, 0.2)',
-          fontFamily: 'Roboto, sans-serif',
-          height: '70px',
+          backgroundColor: "#FFFFFF",
+          color: "#000000",
+          boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.2)",
+          fontFamily: "Roboto, sans-serif",
+          height: "70px",
           top: 0,
           left: 0,
           right: 0,
           zIndex: 1300,
           padding: 0,
-          marginBottom: { xs: 0, md: '20px' },
+          marginBottom: { xs: 0, md: "20px" },
         }}
       >
         <link href={oswaldFont} rel="stylesheet" />
-        <Toolbar sx={{ justifyContent: 'space-between', minHeight: '70px', px: 2 }}>
-          <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center' }}>
-            <Box component="img" src={mLogo} alt="Logo" sx={{ width: 200, height: 'auto', mr: 3 }} />
+        <Toolbar
+          sx={{ justifyContent: "space-between", minHeight: "70px", px: 1 }}
+        >
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Box
+              component="img"
+              src={mLogo}
+              alt="Logo"
+              sx={{ width: 200, height: "auto", mr: 1 }}
+            />
             <IconButton
               color="inherit"
               aria-label="open drawer"
               edge="end"
               onClick={handleDrawerToggle}
               sx={{
-                mr: 4,
-                backgroundColor: 'transparent',
-                '&:hover': {
-                  backgroundColor: 'transparent',
+                mr: 1,
+                backgroundColor: "transparent",
+                "&:hover": {
+                  backgroundColor: "transparent",
                 },
               }}
             >
@@ -166,57 +187,62 @@ const Navbar = (props) => {
             </IconButton>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box
               component="img"
               src={mLogo}
               alt="Logo"
-              sx={{ width: 270, height: 'auto', display: { xs: 'none', md: 'block' }, mr: 2 }}
+              sx={{
+                width: 270,
+                height: "auto",
+                display: { xs: "none", md: "block" },
+                mr: 2,
+              }}
             />
           </Box>
 
           <Box
             sx={{
               flexGrow: 1,
-              display: { xs: 'none', md: 'flex' },
-              justifyContent: 'center',
-              gap: 2,
-              position: 'relative',
+              display: { xs: "none", md: "flex" },
+              justifyContent: "center",
+
+              position: "relative",
             }}
           >
             {navItems.map((item) => (
               <Button
                 key={item.label}
                 // href={`#${item.id}`}
-                href={item.href ? item.href : `#${item.id}`} 
+                href={item.href ? item.href : `#${item.id}`}
                 sx={{
-                  fontFamily: 'Oswald, sans-serif',
-                  fontSize: '21px',
-                  fontWeight: '700',
+                  fontFamily: "Oswald, sans-serif",
+                  fontSize: "21px",
+                  fontWeight: "700",
                   color: "#9001BA",
-                  position: 'relative',
-                  textTransform: 'none',
-                  '&:before': {
+                  position: "relative",
+                  textTransform: "none",
+                  "&:before": {
                     content: '""',
-                    position: 'absolute',
+                    position: "absolute",
                     bottom: 0,
                     left: 0,
-                    width: '0%',
-                    height: '2px',
-                    backgroundColor: 'red',
-                    boxShadow: '0 2px 4px rgba(255, 0, 0, 0.5)',
-                    transition: 'width 0.2s ease, box-shadow 0.2s ease',
+                    width: "0%",
+                    height: "2px",
+                    backgroundColor: "red",
+                    boxShadow: "0 2px 4px rgba(255, 0, 0, 0.5)",
+                    transition: "width 0.2s ease, box-shadow 0.2s ease",
                   },
-                  '&:hover:before': {
-                    width: '100%',
+                  "&:hover:before": {
+                    width: "100%",
                   },
-                  '&:hover': {
-                    boxShadow: 'none',
-                    color: '#007BFF',
+                  "&:hover": {
+                    boxShadow: "none",
+                    color: "#007BFF",
                   },
                 }}
               >
-               <span className='text-nowrap'> {item.label}</span>
+                <span className="text-nowrap"> {item.label}</span>
               </Button>
             ))}
           </Box>
@@ -224,19 +250,18 @@ const Navbar = (props) => {
           <Button
             onClick={handleOpenModal} // Open modal on button click
             sx={{
-              backgroundColor: '#6A1B9A',
-              color: '#FFFFFF',
-              borderRadius: '10px',
-              textTransform: 'none',
-              fontSize: '15px',
-              // px: 6,
-              display: { xs: 'none', md: 'block' },
-              '&:hover': {
-                backgroundColor: '#0056b3',
+              backgroundColor: "#6A1B9A",
+              color: "#FFFFFF",
+              borderRadius: "10px",
+              textTransform: "none",
+              fontSize: "15px",
+              display: { xs: "none", md: "block" },
+              "&:hover": {
+                backgroundColor: "#0056b3",
               },
             }}
           >
-           <span className='text-nowrap'> Book Demo</span>
+            <span className="text-nowrap "> Book Demo</span>
           </Button>
         </Toolbar>
       </AppBar>
@@ -251,8 +276,11 @@ const Navbar = (props) => {
             keepMounted: true,
           }}
           sx={{
-            display: { xs: 'block', sm: 'block', md: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "block", sm: "block", md: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
           }}
         >
           {drawer}
@@ -289,12 +317,12 @@ const Navbar = (props) => {
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: { xs: '90%', md: 400 },
-            bgcolor: 'background.paper',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", md: 400 },
+            bgcolor: "background.paper",
             borderRadius: 2,
             boxShadow: 24,
             p: 4,
