@@ -163,7 +163,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
         <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
             <Link to="/superadmin/dash" className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white ">
-              <span>Super Superadmin Dashboard</span>
+              <span className="text-nowrap">Dashboard</span>
             </Link>
           </a>
         </li>
@@ -901,7 +901,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
           className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
-          <Link to="/superadmin/dashboard/log-out" class="">
+          <Link to="/superadmin/log-out" class="">
             <span>Log Out</span>
           </Link>
         </li>

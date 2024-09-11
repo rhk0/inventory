@@ -216,7 +216,7 @@ const Navbar = (props) => {
                   },
                 }}
               >
-                {item.label}
+               <span className='text-nowrap'> {item.label}</span>
               </Button>
             ))}
           </Box>
@@ -229,14 +229,14 @@ const Navbar = (props) => {
               borderRadius: '10px',
               textTransform: 'none',
               fontSize: '15px',
-              px: 3,
+              // px: 6,
               display: { xs: 'none', md: 'block' },
               '&:hover': {
                 backgroundColor: '#0056b3',
               },
             }}
           >
-            Book a Demo
+           <span className='text-nowrap'> Book Demo</span>
           </Button>
         </Toolbar>
       </AppBar>
