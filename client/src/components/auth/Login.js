@@ -11,10 +11,21 @@ const Login = () => {
   const navigate = useNavigate();
   const [auth, setAuth] = useAuth();
   const [dauth] = useAuth();
+  console.log(dauth,"dauth ")
   useEffect(() => {
-    if (dauth) {
+    if (dauth?.user?.role===1) {
       if (dauth.AccessToken) {
         navigate("/admin");
+      }
+    }
+    if (dauth?.user?.role===2) {
+      if (dauth.AccessToken) {
+        navigate("/superadmin");
+      }
+    }
+    if (dauth?.user?.role===0) {
+      if (dauth.AccessToken) {
+        navigate("/staff");
       }
     }
   });
@@ -48,7 +59,7 @@ const Login = () => {
           AccessToken: response.data.AccessToken,
         });
         sessionStorage.setItem("dauth", JSON.stringify(response.data));
-        console.log(response, "user login role");
+       
         if (response.data.user.role === 1) {
           navigate("/admin");
         }
