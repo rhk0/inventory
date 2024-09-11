@@ -97,6 +97,7 @@ export const userRegisterController = async (req, res) => {
     });
 
     const alldt = {
+      
       businessName: businessName,
       userName: userName,
       address: address,
@@ -170,6 +171,7 @@ export const verificationController = async (req, res) => {
           email,
           password: hashedPwd,
           businessType,
+          role:1,
         });
         if (data) {
           res.status(201).send({
