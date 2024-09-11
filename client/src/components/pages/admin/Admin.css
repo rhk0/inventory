@@ -119,8 +119,9 @@
   background-color: #60207d;
   cursor: pointer;
   font-weight: bolder;
+  font-family: Mongolian Baliti;
   border-radius: 5px;
-  font-family: "Mongolian Baiti"; /* Correcting font family name */
+  
 }
 
 .sidebar-list-item::after {
@@ -179,26 +180,22 @@
   /* font-size: large; */
 }
 .innerlist{
-  font-size: 28px;
+  font-size: 25px;
 
 }
 
 .innerlist :hover {
   text-decoration: none;
   color: #eadeeb;
-  font-size: 28px;
+  font-size: 25px;
 }
 
 .innerlistsuperadmin{
-  font-size: 28px;
+  font-size: 23px;
   margin-top: 15px;
 }
 
-.innerlistsuperadmin :hover {
-  text-decoration: none;
-  color: #eadeeb;
-  font-size: 20px;
-}
+
 
 .sidebar-responsive {
   display: inline !important;
