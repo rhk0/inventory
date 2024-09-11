@@ -901,7 +901,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
-          <Link to="/admin/dashboard/log-out" class="">
+          <Link to="/admin/log-out" class="">
             <span>Log Out</span>
           </Link>
         </li>

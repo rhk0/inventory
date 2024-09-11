@@ -6,6 +6,7 @@ import Home from "../pages/admin/Home";
 import Test from "./Test";
 import { useAuth } from "../context/Auth";
 import SuperAdminSideBar from "../pages/SupeAdmin/SuperAdminSideBar.js";
+import Logout from "../pages/admin/Logout.js";
 const SuperAdminRoute = () => {
   const [auth] = useAuth();
 
@@ -28,7 +29,7 @@ const SuperAdminRoute = () => {
 
         <Route path="/*" element={<Test />} /> 
         {/* <Route path="/companyregistration" element={<CompanyRegistration />} /> */}
-
+        <Route path="log-out" element={<Logout/>} />
 
 
       </Routes>
