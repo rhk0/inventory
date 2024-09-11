@@ -76,7 +76,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             <span className="text-nowrap">Dashboard</span>
           </li>
         </Link>
-        <Link to="/superadmin/" className="w-full">
+        <Link to="/superadmin/subscriptionPlans" className="w-full">
           <li
             className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
             onClick={closeSidebar}
