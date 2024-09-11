@@ -12,12 +12,9 @@ import AdminRoutes from "./components/Routes/AdminRoute.js";
 import Test from "./components/Routes/Test.js";
 
 import Landing from "./landing/Landing.js";
-<<<<<<< HEAD
 import FreeTriel from "./landing/FreeTriel.js";
-=======
 import { SuperAdminProtectedRoute } from "./components/Routes/SuperAdminProtectedRoute.js";
 import SuperAdminRoute from "./components/Routes/SuperAdminRoute.js";
->>>>>>> 4e9bfc762fbae7451f1ee7b2911f6ad53bdded11
 
 function App() {
   return (
@@ -50,5 +47,7 @@ function App() {
     </div>
   );
 }
+
+
 
 export default App;

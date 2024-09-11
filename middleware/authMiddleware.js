@@ -2,8 +2,6 @@ import JWT from "jsonwebtoken"
 
 import userModel from "../models/userModel.js"
 
-
-
 export const requireSignIn=async(req,res,next)=>{
     try {
       
@@ -16,7 +14,6 @@ export const requireSignIn=async(req,res,next)=>{
         return res.send({ message: "Unauthorized" });
     }
 }
-
 
 
 //admin access
@@ -85,3 +82,4 @@ export const isStaff =async(req,res,next)=>{
         
     }
 }
+
