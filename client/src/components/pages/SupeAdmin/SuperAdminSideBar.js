@@ -208,6 +208,16 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             <span>View Free Trial Users</span>
           </Link>
         </li>
+        <Link to="/superadmin/log-out" class="">
+        <li
+          className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
+          onClick={closeSidebar}
+        >
+        
+            <span>Active Users InActive Users </span>
+         
+        </li>
+        </Link>
 
        
         {/* Logout */}
