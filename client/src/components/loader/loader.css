@@ -1,23 +1,20 @@
 .loader {
-  display: flex;
-  justify-content: center; /* Centers items horizontally */
-  align-items: center; /* Centers items vertically */
+  position: relative;
   width: 54px;
   height: 54px;
   border-radius: 10px;
- /* Ensures positioning context for child elements */
 }
 
 .loader div {
-  width: 10%;
-  height: 4%;
-  /* margin-left: 100px; */
+  width: 16%;
+  height: 48%;
   background: rgb(45, 58, 133);
   position: absolute;
-  top: 40%;
+  left: 50%;
+  top: 30%;
   opacity: 0;
   border-radius: 50px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 3px rgba(0,0,0,0.2);
   animation: fade458 1s linear infinite;
 }
 

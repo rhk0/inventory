@@ -137,7 +137,7 @@ const Navbar = (props) => {
       <CssBaseline />
       <AppBar
         component="nav"
-        position="fixed"
+        // position="fixed"
         sx={{
           backgroundColor: "#FFFFFF",
           color: "#000000",
@@ -206,7 +206,8 @@ const Navbar = (props) => {
               flexGrow: 1,
               display: { xs: "none", md: "flex" },
               justifyContent: "center",
-
+              px: { lg: 1 }, // Apply px:2 only on medium screens and above
+              gap: { lg: 1 }, // Apply gap:2 only on medium screens and above,
               position: "relative",
             }}
           >
@@ -254,7 +255,8 @@ const Navbar = (props) => {
               color: "#FFFFFF",
               borderRadius: "10px",
               textTransform: "none",
-              fontSize: "15px",
+              paddingX: { xs: "10px", md: "20px", lg: "40px" },
+              fontSize: { xs: "10px", md: "14px", lg: "14px" }, // Responsive font size
               display: { xs: "none", md: "block" },
               "&:hover": {
                 backgroundColor: "#0056b3",
@@ -294,42 +296,11 @@ const Navbar = (props) => {
         </Typography>
       </Box>
 
-      {/* Scroll-to-top button */}
-      {/* {showScrollTop && (
-        <IconButton
-          onClick={scrollToTop}
-          sx={{
-            position: 'fixed',
-            bottom: 20,
-            right: 20,
-            backgroundColor: '#007BFF',
-            color: '#FFFFFF',
-            '&:hover': {
-              backgroundColor: '#0056b3',
-            },
-          }}
-        >
-          <ArrowUpwardIcon />
-        </IconButton>
-      )} */}
+      
 
       {/* Modal with DemoForm */}
       <Modal open={isModalOpen} onClose={handleCloseModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: { xs: "90%", md: 400 },
-            bgcolor: "background.paper",
-            borderRadius: 2,
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <DemoForm />
-        </Box>
+        <DemoForm />
       </Modal>
     </Box>
   );
