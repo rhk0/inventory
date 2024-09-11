@@ -170,7 +170,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             </a>
           </li>
         </Link>
-        <Link to="/superadmin/" class="">
+        <Link to="/superadmin/subscriptionPlans" class="">
           <li
             className="w-full sidebar-list-item flex items-center innerlistsuperadmin justify-between focus:outline-none text-white   "
             onClick={closeSidebar}
