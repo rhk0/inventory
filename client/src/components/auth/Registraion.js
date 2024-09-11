@@ -66,12 +66,12 @@ const Registration = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center text-white font-montserrat">
+    <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center  font-montserrat">
        {loading ? (
           <Loader />
         ) : (
       <div className="p-5 hover:scale-95 shadow-2xl rounded-lg  login-card p-8 w-full max-w-md flex flex-col">
-        <div className="header mb-12">
+        <div className=" mb-12">
           <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-0 bg-white bg-opacity-10">
             <div className="text-white text-6xl">
               <FaUserAlt />
@@ -199,3 +199,5 @@ const Registration = () => {
 };
 
 export default Registration;
+
+

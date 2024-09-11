@@ -8,16 +8,17 @@ import JWT from "jsonwebtoken";
 const node_cache = new NodeCache({ stdTTL: 120 });
     
 export const userRegisterController = async (req, res) => {
-  try {
+  try {             
     const {
       businessName,
       userName,
       address,
-      contact,
+      contact,  
       email,
       password,
-      businessType,
+      businessType,  
     } = req.body;
+
 
     const requiredField = [
       "businessName",
@@ -66,6 +67,8 @@ export const userRegisterController = async (req, res) => {
       }
       return otp;
     }
+
+
 
     let otp = generateStrongOTP();
     const message =
@@ -193,6 +196,9 @@ export const verificationController = async (req, res) => {
       .send({ success: false, message: "Internal server issue", error });
   }
 };
+           
+
+
 
 export const loginController = async (req, res) => {
   

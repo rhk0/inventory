@@ -4,24 +4,25 @@ const userSchema = mongoose.Schema({
 
     businessName:{
         type:String,
-        required:true,
+       
     },
     userName:{
         type:String,
-        required:true,
+       
     },
     address:{
         type:String,
-        required:true,
+      
     },
     contact:{
         type:String,
-        required:true,
+       
     },
     email:{
         type:String,
         required:true,
         lowercase:true,
+        unique:true,
        
     },
     password:{
@@ -30,7 +31,7 @@ const userSchema = mongoose.Schema({
     },
     businessType:{
         type:String,
-        required:true,
+       
     },
    
     role:{

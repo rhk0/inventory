@@ -12,6 +12,7 @@ import AdminRoutes from "./components/Routes/AdminRoute.js";
 import Test from "./components/Routes/Test.js";
 
 import Landing from "./landing/Landing.js";
+import FreeTriel from "./landing/FreeTriel.js";
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
       <BrowserRouter>
         <Routes>
         <Route path="/" element={<Landing />}/>
-        
+           <Route path="/freeTriel" element={<FreeTriel/>}/>
           <Route path="/login" element={<Login />}/>
           <Route path="/registration" element={<Registraion />} />
           <Route path="/forgetpassword" element={<ForgotPassword />} />
