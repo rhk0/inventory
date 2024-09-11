@@ -33,7 +33,7 @@ export const SuperAdminProtectedRoute = () => {
       authCheck();
     } else {
       setOk(false);
-      setLoading(false);
+    
     }
   }, [auth, navigate]);
 
