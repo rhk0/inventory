@@ -97,6 +97,7 @@ export const userRegisterController = async (req, res) => {
     });
 
     const alldt = {
+      
       businessName: businessName,
       userName: userName,
       address: address,
@@ -161,6 +162,9 @@ export const verificationController = async (req, res) => {
           businessType,
         } = exuser;
 
+
+
+
         const hashedPwd = await hashPassword(password);
         const data = await userModel.create({
           businessName,
@@ -170,6 +174,7 @@ export const verificationController = async (req, res) => {
           email,
           password: hashedPwd,
           businessType,
+          role:1,
         });
         if (data) {
           res.status(201).send({
@@ -196,6 +201,9 @@ export const verificationController = async (req, res) => {
       .send({ success: false, message: "Internal server issue", error });
   }
 };         
+
+           
+
 export const loginController = async (req, res) => {
   
   try {
