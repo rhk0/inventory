@@ -21,8 +21,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/admin/*" element={<AdminRoutes/>}/>
-        {/* <Route path="/" element={<Landing />}/>
+        <Route path="/" element={<Landing />}/>
            <Route path="/freeTriel" element={<FreeTriel/>}/>
           <Route path="/login" element={<Login />}/>
           <Route path="/registration" element={<Registraion />} />
@@ -40,7 +39,7 @@ function App() {
             <Route path="*" element={<SuperAdminRoute />} />
           
           </Route>
-          <Route path="/*" element={<Test />} /> */}
+          <Route path="/*" element={<Test />} />
 
          
         </Routes>
