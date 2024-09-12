@@ -1,7 +1,7 @@
 import userModel from "../models/userModel.js";
 import nodemailer from "nodemailer";
 import { hashPassword, comparePassword } from "../middleware/authHelper.js";
-
+import bcrypt from 'bcrypt';
 import NodeCache from "node-cache";
 import JWT from "jsonwebtoken";
 
@@ -125,6 +125,62 @@ export const userRegisterController = async (req, res) => {
     });
   }
 };
+export const userUpdateController = async (req, res) => {
+  try {
+    const { _id } = req.params;  // Object ID passed as a parameter
+    const updates = req.body;  // The fields to update
+
+    // Validate if ID is provided
+    if (!_id) {
+      return res.status(400).send({
+        success: false,
+        message: "User ID is required"
+      });
+    }
+
+    // Validate if updates object is empty
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).send({
+        success: false,
+        message: "No update data provided"
+      });
+    }
+
+    // Hash the password if it's being updated
+    if (updates.password) {
+      const saltRounds = 10;  // Number of salt rounds
+      const hashedPassword = await bcrypt.hash(updates.password, saltRounds);
+      updates.password = hashedPassword;
+    }
+
+    // Find and update the user
+    const updatedUser = await userModel.findByIdAndUpdate(_id, updates, {
+      new: true,  // Return the updated document
+      runValidators: true  // Apply validation
+    });
+
+    if (!updatedUser) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    return res.send({
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Internal server error",
+      error
+    });
+  }
+};
+
 
 export const verificationController = async (req, res) => {
   try {

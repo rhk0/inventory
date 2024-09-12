@@ -92,7 +92,7 @@ const Navbar = (props) => {
         {navItems.map((item) => (
           <MenuItem key={item.label} disablePadding>
             <ListItemButton
-              href={`#${item.id}`}
+              href={`${item.id}`}
               sx={{
                 textAlign: "left",
                 fontSize: "14px",

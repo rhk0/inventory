@@ -14,9 +14,9 @@ const Login = () => {
   console.log(dauth,"dauth ")
   useEffect(() => {
     if (dauth?.user?.role===1) {
-      if (dauth.AccessToken) {
+ 
         navigate("/admin");
-      }
+
     }
     if (dauth?.user?.role===2) {
       if (dauth.AccessToken) {
