@@ -46,8 +46,6 @@ app.use(cors())
 app.use(express.json())
 
 
-// all apies  here 
-
 app.use("/api/v1/company",comanyRoute)
 app.use("/api/v1/auth",authRoute)
 app.use("/api/v1/auth",supplierRoute)
@@ -76,6 +74,16 @@ app.use("/api/v1/salesEstimateRoute",salesEstimateRoute)
 
 app.use("/api/v1/subscription",subscriptionRoute)
 app.use("/uploads",express.static("uploads"));
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "./client/build")));
+
+// Catch-all route to serve the React app for all non-API routes
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
+
 app.use(formidable());
 app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)
