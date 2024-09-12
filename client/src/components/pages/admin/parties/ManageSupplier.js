@@ -33,7 +33,7 @@ const ManageSupplier = () => {
   const deleteSupplier = async (_id) => {
     try {
       const response = await axios.delete(`/api/v1/auth/deletesupplier/${_id}`);
-      setSuppliers(suppliers.filter((supplier) => supplier._id !== _id));
+      setSuppliers(suppliers?.filter((supplier) => supplier._id !== _id));
 
       if (response) {
         toast.success(" delete all data Successfully...");
@@ -62,7 +62,7 @@ const ManageSupplier = () => {
   };
 
   // Filter suppliers based on search query
-  const filteredSuppliers = suppliers.filter((supplier) =>
+  const filteredSuppliers = suppliers?.filter((supplier) =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
@@ -118,8 +118,8 @@ const ManageSupplier = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredSuppliers.length > 0 ? (
-              filteredSuppliers.map((supplier, index) => (
+            {filteredSuppliers?.length > 0 ? (
+              filteredSuppliers?.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">
