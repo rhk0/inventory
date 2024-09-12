@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
 
-const ExpenseSchema = new mongoose.Schema(
+const IncomeSchema = new mongoose.Schema(
   {
     date: {
       type: Date,
       
     },
-    expenseNo: {
+    incomeNo: {
       type: String,
       
     },
-    expenseType: {
+    incomeType: {
       type: String,
       
     },
@@ -22,7 +22,7 @@ const ExpenseSchema = new mongoose.Schema(
       type: String,
       
     },
-    expense: {
+    income: {
       type: String,
       
     },
@@ -55,8 +55,8 @@ const ExpenseSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,  // Adds createdAt and updatedAt fields
+    timestamps: true, // Adds createdAt and updatedAt fields
   }
 );
 
-export default mongoose.model("Expense", ExpenseSchema);
+export default mongoose.model("Income", IncomeSchema);

@@ -1,15 +1,15 @@
-import ExpenseModel from "../models/expensesModel.js";
+import incomeModel from "../models/incomeModel.js";
 
-// Create a new expense
-export const createExpenseController = async (req, res) => {
+// Create a new income
+export const createincomeController = async (req, res) => {
   try {
     const {
       date,
-      expenseNo,
-      expenseType,
+      incomeNo,
+      incomeType,
       gstType,
       vendor,
-      expense,
+      income,
       amount,
       gstRate,
       cgstAmount,
@@ -19,13 +19,13 @@ export const createExpenseController = async (req, res) => {
       narration,
     } = req.body;
 
-    const newExpense = await ExpenseModel.create({
+    const newincome = await incomeModel.create({
       date,
-      expenseNo,
-      expenseType,
+      incomeNo,
+      incomeType,
       gstType,
       vendor,
-      expense,
+      income,
       amount,
       gstRate,
       cgstAmount,
@@ -37,8 +37,8 @@ export const createExpenseController = async (req, res) => {
 
     return res.status(201).send({
       success: true,
-      message: "Expense Created Successfully",
-      data: newExpense,
+      message: "income Created Successfully",
+      data: newincome,
     });
   } catch (error) {
     console.error(error);
@@ -50,20 +50,20 @@ export const createExpenseController = async (req, res) => {
   }
 };
 
-// Get all expenses
-export const manageExpenseController = async (req, res) => {
+// Get all incomes
+export const manageincomeController = async (req, res) => {
   try {
-    const expenses = await ExpenseModel.find();
-    if (expenses.length > 0) {
+    const incomes = await incomeModel.find();
+    if (incomes.length > 0) {
       return res.status(200).send({
         success: true,
         message: "Data found",
-        data: expenses,
+        data: incomes,
       });
     } else {
       return res.status(404).send({
         success: false,
-        message: "No expenses found",
+        message: "No incomes found",
       });
     }
   } catch (error) {
@@ -76,23 +76,23 @@ export const manageExpenseController = async (req, res) => {
   }
 };
 
-// Delete an expense by ID
-export const deleteExpenseController = async (req, res) => {
+// Delete an income by ID
+export const deleteincomeController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const deletedExpense = await ExpenseModel.findByIdAndDelete(_id);
+    const deletedincome = await incomeModel.findByIdAndDelete(_id);
 
-    if (!deletedExpense) {
+    if (!deletedincome) {
       return res.status(404).send({
         success: false,
-        message: "Expense not found",
+        message: "income not found",
       });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Expense deleted successfully",
-      data: deletedExpense,
+      message: "income deleted successfully",
+      data: deletedincome,
     });
   } catch (error) {
     console.error(error);
@@ -104,17 +104,17 @@ export const deleteExpenseController = async (req, res) => {
   }
 };
 
-// Update an expense by ID
-export const updateExpenseController = async (req, res) => {
+// Update an income by ID
+export const updateincomeController = async (req, res) => {
   try {
     const { _id } = req.params;
     const {
       date,
-      expenseNo,
-      expenseType,
+      incomeNo,
+      incomeType,
       gstType,
       vendor,
-      expense,
+      income,
       amount,
       gstRate,
       cgstAmount,
@@ -124,15 +124,15 @@ export const updateExpenseController = async (req, res) => {
       narration,
     } = req.body;
 
-    const updatedExpense = await ExpenseModel.findByIdAndUpdate(
+    const updatedincome = await incomeModel.findByIdAndUpdate(
       _id,
       {
         date,
-        expenseNo,
-        expenseType,
+        incomeNo,
+        incomeType,
         gstType,
         vendor,
-        expense,
+        income,
         amount,
         gstRate,
         cgstAmount,
@@ -144,17 +144,17 @@ export const updateExpenseController = async (req, res) => {
       { new: true }
     );
 
-    if (!updatedExpense) {
+    if (!updatedincome) {
       return res.status(404).send({
         success: false,
-        message: "Expense not found",
+        message: "income not found",
       });
     }
 
     return res.status(200).send({
       success: true,
-      message: "Expense updated successfully",
-      data: updatedExpense,
+      message: "income updated successfully",
+      data: updatedincome,
     });
   } catch (error) {
     console.error(error);

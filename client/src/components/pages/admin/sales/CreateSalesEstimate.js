@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 
 const CreateSalesEstimate = () => {
   const [date, setDate] = useState("");
   const [estimateNo, setEstimateNo] = useState("");
   const [salesType, setSalesType] = useState("GST Invoice");
   const [customerType, setCustomerType] = useState("");
-  const [customerName, setCustomerName] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [transportDetails, setTransportDetails] = useState({
@@ -28,22 +29,70 @@ const CreateSalesEstimate = () => {
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
 
+  const [formData, setFormData] = useState({
+    date: "",
+    estimateNo: "",
+    salesType: "",
+    customerType: "",
+    customerName: "",
+    placeOfSupply: "",
+    paymentTerm: "",
+    dueDate: "",
+    receiptDocNo: "",
+    dispatchedThrough: "",
+    destination: "",
+    carrierNameAgent: "",
+    billOfLading: "",
+    motorVehicleNo: "",
+    billingAddress: "",
+    reverseCharge: "",
+    gstType: "",
+
+    rows: [
+      {
+        itemCode: "",
+        productName: "",
+        hsnCode: "",
+        qty: null,
+        uom: null,
+        mrp: null,
+        discount: null,
+        cgst: null,
+        sgst: null,
+        igst: null,
+        totalValue: null,
+      },
+    ],
+
+    narration: "",
+    otherChargesDescriptions: "",
+    grossAmount: "",
+    totalGstAmount: "",
+    otherCharges: "",
+    netAmount: "",
+  });
+
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageCustomer");
-        console.log(response, "ksdjfkj");
         setCustomer(response.data.data);
       } catch (error) {
-        console.error("Error fetching suppliers:", error);
+        console.error("Error fetching Customers:", error);
       }
     };
 
     fetchCustomer();
   }, []);
 
-  const handleSupplierChange = (e) => {
-    setSelectedCustomer(e.target.value);
+  const handleCustomerChange = (e) => {
+    const value = e.target.value;
+
+    setSelectedCustomer(value);
+    setFormData((prev) => ({
+      ...prev,
+      customerName: value,
+    }));
   };
 
   const handleOtherChargesChange = (event) => {
@@ -63,8 +112,21 @@ const CreateSalesEstimate = () => {
       const formattedDueDate = `${day}-${month}-${year}`;
 
       setDueDate(formattedDueDate);
+      setFormData((prev) => ({
+        ...prev,
+        dueDate: formattedDueDate, // Update formData with dueDate
+      }));
     }
   }, [date, paymentTerm]);
+
+  const handlePaymentTermChange = (e) => {
+    const value = e.target.value;
+    setPaymentTerm(value); // Update local state for other related logic
+    setFormData((prev) => ({
+      ...prev,
+      paymentTerm: value, // Update formData
+    }));
+  };
 
   const handleGstTypeChange = (e) => {
     setGstType(e.target.value);
@@ -74,11 +136,40 @@ const CreateSalesEstimate = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
-  const handleEstimateNoChange = (e) => setEstimateNo(e.target.value);
-  const handleSalesTypeChange = (e) => setSalesType(e.target.value);
-  const handleCustomerTypeChange = (e) => setCustomerType(e.target.value);
-  const handleCustomerNameChange = (e) => setCustomerName(e.target.value);
-  const handlePlaceOfSupplyChange = (e) => setPlaceOfSupply(e.target.value);
+  const handleEstimateNoChange = (e) => {
+    const value = e.target.value;
+    setEstimateNo(value);
+    setFormData((prev) => ({
+      ...prev,
+      estimateNo: value,
+    }));
+  };
+  const handleSalesTypeChange = (e) => {
+    const value = e.target.value;
+    setSalesType(value);
+    setFormData((prev) => ({
+      ...prev,
+      salesType: value,
+    }));
+  };
+  const handleCustomerTypeChange = (e) => {
+    const value = e.target.value;
+    setCustomerType(value);
+    setFormData((prev) => ({
+      ...prev,
+      customerType: value,
+    }));
+  };
+
+  const handlePlaceOfSupplyChange = (e) => {
+    const value = e.target.value;
+    setPlaceOfSupply(value);
+    setFormData((prev) => ({
+      ...prev,
+      placeOfSupply: value,
+    }));
+  };
+
   const handleBillingAddressChange = (e) => setBillingAddress(e.target.value);
   const handleReverseChargeChange = (e) => setReverseCharge(e.target.value);
 
@@ -152,400 +243,6 @@ const CreateSalesEstimate = () => {
   const { grossAmount, totalGstAmount, netAmount } = calculateTotals();
 
   // Function to handle Save and Print
-  const handlePrintOnly = () => {
-    const printWindow = window.open("", "_blank");
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 10px;
-            }
-            .header, .section-header, .table th {
-              color: red;
-              font-weight: bold;
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 20px;
-              font-size: 24px;
-            }
-            .customer-details .section-header {
-              color: green;
-               font-size: 16px;
-            }
-            .sales-estimate .section-header {
-              color: blue;
-               font-size: 16px;
-            }
-            .transport-details .section-header, .amount-details .section-header {
-              color: blue;
-               font-size: 16px;
-            }
-            .terms .section-header {
-              color: red;
-            }
-            .table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-            }
-            .table th, .table td {
-              border: 1px solid black;
-              padding: 5px;
-              text-align: center;
-              font-size: 12px;
-            }
-            .table th {
-              background-color: #ff0000; /* Red header */
-              color: black;
-            }
-            .details {
-              font-size: 12px;
-              margin-bottom: 5px;
-            }
-            .signature {
-              text-align: right;
-              margin-top: 50px;
-              font-size: 12px;
-            }
-              .heades{
-               text-align: center;
-                color: blue;
-              font-size: 24px;
-              }
-          </style>
-        </head>
-        <body>
-         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
-          <div class="header">
-          
-            <div class="business-name">Business Name</div>
-            <div>Address: Your Address Here</div>
-            <div>GSTIN: Your GSTIN Here</div>
-          </div>
-  
-          <table class="table">
-             <tr>
-                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    Sales Estimate
-                  </th>
-              </tr>
-
-
-         
-            <tr>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>John Doe</span></div>
-                  <div class="details">Address: <span>123 Main St, City</span></div>
-                  <div class="details">Contact: <span>9876543210</span></div>
-                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
-                </div>
-              </td>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header"> Estimate Details</div>
-                  <div class="details">Estimate No: <span>12345</span></div>
-                  <div class="details">Estimate Date: <span>01-Jan-2024</span></div>
-                  <div class="details">Place of Supply: <span>City Name</span></div>
-                </div>
-              </td>
-              <td style="width: 40%;">
-                <div style="text-align:left;" class="transport-details">
-                  <div class="section-header">Transport Details</div>
-                  <div class="details">Receipt Doc No.: <span>6789</span></div>
-                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
-                  <div class="details">Agent Name: <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
-                </div>
-              </td>
-            </tr>
-          </table>
-  
-          <table class="table">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Product Name</th>
-                <th>HSN Code</th>
-                <th>QTY</th>
-                <th>UOM</th>
-                <th>MRP</th>
-                <th>Disc.</th>
-                <th>Rate</th>
-                <th>Taxable Value</th>
-                <th>CGST</th>
-                <th>SGST</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Add your product rows here -->
-              <tr>
-                <td>1</td>
-                <td>Product Name</td>
-                <td>1234</td>
-                <td>10</td>
-                <td>KG</td>
-                <td>500</td>
-                <td>10%</td>
-                <td>450</td>
-                <td>4500</td>
-                <td>9%</td>
-                <td>9%</td>
-                <td>5310</td>
-              </tr>
-            </tbody>
-          </table>
-  
-          <table class="table">
-            <tr>
-              <td style="width: 50%;text-align:left;">
-                <div class="banking-details">
-                  <div class="section-header">Banking Details</div>
-                  <div class="details">Bank Name: XYZ Bank</div>
-                  <div class="details">IFSC Code: XYZ1234</div>
-                  <div class="details">Account No: 1234567890</div>
-                  <div class="details">Account Holder Name: John Doe</div>
-                  <div class="details">UPI ID: john@upi</div>
-                </div>
-              </td>
-              <td style="width: 50%;text-align:left;">
-                <div class="amount-details">
-                  <div class="section-header">Amount Details</div>
-                  <div class="details">Gross Total: ₹10000</div>
-                  <div class="details">GST Amount: ₹1800</div>
-                  <div class="details">Additional Charges: ₹200</div>
-                  <div class="details">Net Total: ₹12000</div>
-                  <div class="details">Amount in Words: Twelve Thousand Only</div>
-                </div>
-              </td>
-            </tr>
-          
-             
-              
-            
-          </table>
-             <div style="margin-top:100px" class="mt-10">
-                  <div class="section-header">Terms & Condition</div>
-                  <div class="details">Your terms and conditions go here...</div>
-                </div>
-  
-          <div  class="signature">
-         
-          
-            <div>For (Business Name)</div>
-            <div style="margin-top: 20px;">Signature</div>
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    printWindow.print();
-    printWindow.close();
-  };
-
-  const handlePrintOnlyWithoutGST = () => {
-    const printWindow = window.open("", "_blank");
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 10px;
-            }
-            .header, .section-header, .table th {
-              color: red;
-              font-weight: bold;
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 20px;
-              font-size: 24px;
-            }
-            .customer-details .section-header {
-              color: green;
-               font-size: 16px;
-            }
-            .sales-estimate .section-header {
-              color: blue;
-               font-size: 16px;
-            }
-            .transport-details .section-header, .amount-details .section-header {
-              color: blue;
-               font-size: 16px;
-            }
-            .terms .section-header {
-              color: red;
-            }
-            .table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-            }
-            .table th, .table td {
-              border: 1px solid black;
-              padding: 5px;
-              text-align: center;
-              font-size: 12px;
-            }
-            .table th {
-              background-color: #ff0000; /* Red header */
-              color: black;
-            }
-            .details {
-              font-size: 12px;
-              margin-bottom: 5px;
-            }
-            .signature {
-              text-align: right;
-              margin-top: 50px;
-              font-size: 12px;
-            }
-              .heades{
-               text-align: center;
-                color: blue;
-              font-size: 24px;
-              }
-          </style>
-        </head>
-        <body>
-         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
-          <div class="header">
-          
-            <div class="business-name">Business Name</div>
-            <div>Address: Your Address Here</div>
-            <div>GSTIN: Your GSTIN Here</div>
-          </div>
-  
-          <table class="table">
-             <tr>
-                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    Sales Estimate
-                  </th>
-              </tr>
-
-
-         
-            <tr>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>John Doe</span></div>
-                  <div class="details">Address: <span>123 Main St, City</span></div>
-                  <div class="details">Contact: <span>9876543210</span></div>
-                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
-                </div>
-              </td>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header"> Estimate Details</div>
-                  <div class="details">Estimate No: <span>12345</span></div>
-                  <div class="details">Estimate Date: <span>01-Jan-2024</span></div>
-                  <div class="details">Place of Supply: <span>City Name</span></div>
-                </div>
-              </td>
-              <td style="width: 40%;">
-                <div style="text-align:left;" class="transport-details">
-                  <div class="section-header">Transport Details</div>
-                  <div class="details">Receipt Doc No.: <span>6789</span></div>
-                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
-                  <div class="details">Agent Name: <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
-                </div>
-              </td>
-            </tr>
-          </table>
-  
-          <table class="table">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Product Name</th>
-                <th>HSN Code</th>
-                <th>QTY</th>
-                <th>UOM</th>
-                <th>MRP</th>
-                <th>Disc.</th>
-                <th>Rate</th>
-               
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Add your product rows here -->
-              <tr>
-                <td>1</td>
-                <td>Product Name</td>
-                <td>1234</td>
-                <td>10</td>
-                <td>KG</td>
-                <td>500</td>
-                <td>10%</td>
-                <td>450</td>
-                
-                <td>5310</td>
-              </tr>
-            </tbody>
-          </table>
-  
-          <table class="table">
-            <tr>
-              <td style="width: 50%;text-align:left;">
-                <div class="banking-details">
-                  <div class="section-header">Banking Details</div>
-                  <div class="details">Bank Name: XYZ Bank</div>
-                  <div class="details">IFSC Code: XYZ1234</div>
-                  <div class="details">Account No: 1234567890</div>
-                  <div class="details">Account Holder Name: John Doe</div>
-                  <div class="details">UPI ID: john@upi</div>
-                </div>
-              </td>
-              <td style="width: 50%;text-align:left;">
-                <div class="amount-details">
-                  <div class="section-header">Amount Details</div>
-                  <div class="details">Gross Total: ₹10000</div>
-                  <div class="details">Additional Charges: ₹200</div>
-                  <div class="details">Net Total: ₹12000</div>
-                  <div class="details">Amount in Words: Twelve Thousand Only</div>
-                </div>
-              </td>
-            </tr>
-          
-             
-              
-            
-          </table>
-             <div style="margin-top:100px" class="mt-10">
-                  <div class="section-header">Terms & Condition</div>
-                  <div class="details">Your terms and conditions go here...</div>
-                </div>
-  
-          <div  class="signature">
-         
-          
-            <div>For (Business Name)</div>
-            <div style="margin-top: 20px;">Signature</div>
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    printWindow.print();
-    printWindow.close();
-  };
 
   const [products, setProducts] = useState([]);
 
@@ -587,6 +284,32 @@ const CreateSalesEstimate = () => {
       setRows(updatedRows);
     }
   };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "/api/v1/salesEstimateRoute/createSalesEstimatet",
+        formData
+      );
+      console.log(response, "sdkfj");
+
+      if (response) {
+        toast.success("sales estimate Created Successfully...");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
   return (
     <>
       <div
@@ -600,8 +323,12 @@ const CreateSalesEstimate = () => {
               Date:
               <input
                 type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                name="date"
+                value={formData.date}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  handleChange(e);
+                }}
                 className="border p-2 w-full   rounded"
               />
             </label>
@@ -609,9 +336,10 @@ const CreateSalesEstimate = () => {
           <div>
             <label className="font-bold">Estimate No.</label>
             <input
+              name="estimateNo"
               type="text"
-              value={estimateNo}
-              onChange={handleEstimateNoChange}
+              value={estimateNo} // Bind to local state
+              onChange={handleEstimateNoChange} // Update both local and formData states
               className="border p-2 w-full  rounded"
             />
           </div>
@@ -642,7 +370,7 @@ const CreateSalesEstimate = () => {
             <select
               className="w-full p-2 border border-gray-300 rounded"
               value={selectedCustomer}
-              onChange={handleSupplierChange}
+              onChange={handleCustomerChange}
             >
               <option value="">Select Customer</option>
               {customer.map((customer) => (
@@ -656,6 +384,7 @@ const CreateSalesEstimate = () => {
             <label className="font-bold">Place of Supply</label>
             <input
               type="text"
+              name="placeOfSupply"
               value={placeOfSupply}
               onChange={handlePlaceOfSupplyChange}
               className="border p-2 w-full  rounded"
@@ -666,8 +395,9 @@ const CreateSalesEstimate = () => {
               Payment Term (days):
               <input
                 type="number"
+                name="paymentTerm"
                 value={paymentTerm}
-                onChange={(e) => setPaymentTerm(e.target.value)}
+                onChange={handlePaymentTermChange}
                 className="border p-2 w-full  rounded"
               />
             </label>
@@ -677,6 +407,7 @@ const CreateSalesEstimate = () => {
             <label className="font-bold">
               Due Date
               <input
+                name="dueDate"
                 type="text"
                 value={dueDate}
                 className="border p-2 w-full text-black rounded"
@@ -703,6 +434,7 @@ const CreateSalesEstimate = () => {
                   <label>Receipt Doc No.</label>
                   <input
                     type="text"
+                    name="receiptDocNo"
                     value={transportDetails.receiptDocNo}
                     onChange={(e) =>
                       handleTransportDetailChange(
@@ -1253,12 +985,13 @@ const CreateSalesEstimate = () => {
           <button
             // onClick={}
             className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-white p-2 mr-2"
+            onClick={handleSubmit}
           >
             Save
           </button>
           {salesType === "GST Invoice" && (
             <button
-              onClick={handlePrintOnly}
+              // onClick={handlePrintOnly}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
             >
               Save and Print
@@ -1266,7 +999,7 @@ const CreateSalesEstimate = () => {
           )}
           {salesType !== "GST Invoice" && (
             <button
-              onClick={handlePrintOnlyWithoutGST}
+              // onClick={handlePrintOnlyWithoutGST}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
             >
               Save and Print

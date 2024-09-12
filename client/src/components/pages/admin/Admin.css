@@ -120,7 +120,7 @@
   cursor: pointer;
   font-weight: bolder;
   border-radius: 5px;
-  font-family: "Mongolian Baiti"; /* Correcting font family name */
+  font-family: "Mongolian Baiti";
 }
 
 .sidebar-list-item::after {

@@ -31,12 +31,12 @@ export const createSalesEstimateController = async (req, res) => {
     } = req.body;
 
     // Validate required fields (basic validation example)
-    if (!date || !estimateNo || !customerName || !billingAddress) {
-      return res.status(400).json({
-        success: false,
-        message: "Required fields are missing",
-      });
-    }
+    // if (!date || !estimateNo || !customerName || !billingAddress) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Required fields are missing",
+    //   });
+    // }
 
     // Create a new instance of the SalesEstimate model
     const newSalesEstimate = new salesEstimateModel({

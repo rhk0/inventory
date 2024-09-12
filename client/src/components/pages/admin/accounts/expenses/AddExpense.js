@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,6 +19,26 @@ const AddExpense = () => {
     total: 0,
     narration: "",
   });
+
+  const [vendor, setVendor] = useState([]);
+  const [selectedVendor, setSelectedVendor] = useState("");
+
+  useEffect(() => {
+    const fetchVendor = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageVendor");
+        setVendor(response.data.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    };
+
+    fetchVendor();
+  }, []);
+
+  const handleVendorChange = (e) => {
+    setSelectedVendor(e.target.value);
+  };
 
   // Helper function to calculate GST and Total
   const calculateGSTAndTotal = (gstType, amount, gstRate) => {
@@ -183,15 +203,16 @@ const AddExpense = () => {
             <div>
               <label className="block font-semibold mb-1">Select Vendor</label>
               <select
-                name="vendor"
-                value={formData.vendor}
-                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded"
-                required
+                value={selectedVendor}
+                onChange={handleVendorChange}
               >
                 <option value="">Select Vendor</option>
-                <option value="vendor1">Vendor 1</option>
-                <option value="vendor2">Vendor 2</option>
+                {vendor.map((vendor) => (
+                  <option key={vendor._id} value={vendor._id}>
+                    {vendor.name}
+                  </option>
+                ))}
               </select>
             </div>
 
