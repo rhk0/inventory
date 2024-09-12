@@ -195,11 +195,7 @@ export const verificationController = async (req, res) => {
       .status(500)
       .send({ success: false, message: "Internal server issue", error });
   }
-};
-           
-
-
-
+};         
 export const loginController = async (req, res) => {
   
   try {
