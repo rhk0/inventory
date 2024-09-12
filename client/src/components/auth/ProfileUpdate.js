@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Avatar,
   CssBaseline,
@@ -10,13 +10,13 @@ import {
   Container,
   createTheme,
   ThemeProvider,
-} from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { makeStyles } from '@mui/styles';
-import axios from 'axios';
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { makeStyles } from "@mui/styles";
+import axios from "axios";
 import { useAuth } from "../context/Auth.js";
+import { toast, ToastContainer } from "react-toastify";
 
-// Create a theme instance
 const theme = createTheme({
   spacing: 8, // Ensure spacing is correctly defined
 });
@@ -24,16 +24,16 @@ const theme = createTheme({
 const useStyles = makeStyles(() => ({
   paper: {
     marginTop: theme.spacing(1),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
   submit: {
@@ -43,32 +43,31 @@ const useStyles = makeStyles(() => ({
 
 export default function SignUp() {
   const classes = useStyles();
-  
+
   // Manage form state using useState hook
   const [formData, setFormData] = useState({
-    businessName: '',
-    userName: '',
-    address: '',
-    contact: '',
-    email: '',
-    password: '',
-    businessType: '',
+    businessName: "",
+    userName: "",
+    address: "",
+    contact: "",
+    email: "",
+    password: "",
+    businessType: "",
   });
-  
+
   const [auth, setAuth] = useAuth();
-  
+
   // Set form data when component mounts or auth changes
-  console.log(auth.user,"password")
   useEffect(() => {
     if (auth && auth.user) {
       setFormData({
-        businessName: auth.user.businessName || '',
-        userName: auth.user.userName || '',
-        address: auth.user.address || '',
-        contact: auth.user.contact || '',
-        email: auth.user.email || '',
-        password: auth.user.password, // Ideally, you don't pre-fill the password for security reasons
-        businessType: auth.user.businessType || '',
+        businessName: auth.user.businessName || "",
+        userName: auth.user.userName || "",
+        address: auth.user.address || "",
+        contact: auth.user.contact || "",
+        email: auth.user.email || "",
+        password: "", // Do not pre-fill the password
+        businessType: auth.user.businessType || "",
       });
     }
   }, [auth]);
@@ -80,34 +79,35 @@ export default function SignUp() {
       [e.target.name]: e.target.value,
     });
   };
-
+  const id = auth.user._id;
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Log form data before sending
-    console.log('Form Data:', formData);
-  
+
     try {
-      const response = await axios.post(`/api/v1/auth/updateuser/${auth.user._id}`, formData, {
-        headers: {
-          'Content-Type': 'application/json', // Ensure the content type is correct
-        },
-      });
-      
-      console.log('Profile updated successfully:', response.data);
-      // Handle success (e.g., show a success message or redirect)
+      console.log(formData, "dsaffd");
+      console.log(`/api/v1/auth/updateuser/${id}`, "id");
+      const response = await axios.put(
+        `/api/v1/auth/updateuser/${id}`,
+        formData
+      );
+      if(response.data.success){
+        toast.success(response.data.message)
+      }
+      console.log("Profile updated successfully:", response);
     } catch (error) {
       if (error.response) {
         // Server responded with a status other than 2xx
-        console.error('Failed to update profile:', error.response.data.message);
+        console.error("Failed to update profile:", error.response.data.message);
+      } else if (error.request) {
+        // Request was made but no response was received
+        console.error("No response received:", error.request);
       } else {
         // Error occurred in setting up the request
-        console.error('Error updating profile:', error.message);
+        console.error("Error updating profile:", error.message);
       }
     }
   };
-  
 
   return (
     <div className="responsive-container">
@@ -198,7 +198,6 @@ export default function SignUp() {
                     label="Password"
                     type="password"
                     id="password"
-                    autoComplete="current-password"
                     value={formData.password}
                     onChange={handleChange}
                   />
@@ -230,6 +229,7 @@ export default function SignUp() {
           </div>
         </Container>
       </ThemeProvider>
+      <ToastContainer/>
     </div>
   );
 }

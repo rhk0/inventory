@@ -6,7 +6,7 @@ import { isAdmin, isStaff, isSuperAdmin, requireSignIn } from "../middleware/aut
 const router=express.Router();
 
 router.post('/register',userRegisterController)
-router.put('/updateuser/:_id',userUpdateController)
+router.put('/updateuser/:_id',requireSignIn,userUpdateController)
 router.post('/mail',mailController)
 router.post('/verification',verificationController )
 router.post('/login',loginController)
