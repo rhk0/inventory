@@ -162,6 +162,9 @@ export const verificationController = async (req, res) => {
           businessType,
         } = exuser;
 
+
+
+
         const hashedPwd = await hashPassword(password);
         const data = await userModel.create({
           businessName,
@@ -199,8 +202,6 @@ export const verificationController = async (req, res) => {
   }
 };
            
-
-
 
 export const loginController = async (req, res) => {
   

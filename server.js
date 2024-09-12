@@ -29,16 +29,31 @@ import formidable from 'express-formidable';
 
 import subscriptionRoute from "./routes/subsCriptionRoute.js"
 
+
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+
 dotenv.config();
 
 //calling the db funciton 
 connectDb();
 
-
 // creating app 
 const app = express();
 app.use(cors())
 app.use(express.json())
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+app.use(express.static(path.join(__dirname, "./client/build")));
+
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
+
+
 
 // all apies  here 
 
