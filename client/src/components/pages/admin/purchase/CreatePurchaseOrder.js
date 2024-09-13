@@ -25,6 +25,27 @@ const CreatePurchaseOrder = () => {
   const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
 
+  const [suppliers, setSuppliers] = useState([]); // State to store supplier data
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageSupplier");
+        console.log(response, "djkgh");
+        setSuppliers(response.data.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    };
+
+    fetchSuppliers();
+  }, []);
+
+  const handleSupplierChange = (e) => {
+    setSelectedSupplier(e.target.value);
+  };
+
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
@@ -607,15 +628,20 @@ const CreatePurchaseOrder = () => {
             />
           </div>
 
-
           <div>
             <label className="font-bold">supplier Name</label>
-            <input
-              type="text"
-              value={supplierName}
-              onChange={handlesupplierNameChange}
-              className="border p-2 w-full  rounded"
-            />
+            <select
+              className="w-full p-2 border border-gray-300 rounded"
+              value={selectedSupplier}
+              onChange={handleSupplierChange}
+            >
+              <option value="">Select Supplier</option>
+              {suppliers.map((supplier) => (
+                <option key={supplier._id} value={supplier._id}>
+                  {supplier.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="font-bold">Place of Supply</label>
@@ -647,15 +673,6 @@ const CreatePurchaseOrder = () => {
                 className="border p-2 w-full text-black rounded"
               />
             </label>
-          </div>
-
-          <div className="mb-4">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-blue-500 text-white p-2"
-            >
-              Transport Details
-            </button>
           </div>
         </div>
 
@@ -764,7 +781,15 @@ const CreatePurchaseOrder = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
+          <div className="mb-8">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white p-2"
+            >
+              Transport Details
+            </button>
+          </div>
           <div className="mb-4">
             <label className="font-bold">Billing Address</label>
             <textarea

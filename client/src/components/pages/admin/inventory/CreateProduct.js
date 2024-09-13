@@ -321,6 +321,29 @@ const CreateProduct = () => {
     calculateOpeningBalance();
   }, [Quantity, Rate]);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    // Set the new value in the form data
+    setFormData((prevData) => {
+      const updatedFormData = { ...prevData, [name]: value };
+
+      // Check if Purchase Price Ex GST and GST Rate are available
+      const purchasePriceExGst =
+        parseFloat(updatedFormData.purchasePriceExGst) || 0;
+      const gstRate = parseFloat(updatedFormData.gstRate) || 0;
+
+      // Calculate the Purchase Price Including GST
+      const purchasePriceInGst =
+        purchasePriceExGst + (purchasePriceExGst * gstRate) / 100;
+
+      return {
+        ...updatedFormData,
+        purchasePriceInGst: purchasePriceInGst.toFixed(2), // Show with two decimal points
+      };
+    });
+  };
+
   const handleTagInputChange = (index, newTags) => {
     const newOptions = [...options];
     newOptions[index].values = newTags;
@@ -395,7 +418,7 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.itemCode}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
             <label className="block font-bold">Product Name</label>
@@ -405,7 +428,7 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.productName}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
 
           <div>
@@ -507,7 +530,7 @@ const CreateProduct = () => {
                 <option key={index} value={unit.unitofquantity}>
                   {unit.unitofquantity}
                 </option>
-              ))}{" "}
+              ))}
             </select>
           </div>
 
@@ -528,7 +551,7 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               name="gstRate"
               value={formData.gstRate}
-              onChange={handleGstRateChange}
+              onChange={handleInputChange}
             >
               <option value="0">0%</option>
               <option value="5">5%</option>
@@ -608,7 +631,7 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.batchNo}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
             <label className="block font-bold">Expiry Date</label>
@@ -652,17 +675,17 @@ const CreateProduct = () => {
         <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4  gap-4">
           <div>
             <label className="block font-bold">Purchase Price</label>
-           
+
             <input
               type="number"
               name="purchasePriceExGst"
               className="w-full p-1 border rounded"
               value={formData.purchasePriceExGst}
-              onChange={handleChange}
+              onChange={handleInputChange}
             />
           </div>
           <div>
-            <label className="block font-bold">Landing cost</label> 
+            <label className="block font-bold">Landing cost</label>
             {/* // change   purches price to landing cost */}
             <input
               type="number"
@@ -673,8 +696,10 @@ const CreateProduct = () => {
             />
           </div>
           <div>
-            <label className="block font-bold">Maximum Retail Price <span className="text-xs">(MRP)</span> </label> 
-           
+            <label className="block font-bold">
+              Maximum Retail Price <span className="text-xs">(MRP)</span>{" "}
+            </label>
+
             <input
               type="number"
               name="maxmimunRetailPrice"
@@ -684,17 +709,21 @@ const CreateProduct = () => {
             />
           </div>
           <div>
-            <label className="block font-bold">Retail Discount  <span className="text-xs">(in %)</span></label>
+            <label className="block font-bold">
+              Retail Discount <span className="text-xs">(in %)</span>
+            </label>
             <input
               type="number"
               name="retailDiscount"
               className="w-full p-1 border rounded"
               value={formData.retailDiscount}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
-            <label className="block font-bold">Retail Price <span className="text-xs">(in RS)</span></label>
+            <label className="block font-bold">
+              Retail Price <span className="text-xs">(in RS)</span>
+            </label>
             {/* <p>(in Rs)</p> */}
             <input
               type="number"
@@ -702,10 +731,12 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.retailPrice}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
-            <label className="block font-bold">Retail Margin <span className="text-xs">(in %)</span></label>
+            <label className="block font-bold">
+              Retail Margin <span className="text-xs">(in %)</span>
+            </label>
             {/* <p>(in %)</p> */}
             <input
               type="number"
@@ -713,10 +744,12 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.retailMargin}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
-            <label className="block font-bold">Wholesaler Discount <span className="text-xs">(in %)</span></label>
+            <label className="block font-bold">
+              Wholesaler Discount <span className="text-xs">(in %)</span>
+            </label>
             {/* <p>(in %)</p> */}
             <input
               type="number"
@@ -724,10 +757,12 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.wholesalerDiscount}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
-            <label className="block font-bold">Wholesaler Price <span className="text-xs">(in RS)</span></label>
+            <label className="block font-bold">
+              Wholesaler Price <span className="text-xs">(in RS)</span>
+            </label>
             {/* <p>(in Rs)</p> */}
             <input
               type="number"
@@ -735,10 +770,12 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.wholesalerPrice}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
           <div>
-            <label className="block font-bold">Wholesale Margin <span className="text-xs">(in %)</span></label>
+            <label className="block font-bold">
+              Wholesale Margin <span className="text-xs">(in %)</span>
+            </label>
             {/* <p>(in %)</p> */}
             <input
               type="number"
@@ -746,7 +783,7 @@ const CreateProduct = () => {
               className="w-full p-1 border rounded"
               value={formData.wholesaleMargin}
               onChange={handleChange}
-            />{" "}
+            />
           </div>
         </div>
       </div>

@@ -225,7 +225,7 @@
 //             <div className="mt-2 text-center text-black text-xl h-10 w-full">
 //               Closing Stock
 //             </div>
-//           </div>
+//           </div> 
 //         </div>
 //       </div>
 //     </main>

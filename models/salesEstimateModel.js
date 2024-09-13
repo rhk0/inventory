@@ -25,7 +25,7 @@ const SalesEstimateSchema = new mongoose.Schema({
       productName: { type: String },
       hsnCode: { type: String },
       qty: { type: Number },
-      units: { type: Number },
+      units: { type: String },  
       mrp: { type: Number },
       discountpercent: { type: Number },
       discountRS: { type: Number },
@@ -39,12 +39,12 @@ const SalesEstimateSchema = new mongoose.Schema({
       totalValue: { type: Number },
     },
   ],
-  otherChargesDiscount: { type: String },
-  othercharges: { type: String },
-  narration: { type: String },
-  grossAmount: { type: String },
-  GstAmount: { type: String },
-  netAmount: { type: String },
+  otherChargesDescriptions:{type:String},
+  otherCharges:{type:String},
+  narration:{type:String},
+  grossAmount:{type :String},
+  GstAmount:{type :String},
+  netAmount:{type :String},
 });
 
 export default mongoose.model("SalesEstimateSchema", SalesEstimateSchema);

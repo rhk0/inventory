@@ -11,14 +11,11 @@ const StockUnit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
-      
       const response = await axios.post("/api/v1/auth/createStockUnit", {
         unitofquantity,
         symbol,
         formalName,
       });
-  
 
       if (response.data.success) {
         toast.success(response.data.message);
@@ -50,17 +47,47 @@ const StockUnit = () => {
               }}
             >
               <option value="">Select</option>
-              <option value="Length - meter (m)"> Length - meter (m)</option>
-              <option value="Time - second (s)">Time - second (s)</option>
-              <option value="Amount of substance - mole (mol)">
-                Amount of substance - mole (mol)
-              </option>
-              <option value="Electric current - ampere (A)">Electric current - ampere (A)</option>
-              <option value="Temperature - kelvin (K)">Temperature - kelvin (K)</option>
-              <option value="Luminous intensity - candela (cd)">
-                Luminous intensity - candela (cd)
-              </option>
-              <option value="Mass - kilogram (kg)">Mass - kilogram (kg)</option>
+              <option value="Bags">Bags</option>
+              <option value="Bale">Bale</option>
+              <option value="Bundles">Bundles</option>
+              <option value="Box">Box</option>
+              <option value="Bunches">Bunches</option>
+              <option value="Cans">Cans</option>
+              <option value="Cubic meters">Cubic meters</option>
+              <option value="Cubic centimeter">Cubic centimeter</option>
+              <option value="Centimeter">Centimeter</option>
+              <option value="Cartons">Cartons</option>
+              <option value="Dozens">Dozens</option>
+              <option value="Drums">Drums</option>
+              <option value="Great gross">Great gross</option>
+              <option value="Gross">Gross</option>
+              <option value="Gross yards">Gross yards</option>
+              <option value="Kilograms">Kilograms</option>
+              <option value="Kilolitre">Kilolitre</option>
+              <option value="Kilometre">Kilometre</option>
+              <option value="Litres">Litres</option>
+              <option value="Millitre">Millitre</option>
+              <option value="Meters">Meters</option>
+              <option value="Metric ton">Metric ton</option>
+              <option value="Numbers">Numbers</option>
+              <option value="Others">Others</option>
+              <option value="Packs">Packs</option>
+              <option value="Pieces">Pieces</option>
+              <option value="Pairs">Pairs</option>
+              <option value="Quintal">Quintal</option>
+              <option value="Rolls">Rolls</option>
+              <option value="Sets">Sets</option>
+              <option value="Square feet">Square feet</option>
+              <option value="Square meters">Square meters</option>
+              <option value="Square yards">Square yards</option>
+              <option value="Tablets">Tablets</option>
+              <option value="Ten gross">Ten gross</option>
+              <option value="Thousands">Thousands</option>
+              <option value="Tonnes">Tonnes</option>
+              <option value="Tubes">Tubes</option>
+              <option value="US gallons">US gallons</option>
+              <option value="Units">Units</option>
+              <option value="Yards">Yards</option>
             </select>
           </div>
 
