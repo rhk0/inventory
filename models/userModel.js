@@ -57,6 +57,10 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: true,
       },
+      freeCounter:{
+        type:Number,
+        defalt: 0,
+      }
 },{
     timestamps:true,
 })

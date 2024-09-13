@@ -28,7 +28,8 @@ import salesEstimateRoute from "./routes//salesEstimateRoute.js"
 import formidable from 'express-formidable';
 
 import subscriptionRoute from "./routes/subsCriptionRoute.js"
-
+// subscription cron
+import subscription from "./middleware/subscriptionMiddleware.js";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -83,7 +84,7 @@ app.use(express.static(path.join(__dirname, "./client/build")));
 app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "./client/build/index.html"));
 });
-
+subscription();
 app.use(formidable());
 app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)

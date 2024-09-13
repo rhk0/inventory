@@ -1,12 +1,12 @@
 import cron from "node-cron";
-import User from "../models/userModel.js"; // Adjust the path to your User model
-import { addDays } from "date-fns";
+import User from "../models/userModel.js"; 
+import { addDays, differenceInDays } from "date-fns"; 
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); 
 
-// Create a Nodemailer transporter
+
 let transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -17,26 +17,36 @@ let transporter = nodemailer.createTransport({
 
 const subscription = async () => {
   try {
-    const users = await User.find({role:2,status:"Active"}).populate("paymentValidation");
+    const users = await User.find({ role: 1, status: "Active" }).populate("paymentValidation");
 
-
-    const paymentValidations = users.map(user => user.paymentValidation);
-  // console.log(users,"usersss")
     const today = new Date();
-    
+
     users.forEach(async (user) => {
       const warningDate3Days = addDays(user.endDate, -3);
       const warningDate2Days = addDays(user.endDate, -2);
       const warningDate1Day = addDays(user.endDate, -1);
 
-      if (user.endDate <= today) {
-       console.log(user)
+     
+      if (user.isFreeTrial && differenceInDays(today, user.createdAt) >= 7) {
+        user.isFreeTrial = false;
         user.status = "Inactive";
         await user.save();
-            // Send email when status changes to "Inactive"
+        console.log(`Free trial expired for user: ${user.email}`);
+        
+     
+        let smd = `Dear ${user.cakeOwnerName}, your free trial has expired. Please choose a subscription plan to continue using our services.`;
+        await sendWarningEmail(user.email, smd);
+      }
+
+      // Check for subscription expiry
+      if (user.endDate <= today) {
+        console.log(user);
+        user.status = "Inactive";
+        await user.save();
+        
+        // Send email when status changes to "Inactive"
         let smd = `Dear ${user.cakeOwnerName}, your subscription has expired on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
-      await sendWarningEmail(user.email, smd);
-    
+        await sendWarningEmail(user.email, smd);
 
       } else if (warningDate3Days <= today && user.status === "Active") {
         let smd = `Dear ${user.cakeOwnerName}, your subscription will expire in 3 days on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
@@ -68,7 +78,7 @@ const sendWarningEmail = async (email, message) => {
   }
 };
 
-// Schedule the subscription function to run daily at midnight
-cron.schedule("0 0 * * *", subscription);
+
+cron.schedule("* * * * *", subscription); 
 
 export default subscription;

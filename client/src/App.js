@@ -15,6 +15,7 @@ import Landing from "./landing/Landing.js";
 import FreeTriel from "./landing/FreeTriel.js";
 import { SuperAdminProtectedRoute } from "./components/Routes/SuperAdminProtectedRoute.js";
 import SuperAdminRoute from "./components/Routes/SuperAdminRoute.js";
+import SubscriptionCheckout from "./components/middlewares/SubscriptionCheckout.js";
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
           <Route path="/otpverification" element={<Otpverification />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/CompanyRegistration" element={<CompanyRegistration />} />
-          
+           <Route path ="/checkOut" element={<SubscriptionCheckout/>}/>
          
           <Route path="/admin/*" element={<AdminProtectedRoute />}>
             <Route path="*" element={<AdminRoutes />} />
