@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const SalesEstimateSchema = new mongoose.Schema({
+  userId:{type:mongoose.Schema.Types.ObjectId,ref:"users"},
   date: { type: String },
   estimateNo: { type: String },
   salesType: { type: String },
@@ -25,20 +26,28 @@ const SalesEstimateSchema = new mongoose.Schema({
       productName: { type: String },
       hsnCode: { type: String },
       qty: { type: Number },
-      uom: { type: Number },
+      units: { type: String },  
       mrp: { type: Number },
-      discount: { type: Number },
-      cgst: { type: Number },
-      sgst: { type: Number },
-      igst: { type: Number },
+      discountpercent: { type: Number },
+      discountRS: { type: Number },
+      taxable: { type: Number },
+      cgstpercent: { type: Number },
+      cgstRS: { type: Number },
+
+      sgstpercent: { type: Number },
+      sgstRS: { type: Number },
+
+      igstpercent: { type: Number },
+      igstRS: { type: Number },
+
       totalValue: { type: Number },
     },
   ],
+  otherChargesDescriptions:{type:String},
+  otherCharges:{type:String},
   narration:{type:String},
-  otherChargesDescriptions:{type :String},
   grossAmount:{type :String},
-  totalGstAmount:{type :String},
-  otherCharges:{type :String},
+  GstAmount:{type :String},
   netAmount:{type :String},
 });
 

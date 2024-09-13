@@ -7,6 +7,7 @@ import Test from "./Test";
 import { useAuth } from "../context/Auth";
 import SuperAdminSideBar from "../pages/SupeAdmin/SuperAdminSideBar.js";
 import Logout from "../pages/admin/Logout.js";
+import SubscriptionPlans from "../pages/SupeAdmin/SubsCription/SubscriptionPlans.js";
 const SuperAdminRoute = () => {
   const [auth] = useAuth();
 
@@ -25,12 +26,13 @@ const SuperAdminRoute = () => {
       />
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/dash" element={<Home />} /> */}
+       
 
         <Route path="/*" element={<Test />} /> 
-        {/* <Route path="/companyregistration" element={<CompanyRegistration />} /> */}
+        <Route path="/subscriptionPlans" element={<SubscriptionPlans/>}/>
+       
         <Route path="log-out" element={<Logout/>} />
-
+       
 
       </Routes>
     </div>

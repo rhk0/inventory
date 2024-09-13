@@ -94,7 +94,7 @@
 
 .nestedlist{
   padding: 0px 29px 0px 14px;
-  font-size: 18px;
+  font-size: 10px;
 
 }
 
@@ -119,8 +119,9 @@
   background-color: #60207d;
   cursor: pointer;
   font-weight: bolder;
+  font-family: Mongolian Baliti;
   border-radius: 5px;
-  font-family: "Mongolian Baiti";
+  
 }
 
 .sidebar-list-item::after {
@@ -179,14 +180,22 @@
   /* font-size: large; */
 }
 .innerlist{
-  font-size: 28px;
+  font-size: 25px;
+
 }
 
 .innerlist :hover {
   text-decoration: none;
   color: #eadeeb;
-  font-size: 28px;
+  font-size: 25px;
 }
+
+.innerlistsuperadmin{
+  font-size: 23px;
+  margin-top: 15px;
+}
+
+
 
 .sidebar-responsive {
   display: inline !important;

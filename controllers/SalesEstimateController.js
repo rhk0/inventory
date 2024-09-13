@@ -23,10 +23,10 @@ export const createSalesEstimateController = async (req, res) => {
       gstType,
       rows,
       otherChargesDescriptions,
+      otherCharges,
       narration,
       grossAmount,
-      totalGstAmount,
-      otherCharges,
+      GstAmount,
       netAmount,
     } = req.body;
 
@@ -59,10 +59,10 @@ export const createSalesEstimateController = async (req, res) => {
       gstType,
       rows,
       otherChargesDescriptions,
+      otherCharges,
       narration,
       grossAmount,
-      totalGstAmount,
-      otherCharges,
+      GstAmount,
       netAmount,
     });
 

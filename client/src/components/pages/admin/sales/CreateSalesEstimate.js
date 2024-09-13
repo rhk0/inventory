@@ -67,10 +67,21 @@ const CreateSalesEstimate = () => {
     narration: "",
     otherChargesDescriptions: "",
     grossAmount: "",
-    totalGstAmount: "",
+    GstAmount: "",
     otherCharges: "",
     netAmount: "",
   });
+
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+
+  const handleOtherChargesDescriptionChange = (event) => {
+    const value = event.target.value;
+    setOtherChargesDescriptions(value);
+    setFormData((prev) => ({
+      ...prev,
+      otherChargesDescriptions: value, // Store in formData
+    }));
+  };
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -98,7 +109,19 @@ const CreateSalesEstimate = () => {
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
-    setTotalValue((prevTotal) => prevTotal + newCharges);
+
+    setFormData((prev) => ({
+      ...prev,
+      otherCharges: newCharges,
+    }));
+  };
+  const handleOtherChargesSave = () => {
+    setFormData((prev) => ({
+      ...prev,
+      otherCharges: otherCharges.toFixed(2),
+      otherChargesDescriptions: otherChargesDescriptions,
+    }));
+    setIsModalOtherChargesOpen(false);
   };
 
   useEffect(() => {
@@ -121,15 +144,20 @@ const CreateSalesEstimate = () => {
 
   const handlePaymentTermChange = (e) => {
     const value = e.target.value;
-    setPaymentTerm(value); // Update local state for other related logic
+    setPaymentTerm(value);
     setFormData((prev) => ({
       ...prev,
-      paymentTerm: value, // Update formData
+      paymentTerm: value,
     }));
   };
 
   const handleGstTypeChange = (e) => {
-    setGstType(e.target.value);
+    const value = e.target.value;
+    setGstType(value);
+    setFormData((prev) => ({
+      ...prev,
+      gstType: value,
+    }));
   };
 
   // State for modal visibility
@@ -170,12 +198,30 @@ const CreateSalesEstimate = () => {
     }));
   };
 
-  const handleBillingAddressChange = (e) => setBillingAddress(e.target.value);
-  const handleReverseChargeChange = (e) => setReverseCharge(e.target.value);
+  const handleBillingAddressChange = (e) => {
+    const value = e.target.value;
+    setBillingAddress(value);
+    setFormData((prev) => ({
+      ...prev,
+      billingAddress: value,
+    }));
+  };
+  const handleReverseChargeChange = (e) => {
+    const value = e.target.value;
+    setReverseCharge(value);
+    setFormData((prev) => ({
+      ...prev,
+      reverseCharge: value,
+    }));
+  };
 
   // Function to handle transport detail change
   const handleTransportDetailChange = (field, value) => {
     setTransportDetails((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
   const handleRowChange = (index, field, value) => {
     const newRows = [...rows];
@@ -229,18 +275,18 @@ const CreateSalesEstimate = () => {
 
   const calculateTotals = () => {
     let grossAmount = 0;
-    let totalGstAmount = 0;
+    let GstAmount = 0;
 
     rows.forEach((row) => {
       grossAmount += row.taxableValue;
-      totalGstAmount += row.cgst + row.sgst + row.igst;
+      GstAmount += row.cgst + row.sgst + row.igst;
     });
 
-    const netAmount = grossAmount + totalGstAmount;
-    return { grossAmount, totalGstAmount, netAmount };
+    const netAmount = grossAmount + GstAmount;
+    return { grossAmount, GstAmount, netAmount };
   };
 
-  const { grossAmount, totalGstAmount, netAmount } = calculateTotals();
+  const { grossAmount, GstAmount, netAmount } = calculateTotals();
 
   // Function to handle Save and Print
 
@@ -276,6 +322,8 @@ const CreateSalesEstimate = () => {
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
         units: selectedProduct.units,
+        productName: selectedProduct.productName, // Ensure productName is updated here
+
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice,
         quantity: selectedProduct.quantity,
         // Add any other fields you want to auto-fill here
@@ -295,18 +343,59 @@ const CreateSalesEstimate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      const updatedFormData = {
+        ...formData,
+        rows: rows.map((row) => ({
+          itemCode: row.itemCode,
+          productName: row.productName,
+          hsnCode: row.hsnCode,
+          qty: row.quantity,
+          uom: row.units,
+          mrp: row.maxmimunRetailPrice,
+
+          discountpercent: row.discountpercent,
+          discountRS: row.discountRS,
+          taxable: row.taxable,
+          cgstpercent: row.cgstpercent,
+          cgstRS: row.cgstRS,
+          sgstpercent: row.sgstpercent,
+          sgstRS: row.sgstRS,
+          igstpercent: row.igstpercent,
+          igstRS: row.igstRS,
+          totalValue: row.totalValue,
+
+          // discount: row.discount,
+          // taxableValue: row.taxableValue,
+          // cgst: row.cgst,
+          // sgst: row.sgst,
+          // igst: row.igst,
+          // totalValue: row.totalValue,
+        })),
+        grossAmount: grossAmount.toFixed(2),
+        GstAmount: GstAmount.toFixed(2),
+        otherCharges: otherCharges.toFixed(2),
+        otherChargesDescriptions: otherChargesDescriptions,
+
+        netAmount: netAmount.toFixed(2),
+      };
+
+      console.log("Form Data:", updatedFormData); // Log to ensure it's correct
+
       const response = await axios.post(
         "/api/v1/salesEstimateRoute/createSalesEstimatet",
-        formData
+        updatedFormData
       );
-      console.log(response, "sdkfj");
+
+      console.log(response, "Response from server");
 
       if (response) {
-        toast.success("sales estimate Created Successfully...");
+        toast.success("Sales estimate created successfully...");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("Failed to create sales estimate. Please try again.");
     }
   };
 
@@ -571,7 +660,7 @@ const CreateSalesEstimate = () => {
 
         {/* Items Section */}
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse  overflow-x-auto">
+          <table className="w-full border-collapse overflow-x-auto">
             <thead>
               <tr>
                 <th className="border p-2">#</th>
@@ -579,10 +668,10 @@ const CreateSalesEstimate = () => {
                 <th className="border p-2">Product Name</th>
                 <th className="border p-2">HSN Code</th>
                 <th className="border p-2">Qty</th>
-                <th className="border p-2">units</th>
+                <th className="border p-2">Units</th>
                 <th className="border p-2">MRP</th>
                 <th className="border p-2">
-                  Discount{" "}
+                  Discount
                   <div className="flex justify-between">
                     <span className="mr-16">%</span> <span>RS</span>
                   </div>
@@ -637,6 +726,7 @@ const CreateSalesEstimate = () => {
                   <td className="border p-2">
                     <select
                       id="product-select"
+                      value={row.productName}
                       onChange={(e) =>
                         handleProductSelect(index, e.target.value)
                       }
@@ -669,7 +759,7 @@ const CreateSalesEstimate = () => {
                       type="number"
                       value={row.quantity}
                       onChange={(e) =>
-                        handleRowChange(index, "qty", e.target.value)
+                        handleRowChange(index, "quantity", e.target.value)
                       }
                       className="w-full"
                     />
@@ -698,26 +788,25 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border ">
+                  <td className="border">
                     <div className="p-1 flex gap-1">
                       <input
                         type="number"
-                        value={row.retailDiscount}
+                        value={row.discountpercent}
                         onChange={(e) =>
                           handleRowChange(
                             index,
-                            "retailDiscount",
+                            "discountpercent",
                             e.target.value
                           )
                         }
                         className="w-full"
                       />
-                      <td className=""></td>
                       <input
                         type="number"
-                        value={row.discount}
+                        value={row.discountRS}
                         onChange={(e) =>
-                          handleRowChange(index, "discount", e.target.value)
+                          handleRowChange(index, "discountRS", e.target.value)
                         }
                         className="w-full"
                       />
@@ -731,33 +820,68 @@ const CreateSalesEstimate = () => {
                           <td className="border p-2">
                             <input
                               type="number"
-                              value={row.taxableValue}
+                              value={row.taxable}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  "taxableValue",
+                                  "taxable",
                                   e.target.value
                                 )
                               }
                               className="w-full"
                             />
                           </td>
-                          <td className="border ">
-                            <div className="p-1 flex  gap-1">
+                          <td className="border">
+                            <div className="p-1 flex gap-1">
                               <input
                                 type="number"
-                                value={row.sgst}
+                                value={row.cgstpercent}
                                 onChange={(e) =>
-                                  handleRowChange(index, "sgst", e.target.value)
+                                  handleRowChange(
+                                    index,
+                                    "cgstpercent",
+                                    e.target.value
+                                  )
                                 }
                                 className="w-full"
                               />
-                              <td className=""></td>
                               <input
                                 type="number"
-                                value={row.sgst}
+                                value={row.cgstRS}
                                 onChange={(e) =>
-                                  handleRowChange(index, "sgst", e.target.value)
+                                  handleRowChange(
+                                    index,
+                                    "cgstRS",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full"
+                              />
+                            </div>
+                          </td>
+                          <td className="border">
+                            <div className="p-1 flex gap-1">
+                              <input
+                                type="number"
+                                value={row.sgstpercent}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "sgstpercent",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full"
+                              />
+                              <input
+                                type="number"
+                                value={row.sgstRS}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "sgstRS",
+                                    e.target.value
+                                  )
                                 }
                                 className="w-full"
                               />
@@ -766,38 +890,51 @@ const CreateSalesEstimate = () => {
                         </>
                       )}
                       {gstType === "IGST" && (
-                        <td className="border p-2">
-                          <input
-                            type="number"
-                            value={row.taxableValue}
-                            onChange={(e) =>
-                              handleRowChange(index, "igst", e.target.value)
-                            }
-                            className="w-full"
-                          />
-                        </td>
+                        <>
+                          <td className="border p-2">
+                            <input
+                              type="number"
+                              value={row.taxable}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  index,
+                                  "taxable",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full"
+                            />
+                          </td>
+                          <td className="border p-2">
+                            <div className="flex gap-1">
+                              <input
+                                type="number"
+                                value={row.igstpercent}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "igstpercent",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full"
+                              />
+                              <input
+                                type="number"
+                                value={row.igstRS}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "igstRS",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full"
+                              />
+                            </div>
+                          </td>
+                        </>
                       )}
-                      <td className="border p-2">
-                        <div className="flex">
-                          <input
-                            type="number"
-                            value={row.igst}
-                            onChange={(e) =>
-                              handleRowChange(index, "igst", e.target.value)
-                            }
-                            className="w-full"
-                          />
-                          <td className="p-1"></td>
-                          <input
-                            type="number"
-                            value={row.igst}
-                            onChange={(e) =>
-                              handleRowChange(index, "igst", e.target.value)
-                            }
-                            className="w-full"
-                          />
-                        </div>
-                      </td>
                     </>
                   )}
                   <td className="border p-2">
@@ -810,13 +947,13 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className=" p-1 gap-2 flex">
+                  <td className="p-1 gap-2 flex">
                     <button
                       onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white p-1 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+                      className="bg-red-500 text-white p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
                     >
                       <svg
-                        xmlns="http//www.w3.org/2000/svg"
+                        xmlns="http://www.w3.org/2000/svg"
                         className="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -836,6 +973,7 @@ const CreateSalesEstimate = () => {
             </tbody>
           </table>
         </div>
+
         <button
           onClick={addRow}
           className="bg-green-500 text-white p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
@@ -890,17 +1028,21 @@ const CreateSalesEstimate = () => {
                   <input
                     type="text"
                     id="other-charges"
-                    // value={otherChargesDescriptions}
-                    className="border p-2 w-full  rounded"
+                    value={otherChargesDescriptions} // Ensure this is controlled
+                    onChange={(e) =>
+                      setOtherChargesDescriptions(e.target.value)
+                    } // Ensure change handler updates state
+                    className="border p-2 w-full rounded"
                   />
                 </div>
                 <div>
                   <label>Other Charges</label>
                   <input
                     type="text"
-                    onChange={handleOtherChargesChange}
+                    value={otherCharges}
+                    onChange={(e) => handleOtherChargesChange(e)}
                     placeholder="Enter other charges"
-                    className="border p-2 w-full  rounded"
+                    className="border p-2 w-full rounded"
                   />
                 </div>
               </div>
@@ -912,8 +1054,8 @@ const CreateSalesEstimate = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-blue-500 text-white p-2"
+                  onClick={handleOtherChargesSave}
+                  className="bg-gray-500 text-white p-2 mr-2"
                 >
                   Save
                 </button>
@@ -927,8 +1069,14 @@ const CreateSalesEstimate = () => {
             <label className="font-bold">Narration</label>
             <br />
             <textarea
-              // value={billingAddress}
-              // onChange={handleBillingAddressChange}
+              name="narration"
+              value={formData.narration}
+              onChange={(e) => {
+                setFormData((prevData) => ({
+                  ...prevData,
+                  narration: e.target.value,
+                }));
+              }}
               className="bg-black text-white border p-1 w-full  rounded"
             />
           </div>
@@ -949,7 +1097,7 @@ const CreateSalesEstimate = () => {
                   GST Amount
                 </label>
                 <input
-                  value={totalGstAmount.toFixed(2)}
+                  value={GstAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
                   className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
@@ -962,7 +1110,7 @@ const CreateSalesEstimate = () => {
               </label>
               <input
                 value={otherCharges}
-                // onChange={handleBillingAddressChange}
+                onChange={handleOtherChargesChange}
                 className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>

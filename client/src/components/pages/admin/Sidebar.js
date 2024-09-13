@@ -4,6 +4,16 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 
+import {
+  MdDashboard,
+  MdInventory,
+  MdPointOfSale,
+  MdSettings,
+  MdExitToApp,
+  MdAccountBalance,
+} from "react-icons/md";
+import { FaUsers, FaShoppingCart, FaMoneyBillWave } from "react-icons/fa";
+
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showParties, setParties] = useState(false);
   const [showTransport, setTransport] = useState(false);
@@ -143,7 +153,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <div className="flex justify-between items-center gap-5">
           <div className="flex items-center">
             <img
-              src="https://manasvitech.in/images/white-logo.png"
+              src="https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png"
               alt="Company Logo"
               className="h-8"
             />
@@ -162,8 +172,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* Dashboard */}
         <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
-            <Link to="/admin/dash" className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white ">
-              <span>Admin Dashboard</span>
+            <Link
+              to="/admin/dash"
+              className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white "
+            >
+              <MdDashboard className="mr-2" /> <span>Admin Dashboard</span>
             </Link>
           </a>
         </li>
@@ -176,7 +189,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               toggleParties();
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
-          >Parties
+          >
+            {" "}
+            <span className="flex ">
+              {" "}
+              <FaUsers className="mr-2 mt-2" />
+              Parties
+            </span>
             {/* <span className="">Parties</span> */}
             {!showParties ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
@@ -314,7 +333,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setTransport(!showTransport)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Transport</span>
                   {!showTransport ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -324,7 +343,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     <li>
                       <Link
                         to="/admin/createtranspoter"
-                        className="flex items-center text-white nesteditem p-1"
+                        className="flex items-center text-white nesteditem  p-1"
                       >
                         Create Transporter
                       </Link>
@@ -343,7 +362,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             </ul>
           )}
         </li>
-     
+
         {/* Inventory */}
         <li className="px-1 py-2 ">
           <button
@@ -353,7 +372,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white "
           >
-            <span className="">Inventory</span>
+            <span className="flex ">
+              {" "}
+              <MdInventory className="mr-2 mt-2" />
+              Inventory
+            </span>
             {!showInventory ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showInventory && (
@@ -473,7 +496,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
           >
-            <span className="">Sales</span>
+            <span className="flex">
+              {" "}
+              <MdPointOfSale className="mr-2 mt-2" />
+              Sales
+            </span>
             {!showSales ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showSales && (
@@ -604,7 +631,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="">Purchase</span>
+            <span className="flex ">
+              {" "}
+              <FaShoppingCart className="mr-2 mt-2" />
+              Purchas
+            </span>
             {!showPurches ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showPurches && (
@@ -686,7 +717,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="">cash</span>
+            <span className="flex">     <FaMoneyBillWave className="mr-2 mt-2" />cash</span>
             {!showCash ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showCash && (
@@ -733,9 +764,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               setBankTransaction(!showAccount);
               toggleAccount();
             }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white p-1"
+            className="w-full sidebar-list-item flex items-center innerlist sidebar-list-item justify-between focus:outline-none text-white p-1"
           >
-            <span className="">Account</span>
+            <span className="flex">  <MdAccountBalance className="mr-2 mt-2" />Account</span>
             {!showAccount ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showAccount && (
@@ -744,9 +775,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setShowBankTransction(!showBankTransaction)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center  innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
-                  <span>Bank Transaction</span>
+                  <span className="text-nowrap">Bank Transaction</span>
                   {!showBankTransaction ? (
                     <IoIosArrowForward />
                   ) : (
@@ -758,7 +789,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     <li>
                       <Link
                         to="/admin/bankTobankTransfer"
-                        className="flex items-center text-white nesteditem p-1"
+                        className="flex items-center  text-white nesteditem p-1"
                       >
                         Bank to Bank Transfer
                       </Link>
@@ -785,7 +816,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setExpenses(!showExpenses)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center nestedlist  justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Expenses</span>
                   {!showExpenses ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -823,7 +854,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 </button>
                 {showIncome && (
                   <ul className="ml-4">
-                    
                     <li>
                       <Link
                         to="/admin/AddIncome"
@@ -856,7 +886,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="">Settings</span>
+            <span className="flex">  <MdSettings className="mr-2 mt-2" />Settings</span>
             {!showSettings ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showSettings && (
@@ -902,7 +932,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           onClick={closeSidebar}
         >
           <Link to="/admin/log-out" class="">
-            <span>Log Out</span>
+            <span className="flex"> <MdExitToApp className="mr-2 mt-2" />Log Out</span>
           </Link>
         </li>
       </ul>
