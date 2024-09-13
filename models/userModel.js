@@ -38,7 +38,25 @@ const userSchema = mongoose.Schema({
         type:Number,
         required:true,
         default:0,
-    }
+    },
+    status: {
+        type: String,
+        enum: ["Active", "Inactive"],
+      },
+     paymentValidation:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"subscriptionPlan"
+     },
+      startDate: {
+        type: Date,
+      },
+      endDate: {
+        type: Date,
+      },
+      isFreeTrial: {
+        type: Boolean,
+        default: true,
+      },
 },{
     timestamps:true,
 })

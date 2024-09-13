@@ -10,8 +10,8 @@ const node_cache = new NodeCache({ stdTTL: 120 });
     
 export const userRegisterController = async (req, res) => {
   try {             
-    const {
-      businessName,
+    const {        
+      businessName,    
       userName,
       address,
       contact,  
