@@ -9,12 +9,12 @@ const ManagePayOut = () => {
   const [editModal, setEditModal] = useState(false);
 
   // Open view modal
-  const handleView = (index) => {
+  const handleView = () => {
     setViewModal(true);
   };
 
   // Open edit modal
-  const handleEdit = (index) => {
+  const handleEdit = () => {
     setEditModal(true);
   };
 
@@ -45,12 +45,11 @@ const ManagePayOut = () => {
       <h1 className="text-center text-3xl bg-gray-100 text-black cucolor">
         Manage Pay Out
       </h1>
-
       <table className="w-full border-collapse border border-gray-300 mt-4">
         <thead className="bg-gray-200">
           <tr>
             <th className="border border-gray-300">No.</th>
-            <th className="border border-gray-300 p-2">Invoice No.</th>
+            <th className="border border-gray-300 p-2">Invoice No</th>
             <th className="border border-gray-300 p-2">Payment Amount</th>
             <th className="border border-gray-300 p-2">Balance Amount</th>
             <th className="border border-gray-300 p-2">Actions</th>
@@ -331,7 +330,7 @@ const ManagePayOut = () => {
               <thead className="bg-gray-200">
                 <tr>
                   <th className="border border-gray-300 p-2">No.</th>
-                  <th className="border border-gray-300 p-2">Invoice No.</th>
+                  <th className="border border-gray-300 p-2">Invoice No</th>
                   <th className="border border-gray-300 p-2">Invoice Amount</th>
                   <th className="border border-gray-300 p-2">Payment Amount</th>
                   <th className="border border-gray-300 p-2">Balance Amount</th>

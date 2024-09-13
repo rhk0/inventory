@@ -43,7 +43,6 @@ const ManageCategory = () => {
     try {
       await axios.delete(`/api/v1/auth/deletecategory/${_id}`);
       toast.success("Category deleted successfully");
-
       fetchCategories();
     } catch (error) {
       toast.error("Failed to delete category");

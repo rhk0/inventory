@@ -47,13 +47,14 @@ import AddExpense from "../pages/admin/accounts/expenses/AddExpense.js";
 import ManageExpense from "../pages/admin/accounts/expenses/ManageExpense.js";
 import AddIncome from "../pages/admin/accounts/income/AddIncome.js";
 import ManageIncome from "../pages/admin/accounts/income/ManageIncome.js";
-import Pos from "../pages/admin/sales/Pos.js"
-import ManagePayIn from "../pages/admin/sales/ManagePayIn.js"
-import TotalSalesList from "../pages/admin/sales/TotalSalesList.js"
+import Pos from "../pages/admin/sales/Pos.js";
+import PayIn from "../pages/admin/sales/PayIn.js";
+import ManagePayIn from "../pages/admin/sales/ManagePayIn.js";
+import TotalSalesList from "../pages/admin/sales/TotalSalesList.js";
 import PurchesReturn from "../pages/admin/purchase/PurchesReturn.js";
 import CompanyRegistration from "../auth/CompanyRegistration.js";
 import PurchesInvoice from "../pages/admin/purchase/PurchesInvoice.js";
-import PayIn from "../pages/admin/sales/PayIn.js";
+
 import CreatePurchaseOrder from "../pages/admin/purchase/CreatePurchaseOrder.js";
 import PayOut from "../pages/admin/purchase/PayOut.js";
 import ManagePayOut from "../pages/admin/purchase/ManagePayOut.js";
@@ -80,7 +81,7 @@ const AdminRoute = () => {
         {/* <Route path="/dash" element={<Home />} /> */}
 
         <Route path="/*" element={<Test />} />
-        {/* rahul routing */}      
+        {/* rahul routing */}
         <Route path="/companyregistration" element={<CompanyRegistration />} />
         <Route path="/CreateSupplier" element={<CreateSupplier />} />
         <Route path="/ManageSupplier" element={<ManageSupplier />} />
@@ -98,7 +99,7 @@ const AdminRoute = () => {
         <Route path="addsubcategory" element={<AddSubCategory />} />
         <Route path="addbrand" element={<AddBrand />} />
         <Route path="addstock" element={<StockUnit />} />
-       
+
         <Route path="AddSubBrand" element={<AddSubBrand />} />
         <Route path="ManageCategory" element={<ManageCategory />} />
         <Route path="managesubcategory" element={<ManageSubCategory />} />
@@ -128,8 +129,7 @@ const AdminRoute = () => {
         <Route path="TotalSalesList" element={<TotalSalesList />} />
 
         <Route path="purchasereturn" element={<PurchesReturn />} />
-        
-       
+
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />
         <Route path="salesreturn" element={<CreateSalesReturn />} />

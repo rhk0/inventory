@@ -1,6 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const PayOut = () => {
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageSupplier");
+        setSuppliers(response.data.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    };
+
+    fetchSuppliers();
+  }, []);
+
+  const handleSupplierChange = (e) => {
+    setSelectedSupplier(e.target.value);
+  };
+
   const [rows, setRows] = useState([
     { invoiceNo: "", paymentAmount: "", balanceAmount: "" },
   ]);
@@ -11,9 +32,11 @@ const PayOut = () => {
   };
 
   const removeRow = (index) => {
-    const newRows = [...rows];
-    newRows.splice(index, 1);
-    setRows(newRows);
+    if (rows.length > 1) {
+      const newRows = [...rows];
+      newRows.splice(index, 1);
+      setRows(newRows);
+    }
   };
 
   const handlePaymentModeChange = (e) => {
@@ -47,9 +70,18 @@ const PayOut = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block">Select Supplier</label>
-          <select className="w-full p-2 border border-gray-300 rounded">
-            <option>Select Supplier</option>
+          <label className="block"> Supplier Name</label>
+          <select
+            className="w-full p-2 border border-gray-300 rounded"
+            value={selectedSupplier}
+            onChange={handleSupplierChange}
+          >
+            <option value="">Select Supplier</option>
+            {suppliers.map((supplier) => (
+              <option key={supplier._id} value={supplier._id}>
+                {supplier.name}
+              </option>
+            ))}
           </select>
         </div>
         <div>
@@ -137,7 +169,7 @@ const PayOut = () => {
                     className="bg-red-500 text-white p-1 rounded"
                     onClick={() => removeRow(index)}
                   >
-                    ✖
+                    ➖
                   </button>
                   <button
                     className="bg-green-500 text-white p-1 rounded"
@@ -156,7 +188,7 @@ const PayOut = () => {
         <label className="block">Total</label>
         <input
           type="text"
-          className="w-1/4 p-2 border border-gray-300 rounded"
+          className="w-1/3 p-2 border border-gray-300 rounded"
         />
       </div>
 
@@ -165,7 +197,9 @@ const PayOut = () => {
         <textarea className="w-1/2 p-2 border border-gray-300 rounded"></textarea>
       </div>
 
-      <button className="mt-4 bg-blue-500 text-white p-2 rounded">Save</button>
+      <button className="mt-4 bg-blue-500 text-white p-2 px-8 rounded">
+        Save
+      </button>
     </div>
   );
 };

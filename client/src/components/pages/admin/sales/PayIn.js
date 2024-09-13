@@ -1,6 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const PayIn = () => {
+  const [customer, setCustomer] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageCustomer");
+        setCustomer(response.data.data);
+      } catch (error) {
+        console.error("Error fetching customer:", error);
+      }
+    };
+    fetchCustomer();
+  }, []);
+
+  const handleCustomerChange = (e) => {
+    setSelectedCustomer(e.target.value);
+  };
+
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -65,10 +85,17 @@ const PayIn = () => {
           <label className="text-md font-bold text-black">
             Select Customer
           </label>
-          <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
-            <option value="Customer1">Customer1</option>
-            <option value="Customer2">Customer2</option>
-            {/* Add more options here if needed */}
+          <select
+            className="w-full p-2 border border-gray-300 rounded"
+            value={selectedCustomer}
+            onChange={handleCustomerChange}
+          >
+            <option value="">Select Customer</option>
+            {customer.map((customer) => (
+              <option key={customer._id} value={customer._id}>
+                {customer.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -126,7 +153,6 @@ const PayIn = () => {
               <th className="border border-gray-500 p-1">Bill Amount</th>
               <th className="border border-gray-500 p-1">Received Amount</th>
               <th className="border border-gray-500 p-1">Balance Amount</th>
-              
             </tr>
           </thead>
           <tbody>

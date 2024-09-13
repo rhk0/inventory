@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddReceiptModal from "../modals/AddReciptModel";
 import Modal from "react-modal";
+import axios from "axios";
 const CreateDeliveryChallan = () => {
   // State for form fields
   const [viewModal, setViewModal] = useState(false);
@@ -31,6 +32,25 @@ const CreateDeliveryChallan = () => {
   const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
 
+  const [customer, setCustomer] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageCustomer");
+        setCustomer(response.data.data);
+      } catch (error) {
+        console.error("Error fetching customer:", error);
+      }
+    };
+    fetchCustomer();
+  }, []);
+
+  const handleCustomerChange = (e) => {
+    setSelectedCustomer(e.target.value);
+  };
+
   // Function to handle "Other Charges" button click
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
@@ -52,10 +72,6 @@ const CreateDeliveryChallan = () => {
       setDueDate(formattedDueDate);
     }
   }, [date, paymentTerm]);
-
-  // const [date, setDate] = useState('');
-  // const [paymentTerms, setPaymentTerms] = useState('');
-  // const [dueDate, setDueDate] = useState('');
 
   const handleDateChange = (e) => {
     setDate(e.target.value);
@@ -164,12 +180,9 @@ const CreateDeliveryChallan = () => {
   };
   const openViewModal = (suppliers) => {
     setViewModal(true);
-    
   };
   const closeModal = () => {
-   
     setViewModal(false);
-  
   };
 
   const { grossAmount, totalGstAmount, netAmount } = calculateTotals();
@@ -688,8 +701,7 @@ const CreateDeliveryChallan = () => {
         {/* Top Section */}
         <div className="print">
           <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
-          Create Delivery Challan 
-
+            Create Delivery Challan
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4   gap-4 mb-4">
             <div>
@@ -704,7 +716,7 @@ const CreateDeliveryChallan = () => {
               </label>
             </div>
             <div>
-              <label  className="font-bold" >Sales Type</label>
+              <label className="font-bold">Sales Type</label>
               <select
                 value={salesType}
                 onChange={handleSalesTypeChange}
@@ -715,7 +727,7 @@ const CreateDeliveryChallan = () => {
               </select>
             </div>
             <div>
-              <label  className="font-bold">Challan No.</label>
+              <label className="font-bold">Challan No.</label>
               <input
                 type="text"
                 value={estimateNo}
@@ -724,16 +736,22 @@ const CreateDeliveryChallan = () => {
               />
             </div>
             <div>
-              <label  className="font-bold">Customer Name</label>
-              <input
-                type="text"
-                value={customerName}
-                onChange={handleCustomerNameChange}
-                className="border p-2 w-full  rounded"
-              />
-            </div>           
+              <label className="font-bold">Customer Name</label>
+              <select
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selectedCustomer}
+                onChange={handleCustomerChange}
+              >
+                <option value="">Select Customer</option>
+                {customer.map((customer) => (
+                  <option key={customer._id} value={customer._id}>
+                    {customer.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div>
-              <label  className="font-bold">Place of Supply</label>
+              <label className="font-bold">Place of Supply</label>
               <input
                 type="text"
                 value={placeOfSupply}
@@ -742,7 +760,7 @@ const CreateDeliveryChallan = () => {
               />
             </div>
             <div>
-              <label  className="font-bold">
+              <label className="font-bold">
                 Payment Term (days):
                 <input
                   type="number"
@@ -754,7 +772,7 @@ const CreateDeliveryChallan = () => {
             </div>
 
             <div>
-              <label  className="font-bold">
+              <label className="font-bold">
                 Due Date
                 <input
                   type="text"
@@ -765,19 +783,18 @@ const CreateDeliveryChallan = () => {
               </label>
             </div>
 
-           
             {/* Billing Address Section */}
           </div>
-           {/* Transport Details Section */}
-           <div className="mb-4">
-              {/* <h4 className="font-bold">Transport Details</h4> */}
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-blue-500 text-white p-2"
-              >
-                Transport Details
-              </button>
-            </div>
+          {/* Transport Details Section */}
+          <div className="mb-4">
+            {/* <h4 className="font-bold">Transport Details</h4> */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white p-2"
+            >
+              Transport Details
+            </button>
+          </div>
 
           {/* Modal for Transport Details */}
           {isModalOpen && (
@@ -785,7 +802,6 @@ const CreateDeliveryChallan = () => {
               <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
                 <h4 className="font-bold mb-4">Transport Details</h4>
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                
                   <div>
                     <label>Dispatched Through</label>
                     <input
@@ -842,7 +858,6 @@ const CreateDeliveryChallan = () => {
                       className="border p-2 w-full  rounded"
                     />
                   </div>
-                 
                 </div>
                 <div className="flex justify-end">
                   <button
@@ -912,32 +927,42 @@ const CreateDeliveryChallan = () => {
                   <th className="border p-2">Qty</th>
                   <th className="border p-2">UOM</th>
                   <th className="border p-2">MRP</th>
-                  <th className="border p-2">Discount
-                  <div className="flex"><span className="mr-16">%</span> <span>RS</span></div>
+                  <th className="border p-2">
+                    Discount
+                    <div className="flex">
+                      <span className="mr-16">%</span> <span>RS</span>
+                    </div>
                   </th>
                   {salesType === "GST Invoice" && (
                     <>
                       <th className="border text-nowrap p-2">Taxable Value</th>
                       {gstType === "CGST/SGST" && (
                         <>
-                          <th className="border p-2">CGST
-                          <div className="flex"><span className="mr-16">%</span> <span>RS</span></div>
+                          <th className="border p-2">
+                            CGST
+                            <div className="flex">
+                              <span className="mr-16">%</span> <span>RS</span>
+                            </div>
                           </th>
-                          <th className="border p-2">SGST
-                          <div className="flex"><span className="mr-16">%</span> <span>RS</span></div>
+                          <th className="border p-2">
+                            SGST
+                            <div className="flex">
+                              <span className="mr-16">%</span> <span>RS</span>
+                            </div>
                           </th>
                         </>
                       )}
                       {gstType === "IGST" && (
-                        <th className="border p-2">IGST <br/>
-                        
-                         <div className="flex"><span className="mr-16">%</span> <span>RS</span></div>
+                        <th className="border p-2">
+                          IGST <br />
+                          <div className="flex">
+                            <span className="mr-16">%</span> <span>RS</span>
+                          </div>
                         </th>
                       )}
                     </>
                   )}
                   <th className="border text-nowrap p-2">Total Value</th>
-             
                 </tr>
               </thead>
               <tbody>
@@ -1063,7 +1088,7 @@ const CreateDeliveryChallan = () => {
                             className="w-full"
                           /> */}
                           <span> {row.igst} </span>
-                         <span> {row.igst} </span>
+                          <span> {row.igst} </span>
                         </td>
                       </>
                     )}
@@ -1230,18 +1255,17 @@ const CreateDeliveryChallan = () => {
                   className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
-            
-                <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-                  <label className=" font-bold lg:w-1/2 text-nowrap">
-                    GST Amount
-                  </label>
-                  <input
-                    value={totalGstAmount.toFixed(2)}
-                    // onChange={handleBillingAddressChange}
-                    className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
-                  />
-                </div>
-            
+
+              <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+                <label className=" font-bold lg:w-1/2 text-nowrap">
+                  GST Amount
+                </label>
+                <input
+                  value={totalGstAmount.toFixed(2)}
+                  // onChange={handleBillingAddressChange}
+                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                />
+              </div>
 
               <div className="flex flex-col  lg:flex-row lg:justify-between mb-4">
                 <label className="font-bold lg:w-1/2 text-nowrap">
@@ -1267,36 +1291,34 @@ const CreateDeliveryChallan = () => {
             </div>
           </div>
           {salesType !== "GST Invoice" && (
-          <div className="mt-8 flex justify-center">
-            <button
-              type="button"
-              onClick={() => openViewModal()}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Add Receipt
-            </button>
-          
-            <Modal
-              isOpen={viewModal}
-              onRequestClose={closeModal}
-              contentLabel="View Item Modal"
-              style={{
-                content: {
-                  width: "80%",
-                  height: "90%",
-                  maxWidth: "800px",
-                  margin: "auto",
-                  padding: "5px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  borderRadius: "5px",
-                },
-              }}
-            >
-              <AddReceiptModal
-                closeModal={closeModal}
-              />
-            </Modal>
-          </div>
+            <div className="mt-8 flex justify-center">
+              <button
+                type="button"
+                onClick={() => openViewModal()}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Add Receipt
+              </button>
+
+              <Modal
+                isOpen={viewModal}
+                onRequestClose={closeModal}
+                contentLabel="View Item Modal"
+                style={{
+                  content: {
+                    width: "80%",
+                    height: "90%",
+                    maxWidth: "800px",
+                    margin: "auto",
+                    padding: "5px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "5px",
+                  },
+                }}
+              >
+                <AddReceiptModal closeModal={closeModal} />
+              </Modal>
+            </div>
           )}
 
           {/* Buttons for saving and printing */}

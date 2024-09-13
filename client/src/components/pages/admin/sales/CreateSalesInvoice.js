@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddReceiptModal from "../modals/AddReciptModel";
 import Modal from "react-modal";
+import axios from "axios";
 const CreateSalesInvoice = () => {
   // State for form fields
   const [viewModal, setViewModal] = useState(false);
@@ -30,6 +31,26 @@ const CreateSalesInvoice = () => {
   // const [dueDate, setDueDate] = useState('');
   const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
+
+  const [customer, setCustomer] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageCustomer");
+        setCustomer(response.data.data);
+      } catch (error) {
+        console.error("Error fetching customer:", error);
+      }
+    };
+
+    fetchCustomer();
+  }, []);
+
+  const handleCustomerChange = (e) => {
+    setSelectedCustomer(e.target.value);
+  };
 
   // Function to handle "Other Charges" button click
   const handleOtherChargesChange = (event) => {
@@ -730,12 +751,18 @@ const CreateSalesInvoice = () => {
             </div>
             <div>
               <label className="font-bold">Customer Name</label>
-              <input
-                type="text"
-                value={customerName}
-                onChange={handleCustomerNameChange}
-                className="border p-2 w-full  rounded"
-              />
+              <select
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selectedCustomer}
+                onChange={handleCustomerChange}
+              >
+                <option value="">Select Customer</option>
+                {customer.map((customer) => (
+                  <option key={customer._id} value={customer._id}>
+                    {customer.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="font-bold">Place of Supply</label>
@@ -764,7 +791,6 @@ const CreateSalesInvoice = () => {
                 <input
                   type="text"
                   value={dueDate}
-                  // onChange={(e) => setPaymentTerm(e.target.value)}
                   className="border p-2 w-full text-black rounded"
                 />
               </label>

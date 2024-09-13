@@ -1,6 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const PurchesReturn = () => {
+  const [suppliers, setSuppliers] = useState([]); // State to store supplier data
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageSupplier");
+        setSuppliers(response.data.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    };
+
+    fetchSuppliers();
+  }, []);
+
+  const handleSupplierChange = (e) => {
+    setSelectedSupplier(e.target.value);
+  };
+
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -50,7 +71,6 @@ const PurchesReturn = () => {
       setRows(rows.filter((_, i) => i !== index));
     }
   };
-
 
   const print = () => {
     const printWindow = window.open("", "_blank");
@@ -348,9 +368,17 @@ const PurchesReturn = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
         <div className="flex flex-col">
           <label className="text-md font-bold text-black">Supplier Name</label>
-          <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
-            <option value="Cash"></option>
-            <option value="Online"></option>
+          <select
+            className="w-full p-2 border border-gray-300 rounded"
+            value={selectedSupplier}
+            onChange={handleSupplierChange}
+          >
+            <option value="">Select Supplier</option>
+            {suppliers.map((supplier) => (
+              <option key={supplier._id} value={supplier._id}>
+                {supplier.name}
+              </option>
+            ))}
           </select>
         </div>
         <div className="flex flex-col">
@@ -736,7 +764,6 @@ const PurchesReturn = () => {
           <textarea
             type="text"
             className="mt-1 p-1  w-full border border-gray-500 rounded-md bg-gray-200 "
-            
           />
         </div>
       </div>
@@ -795,7 +822,9 @@ const PurchesReturn = () => {
 
       <div className="mt-4  flex flex-col items-end">
         <div className=" ">
-          <label className="text-md font-bold text-black mr-3">Gross Amount</label>
+          <label className="text-md font-bold text-black mr-3">
+            Gross Amount
+          </label>
           <input
             type="text"
             className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
@@ -829,11 +858,11 @@ const PurchesReturn = () => {
       </div>
 
       <div className="text-center mt-8">
-      <button
+        <button
           onClick={print}
           className="bg-black mr-3 hide-on-print text-white py-2 rounded px-10 text-xl font-bold hover:bg-gray-700"
         >
-          Save 
+          Save
         </button>
         <button
           onClick={print}

@@ -22,8 +22,8 @@ export const createSalesEstimateController = async (req, res) => {
       reverseCharge,
       gstType,
       rows,
-      otherChargesDiscount,
-      othercharges,
+      otherChargesDescriptions,
+      otherCharges,
       narration,
       grossAmount,
       GstAmount,
@@ -31,20 +31,12 @@ export const createSalesEstimateController = async (req, res) => {
     } = req.body;
 
     // Validate required fields (basic validation example)
-    const requiredFields = [
-      date,
-      estimateNo,
-      customerName,
-      billingAddress,
-      rows,
-    ];
-    
-    if (requiredFields.some(field => !field)) {
-      return res.status(400).json({
-        success: false,
-        message: "Required fields are missing",
-      });
-    }
+    // if (!date || !estimateNo || !customerName || !billingAddress) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Required fields are missing",
+    //   });
+    // }
 
     // Create a new instance of the SalesEstimate model
     const newSalesEstimate = new salesEstimateModel({
@@ -66,8 +58,8 @@ export const createSalesEstimateController = async (req, res) => {
       reverseCharge,
       gstType,
       rows,
-      otherChargesDiscount,
-      othercharges,
+      otherChargesDescriptions,
+      otherCharges,
       narration,
       grossAmount,
       GstAmount,

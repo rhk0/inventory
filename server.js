@@ -24,7 +24,9 @@ import salesQuationRoute from "./routes/salesQuationRoute.js"
 import salesInvoiceRoute from "./routes/salesInvoiceRoute.js"
 import deliveryChallanRoute from "./routes/deliveryChallanRoute.js"
 import manufacturerRoute from "./routes/manufacturerRoute.js"
-import salesEstimateRoute from "./routes//salesEstimateRoute.js"
+import salesEstimateRoute from "./routes/salesEstimateRoute.js"
+import expensesRoute from "./routes/expensesRoute.js"
+import incomeRoute from "./routes/incomeRoute.js"
 import formidable from 'express-formidable';
 
 import subscriptionRoute from "./routes/subsCriptionRoute.js"
@@ -69,6 +71,10 @@ app.use("/api/v1/salesQuationRoute",salesQuationRoute)
 app.use("/api/v1/salesInvoiceRoute",salesInvoiceRoute)
 app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
 app.use("/api/v1/salesEstimateRoute",salesEstimateRoute)
+app.use("/api/v1/expensesRoute",expensesRoute)
+app.use("/api/v1/incomeRoute",incomeRoute)
+
+//change dheeru
 //change 
 
 //subscription routes 

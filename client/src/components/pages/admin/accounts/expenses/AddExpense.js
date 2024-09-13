@@ -1,116 +1,341 @@
-import React from "react";
+import React, { useState ,useEffect} from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddExpense = () => {
+  const [formData, setFormData] = useState({
+    date: "",
+    expenseNo: "",
+    expenseType: "",
+    gstType: "",
+    vendor: "",
+    expense: "",
+    amount: 0,
+    gstRate: 0,
+    cgstAmount: 0,
+    sgstAmount: 0,
+    igstAmount: 0,
+    total: 0,
+    narration: "",
+  });
+
+  const [vendor, setVendor] = useState([]);
+  const [selectedVendor, setSelectedVendor] = useState("");
+
+  useEffect(() => {
+    const fetchVendor = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageVendor");
+        setVendor(response.data.data);
+      } catch (error) {
+        console.error("Error fetching suppliers:", error);
+      }
+    };
+
+    fetchVendor();
+  }, []);
+
+  const handleVendorChange = (e) => {
+    setSelectedVendor(e.target.value);
+  };
+
+  // Helper function to calculate GST and Total
+  const calculateGSTAndTotal = (gstType, amount, gstRate) => {
+    let cgstAmount = 0;
+    let sgstAmount = 0;
+    let igstAmount = 0;
+    let total = amount;
+
+    if (gstType === "cgst-sgst") {
+      cgstAmount = (amount * gstRate) / 200; // Half of GST rate
+      sgstAmount = (amount * gstRate) / 200;
+      total = amount + cgstAmount + sgstAmount;
+    } else if (gstType === "igst") {
+      igstAmount = (amount * gstRate) / 100;
+      total = amount + igstAmount;
+    }
+
+    return { cgstAmount, sgstAmount, igstAmount, total };
+  };
+
+  // Handler for input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const updatedData = { ...formData, [name]: value };
+
+    // Recalculate GST and Total when amount, gstRate, or gstType changes
+    if (name === "amount" || name === "gstRate" || name === "gstType") {
+      if (formData.expenseType === "GST") {
+        const { cgstAmount, sgstAmount, igstAmount, total } =
+          calculateGSTAndTotal(
+            updatedData.gstType,
+            parseFloat(updatedData.amount),
+            parseFloat(updatedData.gstRate)
+          );
+        updatedData.cgstAmount = cgstAmount;
+        updatedData.sgstAmount = sgstAmount;
+        updatedData.igstAmount = igstAmount;
+        updatedData.total = total;
+      } else {
+        // For Non-GST expenses
+        updatedData.cgstAmount = 0;
+        updatedData.sgstAmount = 0;
+        updatedData.igstAmount = 0;
+        updatedData.total = parseFloat(updatedData.amount);
+      }
+    }
+
+    setFormData(updatedData);
+  };
+
+  // Handler for GST Type change and resetting GST fields
+  const handleGstTypeChange = (e) => {
+    const gstType = e.target.value;
+    setFormData({
+      ...formData,
+      gstType,
+      cgstAmount: 0,
+      sgstAmount: 0,
+      igstAmount: 0,
+      total: parseFloat(formData.amount), // Reset total to amount without GST
+    });
+  };
+
+  // Handler for form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Mock API call to save expense data
+      console.log(formData, "response");
+      const response = await axios.post(
+        "/api/v1/expensesRoute/create",
+        formData
+      );
+
+      // Reset form after submission
+      setFormData({
+        date: "",
+        expenseNo: "",
+        expenseType: "",
+        gstType: "",
+        vendor: "",
+        expense: "",
+        amount: 0,
+        gstRate: 0,
+        cgstAmount: 0,
+        sgstAmount: 0,
+        igstAmount: 0,
+        total: 0,
+        narration: "",
+      });
+
+      toast.success("expense created successfully");
+    } catch (error) {
+      console.error("Error saving expense:", error);
+      alert("Error saving expense");
+    }
+  };
+
   return (
-    <div className=" p-2 flex justify-center  responsive-container">
+    <div className="p-2 flex justify-center responsive-container">
       <div className="p-2 rounded-lg shadow-lg w-full max-w-7xl">
         <h1 className="text-2xl font-bold mb-4 text-center">Add Expense</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block font-semibold mb-1">Date</label>
-            <input
-              type="date"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-semibold mb-1">Date</label>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-1">Expense No.</label>
+              <input
+                type="text"
+                name="expenseNo"
+                value={formData.expenseNo}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-1">Expense Type</label>
+              <select
+                name="expenseType"
+                value={formData.expenseType}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              >
+                <option value="">Select Expense Type</option>
+                <option value="GST">GST</option>
+                <option value="Non GST">Non GST</option>
+              </select>
+            </div>
+            {formData.expenseType === "GST" && (
+              <div>
+                <label className="block font-semibold mb-1">GST Type</label>
+                <select
+                  name="gstType"
+                  value={formData.gstType}
+                  onChange={handleGstTypeChange}
+                  className="w-full p-2 border border-gray-300 rounded"
+                  required
+                >
+                  <option value="">Select GST Type</option>
+                  <option value="cgst-sgst">CGST + SGST</option>
+                  <option value="igst">IGST</option>
+                </select>
+              </div>
+            )}
+
+            <div>
+              <label className="block font-semibold mb-1">Select Vendor</label>
+              <select
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selectedVendor}
+                onChange={handleVendorChange}
+              >
+                <option value="">Select Vendor</option>
+                {vendor.map((vendor) => (
+                  <option key={vendor._id} value={vendor._id}>
+                    {vendor.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-1">Expense</label>
+              <input
+                type="text"
+                name="expense"
+                value={formData.expense}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-1">Amount</label>
+              <input
+                type="number"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+
+            {formData.expenseType === "GST" && (
+              <>
+                <div>
+                  <label className="block font-semibold mb-1">GST Rate</label>
+                  <select
+                    name="gstRate"
+                    value={formData.gstRate}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded"
+                  >
+                    <option value="5">5%</option>
+                    <option value="12">12%</option>
+                    <option value="18">18%</option>
+                  </select>
+                </div>
+
+                {formData.gstType === "cgst-sgst" && (
+                  <>
+                    <div>
+                      <label className="block font-semibold mb-1">
+                        CGST Amount
+                      </label>
+                      <input
+                        type="number"
+                        name="cgstAmount"
+                        value={formData.cgstAmount}
+                        className="w-full p-2 border border-gray-300 rounded"
+                        readOnly
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold mb-1">
+                        SGST Amount
+                      </label>
+                      <input
+                        type="number"
+                        name="sgstAmount"
+                        value={formData.sgstAmount}
+                        className="w-full p-2 border border-gray-300 rounded"
+                        readOnly
+                      />
+                    </div>
+                  </>
+                )}
+
+                {formData.gstType === "igst" && (
+                  <div>
+                    <label className="block font-semibold mb-1">
+                      IGST Amount
+                    </label>
+                    <input
+                      type="number"
+                      name="igstAmount"
+                      value={formData.igstAmount}
+                      className="w-full p-2 border border-gray-300 rounded"
+                      readOnly
+                    />
+                  </div>
+                )}
+              </>
+            )}
+
+            <div>
+              <label className="block font-semibold mb-1">Total</label>
+              <input
+                type="number"
+                name="total"
+                value={formData.total}
+                className="w-full p-2 border border-gray-300 rounded"
+                readOnly
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-1">Narration</label>
+              <textarea
+                name="narration"
+                value={formData.narration}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block font-semibold mb-1">Expense No.</label>
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
+          <div className="mt-4 text-center">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white py-2 px-4 rounded"
+            >
+              Submit
+            </button>
           </div>
-
-          <div>
-            <label className="block font-semibold mb-1">Expense Type</label>
-            <select className="w-full p-2 border border-gray-300 rounded">
-              <option value="GST">GST</option>
-              <option value="Non GST">Non GST</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1">GST Type</label>
-            <select className="w-full p-2 border border-gray-300 rounded">
-              <option value="gst">GST</option>
-              <option value="non-gst">Non GST</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1">Select Vendor</label>
-            <select className="w-full p-2 border border-gray-300 rounded">
-              <option value="vendor1">Vendor 1</option>
-              <option value="vendor2">Vendor 2</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1">Expense</label>
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1">Amount</label>
-            <input
-              type="number"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1">GST Rate</label>
-            <select className="w-full p-2 border border-gray-300 rounded">
-              <option value="5">5%</option>
-              <option value="12">12%</option>
-              <option value="18">18%</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1">CGST Amount</label>
-            <input
-              type="number"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1">SGST Amount</label>
-            <input
-              type="number"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1">Total</label>
-            <input
-              type="number"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <label className="block font-semibold mb-1">Narration</label>
-          <textarea
-            rows="3"
-            className="w-full p-2 border border-gray-300 rounded"
-          ></textarea>
-        </div>
-
-        <div className="mt-6 flex justify-center">
-          <button className="bg-gray-800 text-white px-6 py-2 rounded hover:bg-gray-700">
-            Save
-          </button>
-        </div>
+        </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };
