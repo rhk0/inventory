@@ -111,7 +111,6 @@ export const createSalesInvoiceController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
-
 export const getAllSalesInvoiceCOntroller = async (req, res) => {
   try {
     const response = await salesInvoiceModel.find();
@@ -132,29 +131,31 @@ export const getAllSalesInvoiceCOntroller = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-export const getAllSalesInvoiceByIdCOntroller = async (req, res) => {
+export const getAllSalesInvoiceByIdController = async (req, res) => {
   try {
-    const _id=req.params;
-    const response = await salesInvoiceModel.find(_id);
-
+    const { id } = req.params;
+    const response = await salesInvoiceModel.find(id);
     if (!response) {
-      return res
-        .status(404)
-        .send({ success: false, message: "Data not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Data not found",
+      });
     }
 
-    return res
-      .status(200)
-      .send({ success: true, message: "Data  found", response });
+    return res.status(200).json({
+      success: true,
+      message: "Data found",
+      invoice: response, // Named it `invoice` for clarity
+    });
   } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .send({ success: false, message: "Internal Server Issue" });
+    console.error("Error fetching sales invoice by ID:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Issue",
+      error: error.message,
+    });
   }
 };
-
-
 export const deletSalesInvoiceByIDController = async (req, res) => {
   try {
     const { _id } = req.params;
@@ -178,7 +179,6 @@ export const deletSalesInvoiceByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-
 export const updateSalesInvoiceByIDController = async (req, res) => {
   try {
     const { _id } = req.params;
@@ -202,18 +202,23 @@ export const updateSalesInvoiceByIDController = async (req, res) => {
     invoice.paymentTerm = updateData.paymentTerm || invoice.paymentTerm;
     invoice.dueDate = updateData.dueDate || invoice.dueDate;
     invoice.receiptDocNo = updateData.receiptDocNo || invoice.receiptDocNo;
-    invoice.dispatchedThrough = updateData.dispatchedThrough || invoice.dispatchedThrough;
+    invoice.dispatchedThrough =
+      updateData.dispatchedThrough || invoice.dispatchedThrough;
     invoice.destination = updateData.destination || invoice.destination;
-    invoice.carrierNameAgent = updateData.carrierNameAgent || invoice.carrierNameAgent;
+    invoice.carrierNameAgent =
+      updateData.carrierNameAgent || invoice.carrierNameAgent;
     invoice.billOfLading = updateData.billOfLading || invoice.billOfLading;
-    invoice.motorVehicleNo = updateData.motorVehicleNo || invoice.motorVehicleNo;
-    invoice.billingAddress = updateData.billingAddress || invoice.billingAddress;
+    invoice.motorVehicleNo =
+      updateData.motorVehicleNo || invoice.motorVehicleNo;
+    invoice.billingAddress =
+      updateData.billingAddress || invoice.billingAddress;
     invoice.reverseCharge = updateData.reverseCharge || invoice.reverseCharge;
     invoice.gstType = updateData.gstType || invoice.gstType;
     invoice.rows = updateData.rows || invoice.rows;
     invoice.cash = updateData.cash || invoice.cash;
     invoice.bank = updateData.bank || invoice.bank;
-    invoice.otherChargesDescription = updateData.otherChargesDescription || invoice.otherChargesDescription;
+    invoice.otherChargesDescription =
+      updateData.otherChargesDescription || invoice.otherChargesDescription;
     invoice.othercharges = updateData.othercharges || invoice.othercharges;
     invoice.narration = updateData.narration || invoice.narration;
     invoice.grossAmount = updateData.grossAmount || invoice.grossAmount;
@@ -234,4 +239,3 @@ export const updateSalesInvoiceByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-
