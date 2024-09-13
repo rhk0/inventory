@@ -1,16 +1,17 @@
 import userModel from "../models/userModel.js";
 import nodemailer from "nodemailer";
 import { hashPassword, comparePassword } from "../middleware/authHelper.js";
-
+import bcrypt from 'bcrypt';
 import NodeCache from "node-cache";
 import JWT from "jsonwebtoken";
+
 
 const node_cache = new NodeCache({ stdTTL: 120 });
     
 export const userRegisterController = async (req, res) => {
   try {             
-    const {
-      businessName,
+    const {        
+      businessName,    
       userName,
       address,
       contact,  
@@ -200,7 +201,8 @@ export const verificationController = async (req, res) => {
       .status(500)
       .send({ success: false, message: "Internal server issue", error });
   }
-};
+};         
+
            
 
 export const loginController = async (req, res) => {
@@ -245,6 +247,68 @@ export const loginController = async (req, res) => {
       .send({ success: false, message: "internal server issue", error });
   }
 };
+export const userUpdateController = async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const { businessName, userName, address, contact, email, password, businessType } = req.body;
+
+    if (!_id) {
+      return res.status(400).send({
+        success: false,
+        message: "User ID is required"
+      });
+    }
+
+    const updates = {};
+
+    if (businessName) updates.businessName = businessName;
+    if (userName) updates.userName = userName;
+    if (address) updates.address = address;
+    if (contact) updates.contact = contact;
+    if (email) updates.email = email;
+    if (businessType) updates.businessType = businessType;
+
+    if (password) {
+      const hashedPassword = await hashPassword(password);
+      updates.password = hashedPassword;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).send({
+        success: false,
+        message: "No update data provided"
+      });
+    }
+
+    const updatedUser = await userModel.findByIdAndUpdate(_id, updates, {
+      new: true,
+      runValidators: true
+    });
+
+    if (!updatedUser) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    return res.send({
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Internal server error",
+      error
+    });
+  }
+};
+
+
+
 
 export const forgetController = async (req, res) => {
   try {

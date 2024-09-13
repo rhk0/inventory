@@ -1,11 +1,12 @@
 import express from "express";
-import { forgetController, loginController, resetPasswordController, userRegisterController, verificationController } from "../controllers/authController.js";
+import { forgetController, loginController, resetPasswordController, userRegisterController, userUpdateController, verificationController } from "../controllers/authController.js";
 import { mailController } from "../middleware/mailController.js";
 import { isAdmin, isStaff, isSuperAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router=express.Router();
 
 router.post('/register',userRegisterController)
+router.put('/updateuser/:_id',requireSignIn,userUpdateController)
 router.post('/mail',mailController)
 router.post('/verification',verificationController )
 router.post('/login',loginController)

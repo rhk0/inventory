@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const SalesEstimateSchema = new mongoose.Schema({
-  userId:{type:mongoose.Schema.Types.ObjectId,ref:"users"},
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
   date: { type: String },
   estimateNo: { type: String },
   salesType: { type: String },
@@ -15,11 +15,10 @@ const SalesEstimateSchema = new mongoose.Schema({
   destination: { type: String },
   carrierNameAgent: { type: String },
   billOfLading: { type: String },
-  motorVehicleNo: { type: String} ,
+  motorVehicleNo: { type: String },
   billingAddress: { type: String },
   reverseCharge: { type: String },
   gstType: { type: String },
-
   rows: [
     {
       itemCode: { type: String },
@@ -33,13 +32,10 @@ const SalesEstimateSchema = new mongoose.Schema({
       taxable: { type: Number },
       cgstpercent: { type: Number },
       cgstRS: { type: Number },
-
       sgstpercent: { type: Number },
       sgstRS: { type: Number },
-
       igstpercent: { type: Number },
       igstRS: { type: Number },
-
       totalValue: { type: Number },
     },
   ],

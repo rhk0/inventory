@@ -77,7 +77,7 @@ app.use("/api/v1/incomeRoute",incomeRoute)
 //change 
 
 //subscription routes 
-
+ 
 app.use("/api/v1/subscription",subscriptionRoute)
 app.use("/uploads",express.static("uploads"));
 
@@ -95,4 +95,4 @@ app.listen(process.env.PORT,async()=>{
     console.log(`Server is Running on port ${process.env.PORT } in ${process.env.DEV_MODE} mode`)
 })
 
-/// server code
+ 
