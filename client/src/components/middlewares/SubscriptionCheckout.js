@@ -39,7 +39,7 @@ const SubscriptionCheckout = () => {
     };
     script.onload = async () => {
       try {
-        const result = await axios.post('/api/v1/payment/create-subs', {
+        const result = await axios.post('/api/v1/payment/createorder', {
           amount: plan.price * 100,
         });
         const { amount, id: order_id, currency } = result.data;
@@ -53,7 +53,7 @@ const SubscriptionCheckout = () => {
           description: 'Transaction to Manasvi',
           order_id: order_id,
           handler: async (response) => {
-            await axios.post('/api/v1/subPayment/paySubPayment', {
+            await axios.post('/api/v1/payment/subpayorder', {
               paymentMode: true,
               amount: amount,
               razorpay: {
@@ -62,7 +62,7 @@ const SubscriptionCheckout = () => {
                 signature: response.razorpay_signature,
               },
               plan: plan,
-              tcManager: _id,
+              customer: _id,
             });
 
             toast.success('Payment Completed Successfully');
@@ -70,7 +70,7 @@ const SubscriptionCheckout = () => {
           prefill: {
             name: 'Manasvi Technologies',
             email: 'staff.manasvi@gmail.com',
-            contact: '1111111111',
+            contact: "6268301547",
           },
           notes: {
             address: '30, Minal Residency Bhopal D.',

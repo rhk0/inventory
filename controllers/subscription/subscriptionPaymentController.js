@@ -1,7 +1,7 @@
-import subPayment from "../models/subPayment.js";
+import subPayment from "../../models/subscription/subscriptionModel.js";
 import Razorpay from "razorpay";
 import crypto from "crypto"; // Import crypto for signature verification
-import userModel from "../models/userModel.js";
+import userModel from "../../models/userModel.js";
 
 // Controller to create a Razorpay order
 export const subPayCreateController = async (req, res) => {
@@ -17,13 +17,14 @@ export const subPayCreateController = async (req, res) => {
     };
 
     const orderRazor = await instance.orders.create(options);
-
-    if (!orderRazor) return res.status(500).send("Some error occurred");
+  
+    if (!orderRazor) 
+      return res.send("Some error occurred");
 
     res.send(orderRazor);
   } catch (error) {
     console.log(error);
-    res.status(500).send(error.message);
+    res.status(500).send(error);
   }
 };
 
@@ -32,7 +33,7 @@ export const subPayCreateController = async (req, res) => {
 // Controller to handle the payment verification
 export const subPayOrderRazorController = async (req, res) => {
   try {
-    const { amount, razorpay, plan, tcManager } = req.body;
+    const { amount, razorpay, plan, customer } = req.body;
     const { orderId, paymentId, signature } = razorpay;
 
     // Verify payment signature
@@ -77,13 +78,13 @@ export const subPayOrderRazorController = async (req, res) => {
       amount: dmt,
       plan: plan,
       razorpay: razorpay,
-      tcManager: tcManager,
+      customer: customer,
       invoiceNo: newInvoice,
     });
     const result = await newOrder.save();
 
    
-    const user = await userModel.findById(tcManager);
+    const user = await userModel.findById(customer);
     if (user) {
       const noOfDay = result.plan[0].duration;
       const edate = user.endDate || new Date();
@@ -91,7 +92,7 @@ export const subPayOrderRazorController = async (req, res) => {
       endDate.setDate(endDate.getDate() + noOfDay);
 
       await userModel.findByIdAndUpdate(
-        tcManager,
+        customer,
         { paymentValidation: result.plan[0]._id, endDate: endDate },
         { new: true }
       );

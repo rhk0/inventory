@@ -44,7 +44,7 @@ const Pricing = () => {
               Subscribe Now to Continue Our Service
             </Typography>
           </Box>
-
+       
 
           {/* Subscription Plans Section */}
           <Box mt={2}>
