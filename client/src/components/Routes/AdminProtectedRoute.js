@@ -33,7 +33,7 @@ export const AdminProtectedRoute = () => {
       authCheck();
     } else {
       setOk(false);
-      setLoading(false);
+     
     }
   }, [auth, navigate]);
 
