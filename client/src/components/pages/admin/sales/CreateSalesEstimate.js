@@ -405,9 +405,7 @@ const CreateSalesEstimate = () => {
         "/api/v1/salesEstimateRoute/createSalesEstimatet",
         updatedFormData
       );
-
-     
-
+      console.log(response,"response")
       if (response) {
         toast.success("Sales estimate created successfully...");
       }
