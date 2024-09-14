@@ -87,6 +87,44 @@ const CreateProduct = () => {
   const [imgs, setimgs] = useState([]);
   const fileInputRef = useRef(null);
 
+  // calculation
+  const [margin, setMargin] = useState(0);
+
+  const calculateProfitAndMargin = () => {
+    const retailPrice = parseFloat(formData.retailPrice) || 0;
+    const landingCost = parseFloat(formData.purchasePriceInGst) || 0;
+    const gstRate = parseFloat(formData.gstRate) || 0;
+    const salesTaxInclude = formData.salesTaxInclude;
+
+    let retailPriceExTax, calculatedProfit, calculatedMargin;
+
+    if (salesTaxInclude) {
+      retailPriceExTax = retailPrice / (1 + gstRate / 100);
+      calculatedProfit = retailPriceExTax - landingCost;
+      calculatedMargin = (calculatedProfit / retailPriceExTax) * 100;
+    } else {
+      calculatedProfit = retailPrice - landingCost;
+      calculatedMargin = (calculatedProfit / retailPrice) * 100;
+    }
+
+    // Update margin in formData
+    setFormData((prevData) => ({
+      ...prevData,
+      retailMargin: calculatedMargin,
+    }));
+
+    setMargin(calculatedMargin);
+  };
+
+  useEffect(() => {
+    calculateProfitAndMargin();
+  }, [
+    formData.retailPrice,
+    formData.purchasePriceInGst,
+    formData.gstRate,
+    formData.salesTaxInclude,
+  ]);
+
   useEffect(() => {
     const fetchManufecturer = async () => {
       try {
@@ -733,6 +771,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             />
           </div>
+
           <div>
             <label className="block font-bold">
               Retail Margin <span className="text-xs">(in %)</span>
@@ -742,7 +781,7 @@ const CreateProduct = () => {
               type="number"
               name="retailMargin"
               className="w-full p-1 border rounded"
-              value={formData.retailMargin}
+              value={margin.toFixed(2)}
               onChange={handleChange}
             />
           </div>
