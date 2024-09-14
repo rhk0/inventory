@@ -279,7 +279,7 @@ const CreateSalesEstimate = () => {
     let GstAmount = 0;
 
     rows.forEach((rows) => {
-      grossAmount += rows.totalvalue;
+      grossAmount += rows.taxableValue;
       GstAmount += rows.cgstrs + rows.sgstrs ;
       
     });
@@ -316,6 +316,7 @@ const CreateSalesEstimate = () => {
     const selectedProduct = products.find(
       (product) => product.productName === selectedProductName
     );
+
     if (selectedProduct) {
       const updatedRows = [...rows];
       updatedRows[rowIndex] = {
@@ -336,15 +337,21 @@ const CreateSalesEstimate = () => {
           retailDiscountRS:(selectedProduct.maxmimunRetailPrice *
             selectedProduct.retailDiscount) /
           100,
-        taxableValue: (((selectedProduct.retailPrice* selectedProduct.quantity)/100)+selectedProduct.gstRate*100),
+        taxableValue: (selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
+        (100 + Number(selectedProduct.gstRate)), 
         cgstp:selectedProduct.gstRate/2,
         sgstp: selectedProduct.gstRate/2,
         igstp:selectedProduct.gstRate,
         
-        cgstrs:(selectedProduct.maxmimunRetailPrice* selectedProduct.gstRate/2)/100,
-        sgstrs:(selectedProduct.maxmimunRetailPrice* selectedProduct.gstRate/2)/100,
-        igstrs:(selectedProduct.maxmimunRetailPrice* selectedProduct.gstRate)/100,
-        totalvalue:(selectedProduct.maxmimunRetailPrice*selectedProduct.quantity)
+        cgstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
+        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate/2))/100,
+        sgstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
+        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate/2))/100,
+        igstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
+        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate))/100,
+        totalvalue:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
+        (100 + Number(selectedProduct.gstRate))+(((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
+        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate))/100))
 
 
         // Add any other fields you want to auto-fill here
@@ -866,7 +873,7 @@ const CreateSalesEstimate = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue}
+                              value={row.taxableValue.toFixed(2)}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -940,7 +947,7 @@ const CreateSalesEstimate = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue}
+                              value={row.taxableValue.toFixed(2)}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,

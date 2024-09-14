@@ -4,7 +4,7 @@ const salesReturnSchema = new mongoose.Schema(  {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     date: { type: String },
     salesType: { type: String },
-    cresitNoteNo: { type: String },
+    creditNoteNo: { type: String },
     customerName: { type: String },
     placeOfSupply: { type: String },
     paymentTerm: { type: String },

@@ -6,7 +6,7 @@ export const createReturnController = async (req, res) => {
       userId,
       date,
       salesType,
-      cresitNoteNo,
+      creditNoteNo,
       customerName,
       placeOfSupply,
       paymentTerm,
@@ -31,25 +31,21 @@ export const createReturnController = async (req, res) => {
     const requiredFields = [
       "userId",
       "date",
-      "SalesReturnNo",
       "salesType",
-      "customerType",
+      "creditNoteNo",
       "customerName",
       "placeOfSupply",
       "paymentTerm",
       "dueDate",
-      "receiptDocNo",
       "dispatchedThrough",
       "destination",
       "carrierNameAgent",
       "billOfLading",
-      "motorVehicleNo",
       "billingAddress",
       "reverseCharge",
       "gstType",
+      "reasonForReturn",
       "rows",
-      "cash",
-      "bank",
       "otherChargesDescription",
       "othercharges",
       "narration",
@@ -69,25 +65,21 @@ export const createReturnController = async (req, res) => {
       const newSalesReturn = new returnModel({
         userId,
         date,
-        SalesReturnNo,
         salesType,
-        customerType,
+        creditNoteNo,
         customerName,
         placeOfSupply,
         paymentTerm,
         dueDate,
-        receiptDocNo,
         dispatchedThrough,
         destination,
         carrierNameAgent,
         billOfLading,
-        motorVehicleNo,
         billingAddress,
         reverseCharge,
         gstType,
+        reasonForReturn,
         rows,
-        cash,
-        bank,
         otherChargesDescription,
         othercharges,
         narration,
@@ -190,29 +182,24 @@ export const updateReturnByIDController = async (req, res) => {
     // Update fields
     salesreturn.userId = updateData.userId || salesreturn.userId;
     salesreturn.date = updateData.date || salesreturn.date;
-    salesreturn.SalesReturnNo = updateData.SalesReturnNo || salesreturn.SalesReturnNo;
     salesreturn.salesType = updateData.salesType || salesreturn.salesType;
-    salesreturn.customerType = updateData.customerType || salesreturn.customerType;
+    salesreturn.creditNoteNo = updateData.creditNoteNo || salesreturn.creditNoteNo;
     salesreturn.customerName = updateData.customerName || salesreturn.customerName;
     salesreturn.placeOfSupply = updateData.placeOfSupply || salesreturn.placeOfSupply;
     salesreturn.paymentTerm = updateData.paymentTerm || salesreturn.paymentTerm;
     salesreturn.dueDate = updateData.dueDate || salesreturn.dueDate;
-    salesreturn.receiptDocNo = updateData.receiptDocNo || salesreturn.receiptDocNo;
     salesreturn.dispatchedThrough =
       updateData.dispatchedThrough || salesreturn.dispatchedThrough;
     salesreturn.destination = updateData.destination || salesreturn.destination;
     salesreturn.carrierNameAgent =
       updateData.carrierNameAgent || salesreturn.carrierNameAgent;
     salesreturn.billOfLading = updateData.billOfLading || salesreturn.billOfLading;
-    salesreturn.motorVehicleNo =
-      updateData.motorVehicleNo || salesreturn.motorVehicleNo;
     salesreturn.billingAddress =
       updateData.billingAddress || salesreturn.billingAddress;
     salesreturn.reverseCharge = updateData.reverseCharge || salesreturn.reverseCharge;
     salesreturn.gstType = updateData.gstType || salesreturn.gstType;
+    salesreturn.reasonForReturn = updateData.reasonForReturn || salesreturn.reasonForReturn;
     salesreturn.rows = updateData.rows || salesreturn.rows;
-    salesreturn.cash = updateData.cash || salesreturn.cash;
-    salesreturn.bank = updateData.bank || salesreturn.bank;
     salesreturn.otherChargesDescription =
       updateData.otherChargesDescription || salesreturn.otherChargesDescription;
     salesreturn.othercharges = updateData.othercharges || salesreturn.othercharges;
