@@ -234,7 +234,7 @@ const CreateManufacturer = () => {
                 value={formData.asOnDate}
                 onChange={handleChange}
               />
-              <p className="text-sm text-gray-500 mt-1">As on date</p>
+          
             </div>
           </div>
         </div>

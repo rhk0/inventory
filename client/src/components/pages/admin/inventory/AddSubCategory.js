@@ -13,7 +13,7 @@ const AddSubCategory = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/getSubCategory");
+        const response = await axios.get("/api/v1/auth/getcategory");
         setCategories(response.data.data); 
       } catch (error) {
         console.error("Error fetching categories:", error);

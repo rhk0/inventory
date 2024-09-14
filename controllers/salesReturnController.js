@@ -1,12 +1,12 @@
-import deliveryChallanModel from "../models/deliveryChallanModel.js";
+import returnModel from "../models/returnModel.js";
 
-export const createChallanController = async (req, res) => {
+export const createReturnController = async (req, res) => {
   try {
     const {
       userId,
       date,
       salesType,
-      challanNo,
+      creditNoteNo,
       customerName,
       placeOfSupply,
       paymentTerm,
@@ -18,6 +18,7 @@ export const createChallanController = async (req, res) => {
       billingAddress,
       reverseCharge,
       gstType,
+      reasonForReturn,
       rows,
       otherChargesDescription,
       othercharges,
@@ -31,7 +32,7 @@ export const createChallanController = async (req, res) => {
       "userId",
       "date",
       "salesType",
-      "challanNo",
+      "creditNoteNo",
       "customerName",
       "placeOfSupply",
       "paymentTerm",
@@ -43,6 +44,7 @@ export const createChallanController = async (req, res) => {
       "billingAddress",
       "reverseCharge",
       "gstType",
+      "reasonForReturn",
       "rows",
       "otherChargesDescription",
       "othercharges",
@@ -60,11 +62,11 @@ export const createChallanController = async (req, res) => {
     }
 
     try {
-      const newChallan = new deliveryChallanModel({
+      const newSalesReturn = new returnModel({
         userId,
         date,
         salesType,
-        challanNo,
+        creditNoteNo,
         customerName,
         placeOfSupply,
         paymentTerm,
@@ -76,6 +78,7 @@ export const createChallanController = async (req, res) => {
         billingAddress,
         reverseCharge,
         gstType,
+        reasonForReturn,
         rows,
         otherChargesDescription,
         othercharges,
@@ -84,10 +87,10 @@ export const createChallanController = async (req, res) => {
         GstAmount,
         netAmount,
       });
-      const savedChallan = await newChallan.save();
+      const savedSalesReturn = await newSalesReturn.save();
       res.status(201).send({
-        message: "Challan created successfully",
-        challan: savedChallan,
+        message: "SalesReturn created successfully",
+        salesreturn: savedSalesReturn,
       });
     } catch (error) {
       res.status(500).send({ error: "Server error", message: error.message });
@@ -96,9 +99,9 @@ export const createChallanController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
-export const getAllChallanCOntroller = async (req, res) => {
+export const getAllReturnCOntroller = async (req, res) => {
   try {
-    const response = await deliveryChallanModel.find();
+    const response = await returnModel.find();
 
     if (!response) {
       return res
@@ -116,10 +119,10 @@ export const getAllChallanCOntroller = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-export const getAllChallanByIdController = async (req, res) => {
+export const getAllReturnByIdController = async (req, res) => {
   try {
-    const { _id } = req.params;
-    const response = await deliveryChallanModel.findById(_id); // Use findById instead of find
+    const { id } = req.params;
+    const response = await returnModel.find(id);
     if (!response) {
       return res.status(404).json({
         success: false,
@@ -130,10 +133,10 @@ export const getAllChallanByIdController = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Data found",
-      challan: response,
+      salesreturn: response, // Named it `salesreturn` for clarity
     });
   } catch (error) {
-    console.error("Error fetching sales challan by ID:", error);
+    console.error("Error fetching sales salesreturn by ID:", error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Issue",
@@ -141,10 +144,10 @@ export const getAllChallanByIdController = async (req, res) => {
     });
   }
 };
-export const deletChallanByIDController = async (req, res) => {
+export const deletReturnByIDController = async (req, res) => {
   try {
     const { _id } = req.params;
-    const deleteData = await deliveryChallanModel.findByIdAndDelete({ _id });
+    const deleteData = await returnModel.findByIdAndDelete({ _id });
 
     if (!deleteData) {
       return res
@@ -154,7 +157,7 @@ export const deletChallanByIDController = async (req, res) => {
 
     return res.status(200).send({
       success: true,
-      message: "Sales Challan Deleted Successfully",
+      message: "Sales SalesReturn Deleted Successfully",
       deleteData,
     });
   } catch (error) {
@@ -164,52 +167,53 @@ export const deletChallanByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-export const updateChallanByIDController = async (req, res) => {
+export const updateReturnByIDController = async (req, res) => {
   try {
     const { _id } = req.params;
     const updateData = req.body;
 
-    const challan = await deliveryChallanModel.findById(_id);
-    if (!challan) {
+    const salesreturn = await returnModel.findById(_id);
+    if (!salesreturn) {
       return res
         .status(404)
         .send({ success: false, message: "Data not found" });
     }
 
     // Update fields
-    challan.userId = updateData.userId || challan.userId;
-    challan.date = updateData.date || challan.date;
-    challan.salesType = updateData.salesType || challan.salesType;
-    challan.challanNo = updateData.ChallanNo || challan.ChallanNo;
-    challan.customerName = updateData.customerName || challan.customerName;
-    challan.placeOfSupply = updateData.placeOfSupply || challan.placeOfSupply;
-    challan.paymentTerm = updateData.paymentTerm || challan.paymentTerm;
-    challan.dueDate = updateData.dueDate || challan.dueDate;
-    challan.dispatchedThrough =
-      updateData.dispatchedThrough || challan.dispatchedThrough;
-    challan.destination = updateData.destination || challan.destination;
-    challan.carrierNameAgent =
-      updateData.carrierNameAgent || challan.carrierNameAgent;
-    challan.billOfLading = updateData.billOfLading || challan.billOfLading;
-    challan.billingAddress =
-      updateData.billingAddress || challan.billingAddress;
-    challan.reverseCharge = updateData.reverseCharge || challan.reverseCharge;
-    challan.gstType = updateData.gstType || challan.gstType;
-    challan.rows = updateData.rows || challan.rows;
-    challan.otherChargesDescription =
-      updateData.otherChargesDescription || challan.otherChargesDescription;
-    challan.othercharges = updateData.othercharges || challan.othercharges;
-    challan.narration = updateData.narration || challan.narration;
-    challan.grossAmount = updateData.grossAmount || challan.grossAmount;
-    challan.GstAmount = updateData.GstAmount || challan.GstAmount;
-    challan.netAmount = updateData.netAmount || challan.netAmount;
+    salesreturn.userId = updateData.userId || salesreturn.userId;
+    salesreturn.date = updateData.date || salesreturn.date;
+    salesreturn.salesType = updateData.salesType || salesreturn.salesType;
+    salesreturn.creditNoteNo = updateData.creditNoteNo || salesreturn.creditNoteNo;
+    salesreturn.customerName = updateData.customerName || salesreturn.customerName;
+    salesreturn.placeOfSupply = updateData.placeOfSupply || salesreturn.placeOfSupply;
+    salesreturn.paymentTerm = updateData.paymentTerm || salesreturn.paymentTerm;
+    salesreturn.dueDate = updateData.dueDate || salesreturn.dueDate;
+    salesreturn.dispatchedThrough =
+      updateData.dispatchedThrough || salesreturn.dispatchedThrough;
+    salesreturn.destination = updateData.destination || salesreturn.destination;
+    salesreturn.carrierNameAgent =
+      updateData.carrierNameAgent || salesreturn.carrierNameAgent;
+    salesreturn.billOfLading = updateData.billOfLading || salesreturn.billOfLading;
+    salesreturn.billingAddress =
+      updateData.billingAddress || salesreturn.billingAddress;
+    salesreturn.reverseCharge = updateData.reverseCharge || salesreturn.reverseCharge;
+    salesreturn.gstType = updateData.gstType || salesreturn.gstType;
+    salesreturn.reasonForReturn = updateData.reasonForReturn || salesreturn.reasonForReturn;
+    salesreturn.rows = updateData.rows || salesreturn.rows;
+    salesreturn.otherChargesDescription =
+      updateData.otherChargesDescription || salesreturn.otherChargesDescription;
+    salesreturn.othercharges = updateData.othercharges || salesreturn.othercharges;
+    salesreturn.narration = updateData.narration || salesreturn.narration;
+    salesreturn.grossAmount = updateData.grossAmount || salesreturn.grossAmount;
+    salesreturn.GstAmount = updateData.GstAmount || salesreturn.GstAmount;
+    salesreturn.netAmount = updateData.netAmount || salesreturn.netAmount;
 
-    const updatedChallan = await challan.save();
+    const updatedSalesReturn = await salesreturn.save();
 
     return res.status(200).send({
       success: true,
-      message: "Sales Challan updated successfully",
-      updatedChallan,
+      message: "Sales SalesReturn updated successfully",
+      updatedSalesReturn,
     });
   } catch (error) {
     console.log(error);
@@ -218,5 +222,3 @@ export const updateChallanByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-
-

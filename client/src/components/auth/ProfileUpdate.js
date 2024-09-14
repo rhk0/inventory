@@ -66,7 +66,7 @@ export default function SignUp() {
         address: auth.user.address || "",
         contact: auth.user.contact || "",
         email: auth.user.email || "",
-        password: "", // Do not pre-fill the password
+        password:"", // Do not pre-fill the password
         businessType: auth.user.businessType || "",
       });
     }
@@ -219,6 +219,7 @@ export default function SignUp() {
               <Button
                 type="submit"
                 fullWidth
+                sx={{marginTop:"20px"}}
                 variant="contained"
                 color="primary"
                 className={classes.submit}

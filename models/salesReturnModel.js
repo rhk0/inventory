@@ -1,25 +1,22 @@
 import mongoose from "mongoose";
 
-const salesInvoiceSchema = new mongoose.Schema(
-  {
+const salesReturnSchema = new mongoose.Schema(  {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     date: { type: String },
-    InvoiceNo: { type: String },
     salesType: { type: String },
-    customerType: { type: String },
+    creditNoteNo: { type: String },
     customerName: { type: String },
     placeOfSupply: { type: String },
     paymentTerm: { type: String },
     dueDate: { type: String },
-    receiptDocNo: { type: String },
     dispatchedThrough: { type: String },
     destination: { type: String },
     carrierNameAgent: { type: String },
     billOfLading: { type: String },
-    motorVehicleNo: { type: String },
     billingAddress: { type: String },
     reverseCharge: { type: String },
     gstType: { type: String },
+    reasonForReturn: { type: String },
     rows: [
       {
         itemCode: { type: String },
@@ -40,23 +37,6 @@ const salesInvoiceSchema = new mongoose.Schema(
         totalValue: { type: Number },
       },
     ],
-    cash: {
-      Amount: { type: Number },
-      Advance: { type: Number },
-      Received: { type: Number },
-      Balance: { type: Number },
-    },
-    bank: {
-      bank: { type: Number },
-      selectBankType: { type: Number },
-      transactionDate: { type: Number },
-      chequeNo: { type: Number },
-      transactionNo: { type: Number },
-      Amount: { type: Number },
-      Advance: { type: Number },
-      Received: { type: Number },
-      Balance: { type: Number },
-    },
     otherChargesDescription: { type: String },
     othercharges: { type: String },
     narration: { type: String },
@@ -69,4 +49,4 @@ const salesInvoiceSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("salesinvoice", salesInvoiceSchema);
+export default mongoose.model("salesReturn", salesReturnSchema);

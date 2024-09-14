@@ -1,31 +1,52 @@
 import mongoose from "mongoose";
 
-const deliveryChallanSchema = new mongoose.Schema({
-  date: { type: Date }, 
-  challanNo: { type: String },
-  selectCustomer: { type: String },
-  reverseCharge: { type: String },
-  placeOfSupply: { type: String },
-  paymentsTerms: { type: String },
-  dueDate: { type: String },
-  taxType: { type: String },
-  billingAddress: { type: String },
-  shippingAddress: { type: String }, 
-  rows: [   
-    {
-      itemCode: String,
-      itemName: String,
-      hsnCode: String,
-      qty: Number,
-      rate: Number,
-      cgst: Number,
-      sgst: Number,
-      igst: Number,
-      total: Number,
-    },
-  ],
-
-
-});
+const deliveryChallanSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    date: { type: String },
+    salesType: { type: String },
+    challanNo: { type: String },
+    customerName: { type: String },
+    placeOfSupply: { type: String },
+    paymentTerm: { type: String },
+    dueDate: { type: String },
+    dispatchedThrough: { type: String },
+    destination: { type: String },
+    carrierNameAgent: { type: String },
+    billOfLading: { type: String },
+    billingAddress: { type: String },
+    reverseCharge: { type: String },
+    gstType: { type: String },
+    rows: [
+      {
+        itemCode: { type: String },
+        productName: { type: String },
+        hsnCode: { type: String },
+        qty: { type: Number },
+        uom: { type: Number },
+        mrp: { type: Number },
+        discountpercent: { type: Number },
+        discountRS: { type: Number },
+        taxable: { type: Number },
+        cgstpercent: { type: Number },
+        cgstRS: { type: Number },
+        sgstpercent: { type: Number },
+        sgstRS: { type: Number },
+        igstpercent: { type: Number },
+        igstRS: { type: Number },
+        totalValue: { type: Number },
+      },
+    ],
+    otherChargesDescription: { type: String },
+    othercharges: { type: String },
+    narration: { type: String },
+    grossAmount: { type: String },
+    GstAmount: { type: String },
+    netAmount: { type: String },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 export default mongoose.model("deliveryChallan", deliveryChallanSchema);

@@ -3,41 +3,63 @@ import salesInvoiceModel from "../models/salesInvoiceModel.js";
 export const createSalesInvoiceController = async (req, res) => {
   try {
     const {
+      userId,
       date,
-      invoiceNo,
-      selectCustomer,
-      reverseCharge,
-      placeOfSupply,
-      paymentsTerms,
-      dueDate,
-      taxType,
-      billingAddress,
-      shippingAddress,
+      InvoiceNo,
+      salesType,
       customerType,
-      Items,
-      subTotal,
-      Charges,
-      Discount,
-      TaxAmount,
+      customerName,
+      placeOfSupply,
+      paymentTerm,
+      dueDate,
+      receiptDocNo,
+      dispatchedThrough,
+      destination,
+      carrierNameAgent,
+      billOfLading,
+      motorVehicleNo,
+      billingAddress,
+      reverseCharge,
+      gstType,
+      rows,
+      cash,
+      bank,
+      otherChargesDescription,
+      othercharges,
+      narration,
+      grossAmount,
+      GstAmount,
+      netAmount,
     } = req.body;
 
     const requiredFields = [
+      "userId",
       "date",
-      "invoiceNo",
-      "selectCustomer",
-      "reverseCharge",
-      "placeOfSupply",
-      "paymentsTerms",
-      "dueDate",
-      "taxType",
-      "billingAddress",
-      "shippingAddress",
+      "InvoiceNo",
+      "salesType",
       "customerType",
-      "Items",
-      "subTotal",
-      "Charges",
-      "Discount",
-      "TaxAmount",
+      "customerName",
+      "placeOfSupply",
+      "paymentTerm",
+      "dueDate",
+      "receiptDocNo",
+      "dispatchedThrough",
+      "destination",
+      "carrierNameAgent",
+      "billOfLading",
+      "motorVehicleNo",
+      "billingAddress",
+      "reverseCharge",
+      "gstType",
+      "rows",
+      "cash",
+      "bank",
+      "otherChargesDescription",
+      "othercharges",
+      "narration",
+      "grossAmount",
+      "GstAmount",
+      "netAmount",
     ];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length > 0) {
@@ -47,42 +69,40 @@ export const createSalesInvoiceController = async (req, res) => {
       });
     }
 
-    const rows = Items.map((rowData) => ({
-      itemName: rowData.itemName,
-      itemCode: rowData.itemCode,
-      hsnCode: rowData.hsnCode,
-      taxable: rowData.taxable,
-      qty: rowData.qty,
-      rate: rowData.rate,
-      cgst: rowData.cgst,
-      sgst: rowData.sgst,
-      igst: rowData.igst,
-      total: rowData.total,
-    }));
-
     try {
-      const newProduct = new salesInvoiceModel({
+      const newInvoice = new salesInvoiceModel({
+        userId,
         date,
-        invoiceNo,
-        selectCustomer,
-        reverseCharge,
-        placeOfSupply,
-        paymentsTerms,
-        dueDate,
-        taxType,
-        billingAddress,
-        shippingAddress,
+        InvoiceNo,
+        salesType,
         customerType,
+        customerName,
+        placeOfSupply,
+        paymentTerm,
+        dueDate,
+        receiptDocNo,
+        dispatchedThrough,
+        destination,
+        carrierNameAgent,
+        billOfLading,
+        motorVehicleNo,
+        billingAddress,
+        reverseCharge,
+        gstType,
         rows,
-        subTotal,
-        Charges,
-        Discount,
-        TaxAmount,
+        cash,
+        bank,
+        otherChargesDescription,
+        othercharges,
+        narration,
+        grossAmount,
+        GstAmount,
+        netAmount,
       });
-      const savedProduct = await newProduct.save();
+      const savedInvoice = await newInvoice.save();
       res.status(201).send({
-        message: "Invoice Creates successfully",
-        product: savedProduct,
+        message: "Invoice created successfully",
+        invoice: savedInvoice,
       });
     } catch (error) {
       res.status(500).send({ error: "Server error", message: error.message });
@@ -91,7 +111,6 @@ export const createSalesInvoiceController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
-
 export const getAllSalesInvoiceCOntroller = async (req, res) => {
   try {
     const response = await salesInvoiceModel.find();
@@ -112,7 +131,31 @@ export const getAllSalesInvoiceCOntroller = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
+export const getAllSalesInvoiceByIdController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await salesInvoiceModel.find(id);
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "Data not found",
+      });
+    }
 
+    return res.status(200).json({
+      success: true,
+      message: "Data found",
+      invoice: response, // Named it `invoice` for clarity
+    });
+  } catch (error) {
+    console.error("Error fetching sales invoice by ID:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Issue",
+      error: error.message,
+    });
+  }
+};
 export const deletSalesInvoiceByIDController = async (req, res) => {
   try {
     const { _id } = req.params;
@@ -136,7 +179,6 @@ export const deletSalesInvoiceByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-
 export const updateSalesInvoiceByIDController = async (req, res) => {
   try {
     const { _id } = req.params;
@@ -150,37 +192,38 @@ export const updateSalesInvoiceByIDController = async (req, res) => {
     }
 
     // Update fields
+    invoice.userId = updateData.userId || invoice.userId;
     invoice.date = updateData.date || invoice.date;
-    invoice.invoiceNo = updateData.invoiceNo || invoice.invoiceNo;
-    invoice.selectCustomer = updateData.selectCustomer || invoice.selectCustomer;
-    invoice.reverseCharge = updateData.reverseCharge || invoice.reverseCharge;
-    invoice.placeOfSupply = updateData.placeOfSupply || invoice.placeOfSupply;
-    invoice.paymentsTerms = updateData.paymentsTerms || invoice.paymentsTerms;
-    invoice.dueDate = updateData.dueDate || invoice.dueDate;
-    invoice.taxType = updateData.taxType || invoice.taxType;
-    invoice.billingAddress = updateData.billingAddress || invoice.billingAddress;
-    invoice.shippingAddress = updateData.shippingAddress || invoice.shippingAddress;
+    invoice.InvoiceNo = updateData.InvoiceNo || invoice.InvoiceNo;
+    invoice.salesType = updateData.salesType || invoice.salesType;
     invoice.customerType = updateData.customerType || invoice.customerType;
-    invoice.subTotal = updateData.subTotal || invoice.subTotal;
-    invoice.Charges = updateData.Charges || invoice.Charges;
-    invoice.Discount = updateData.Discount || invoice.Discount;
-    invoice.TaxAmount = updateData.TaxAmount || invoice.TaxAmount;
-
-    // Update rows array
-    if (updateData.Items) {
-      invoice.rows = updateData.Items.map((rowData) => ({
-        itemName: rowData.itemName,
-        itemCode: rowData.itemCode,
-        hsnCode: rowData.hsnCode,
-        taxable: rowData.taxable,
-        qty: rowData.qty,
-        rate: rowData.rate,
-        cgst: rowData.cgst,
-        sgst: rowData.sgst,
-        igst: rowData.igst,
-        total: rowData.total,
-      }));
-    }
+    invoice.customerName = updateData.customerName || invoice.customerName;
+    invoice.placeOfSupply = updateData.placeOfSupply || invoice.placeOfSupply;
+    invoice.paymentTerm = updateData.paymentTerm || invoice.paymentTerm;
+    invoice.dueDate = updateData.dueDate || invoice.dueDate;
+    invoice.receiptDocNo = updateData.receiptDocNo || invoice.receiptDocNo;
+    invoice.dispatchedThrough =
+      updateData.dispatchedThrough || invoice.dispatchedThrough;
+    invoice.destination = updateData.destination || invoice.destination;
+    invoice.carrierNameAgent =
+      updateData.carrierNameAgent || invoice.carrierNameAgent;
+    invoice.billOfLading = updateData.billOfLading || invoice.billOfLading;
+    invoice.motorVehicleNo =
+      updateData.motorVehicleNo || invoice.motorVehicleNo;
+    invoice.billingAddress =
+      updateData.billingAddress || invoice.billingAddress;
+    invoice.reverseCharge = updateData.reverseCharge || invoice.reverseCharge;
+    invoice.gstType = updateData.gstType || invoice.gstType;
+    invoice.rows = updateData.rows || invoice.rows;
+    invoice.cash = updateData.cash || invoice.cash;
+    invoice.bank = updateData.bank || invoice.bank;
+    invoice.otherChargesDescription =
+      updateData.otherChargesDescription || invoice.otherChargesDescription;
+    invoice.othercharges = updateData.othercharges || invoice.othercharges;
+    invoice.narration = updateData.narration || invoice.narration;
+    invoice.grossAmount = updateData.grossAmount || invoice.grossAmount;
+    invoice.GstAmount = updateData.GstAmount || invoice.GstAmount;
+    invoice.netAmount = updateData.netAmount || invoice.netAmount;
 
     const updatedInvoice = await invoice.save();
 
@@ -196,4 +239,3 @@ export const updateSalesInvoiceByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-
