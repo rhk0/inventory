@@ -176,6 +176,9 @@ export const verificationController = async (req, res) => {
           password: hashedPwd,
           businessType,
           role:1,
+          status:"Active",
+          
+          
         });
         if (data) {
           res.status(201).send({
