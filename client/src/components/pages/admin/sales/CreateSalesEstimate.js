@@ -7,7 +7,7 @@ const CreateSalesEstimate = () => {
   const [date, setDate] = useState("");
   const [estimateNo, setEstimateNo] = useState("");
   const [salesType, setSalesType] = useState("GST Invoice");
-  const [customerType, setCustomerType] = useState("");
+  const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [transportDetails, setTransportDetails] = useState({
@@ -160,6 +160,7 @@ const CreateSalesEstimate = () => {
     }));
   };
 
+
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
@@ -277,12 +278,13 @@ const CreateSalesEstimate = () => {
     let grossAmount = 0;
     let GstAmount = 0;
 
-    rows.forEach((row) => {
-      grossAmount += row.taxableValue;
-      GstAmount += row.cgst + row.sgst + row.igst;
+    rows.forEach((rows) => {
+      grossAmount += rows.totalvalue;
+      GstAmount += rows.cgstrs + rows.sgstrs ;
+      
     });
 
-    const netAmount = grossAmount + GstAmount;
+    const netAmount = grossAmount + GstAmount+otherCharges+0;
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -314,7 +316,6 @@ const CreateSalesEstimate = () => {
     const selectedProduct = products.find(
       (product) => product.productName === selectedProductName
     );
-
     if (selectedProduct) {
       const updatedRows = [...rows];
       updatedRows[rowIndex] = {
@@ -323,9 +324,29 @@ const CreateSalesEstimate = () => {
         hsnCode: selectedProduct.hsnCode,
         units: selectedProduct.units,
         productName: selectedProduct.productName, // Ensure productName is updated here
-
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice,
         quantity: selectedProduct.quantity,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        wholeselerDiscountRS:
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.wholesalerDiscount) /
+          100,
+
+          retailDiscount :selectedProduct.retailDiscount,
+          retailDiscountRS:(selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+          100,
+        taxableValue: (((selectedProduct.retailPrice* selectedProduct.quantity)/100)+selectedProduct.gstRate*100),
+        cgstp:selectedProduct.gstRate/2,
+        sgstp: selectedProduct.gstRate/2,
+        igstp:selectedProduct.gstRate,
+        
+        cgstrs:(selectedProduct.maxmimunRetailPrice* selectedProduct.gstRate/2)/100,
+        sgstrs:(selectedProduct.maxmimunRetailPrice* selectedProduct.gstRate/2)/100,
+        igstrs:(selectedProduct.maxmimunRetailPrice* selectedProduct.gstRate)/100,
+        totalvalue:(selectedProduct.maxmimunRetailPrice*selectedProduct.quantity)
+
+
         // Add any other fields you want to auto-fill here
       };
 
@@ -380,15 +401,12 @@ const CreateSalesEstimate = () => {
 
         netAmount: netAmount.toFixed(2),
       };
-
-      console.log("Form Data:", updatedFormData); // Log to ensure it's correct
-
       const response = await axios.post(
         "/api/v1/salesEstimateRoute/createSalesEstimatet",
         updatedFormData
       );
 
-      console.log(response, "Response from server");
+     
 
       if (response) {
         toast.success("Sales estimate created successfully...");
@@ -406,6 +424,9 @@ const CreateSalesEstimate = () => {
         className="p-4 responsive-container"
       >
         {/* Top Section */}
+        <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
+            Create Sales Estimate
+          </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">
@@ -483,7 +504,7 @@ const CreateSalesEstimate = () => {
             <label className="font-bold">
               Payment Term (days):
               <input
-                type="number"
+                type="text"
                 name="paymentTerm"
                 value={paymentTerm}
                 onChange={handlePaymentTermChange}
@@ -663,17 +684,17 @@ const CreateSalesEstimate = () => {
           <table className="w-full border-collapse overflow-x-auto">
             <thead>
               <tr>
-                <th className="border p-2">#</th>
-                <th className="border p-2">Item Code</th>
-                <th className="border p-2">Product Name</th>
-                <th className="border p-2">HSN Code</th>
-                <th className="border p-2">Qty</th>
-                <th className="border p-2">Units</th>
-                <th className="border p-2">MRP</th>
-                <th className="border p-2">
+                <th className="border p-1">#</th>
+                <th className="border text-bold text-sm ">Item Code</th>
+                <th className="border ">Product Name</th>
+                <th className="border p-1 text-nowrap">HSN Code</th>
+                <th className="border p-1">Qty</th>
+                <th className="border p-1">Units</th>
+                <th className="border p-1">MRP</th>
+                <th className="border p-1">
                   Discount
                   <div className="flex justify-between">
-                    <span className="mr-16">%</span> <span>RS</span>
+                    <span className="">%</span> <span>RS</span>
                   </div>
                 </th>
 
@@ -685,13 +706,13 @@ const CreateSalesEstimate = () => {
                         <th className="border p-2">
                           CGST{" "}
                           <div className="flex justify-between">
-                            <span className="mr-16">%</span> <span>RS</span>
+                            <span className="">%</span> <span>RS</span>
                           </div>
                         </th>
                         <th className="border p-2">
                           SGST{" "}
                           <div className="flex justify-between">
-                            <span className="mr-16">%</span> <span>RS</span>
+                            <span className="">%</span> <span>RS</span>
                           </div>
                         </th>
                       </>
@@ -700,7 +721,7 @@ const CreateSalesEstimate = () => {
                       <th className="border p-2">
                         IGST{" "}
                         <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>RS</span>
+                          <span className="">%</span> <span>RS</span>
                         </div>
                       </th>
                     )}
@@ -712,8 +733,8 @@ const CreateSalesEstimate = () => {
             <tbody>
               {rows.map((row, index) => (
                 <tr key={index}>
-                  <td className="border p-2">{index + 1}</td>
-                  <td className="border p-2">
+                  <td className="border p-1">{index + 1}</td>
+                  <td className="border ">
                     <input
                       type="text"
                       value={row.itemCode}
@@ -723,14 +744,14 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-2">
+                  <td className="border p-[3px]">
                     <select
                       id="product-select"
                       value={row.productName}
                       onChange={(e) =>
                         handleProductSelect(index, e.target.value)
                       }
-                      className="w-full"
+                      className=""
                     >
                       <option value="">Select a Product</option>
                       {products.length > 0 ? (
@@ -744,7 +765,7 @@ const CreateSalesEstimate = () => {
                       )}
                     </select>
                   </td>
-                  <td className="border p-2">
+                  <td className="border p-1">
                     <input
                       type="text"
                       value={row.hsnCode}
@@ -754,9 +775,10 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-2">
+
+                  <td className="border p-1">
                     <input
-                      type="number"
+                      type="text"
                       value={row.quantity}
                       onChange={(e) =>
                         handleRowChange(index, "quantity", e.target.value)
@@ -764,7 +786,7 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-2">
+                  <td className="border p-1">
                     <input
                       type="text"
                       value={row.units}
@@ -776,7 +798,7 @@ const CreateSalesEstimate = () => {
                   </td>
                   <td className="border p-2">
                     <input
-                      type="number"
+                      type="text"
                       value={row.maxmimunRetailPrice}
                       onChange={(e) =>
                         handleRowChange(
@@ -789,38 +811,64 @@ const CreateSalesEstimate = () => {
                     />
                   </td>
                   <td className="border">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="number"
-                        value={row.discountpercent}
-                        onChange={(e) =>
-                          handleRowChange(
-                            index,
-                            "discountpercent",
-                            e.target.value
-                          )
-                        }
-                        className="w-full"
-                      />
-                      <input
-                        type="number"
-                        value={row.discountRS}
-                        onChange={(e) =>
-                          handleRowChange(index, "discountRS", e.target.value)
-                        }
-                        className="w-full"
-                      />
-                    </div>
+                    {customerType === "Wholesaler" && (
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          value={row.wholesalerDiscount}
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              "discountpercent",
+                              e.target.value
+                            )
+                          }
+                          className="w-full"
+                        />
+                        <input
+                          type="text"
+                          value={row.wholeselerDiscountRS}
+                          onChange={(e) =>
+                            handleRowChange(index, "discountRS", e.target.value)
+                          }
+                          className="w-full"
+                        />
+                      </div>
+                    )}
+                      {customerType === "Retailer" && (
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          value={row.retailDiscount}
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              "discountpercent",
+                              e.target.value
+                            )
+                          }
+                          className="w-full"
+                        />
+                        <input
+                          type="text"
+                          value={row.retailDiscountRS}
+                          onChange={(e) =>
+                            handleRowChange(index, "discountRS", e.target.value)
+                          }
+                          className="w-full"
+                        />
+                      </div>
+                    )}
                   </td>
 
                   {salesType === "GST Invoice" && (
                     <>
                       {gstType === "CGST/SGST" && (
                         <>
-                          <td className="border p-2">
+                          <td className="border p-1">
                             <input
-                              type="number"
-                              value={row.taxable}
+                              type="text"
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -834,8 +882,8 @@ const CreateSalesEstimate = () => {
                           <td className="border">
                             <div className="p-1 flex gap-1">
                               <input
-                                type="number"
-                                value={row.cgstpercent}
+                                type="text"
+                                value={row.cgstp}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -846,8 +894,8 @@ const CreateSalesEstimate = () => {
                                 className="w-full"
                               />
                               <input
-                                type="number"
-                                value={row.cgstRS}
+                                type="text"
+                                value={row.cgstrs}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -862,8 +910,8 @@ const CreateSalesEstimate = () => {
                           <td className="border">
                             <div className="p-1 flex gap-1">
                               <input
-                                type="number"
-                                value={row.sgstpercent}
+                                type="text"
+                                value={row.sgstp}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -874,8 +922,8 @@ const CreateSalesEstimate = () => {
                                 className="w-full"
                               />
                               <input
-                                type="number"
-                                value={row.sgstRS}
+                                type="text"
+                                value={row.sgstrs}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -891,10 +939,10 @@ const CreateSalesEstimate = () => {
                       )}
                       {gstType === "IGST" && (
                         <>
-                          <td className="border p-2">
+                          <td className="border p-1">
                             <input
-                              type="number"
-                              value={row.taxable}
+                              type="text"
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -905,11 +953,11 @@ const CreateSalesEstimate = () => {
                               className="w-full"
                             />
                           </td>
-                          <td className="border p-2">
+                          <td className="border p-1">
                             <div className="flex gap-1">
                               <input
-                                type="number"
-                                value={row.igstpercent}
+                                type="text"
+                                value={row.igstp}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -920,8 +968,8 @@ const CreateSalesEstimate = () => {
                                 className="w-full"
                               />
                               <input
-                                type="number"
-                                value={row.igstRS}
+                                type="text"
+                                value={row.igstrs}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -937,10 +985,10 @@ const CreateSalesEstimate = () => {
                       )}
                     </>
                   )}
-                  <td className="border p-2">
+                  <td className="border p-1">
                     <input
-                      type="number"
-                      value={row.totalValue}
+                      type="text"
+                      value={row.totalvalue}
                       onChange={(e) =>
                         handleRowChange(index, "totalValue", e.target.value)
                       }
@@ -1109,7 +1157,7 @@ const CreateSalesEstimate = () => {
                 Other Charge
               </label>
               <input
-                value={otherCharges}
+                value={otherCharges.toFixed(2)}
                 onChange={handleOtherChargesChange}
                 className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
