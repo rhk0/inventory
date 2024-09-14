@@ -1,18 +1,18 @@
 import express from "express";
 import {
-  createSalesInvoiceController,
-  deletSalesInvoiceByIDController,
-  getAllSalesInvoiceByIdController,
-  getAllSalesInvoiceCOntroller,
-  updateSalesInvoiceByIDController,
-} from "../controllers/salesInvoiceController.js";
+  createReturnController,
+  deletReturnByIDController,
+  getAllReturnByIdController,
+  getAllReturnCOntroller,
+  updateReturnByIDController,
+} from "../controllers/salesReturnController.js";
 
 const router = express.Router();
 
-router.post("/createsalesinvoice", createSalesInvoiceController);
-router.get("/getAllsalesinvoice", getAllSalesInvoiceCOntroller);
-router.get("/getAllsalesinvoiceById/:_id", getAllSalesInvoiceByIdController);
-router.put("/updatesalesinvoice/:_id", updateSalesInvoiceByIDController);
-router.delete("/deletesalesinvoice/:_id", deletSalesInvoiceByIDController);
+router.post("/createreturn", createReturnController);
+router.get("/getAllreturn", getAllReturnCOntroller);
+router.get("/getAllreturnById/:_id", getAllReturnByIdController);
+router.put("/updatereturn/:_id", updateReturnByIDController);
+router.delete("/deletereturn/:_id", deletReturnByIDController);
 
 export default router;
