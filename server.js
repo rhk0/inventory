@@ -28,7 +28,7 @@ import salesEstimateRoute from "./routes/salesEstimateRoute.js"
 import expensesRoute from "./routes/expensesRoute.js"
 import incomeRoute from "./routes/incomeRoute.js"
 import formidable from 'express-formidable';
-
+import paymentRoute from "./routes/paymentRoute.js"
 import subscriptionRoute from "./routes/subsCriptionRoute.js"
 // subscription cron
 import subscription from "./middleware/subscriptionMiddleware.js";
@@ -78,7 +78,7 @@ app.use("/api/v1/incomeRoute",incomeRoute)
 //change 
 
 //subscription routes 
- 
+ app.use("/api/v1/payment",paymentRoute)
 app.use("/api/v1/subscription",subscriptionRoute)
 app.use("/uploads",express.static("uploads"));
 

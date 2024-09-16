@@ -27,7 +27,7 @@ const subPayment = new mongoose.Schema(
         default: "",
       },
     },
-    tcManager: { 
+    customer: { 
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
     },
