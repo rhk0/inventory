@@ -47,6 +47,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showExpenses, setExpenses] = useState(false);
 
   const [showAccount, SetShowAccount] = useState(false);
+  const [showSubscription,setSubscription] = useState(false)
   const sidebarRef = useRef(null);
 
   const closeAll = () => {
@@ -923,6 +924,44 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   Account Settings
                 </Link>
               </li>
+            </ul>
+          )}
+        </li>
+
+
+         {/* subscription */}
+
+        <li className="px-1 py-2 ">
+          <button
+            onClick={() => {
+              setSubscription(!showSubscription);
+              //toggleSettings();
+            }}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+          >
+            <span className="flex">  <MdSettings className="mr-2 mt-2" />Subscription</span>
+            {!showSubscription ? <IoIosArrowForward /> : <IoIosArrowDown />}
+          </button>
+          {showSubscription && (
+            <ul className="ml-4   ">
+              <li className="nestedlist innerlist sidebar-list-item ">
+                <Link
+                  to="/admin/current-plan"
+                  className="flex items-center text-white nestitemhover "
+                >
+                Current Plan
+                </Link>
+              </li>
+              <li className="nestedlist innerlist sidebar-list-item">
+                <Link
+                  to="/admin/plan-history"
+                  className="flex items-center text-white nestitemhover"
+                >
+                 history
+                </Link>
+              </li>
+             
+              
             </ul>
           )}
         </li>

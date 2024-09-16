@@ -21,10 +21,11 @@ export const isAdmin=async(req,res,next)=>{
     try {
 
         const user=await userModel.findById(req.user._id)
-        
-        if(user.role!==1)
+      
+        if(user.role!==1 ||  user.status!=="Active")
         {
-            return res.status(401).send({success:false,message:"UnAuthorized Access U e not the AdminDharma...!"})
+             console.log(user)
+            return res.status(401).send({success:false,message:"UnAuthorized Access U r not the AdminDharma...!"})
         }
         else{
             next();

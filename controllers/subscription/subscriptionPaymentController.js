@@ -55,9 +55,9 @@ export const subPayOrderRazorController = async (req, res) => {
     const paymentStatus = await instance.payments.fetch(paymentId);
     const isPaid = paymentStatus.status === "captured";
 
-    if (!isPaid) {
-      return res.status(400).json({ success: false, message: "Payment not captured" });
-    }
+    // if (!isPaid) {
+    //   return res.status(400).json({ success: false, message: "Payment not captured" });
+    // }
 
     // Continue processing after successful payment
     let amt = amount;
@@ -93,7 +93,7 @@ export const subPayOrderRazorController = async (req, res) => {
 
       await userModel.findByIdAndUpdate(
         customer,
-        { paymentValidation: result.plan[0]._id, endDate: endDate },
+        { paymentValidation: result.plan[0]._id, endDate: endDate ,status:"Active" },
         { new: true }
       );
     }

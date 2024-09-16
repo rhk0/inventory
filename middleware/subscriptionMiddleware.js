@@ -27,14 +27,14 @@ const subscription = async () => {
       const warningDate1Day = addDays(user.endDate, -1);
 
      
-      if (user.isFreeTrial && differenceInDays(today, user.createdAt) >= 7) {
+      if (user.isFreeTrial && differenceInDays(today, user.createdAt) >= 3) {
         user.isFreeTrial = false;
         user.status = "Inactive";
         await user.save();
         console.log(`Free trial expired for user: ${user.email}`);
         
      
-        let smd = `Dear ${user.cakeOwnerName}, your free trial has expired. Please choose a subscription plan to continue using our services.`;
+        let smd = `Dear ${user.userName}, your free trial has expired. Please choose a subscription plan to continue using our services.`;
         await sendWarningEmail(user.email, smd);
       }
 
@@ -45,17 +45,17 @@ const subscription = async () => {
         await user.save();
         
         // Send email when status changes to "Inactive"
-        let smd = `Dear ${user.cakeOwnerName}, your subscription has expired on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
+        let smd = `Dear ${user.userName}, your subscription has expired on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
         await sendWarningEmail(user.email, smd);
 
       } else if (warningDate3Days <= today && user.status === "Active") {
-        let smd = `Dear ${user.cakeOwnerName}, your subscription will expire in 3 days on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
+        let smd = `Dear ${user.userName}, your subscription will expire in 3 days on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
         await sendWarningEmail(user.email, smd);
       } else if (warningDate2Days <= today && user.status === "Active") {
-        let smd = `Dear ${user.cakeOwnerName}, your subscription will expire in 2 days on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
+        let smd = `Dear ${user.userName}, your subscription will expire in 2 days on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
         await sendWarningEmail(user.email, smd);
       } else if (warningDate1Day <= today && user.status === "Active") {
-        let smd = `Dear ${user.cakeOwnerName}, your subscription will expire in 1 day on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
+        let smd = `Dear ${user.userName}, your subscription will expire in 1 day on ${user.endDate.toDateString()}. Please renew to continue enjoying our services.`;
         await sendWarningEmail(user.email, smd);
       }
     });
@@ -67,9 +67,9 @@ const subscription = async () => {
 const sendWarningEmail = async (email, message) => {
   try {
     let info = await transporter.sendMail({
-      from: `Manasvi-Cakes<${process.env.EMAIL_USER}>`,
+      from: `Manasvi-Invenotry<${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Cakes Subscription Expiry Warning",
+      subject: "Inventory Subscription Expiry Warning",
       text: message,
     });
     console.log("Warning email sent: ", info.response);

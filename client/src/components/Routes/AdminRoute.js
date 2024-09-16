@@ -60,6 +60,8 @@ import PayOut from "../pages/admin/purchase/PayOut.js";
 import ManagePayOut from "../pages/admin/purchase/ManagePayOut.js";
 import Logout from "../pages/admin/Logout.js";
 import ProfileUpdate from "../auth/ProfileUpdate.js";
+import CurrentPlan from "../pages/admin/subscription/CurrentPlan.jsx"
+import PlanHistory from "../pages/admin/subscription/PlanHistory.jsx"
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -145,6 +147,9 @@ const AdminRoute = () => {
         <Route path="PayOut" element={<PayOut />} />
         <Route path="ManagePayOut" element={<ManagePayOut />} />
         <Route path="profileupdate" element={<ProfileUpdate />} />
+
+        <Route path="current-plan" element={<CurrentPlan/>}/>
+        <Route path ="plan-history" element={<PlanHistory/>}/>
         <Route path="log-out" element={<Logout />} />
       </Routes>
     </div>
