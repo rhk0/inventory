@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+import Select from "react-select";
 
 const CreateSalesEstimate = () => {
   const [date, setDate] = useState("");
@@ -160,7 +161,6 @@ const CreateSalesEstimate = () => {
     }));
   };
 
-
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
@@ -280,11 +280,10 @@ const CreateSalesEstimate = () => {
 
     rows.forEach((rows) => {
       grossAmount += rows.taxableValue;
-      GstAmount += rows.cgstrs + rows.sgstrs ;
-      
+      GstAmount += rows.e + rows.sgstrs;
     });
 
-    const netAmount = grossAmount + GstAmount+otherCharges+0;
+    const netAmount = grossAmount + GstAmount + otherCharges + 0;
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -319,12 +318,29 @@ const CreateSalesEstimate = () => {
 
     if (selectedProduct) {
       const updatedRows = [...rows];
+
+      // Calculate retail price
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      // Determine if sales tax is included from the fetched product data
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+
+      // Calculate taxable value based on salesTaxInclude
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * selectedProduct.quantity;
+
+      // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
         units: selectedProduct.units,
-        productName: selectedProduct.productName, // Ensure productName is updated here
+        productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice,
         quantity: selectedProduct.quantity,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
@@ -332,27 +348,33 @@ const CreateSalesEstimate = () => {
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.wholesalerDiscount) /
           100,
-
-          retailDiscount :selectedProduct.retailDiscount,
-          retailDiscountRS:(selectedProduct.maxmimunRetailPrice *
+        retailDiscount: selectedProduct.retailDiscount,
+        retailDiscountRS:
+          (selectedProduct.maxmimunRetailPrice *
             selectedProduct.retailDiscount) /
           100,
-        taxableValue: (selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate)), 
-        cgstp:selectedProduct.gstRate/2,
-        sgstp: selectedProduct.gstRate/2,
-        igstp:selectedProduct.gstRate,
-        
-        cgstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate/2))/100,
-        sgstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate/2))/100,
-        igstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate))/100,
-        totalvalue:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))+(((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate))/100))
 
+        // taxable value based on salesTaxInclude
+        taxableValue: taxableValue,
+
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
 
         // Add any other fields you want to auto-fill here
       };
@@ -380,9 +402,8 @@ const CreateSalesEstimate = () => {
           productName: row.productName,
           hsnCode: row.hsnCode,
           qty: row.quantity,
-          uom: row.units,
+          units: row.units,
           mrp: row.maxmimunRetailPrice,
-
           discountpercent: row.discountpercent,
           discountRS: row.discountRS,
           taxable: row.taxable,
@@ -393,13 +414,6 @@ const CreateSalesEstimate = () => {
           igstpercent: row.igstpercent,
           igstRS: row.igstRS,
           totalValue: row.totalValue,
-
-          // discount: row.discount,
-          // taxableValue: row.taxableValue,
-          // cgst: row.cgst,
-          // sgst: row.sgst,
-          // igst: row.igst,
-          // totalValue: row.totalValue,
         })),
         grossAmount: grossAmount.toFixed(2),
         GstAmount: GstAmount.toFixed(2),
@@ -412,7 +426,7 @@ const CreateSalesEstimate = () => {
         "/api/v1/salesEstimateRoute/createSalesEstimatet",
         updatedFormData
       );
-      console.log(response,"response")
+      console.log(response, "response");
       if (response) {
         toast.success("Sales estimate created successfully...");
       }
@@ -430,8 +444,8 @@ const CreateSalesEstimate = () => {
       >
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
-            Create Sales Estimate
-          </h1>
+          Create Sales Estimate
+        </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">
@@ -738,8 +752,8 @@ const CreateSalesEstimate = () => {
             <tbody>
               {rows.map((row, index) => (
                 <tr key={index}>
-                  <td className="border p-1">{index + 1}</td>
-                  <td className="border ">
+                  <td className="border p-2">{index + 1}</td>
+                  <td className="border " style={{ width: "75px" }}>
                     <input
                       type="text"
                       value={row.itemCode}
@@ -840,7 +854,7 @@ const CreateSalesEstimate = () => {
                         />
                       </div>
                     )}
-                      {customerType === "Retailer" && (
+                    {customerType === "Retailer" && (
                       <div className="p-1 flex gap-1">
                         <input
                           type="text"
@@ -896,7 +910,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px",
+                                  flexBasis: "20px",
+                                  flexShrink: 1,
+                                }}
                               />
                               <input
                                 type="text"
@@ -908,10 +927,16 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px",
+                                  flexBasis: "60px",
+                                  flexShrink: 1,
+                                }}
                               />
                             </div>
                           </td>
+
                           <td className="border">
                             <div className="p-1 flex gap-1">
                               <input
@@ -924,7 +949,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px",
+                                  flexBasis: "20px",
+                                  flexShrink: 1,
+                                }}
                               />
                               <input
                                 type="text"
@@ -936,7 +966,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px",
+                                  flexBasis: "60px",
+                                  flexShrink: 1,
+                                }}
                               />
                             </div>
                           </td>
@@ -970,7 +1005,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px",
+                                  flexBasis: "20px",
+                                  flexShrink: 1,
+                                }}
                               />
                               <input
                                 type="text"
@@ -982,7 +1022,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px",
+                                  flexBasis: "60px",
+                                  flexShrink: 1,
+                                }}
                               />
                             </div>
                           </td>
