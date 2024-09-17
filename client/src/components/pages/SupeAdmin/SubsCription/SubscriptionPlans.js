@@ -25,7 +25,7 @@ const SubscriptionPlans = () => {
   const fetchPlans = async () => {
     try {
       const response = await axios.get('/api/v1/subscription/all');
-      console.log(response,"res")
+     
       setPlans(response.data.plan);
     } catch (error) {
       console.error('Error fetching plans:', error);

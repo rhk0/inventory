@@ -32,7 +32,7 @@ import paymentRoute from "./routes/paymentRoute.js"
 import subscriptionRoute from "./routes/subsCriptionRoute.js"
 // subscription cron
 import subscription from "./middleware/subscriptionMiddleware.js";
-
+import superAdminRoutes from "./routes/superAdminRoutes.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -74,14 +74,16 @@ app.use("/api/v1/salesEstimateRoute",salesEstimateRoute)
 app.use("/api/v1/expensesRoute",expensesRoute)
 app.use("/api/v1/incomeRoute",incomeRoute)
 
-//change dheeru
+
 //change 
 
 //subscription routes 
  app.use("/api/v1/payment",paymentRoute)
 app.use("/api/v1/subscription",subscriptionRoute)
 app.use("/uploads",express.static("uploads"));
+//super admin routes
 
+app.use("/api/v1/super",superAdminRoutes)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "./client/build")));
