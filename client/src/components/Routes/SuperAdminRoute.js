@@ -14,6 +14,7 @@ import InActiveUser from "../pages/SupeAdmin/InActiveUser.jsx";
 import SubscribedUser from "../pages/SupeAdmin/SubscribedUser.jsx";
 import Analytics from "../pages/SupeAdmin/Analytics.jsx";
 import RevenueAnalytics from "../pages/SupeAdmin/RevenueAnalytics.jsx";
+import UsersStaff from "../pages/SupeAdmin/UsersStaff.jsx";
 const SuperAdminRoute = () => {
   const [auth] = useAuth();
 
@@ -42,6 +43,7 @@ const SuperAdminRoute = () => {
          <Route path = "/subscribed-users" element={<SubscribedUser/>}/>
          <Route path = "/analytics" element={<Analytics/>}/>
          <Route path = "/revenue-analytics" element={<RevenueAnalytics/>}/>
+         <Route path = "/users-staff" element = {<UsersStaff/>}/>
         <Route path="log-out" element={<Logout/>} />
        
 

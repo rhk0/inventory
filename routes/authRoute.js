@@ -1,5 +1,5 @@
 import express from "express";
-import { forgetController, loginController, resetPasswordController, userRegisterController, userUpdateController, verificationController } from "../controllers/authController.js";
+import { addStaffController, deleteStaffController, forgetController, loginController, resetPasswordController, userRegisterController, userUpdateController, verificationController, viewStaffController } from "../controllers/authController.js";
 import { mailController } from "../middleware/mailController.js";
 import { isAdmin, isStaff, isSuperAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
@@ -12,6 +12,17 @@ router.post('/verification',verificationController )
 router.post('/login',loginController)
 router.post('/forget',forgetController)
 router.post('/resetPassword',resetPasswordController)
+// staff
+router.post("/add-staff",requireSignIn,isAdmin,addStaffController)
+  
+router.get("/all-staff",requireSignIn,isAdmin,viewStaffController)
+router.delete("/delete-staff/:_id",requireSignIn,isAdmin,deleteStaffController)
+
+
+
+
+
+
 
 
 router.get("/staff-auth", requireSignIn,isStaff, (req, res) => {

@@ -4,6 +4,7 @@ import { hashPassword, comparePassword } from "../middleware/authHelper.js";
 import bcrypt from 'bcrypt';
 import NodeCache from "node-cache";
 import JWT from "jsonwebtoken";
+import { isValidObjectId } from "mongoose";
 
 
 const node_cache = new NodeCache({ stdTTL: 120 });
@@ -140,7 +141,7 @@ export const verificationController = async (req, res) => {
         message: "Invalid email format",
       });
     }
-
+ 
     const exu = await userModel.findOne({ email });
 
     if (exu) {
@@ -448,4 +449,94 @@ export const resetPasswordController = async (req, res) => {
       .send({ success: false, message: "internal server issue...!" });
   }
 };
+
+// here we have to create 4 cr 
+
+// add Staff , update staff , get staff, delete staff
+
+export const addStaffController = async(req,res)=>{
+  try { const {_id}=req.user;
+ 
+  if(!_id){
+    return res.send({success:false,message:"object id of admin not found"})
+  }
+  if(!isValidObjectId(_id)){
+    return res.send({success:false,message:"objct id not valid"})
+  }
+   
+   const {name,contact,address,pincode,state,fatherName,email,password}=req.body;
+const requiredFields= [
+  "name","contact","address","pincode","state","fatherName","email","password"
+]
+ const missingFields = [];
+   for(let i of requiredFields){
+    if(!req.body[i]){
+      missingFields.push(i)
+    }
+   }
+
+   if(missingFields.length>0){
+  return res.send({success:false,message:"missing Fields ",missingFields})
+   }
+   
+
+const exStaff = await userModel.findOne({email})
+if(exStaff){
+   return res.send({success:false,message:"This staff is already registerd try with another email"})
+}
+
+    const hashpwd = await hashPassword(password)
+    const role = 0;
+   const staff =  await userModel.create({
+    userName: name,
+    contact,                    
+    address,
+    pincode,
+    state,
+    fatherName,
+    email,
+    password: hashpwd,
+    role:role,
+    admin:_id
+   })
+
+  
+  
+ return res.status(201).send({success:true,message:"Staff Added Successfully",staff})
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send({success:false,message:error.message,})
+  }
+}
+
+export const  viewStaffController = async(req,res)=>{
+  try {
+    const {_id}=req.user;
+    const staff = await userModel.find({role:0,admin:_id}).populate("admin")
+   
+    return res.send({success:true,message:"staff found successfully",staff})
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send({success:false,message:error.message})
+  }
+}
+
+export const deleteStaffController = async (req, res) => {
+  try {
+    const { _id } = req.params; 
+    const staff = await userModel.findByIdAndDelete(_id); 
+
+    if (!staff) {
+      return res.status(404).send({ success: false, message: 'Staff member not found' });
+    }
+
+    return res.status(200).send({ success: true, message: 'Staff member deleted successfully' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+
+
    

@@ -9,7 +9,7 @@ import supplierRoute from "./routes/supplierRoute.js"
 import customerRoute from "./routes/customerRoute.js"
 import transportRoute from "./routes/transportRoute.js"
 import vendorRoute from "./routes/vendorRoute.js"
-// import staffRoute from "./routes/staffRoute.js"
+
 import cashRoute from "./routes/cashRoute.js"
 import bankRoute from "./routes/bankRoute.js"
 import bankTransctionRoute from "./routes/bankTransctionRoute.js"
@@ -55,7 +55,7 @@ app.use("/api/v1/auth",supplierRoute)
 app.use("/api/v1/auth",customerRoute)
 app.use("/api/v1/auth",transportRoute)
 app.use("/api/v1/auth",vendorRoute)
-// app.use("/api/v1/auth",staffRoute)
+
 app.use("/api/v1/auth",bankRoute)
 app.use("/api/v1/auth",cashRoute);
 app.use("/api/v1/auth",bankTransctionRoute)

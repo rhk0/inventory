@@ -2,8 +2,7 @@ import React from 'react';
 
 
 const Test = () => {
-  // You can useTailwind CSS classes directly within your JSX
-
+   
   return (
 <div className="flex items-center justify-center bg-gray-200  responsive-container">
   <div className="p-8 rounded shadow-lg bg-red-500 text-white shadow-2xl shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">

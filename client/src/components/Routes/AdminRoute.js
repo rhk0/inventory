@@ -15,7 +15,7 @@ import ManageCustomer from "../pages/admin/parties/ManageCustomer.js";
 import Cash from "../pages/admin/cash/Cash.js";
 import CreateVendors from "../pages/admin/parties/CreateVendors.js";
 import ManageVendor from "../pages/admin/parties/ManageVendor.js";
-import CreateStaff from "../pages/admin/CreateStaff.js";
+import CreateStaff from "../pages/admin/settings/CreateStaff.js";
 import BankToBankTranfer from "../pages/admin/accounts/banktransaction/BankToBankTransfer.js";
 import AddBank from "../pages/admin/cash/AddBank.js";
 
@@ -62,6 +62,7 @@ import Logout from "../pages/admin/Logout.js";
 import ProfileUpdate from "../auth/ProfileUpdate.js";
 import CurrentPlan from "../pages/admin/subscription/CurrentPlan.jsx"
 import PlanHistory from "../pages/admin/subscription/PlanHistory.jsx"
+import ViewStaff from "../pages/admin/settings/ViewStaff.jsx";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -114,7 +115,10 @@ const AdminRoute = () => {
         <Route path="managetranspoter" element={<ManageTranspoter />} />
         <Route path="createvendors" element={<CreateVendors />} />
         <Route path="manageVendor" element={<ManageVendor />} />
+
+        {/* staff  */}
         <Route path="createstaff" element={<CreateStaff />} />
+        <Route path ="manage-staff" element={<ViewStaff/>}/>
         <Route path="addbank" element={<AddBank />} />
         <Route path="purchesInvoice" element={<PurchesInvoice />} />
 
