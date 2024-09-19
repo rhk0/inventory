@@ -6,13 +6,14 @@ import {
   getAllPurchesOrderController,
   updatePurchesOrderByIdController,
 } from "../controllers/purchesOrderController.js";
+import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createpurchesorder", createPurchesOrderController);
-router.get("/getAllpurchesorder", getAllPurchesOrderController);
-router.get("/getAllpurchesorderById/:_id", getAllPurchesOrderByIdController);
-router.put("/updatepurchesorder/:_id", updatePurchesOrderByIdController);
-router.delete("/deletepurchesorder/:_id", deletePurchesOrderByIdController);
+router.post("/createpurchesorder",requireSignIn,isAdmin, createPurchesOrderController);
+router.get("/getAllpurchesorder",requireSignIn,isAdmin, getAllPurchesOrderController);
+router.get("/getAllpurchesorderById/:_id",requireSignIn,isAdmin, getAllPurchesOrderByIdController);
+router.put("/updatepurchesorder/:_id", requireSignIn,isAdmin,updatePurchesOrderByIdController);
+router.delete("/deletepurchesorder/:_id", requireSignIn,isAdmin,deletePurchesOrderByIdController);
 
 export default router;

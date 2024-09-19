@@ -40,6 +40,8 @@ import salesReturnRoute from "./routes/salesReturnRoute.js"
 import pointOfSaleRoute from "./routes/pointOfSaleRoute.js"
 import payInRoute from "./routes/payInRoute.js"
 import purchesOrderRoute from "./routes/purchesOrderRoute.js"
+import purchaseInvoiceRoute from "./routes/purchaseInvoiceRoute.js"
+import purchesReturnRoute from "./routes/purchesReturnRoute.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -114,12 +116,15 @@ app.use("/api/v1/salesReturnRoute",salesReturnRoute)
 app.use("/api/v1/pointOfSaleRoute",pointOfSaleRoute)
 app.use("/api/v1/payInRoute",payInRoute)
 app.use("/api/v1/purchesOrderRoute",purchesOrderRoute)
+app.use("/api/v1/purchaseInvoiceRoute",purchaseInvoiceRoute)
+app.use("/api/v1/purchesReturnRoute",purchesReturnRoute)
 
 //change 
 
 //subscription routes 
  app.use("/api/v1/payment",paymentRoute)
 app.use("/api/v1/subscription",subscriptionRoute)
+
 app.use("/uploads",express.static("uploads"));
 //super admin routes
 

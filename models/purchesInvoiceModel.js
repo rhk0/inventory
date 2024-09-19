@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 
-const purchesOrderSchema = new mongoose.Schema(
+const purchesInvoiceSchema = new mongoose.Schema(
   {
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-    date: { type: String },
-    orderNo: { type: String },
     purchaseType: { type: String },
+    date: { type: String },
+    invoiceNo:{type:String},
+    supplierInvoiceNo: { type: String },
     supplierName: { type: String },
     placeOfSupply: { type: String },
     paymentTerm: { type: String },
@@ -24,9 +25,14 @@ const purchesOrderSchema = new mongoose.Schema(
         itemCode: { type: String },
         productName: { type: String },
         hsnCode: { type: String },
-        qty: { type: Number },
         uom: { type: Number },
+        qty: { type: Number },
+        freeQty:{type:String},
         mrp: { type: Number },
+        unitCost: { type: Number },
+        schemeMargin: { type: String },
+        discountpercent: { type: Number },
+        discountRs: { type: Number },
         taxable: { type: Number },
         cgstpercent: { type: Number },
         cgstRS: { type: Number },
@@ -43,10 +49,11 @@ const purchesOrderSchema = new mongoose.Schema(
     grossAmount: { type: String },
     GstAmount: { type: String },
     netAmount: { type: String },
+    documentPath: { type: String },
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.model("purchesOrder", purchesOrderSchema);
+export default mongoose.model("purchesInvoice", purchesInvoiceSchema);
