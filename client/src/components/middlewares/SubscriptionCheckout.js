@@ -12,6 +12,7 @@ const SubscriptionCheckout = () => {
   const _id = auth?.user?._id;
 
   useEffect(() => {
+    toast.error("Your Subscription has been expired ...!  Subscribe Now ")
     fetchPlans();
   }, []);
 
@@ -66,6 +67,7 @@ const SubscriptionCheckout = () => {
             });
 
             toast.success('Payment Completed Successfully');
+            handleLogout()
           },
           prefill: {
             name: 'Manasvi Technologies',

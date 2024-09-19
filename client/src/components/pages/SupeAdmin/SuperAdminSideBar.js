@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowForward, IoMdClose } from "react-icons/io";
 import { MdDashboard, MdSubscriptions, MdPeople, MdPerson, MdExitToApp, MdCheckCircle, MdHighlightOff } from "react-icons/md";
+import Analytics from './Analytics';
 
 function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
   const [showParties, setParties] = useState(false);
@@ -85,7 +86,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             <span>Subscription Plans</span>
           </li>
         </Link>
-        <Link to="/superadmin/" className="w-full">
+        <Link to="/superadmin/all-users" className="w-full">
           <li
             className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
             onClick={closeSidebar}
@@ -94,7 +95,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             <span>Users</span>
           </li>
         </Link>
-        <Link to="/superadmin/" className="w-full">
+        <Link to="/superadmin/subscribed-users" className="w-full">
           <li
             className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
             onClick={closeSidebar}
@@ -103,7 +104,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             <span>Subscribed Users</span>
           </li>
         </Link>
-        <Link to="/superadmin/" className="w-full">
+        <Link to="/superadmin/active-users" className="w-full">
           <li
             className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
             onClick={closeSidebar}
@@ -112,13 +113,41 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             <span>Active Users</span>
           </li>
         </Link>
-        <Link to="/superadmin/" className="w-full">
+        <Link to="/superadmin/inactive-users" className="w-full">
           <li
             className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
             onClick={closeSidebar}
           >
             <MdHighlightOff className="mr-2" />
             <span>Inactive Users</span>
+          </li>
+        </Link>
+        <Link to="/superadmin/users-staff" className="w-full">
+          <li
+            className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
+            onClick={closeSidebar}
+          >
+            <MdPeople className="mr-2" />
+            <span>Users Staff</span>
+          </li>
+        </Link>
+
+        <Link to="/superadmin/analytics" className="w-full">
+          <li
+            className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
+            onClick={closeSidebar}
+          >
+            <MdPeople className="mr-2" />
+            <span> User Analytics</span>
+          </li>
+        </Link>
+        <Link to="/superadmin/revenue-analytics" className="w-full">
+          <li
+            className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
+            onClick={closeSidebar}
+          >
+            <MdPeople className="mr-2" />
+            <span> Revenue Analytics</span>
           </li>
         </Link>
         <Link to="/superadmin/log-out" className="w-full">
