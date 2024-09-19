@@ -1,4 +1,4 @@
-import returnModel from "../models/returnModel.js";
+import returnModel from "../models/salesReturnModel.js";
 
 export const createReturnController = async (req, res) => {
   try {
@@ -43,7 +43,7 @@ export const createReturnController = async (req, res) => {
       "billOfLading",
       "billingAddress",
       "reverseCharge",
-      "gstType",
+      'gstType',
       "reasonForReturn",
       "rows",
       "otherChargesDescription",
@@ -121,8 +121,8 @@ export const getAllReturnCOntroller = async (req, res) => {
 };
 export const getAllReturnByIdController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const response = await returnModel.find(id);
+    const { _id } = req.params;
+    const response = await returnModel.findById(_id);
     if (!response) {
       return res.status(404).json({
         success: false,

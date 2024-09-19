@@ -9,7 +9,7 @@ import supplierRoute from "./routes/supplierRoute.js"
 import customerRoute from "./routes/customerRoute.js"
 import transportRoute from "./routes/transportRoute.js"
 import vendorRoute from "./routes/vendorRoute.js"
-// import staffRoute from "./routes/staffRoute.js"
+import staffRoute from "./routes/staffRoute.js"
 import cashRoute from "./routes/cashRoute.js"
 import bankRoute from "./routes/bankRoute.js"
 import bankTransctionRoute from "./routes/bankTransctionRoute.js"
@@ -33,6 +33,10 @@ import subscriptionRoute from "./routes/subsCriptionRoute.js"
 // subscription cron
 import subscription from "./middleware/subscriptionMiddleware.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js"
+import salesReturnRoute from "./routes/salesReturnRoute.js"
+import pointOfSaleRoute from "./routes/pointOfSaleRoute.js"
+import payInRoute from "./routes/payInRoute.js"
+import purchesOrderRoute from "./routes/purchesOrderRoute.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -55,7 +59,7 @@ app.use("/api/v1/auth",supplierRoute)
 app.use("/api/v1/auth",customerRoute)
 app.use("/api/v1/auth",transportRoute)
 app.use("/api/v1/auth",vendorRoute)
-// app.use("/api/v1/auth",staffRoute)
+app.use("/api/v1/auth",staffRoute)
 app.use("/api/v1/auth",bankRoute)
 app.use("/api/v1/auth",cashRoute);
 app.use("/api/v1/auth",bankTransctionRoute)
@@ -73,7 +77,10 @@ app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
 app.use("/api/v1/salesEstimateRoute",salesEstimateRoute)
 app.use("/api/v1/expensesRoute",expensesRoute)
 app.use("/api/v1/incomeRoute",incomeRoute)
-
+app.use("/api/v1/salesReturnRoute",salesReturnRoute)
+app.use("/api/v1/pointOfSaleRoute",pointOfSaleRoute)
+app.use("/api/v1/payInRoute",payInRoute)
+app.use("/api/v1/purchesOrderRoute",purchesOrderRoute)
 
 //change 
 

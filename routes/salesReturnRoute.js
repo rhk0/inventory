@@ -9,7 +9,7 @@ import {
 
 const router = express.Router();
 
-router.post("/createreturn", createReturnController);
+router.post("/createsalesreturn", createReturnController);
 router.get("/getAllreturn", getAllReturnCOntroller);
 router.get("/getAllreturnById/:_id", getAllReturnByIdController);
 router.put("/updatereturn/:_id", updateReturnByIDController);
