@@ -87,6 +87,48 @@ const CreateProduct = () => {
   const [imgs, setimgs] = useState([]);
   const fileInputRef = useRef(null);
 
+  // calculation
+  const [margin, setMargin] = useState(0);
+
+  // const calculateProfitAndMargin = () => {
+  //   const retailDiscount = parseFloat(formData.retailDiscount) || 0;
+  //   const maxmimunRetailPrice = parseFloat(formData.maxmimunRetailPrice) || 0;
+  //   const landingCost = parseFloat(formData.purchasePriceInGst) || 0;
+  //   const gstRate = parseFloat(formData.gstRate) || 0;
+  //   const salesTaxInclude = formData.salesTaxInclude;
+
+  //   // Calculate retail price based on MRP and discount
+  //   const retailPrice =
+  //     maxmimunRetailPrice - maxmimunRetailPrice * (retailDiscount / 100);
+
+  //   let retailPriceExTax, calculatedProfit, calculatedMargin;
+
+  //   if (salesTaxInclude) {
+  //     retailPriceExTax = retailPrice / (1 + gstRate / 100);
+  //     calculatedProfit = retailPriceExTax - landingCost;
+  //     calculatedMargin = (calculatedProfit / retailPriceExTax) * 100;
+  //   } else {
+  //     calculatedProfit = retailPrice - landingCost;
+  //     calculatedMargin = (calculatedProfit / retailPrice) * 100;
+  //   }
+
+  //   // Update form data with calculated values
+  //   setFormData({
+  //     ...formData,
+  //     retailPrice: retailPrice.toFixed(2),
+  //     retailMargin: calculatedMargin.toFixed(2),
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   handleChange();
+  // }, [
+  //   formData.retailPrice,
+  //   formData.purchasePriceInGst,
+  //   formData.gstRate,
+  //   formData.salesTaxInclude,
+  // ]);
+
   useEffect(() => {
     const fetchManufecturer = async () => {
       try {
@@ -174,10 +216,65 @@ const CreateProduct = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
+    // Update form data first
+    const updatedFormData = {
+      ...formData,
       [name]: type === "checkbox" ? checked : value,
-    }));
+    };
+
+    // Now calculate retail price if MRP or discount is updated
+    const retailDiscount = parseFloat(updatedFormData.retailDiscount) || 0;
+    const maxmimunRetailPrice =
+      parseFloat(updatedFormData.maxmimunRetailPrice) || 0;
+    const landingCost = parseFloat(updatedFormData.purchasePriceInGst) || 0;
+    const gstRate = parseFloat(updatedFormData.gstRate) || 0;
+    const salesTaxInclude = updatedFormData.salesTaxInclude;
+
+    // Calculate the retail price
+    const retailPrice =
+      maxmimunRetailPrice - maxmimunRetailPrice * (retailDiscount / 100);
+
+    let retailPriceExTax, calculatedRetailProfit, calculatedRetailMargin;
+
+    if (salesTaxInclude) {
+      retailPriceExTax = retailPrice / (1 + gstRate / 100);
+      calculatedRetailProfit = retailPriceExTax - landingCost;
+      calculatedRetailMargin =
+        (calculatedRetailProfit / retailPriceExTax) * 100;
+    } else {
+      calculatedRetailProfit = retailPrice - landingCost;
+      calculatedRetailMargin = (calculatedRetailProfit / retailPrice) * 100;
+    }
+
+    // Now calculate wholesaler price and margin
+    const wholesalerDiscount =
+      parseFloat(updatedFormData.wholesalerDiscount) || 0;
+    const wholesalerPrice =
+      maxmimunRetailPrice - maxmimunRetailPrice * (wholesalerDiscount / 100);
+
+    let wholesalerPriceExTax,
+      calculatedWholesalerProfit,
+      calculatedWholesalerMargin;
+
+    if (salesTaxInclude) {
+      wholesalerPriceExTax = wholesalerPrice / (1 + gstRate / 100);
+      calculatedWholesalerProfit = wholesalerPriceExTax - landingCost;
+      calculatedWholesalerMargin =
+        (calculatedWholesalerProfit / wholesalerPriceExTax) * 100;
+    } else {
+      calculatedWholesalerProfit = wholesalerPrice - landingCost;
+      calculatedWholesalerMargin =
+        (calculatedWholesalerProfit / wholesalerPrice) * 100;
+    }
+
+    // Update formData with calculated retail and wholesaler values
+    setFormData({
+      ...updatedFormData,
+      retailPrice: retailPrice.toFixed(2),
+      retailMargin: calculatedRetailMargin.toFixed(2),
+      wholesalerPrice: wholesalerPrice.toFixed(2),
+      wholesaleMargin: calculatedWholesalerMargin.toFixed(2),
+    });
   };
 
   useEffect(() => {
@@ -636,7 +733,7 @@ const CreateProduct = () => {
           <div>
             <label className="block font-bold">Expiry Date</label>
             <input
-              type="date"
+              type="month"
               name="expiryDate"
               className="w-full p-1 border rounded"
               value={formData.expiryDate}
@@ -733,6 +830,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             />
           </div>
+
           <div>
             <label className="block font-bold">
               Retail Margin <span className="text-xs">(in %)</span>

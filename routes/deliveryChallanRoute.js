@@ -6,10 +6,11 @@ import {
   getAllChallanCOntroller,
   updateChallanByIDController,
 } from "../controllers/deliveryChallanController.js";
+import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createchallan", createChallanController);
+router.post("/createchallan",requireSignIn,isAdmin, createChallanController);
 router.get("/getAllchallan", getAllChallanCOntroller);
 router.get("/getchallanById/:_id", getAllChallanByIdController);
 router.put("/updatechallan/:_id", updateChallanByIDController);

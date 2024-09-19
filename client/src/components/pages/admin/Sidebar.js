@@ -837,7 +837,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/ManageExpense"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Expenses List
+                        Expenses List 
                       </Link>
                     </li>
                   </ul>
@@ -906,6 +906,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="flex items-center text-white nestitemhover"
                 >
                   Add Staff
+                </Link>
+              </li>
+              <li className="">
+                <Link
+                  to="/admin/manage-staff"
+                  className="flex items-center text-white nestitemhover"
+                >
+                Manage Staff
                 </Link>
               </li>
               <li className="">

@@ -3,7 +3,6 @@ import deliveryChallanModel from "../models/deliveryChallanModel.js";
 export const createChallanController = async (req, res) => {
   try {
     const {
-      userId,
       date,
       salesType,
       challanNo,
@@ -19,49 +18,18 @@ export const createChallanController = async (req, res) => {
       reverseCharge,
       gstType,
       rows,
-      otherChargesDescription,
-      othercharges,
+      otherChargesDescriptions,
+      otherCharges,
       narration,
       grossAmount,
       GstAmount,
       netAmount,
     } = req.body;
 
-    const requiredFields = [
-      "userId",
-      "date",
-      "salesType",
-      "challanNo",
-      "customerName",
-      "placeOfSupply",
-      "paymentTerm",
-      "dueDate",
-      "dispatchedThrough",
-      "destination",
-      "carrierNameAgent",
-      "billOfLading",
-      "billingAddress",
-      "reverseCharge",
-      "gstType",
-      "rows",
-      "otherChargesDescription",
-      "othercharges",
-      "narration",
-      "grossAmount",
-      "GstAmount",
-      "netAmount",
-    ];
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
-
     try {
+      const { _id } = req.user;
       const newChallan = new deliveryChallanModel({
-        userId,
+        admin: _id,
         date,
         salesType,
         challanNo,
@@ -77,8 +45,8 @@ export const createChallanController = async (req, res) => {
         reverseCharge,
         gstType,
         rows,
-        otherChargesDescription,
-        othercharges,
+        otherChargesDescriptions,
+        otherCharges,
         narration,
         grossAmount,
         GstAmount,
@@ -218,5 +186,3 @@ export const updateChallanByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
-
-

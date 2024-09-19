@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const deliveryChallanSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     date: { type: String },
     salesType: { type: String },
     challanNo: { type: String },
@@ -38,7 +38,7 @@ const deliveryChallanSchema = new mongoose.Schema(
       },
     ],
     otherChargesDescription: { type: String },
-    othercharges: { type: String },
+    otherCharges: { type: String },
     narration: { type: String },
     grossAmount: { type: String },
     GstAmount: { type: String },

@@ -60,6 +60,20 @@ const userSchema = mongoose.Schema({
       freeCounter:{
         type:Number,
         defalt: 0,
+      },
+      fatherName:{
+        type:String,
+    
+      },
+      pincode:{
+        type:Number,
+      },
+      state:{
+        type:String,
+      },
+      admin:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"user"
       }
 },{
     timestamps:true,

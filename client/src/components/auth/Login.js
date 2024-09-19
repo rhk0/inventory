@@ -31,7 +31,7 @@ const Login = () => {
     }
     if (dauth?.user?.role===0) {
       if (dauth.AccessToken) {
-        navigate("/staff");
+        navigate("/admin");
       }
     }
   });
