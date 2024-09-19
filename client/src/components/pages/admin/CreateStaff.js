@@ -5,19 +5,55 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const indianStates = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
-  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
-  "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
-  "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands",
-  "Chandigarh", "Dadra and Nagar Haveli", "Daman and Diu", "Lakshadweep", "Delhi",
-  "Puducherry", "Ladakh", "Jammu and Kashmir"
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli",
+  "Daman and Diu",
+  "Lakshadweep",
+  "Delhi",
+  "Puducherry",
+  "Ladakh",
+  "Jammu and Kashmir",
 ];
 
 const initialFormData = {
   photo: "",
-  name: "", contact: "", address: "", pinCode: "", state: "", fatherName: "",
-  email: "", password: ""
+  name: "",
+  contact: "",
+  address: "",
+  pinCode: "",
+  state: "",
+  fatherName: "",
+  email: "",
+  password: "",
 };
 
 const CreateStaff = () => {
@@ -46,7 +82,14 @@ const CreateStaff = () => {
     e.preventDefault();
 
     const requiredFields = [
-      "name", "contact", "address", "pinCode", "state", "fatherName", "email", "password"
+      "name",
+      "contact",
+      "address",
+      "pinCode",
+      "state",
+      "fatherName",
+      "email",
+      "password",
     ];
 
     for (const field of requiredFields) {
@@ -64,17 +107,19 @@ const CreateStaff = () => {
       }
     }
 
-       // Append the photo if it exists
-       if (formData.photo) {
-        console.log("Photo file in formData:", formData.photo);
-        formDataToSend.append("photo", formData.photo);
-      } else {
-        console.error("Photo is missing from formData.");
-      }
-  
+    // Append the photo if it exists
+    if (formData.photo) {
+      console.log("Photo file in formData:", formData.photo);
+      formDataToSend.append("photo", formData.photo);
+    } else {
+      console.error("Photo is missing from formData.");
+    }
 
     try {
-      const response = await axios.post("http://localhost:5011/api/v1/auth/createStaff", formDataToSend);
+      const response = await axios.post(
+        "http://localhost:5011/api/v1/auth/createStaff",
+        formDataToSend
+      );
 
       if (response) {
         toast.success("Staff created successfully.");
@@ -82,8 +127,15 @@ const CreateStaff = () => {
 
       clearData();
     } catch (error) {
-      console.error("Error creating staff:", error.response ? error.response.data : error.message);
-      toast.error(`There was an error creating the staff: ${error.response ? error.response.data.message : error.message}`);
+      console.error(
+        "Error creating staff:",
+        error.response ? error.response.data : error.message
+      );
+      toast.error(
+        `There was an error creating the staff: ${
+          error.response ? error.response.data.message : error.message
+        }`
+      );
     }
   };
 
@@ -94,7 +146,10 @@ const CreateStaff = () => {
   const photoInputRef = useRef(null);
   return (
     <div className="responsive-container px-4 py-1">
-      <form className="mx-auto p-8 border border-gray-300 shadow-lg rounded-lg bg-white" onSubmit={handleSubmit}>
+      <form
+        className="mx-auto p-8 border border-gray-300 shadow-lg rounded-lg bg-white"
+        onSubmit={handleSubmit}
+      >
         <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
           Add Staff
         </h4>
@@ -103,12 +158,12 @@ const CreateStaff = () => {
           <label className="block mb-2 font-bold">
             Passport Image
             <input
-            type="file"
-            name="photo" // This name should match the Multer field name
-            accept="image/*"
-            onChange={handlePhotoChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
-          />
+              type="file"
+              name="photo" // This name should match the Multer field name
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+            />
           </label>
 
           <label className="block mb-2 font-bold">
@@ -206,7 +261,10 @@ const CreateStaff = () => {
           </label>
         </div>
 
-        <button type="submit" className="mt-4 bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700">
+        <button
+          type="submit"
+          className="mt-4 bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700"
+        >
           Submit
         </button>
 

@@ -12,9 +12,11 @@ const ManageSalesEstimate = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
     fetchEstimate();
+    fetchCustomers();
   }, []);
 
   const fetchEstimate = async () => {
@@ -24,7 +26,6 @@ const ManageSalesEstimate = () => {
       const response = await axios.get(
         "/api/v1/salesEstimateRoute/getAllSalesEstimatet"
       );
-      console.log(response, "kdlsjf");
       setSalesEstimates(response.data.salesEstimates);
     } catch (error) {
       setError("Error fetching sales estimates.");
@@ -41,6 +42,37 @@ const ManageSalesEstimate = () => {
   const handleEdit = (estimate) => {
     setSelectedEstimate(estimate);
     setEditModalOpen(true);
+  };
+
+  const handleDelete = async (estimateId) => {
+    if (window.confirm("Are you sure you want to delete this estimate?")) {
+      setLoading(true);
+      try {
+        await axios.delete(
+          `/api/v1/salesEstimateRoute/deleteSalesEstimatetByID/${estimateId}`
+        );
+        fetchEstimate();
+      } catch (error) {
+        setError("Error deleting the sales estimate.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get("/api/v1/auth/manageCustomer");
+      console.log(response, "ldsf");
+      setCustomers(response.data.data);
+    } catch (error) {
+      console.error("Error fetching customers", error);
+    }
+  };
+
+  const getCustomerName = (customerId) => {
+    const customer = customers.find((c) => c.id === customerId);
+    return customer ? customer.name : "Unknown Customer";
   };
 
   const closeModal = () => {
@@ -92,7 +124,7 @@ const ManageSalesEstimate = () => {
                   "UOM",
                   "MRP",
                   "QTY",
-                  "Rate",
+                  // "Rate",
                   "Total Value",
                   "Action",
                 ].map((header) => (
@@ -115,7 +147,7 @@ const ManageSalesEstimate = () => {
                     <td className="border border-gray-300 text-center">
                       {index + 1}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
+                    <td className="border border-gray-300 p-2 text-center whitespace-nowrap">
                       {estimate.date}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
@@ -125,7 +157,7 @@ const ManageSalesEstimate = () => {
                       {estimate.salesType}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.customerName}
+                      {getCustomerName(estimate.customerId)}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -133,9 +165,10 @@ const ManageSalesEstimate = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.paymentTerm}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
+                    <td className="border border-gray-300 p-2 text-center whitespace-nowrap">
                       {estimate.dueDate}
                     </td>
+
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
                     </td>
@@ -155,37 +188,46 @@ const ManageSalesEstimate = () => {
                       {estimate.rows?.[0]?.qty || "-"}
                     </td>
 
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.rate || "-"}
-                    </td>
+                    {/* <td className="border border-gray-300 p-2 text-center">
+            {estimate.rows?.[0]?.rate || "-"}
+          </td> */}
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.totalValue || "-"}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center flex justify-center space-x-2">
-                      <button
-                        className="text-blue-500 hover:underline"
-                        onClick={() => handleView(estimate)}
-                      >
-                        View
-                      </button>
-                      <button
-                        className="text-yellow-500 hover:underline"
-                        onClick={() => handleEdit(estimate)}
-                      >
-                        Edit
-                      </button>
-                      <button className="text-red-500 hover:underline">
-                        Delete
-                      </button>
-                      <button className="text-green-500 hover:underline">
-                        Create Invoice
-                      </button>
+
+                    <td className="border border-gray-300 p-2 text-center">
+                      <div className="flex justify-center space-x-2">
+                        <button
+                          className="text-blue-500 hover:underline focus:outline-none"
+                          onClick={() => handleView(estimate)}
+                        >
+                          View
+                        </button>
+                        <button
+                          className="text-yellow-500 hover:underline focus:outline-none "
+                          onClick={() => handleEdit(estimate)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-red-500 hover:underline focus:outline-none"
+                          onClick={() => handleDelete(estimate._id)}
+                        >
+                          Delete
+                        </button>
+                        <button className="text-green-500 hover:underline focus:outline-none">
+                          Create Invoice
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="17" className="text-center p-4">
+                  <td
+                    colSpan="17"
+                    className="text-center p-4 border border-gray-300"
+                  >
                     No sales estimates found.
                   </td>
                 </tr>
@@ -202,9 +244,9 @@ const ManageSalesEstimate = () => {
         contentLabel="View Estimate Modal"
         style={{
           content: {
-            width: "100%",
+            width: "90%",
             height: "100%",
-            maxWidth: "1200px",
+            maxWidth: "1400px",
             margin: "auto",
             padding: "5px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -216,6 +258,7 @@ const ManageSalesEstimate = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
+          getCustomerName={getCustomerName}
         />
       </Modal>
 
@@ -226,9 +269,9 @@ const ManageSalesEstimate = () => {
         contentLabel="Edit Estimate Modal"
         style={{
           content: {
-            width: "100%",
+            width: "90%",
             height: "100%",
-            maxWidth: "1200px",
+            maxWidth: "1400px",
             margin: "auto",
             padding: "5px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -236,7 +279,12 @@ const ManageSalesEstimate = () => {
           },
         }}
       >
-        <EditEstimateModal isOpen={editModalOpen} estimate={selectedEstimate} />
+        <EditEstimateModal
+          isOpen={editModalOpen}
+          estimate={selectedEstimate}
+          closeModal={closeModal}
+          getCustomerName={getCustomerName}
+        />
       </Modal>
     </div>
   );
