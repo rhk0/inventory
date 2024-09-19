@@ -69,7 +69,7 @@ const ManageSubBrand = () => {
   return (
     <div className="container mx-auto p-4 responsive-container">
       <h1 className="text-center text-2xl font-bold text-purple-600 mb-4 underline">
-        Manage Sub Brand 
+        Manage Sub Brand
       </h1>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300">
@@ -78,14 +78,14 @@ const ManageSubBrand = () => {
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 S.No
               </th>
-             
+
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-              Brand Name
+                Brand Name
               </th>
               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
-               Manufacturer Name
-              </th> 
-               <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
+                Manufacturer Name
+              </th>
+              <th className="px-6 py-2 border-r text-left text-sm font-medium text-gray-600">
                 Sub Brand Name
               </th>
               <th className="px-6 py-2 text-left text-sm font-medium text-gray-600">
@@ -105,11 +105,10 @@ const ManageSubBrand = () => {
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
                     {SubBrand.manufacturerName}
                   </td>
-                  
+
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
                     {SubBrand.SubBrandName}
                   </td>
-                  
 
                   <td className="px-6 py-2 border-r text-sm text-nowrap">
                     <button

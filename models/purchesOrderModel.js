@@ -1,19 +1,22 @@
 import mongoose from "mongoose";
 
-const deliveryChallanSchema = new mongoose.Schema(
+const salesInvoiceSchema = new mongoose.Schema(
   {
-    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  
     date: { type: String },
-    salesType: { type: String },
-    challanNo: { type: String },
-    customerName: { type: String },
+    orderNo: { type: String, required: true }, 
+    purchaseType: { type: String, required: true }, 
+    supplierName: { type: String, required: true },
     placeOfSupply: { type: String },
     paymentTerm: { type: String },
     dueDate: { type: String },
+    receiptDocNo: { type: String },
     dispatchedThrough: { type: String },
     destination: { type: String },
     carrierNameAgent: { type: String },
     billOfLading: { type: String },
+    motorVehicleNo: { type: String },
     billingAddress: { type: String },
     reverseCharge: { type: String },
     gstType: { type: String },
@@ -25,9 +28,7 @@ const deliveryChallanSchema = new mongoose.Schema(
         qty: { type: Number },
         uom: { type: Number },
         mrp: { type: Number },
-        discountpercent: { type: Number },
-        discountRS: { type: Number },
-        taxable: { type: Number },
+        taxable: { type: Number },       
         cgstpercent: { type: Number },
         cgstRS: { type: Number },
         sgstpercent: { type: Number },
@@ -38,7 +39,7 @@ const deliveryChallanSchema = new mongoose.Schema(
       },
     ],
     otherChargesDescription: { type: String },
-    otherCharges: { type: String },
+    othercharges: { type: String },
     narration: { type: String },
     grossAmount: { type: String },
     GstAmount: { type: String },
@@ -49,4 +50,4 @@ const deliveryChallanSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("deliveryChallan", deliveryChallanSchema);
+export default mongoose.model("salesinvoice", salesInvoiceSchema);

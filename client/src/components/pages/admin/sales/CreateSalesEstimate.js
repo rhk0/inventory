@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+import Select from "react-select";
 
 const CreateSalesEstimate = () => {
   const [date, setDate] = useState("");
@@ -23,7 +24,6 @@ const CreateSalesEstimate = () => {
   const [gstType, setGstType] = useState("CGST/SGST");
   const [rows, setRows] = useState([]);
   const [paymentTerm, setPaymentTerm] = useState(0);
-  const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
 
   const [customer, setCustomer] = useState([]);
@@ -73,15 +73,6 @@ const CreateSalesEstimate = () => {
   });
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
-
-  const handleOtherChargesDescriptionChange = (event) => {
-    const value = event.target.value;
-    setOtherChargesDescriptions(value);
-    setFormData((prev) => ({
-      ...prev,
-      otherChargesDescriptions: value, // Store in formData
-    }));
-  };
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -159,7 +150,6 @@ const CreateSalesEstimate = () => {
       gstType: value,
     }));
   };
-
 
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -280,11 +270,10 @@ const CreateSalesEstimate = () => {
 
     rows.forEach((rows) => {
       grossAmount += rows.taxableValue;
-      GstAmount += rows.cgstrs + rows.sgstrs ;
-      
+      GstAmount += rows.cgstrs + rows.sgstrs;
     });
 
-    const netAmount = grossAmount + GstAmount+otherCharges+0;
+    const netAmount = grossAmount + GstAmount + otherCharges + 0;
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -319,42 +308,131 @@ const CreateSalesEstimate = () => {
 
     if (selectedProduct) {
       const updatedRows = [...rows];
+
+      // Calculate retail price
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      // Determine if sales tax is included from the fetched product data
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+
+      // Calculate taxable value based on salesTaxInclude
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * selectedProduct.quantity;
+
+      // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
         units: selectedProduct.units,
-        productName: selectedProduct.productName, // Ensure productName is updated here
-        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice,
+        productName: selectedProduct.productName,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
         quantity: selectedProduct.quantity,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
         wholeselerDiscountRS:
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.wholesalerDiscount) /
           100,
-
-          retailDiscount :selectedProduct.retailDiscount,
-          retailDiscountRS:(selectedProduct.maxmimunRetailPrice *
+        retailDiscount: selectedProduct.retailDiscount,
+        retailDiscountRS:
+          (selectedProduct.maxmimunRetailPrice *
             selectedProduct.retailDiscount) /
           100,
-        taxableValue: (selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate)), 
-        cgstp:selectedProduct.gstRate/2,
-        sgstp: selectedProduct.gstRate/2,
-        igstp:selectedProduct.gstRate,
-        
-        cgstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate/2))/100,
-        sgstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate/2))/100,
-        igstrs:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate))/100,
-        totalvalue:((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))+(((selectedProduct.retailPrice * selectedProduct.quantity * 100) / 
-        (100 + Number(selectedProduct.gstRate))*(selectedProduct.gstRate))/100))
 
+        // taxable value based on salesTaxInclude
+        taxableValue: taxableValue,
 
-        // Add any other fields you want to auto-fill here
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
+    }
+  };
+
+  const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
+    const selectedProduct = products.find(
+      (product) => product.itemCode === selectedItemCode
+    );
+
+    if (selectedProduct) {
+      const updatedRows = [...rows];
+
+      // Calculate retail price and taxable value based on the product details
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      const taxableValue = selectedProduct.salesTaxInclude
+        ? (retailPrice * selectedProduct.quantity * 100) /
+          (100 + selectedProduct.gstRate)
+        : retailPrice * selectedProduct.quantity;
+
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        productName: selectedProduct.productName,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        quantity: selectedProduct.quantity,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        wholeselerDiscountRS: (
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.wholesalerDiscount) /
+          100
+        ).toFixed(2),
+        retailDiscount: selectedProduct.retailDiscount,
+        retailDiscountRS: (
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+          100
+        ).toFixed(2),
+        taxableValue: taxableValue,
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
       };
 
       setRows(updatedRows);
@@ -380,31 +458,35 @@ const CreateSalesEstimate = () => {
           productName: row.productName,
           hsnCode: row.hsnCode,
           qty: row.quantity,
-          uom: row.units,
+          units: row.units,
           mrp: row.maxmimunRetailPrice,
 
-          discountpercent: row.discountpercent,
-          discountRS: row.discountRS,
-          taxable: row.taxable,
-          cgstpercent: row.cgstpercent,
-          cgstRS: row.cgstRS,
-          sgstpercent: row.sgstpercent,
-          sgstRS: row.sgstRS,
-          igstpercent: row.igstpercent,
-          igstRS: row.igstRS,
-          totalValue: row.totalValue,
+          discountpercent:
+            customerType === "Wholesaler"
+              ? row.wholesalerDiscount
+              : row.retailDiscount,
+          discountRS:
+            customerType === "Wholesaler"
+              ? row.wholeselerDiscountRS
+              : row.retailDiscountRS,
 
-          // discount: row.discount,
-          // taxableValue: row.taxableValue,
-          // cgst: row.cgst,
-          // sgst: row.sgst,
-          // igst: row.igst,
-          // totalValue: row.totalValue,
+          taxable: row.taxableValue.toFixed(2),
+          cgstpercent: row.cgstp,
+          cgstRS: row.cgstrs,
+          sgstpercent: row.sgstp,
+          sgstRS: row.sgstrs,
+          igstpercent: row.igstp,
+          igstRS: row.igstrs,
+          totalValue: row.totalvalue,
         })),
         grossAmount: grossAmount.toFixed(2),
         GstAmount: GstAmount.toFixed(2),
         otherCharges: otherCharges.toFixed(2),
         otherChargesDescriptions: otherChargesDescriptions,
+        salesType,
+        customerType,
+        reverseCharge,
+        gstType,
 
         netAmount: netAmount.toFixed(2),
       };
@@ -413,11 +495,74 @@ const CreateSalesEstimate = () => {
         updatedFormData
       );
 
-     
-
       if (response) {
         toast.success("Sales estimate created successfully...");
       }
+      setFormData({
+        date: "",
+        estimateNo: "",
+        salesType: "",
+        customerType: "",
+        customerName: "",
+        placeOfSupply: "",
+        paymentTerm: "",
+        dueDate: "",
+        receiptDocNo: "",
+        dispatchedThrough: "",
+        destination: "",
+        carrierNameAgent: "",
+        billOfLading: "",
+        motorVehicleNo: "",
+        billingAddress: "",
+        reverseCharge: "",
+        gstType: "",
+        rows: [
+          {
+            itemCode: "",
+            productName: "",
+            hsnCode: "",
+            qty: null,
+            uom: null,
+            mrp: null,
+            discount: null,
+            cgst: null,
+            sgst: null,
+            igst: null,
+            totalValue: null,
+          },
+        ],
+        narration: "",
+        otherChargesDescriptions: "",
+        grossAmount: "",
+        GstAmount: "",
+        otherCharges: "",
+        netAmount: "",
+      });
+
+      // Clear other independent states
+      setDate("");
+      setEstimateNo("");
+      setSalesType("GST Invoice");
+      setCustomerType("Retailer");
+      setPlaceOfSupply("");
+      setDueDate("");
+      setTransportDetails({
+        receiptDocNo: "",
+        dispatchedThrough: "",
+        destination: "",
+        carrierNameAgent: "",
+        billOfLading: "",
+        motorVehicleNo: "",
+      });
+      setBillingAddress("");
+      setReverseCharge("No");
+      setGstType("CGST/SGST");
+      setRows([]);
+      setPaymentTerm(0);
+      setOtherCharges(0);
+      setOtherChargesDescriptions("");
+
+      setSelectedCustomer("");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to create sales estimate. Please try again.");
@@ -432,8 +577,8 @@ const CreateSalesEstimate = () => {
       >
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
-            Create Sales Estimate
-          </h1>
+          Create Sales Estimate
+        </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">
@@ -741,37 +886,78 @@ const CreateSalesEstimate = () => {
               {rows.map((row, index) => (
                 <tr key={index}>
                   <td className="border p-1">{index + 1}</td>
-                  <td className="border ">
-                    <input
-                      type="text"
-                      value={row.itemCode}
-                      onChange={(e) =>
-                        handleRowChange(index, "itemCode", e.target.value)
+                  <td className="border">
+                    <Select
+                      id="itemcode-select"
+                      value={
+                        rows[index].itemCode
+                          ? {
+                              label: rows[index].itemCode,
+                              value: rows[index].itemCode,
+                            }
+                          : null
                       }
-                      className="w-full"
+                      onChange={(selectedOption) =>
+                        handleItemCodeSelect(index, selectedOption.value)
+                      }
+                      options={products.map((product) => ({
+                        label: product.itemCode,
+                        value: product.itemCode,
+                      }))}
+                      isSearchable={true}
+                      placeholder="Select"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "120px",
+                          maxWidth: "300px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
                     />
                   </td>
-                  <td className="border p-[3px]">
-                    <select
+
+                  <td className="border ">
+                    <Select
                       id="product-select"
-                      value={row.productName}
-                      onChange={(e) =>
-                        handleProductSelect(index, e.target.value)
+                      value={
+                        rows[index].productName
+                          ? {
+                              label: rows[index].productName,
+                              value: rows[index].productName,
+                            }
+                          : null
                       }
-                      className=""
-                    >
-                      <option value="">Select a Product</option>
-                      {products.length > 0 ? (
-                        products.map((product) => (
-                          <option key={product._id} value={product.productName}>
-                            {product.productName}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="">Loading...</option>
-                      )}
-                    </select>
+                      onChange={(selectedOption) =>
+                        handleProductSelect(index, selectedOption.value)
+                      }
+                      options={products.map((product) => ({
+                        label: product.productName,
+                        value: product.productName,
+                      }))}
+                      isSearchable={true}
+                      placeholder="Select a Product"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "200px",
+                          maxWidth: "500px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                    />
                   </td>
+
                   <td className="border p-1">
                     <input
                       type="text"
@@ -782,7 +968,6 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-
                   <td className="border p-1">
                     <input
                       type="text"
@@ -814,7 +999,12 @@ const CreateSalesEstimate = () => {
                           e.target.value
                         )
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px", // Set a small minimum width to ensure visibility
+                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}
                     />
                   </td>
                   <td className="border">
@@ -830,7 +1020,12 @@ const CreateSalesEstimate = () => {
                               e.target.value
                             )
                           }
-                          className="w-full"
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: "20px", // Set a small minimum width to ensure visibility
+                            flexBasis: "20px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}
                         />
                         <input
                           type="text"
@@ -842,7 +1037,7 @@ const CreateSalesEstimate = () => {
                         />
                       </div>
                     )}
-                      {customerType === "Retailer" && (
+                    {customerType === "Retailer" && (
                       <div className="p-1 flex gap-1">
                         <input
                           type="text"
@@ -854,7 +1049,12 @@ const CreateSalesEstimate = () => {
                               e.target.value
                             )
                           }
-                          className="w-full"
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: "20px", // Set a small minimum width to ensure visibility
+                            flexBasis: "20px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}
                         />
                         <input
                           type="text"
@@ -867,7 +1067,6 @@ const CreateSalesEstimate = () => {
                       </div>
                     )}
                   </td>
-
                   {salesType === "GST Invoice" && (
                     <>
                       {gstType === "CGST/SGST" && (
@@ -879,11 +1078,16 @@ const CreateSalesEstimate = () => {
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  "taxable",
+                                  "taxableValue",
                                   e.target.value
                                 )
                               }
-                              className="w-full"
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "70px", // Set a small minimum width to ensure visibility
+                                flexBasis: "70px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}
                             />
                           </td>
                           <td className="border">
@@ -898,7 +1102,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
                               />
                               <input
                                 type="text"
@@ -910,7 +1119,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
                               />
                             </div>
                           </td>
@@ -926,7 +1140,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
                               />
                               <input
                                 type="text"
@@ -938,7 +1157,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
                               />
                             </div>
                           </td>
@@ -953,7 +1177,7 @@ const CreateSalesEstimate = () => {
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  "taxable",
+                                  "taxableValue",
                                   e.target.value
                                 )
                               }
@@ -972,7 +1196,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
                               />
                               <input
                                 type="text"
@@ -984,7 +1213,12 @@ const CreateSalesEstimate = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
                               />
                             </div>
                           </td>
@@ -999,7 +1233,12 @@ const CreateSalesEstimate = () => {
                       onChange={(e) =>
                         handleRowChange(index, "totalValue", e.target.value)
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
                     />
                   </td>
                   <td className="p-1 gap-2 flex">
@@ -1210,6 +1449,7 @@ const CreateSalesEstimate = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

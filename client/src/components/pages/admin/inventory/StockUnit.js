@@ -46,7 +46,7 @@ const StockUnit = () => {
                 setunitofquantity(e.target.value);
               }}
             >
-              <option value="">Select</option>
+              {/* <option value="">Select</option>
               <option value="Bags">Bags</option>
               <option value="Bale">Bale</option>
               <option value="Bundles">Bundles</option>
@@ -87,7 +87,50 @@ const StockUnit = () => {
               <option value="Tubes">Tubes</option>
               <option value="US gallons">US gallons</option>
               <option value="Units">Units</option>
-              <option value="Yards">Yards</option>
+              <option value="Yards">Yards</option> */}
+
+              <option value="">Select</option>
+              <option value="BAGS">Bags</option>
+              <option value="BALE">Bale</option>
+              <option value="BUND">Bundles</option>
+              <option value="BOX">Box</option>
+              <option value="BNCH">Bunches</option>
+              <option value="CANS">Cans</option>
+              <option value="CBM">Cubic meters</option>
+              <option value="CCM">Cubic centimeter</option>
+              <option value="CM">Centimeter</option>
+              <option value="CTN">Cartons</option>
+              <option value="DOZ">Dozens</option>
+              <option value="DRUM">Drums</option>
+              <option value="GGRS">Great gross</option>
+              <option value="GRS">Gross</option>
+              <option value="GYD">Gross yards</option>
+              <option value="KG">Kilograms</option>
+              <option value="KL">Kilolitre</option>
+              <option value="KM">Kilometre</option>
+              <option value="LTR">Litres</option>
+              <option value="ML">Millitre</option>
+              <option value="MTR">Meters</option>
+              <option value="MTON">Metric ton</option>
+              <option value="NOS">Numbers</option>
+              <option value="OTH">Others</option>
+              <option value="PACK">Packs</option>
+              <option value="PCS">Pieces</option>
+              <option value="PAIRS">Pairs</option>
+              <option value="QTL">Quintal</option>
+              <option value="ROLL">Rolls</option>
+              <option value="SETS">Sets</option>
+              <option value="SQFT">Square feet</option>
+              <option value="SQMTR">Square meters</option>
+              <option value="SQYD">Square yards</option>
+              <option value="TAB">Tablets</option>
+              <option value="TGRS">Ten gross</option>
+              <option value="THOU">Thousands</option>
+              <option value="TON">Tonnes</option>
+              <option value="TUBE">Tubes</option>
+              <option value="USGAL">US gallons</option>
+              <option value="UNIT">Units</option>
+              <option value="YDS">Yards</option>
             </select>
           </div>
 
