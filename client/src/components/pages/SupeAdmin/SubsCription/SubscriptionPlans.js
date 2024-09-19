@@ -125,7 +125,7 @@ const SubscriptionPlans = () => {
   };
 
   return (
-    <div className=" responsive-container  px-4 py-1 max-w-7xl">
+    <div className=" responsive-container  px-4 py-1 max-w-7xl" data-aos="zoom-in-up">
       <div className=" mx-auto  p-8 border border-gray-300 shadow-lg rounded-lg bg-white ">
     <Box>
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
