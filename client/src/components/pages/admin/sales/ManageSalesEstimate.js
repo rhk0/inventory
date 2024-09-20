@@ -120,7 +120,7 @@ const ManageSalesEstimate = () => {
                   "Due Date",
                   "GST Type",
                   "Product Code",
-                  "Product Name",
+                 
                   "UOM",
                   "MRP",
                   "QTY",
@@ -175,9 +175,7 @@ const ManageSalesEstimate = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.itemCode || "-"}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.productName || "-"}
-                    </td>
+                   
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.units || "-"}
                     </td>

@@ -178,7 +178,6 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     let totalGST = 0;
 
     rows.forEach((row) => {
-      console.log("Row Total Value:", row.totalValue);
       grossAmount += parseFloat(row.taxable) || 0;
       totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0);
     });
@@ -300,8 +299,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
         100;
 
     const taxableValue = selectedProduct.salesTaxInclude
-      ? (retailPrice * selectedProduct.quantity * 100) /
-        (100 + selectedProduct.gstRate)
+      ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
+        (100 + Number(selectedProduct.gstRate))
       : retailPrice * selectedProduct.quantity;
 
     // Update all relevant fields in the selected row
@@ -387,7 +386,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
               : row.retailDiscount,
           discountRS:
             customerType === "Wholesaler"
-              ? row.wholeselerDiscountRS
+              ? row.wholesalerDiscountRS
               : row.retailDiscountRS,
 
           taxable: row.taxable,
@@ -411,7 +410,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
         `/api/v1/salesEstimateRoute/updateSalesEstimatetByID/${estimate._id}`,
         updatedEstimate
       );
-      console.log(response, "dfjk");
+
       if (response.data.success) {
         alert("Estimate updated successfully");
         // closeModal();
@@ -803,6 +802,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     className="w-full"
                   />
                 </td>
+
                 <td className="border p-2">
                   <input
                     type="text"
@@ -824,63 +824,98 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                   />
                 </td>
                 <td className="border">
-                  {customerType === "Wholesaler" && (
+                  {row.discountpercent && row.discountRS ? (
+                    // If discountpercent and discountRS exist, show these fields
                     <div className="p-1 flex gap-1">
                       <input
                         type="text"
-                        value={row.wholesalerDiscount}
-                        onChange={(e) =>
-                          handleRowChange(
-                            index,
-                            "discountpercent",
-                            e.target.value
-                          )
-                        }
+                        value={row.discountpercent}
+                        readOnly
                         className="w-full flex-grow"
                         style={{
-                          minWidth: "20px", // Set a small minimum width to ensure visibility
-                          flexBasis: "20px", // Allow it to shrink, but still have a base width
-                          flexShrink: 1, // Allow it to shrink on mobile
+                          minWidth: "20px",
+                          flexBasis: "20px",
+                          flexShrink: 1,
                         }}
                       />
                       <input
                         type="text"
-                        value={row.wholeselerDiscountRS}
-                        onChange={(e) =>
-                          handleRowChange(index, "discountRS", e.target.value)
-                        }
+                        value={row.discountRS}
+                        readOnly
                         className="w-full"
                       />
                     </div>
-                  )}
-                  {customerType === "Retailer" && (
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        value={row.retailDiscount}
-                        onChange={(e) =>
-                          handleRowChange(
-                            index,
-                            "discountpercent",
-                            e.target.value
-                          )
-                        }
-                        className="w-full flex-grow"
-                        style={{
-                          minWidth: "20px", // Set a small minimum width to ensure visibility
-                          flexBasis: "20px", // Allow it to shrink, but still have a base width
-                          flexShrink: 1, // Allow it to shrink on mobile
-                        }}
-                      />
-                      <input
-                        type="text"
-                        value={row.retailDiscountRS}
-                        onChange={(e) =>
-                          handleRowChange(index, "discountRS", e.target.value)
-                        }
-                        className="w-full"
-                      />
-                    </div>
+                  ) : (
+                    // If discountpercent and discountRS do not exist, show these input boxes
+                    <>
+                      {customerType === "Wholesaler" && (
+                        <div className="p-1 flex gap-1">
+                          <input
+                            type="text"
+                            value={row.wholesalerDiscount}
+                            onChange={(e) =>
+                              handleRowChange(
+                                index,
+                                "discountpercent",
+                                e.target.value
+                              )
+                            }
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "20px",
+                              flexBasis: "20px",
+                              flexShrink: 1,
+                            }}
+                          />
+
+                          <input
+                            type="text"
+                            value={row.wholesalerDiscountRS}
+                            onChange={(e) =>
+                              handleRowChange(
+                                index,
+                                "discountRS",
+                                e.target.value
+                              )
+                            }
+                            className="w-full"
+                          />
+                        </div>
+                      )}
+                      {customerType === "Retailer" && (
+                        <div className="p-1 flex gap-1">
+                          <input
+                            type="text"
+                            value={row.retailDiscount}
+                            onChange={(e) =>
+                              handleRowChange(
+                                index,
+                                "discountpercent",
+                                e.target.value
+                              )
+                            }
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "20px",
+                              flexBasis: "20px",
+                              flexShrink: 1,
+                            }}
+                          />
+                          <input
+                            type="text"
+                            value={row.retailDiscountRS}
+                            onChange={(e) =>
+                              handleRowChange(
+                                index,
+                                "discountRS",
+                                e.target.value
+                              )
+                            }
+                            className="w-full"
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
                 </td>
                 {salesType === "GST Invoice" && (
