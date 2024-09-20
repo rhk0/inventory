@@ -43,11 +43,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showSettings, setSettings] = useState(false);
   const [showBankTransaction, setShowBankTransction] = useState(false);
   const [showCash, setCash] = useState(false);
-
   const [showExpenses, setExpenses] = useState(false);
-
   const [showAccount, SetShowAccount] = useState(false);
   const [showSubscription, setSubscription] = useState(false);
+  const [showReports, setReports] = useState(false);
   const sidebarRef = useRef(null);
 
   const closeAll = () => {
@@ -118,6 +117,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     closeAll();
     setReport(!showReport);
   };
+  const toggleReports = () => {
+    closeAll();
+    setReports(!showReports);
+  };
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -137,7 +140,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   }, [openSidebarToggle, OpenSidebar]);
   const toggleSettings = () => {
     closeAll();
-    setSettings(!showSettings);
+    setSubscription(!showSubscription);
   };
   const closeSidebar = () => {
     if (openSidebarToggle) {
@@ -954,7 +957,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <button
             onClick={() => {
               setSubscription(!showSubscription);
-              //toggleSettings();
+              toggleSettings();
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
@@ -981,6 +984,58 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   className="flex items-center text-white nestitemhover"
                 >
                   history
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+        {/* Reports */}
+        <li className="px-1 py-2 ">
+          <button
+            onClick={() => {
+              setReports(!showReports);
+              toggleReports();
+            }}
+            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
+          >
+            <span className="flex">
+              <MdSettings className="mr-2 mt-2" />
+              Reports
+            </span>
+            {!showReports ? <IoIosArrowForward /> : <IoIosArrowDown />}
+          </button>
+          {showReports && (
+            <ul className="ml-4   ">
+              <li className="nestedlist innerlist sidebar-list-item ">
+                <Link
+                  to="/admin/stockreports"
+                  className="flex items-center text-white nestitemhover "
+                >
+                  Stock Reports
+                </Link>
+              </li>
+              <li className="nestedlist innerlist sidebar-list-item ">
+                <Link
+                  to="/admin/salesreports"
+                  className="flex items-center text-white nestitemhover "
+                >
+                  Sales Reports
+                </Link>
+              </li>
+              <li className="nestedlist text-nowrap innerlist sidebar-list-item">
+                <Link
+                  to="/admin/purchesreports"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Purches Reports
+                </Link>
+              </li>
+              <li className="nestedlist innerlist sidebar-list-item">
+                <Link
+                  to="/admin/daybook"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Day Book
                 </Link>
               </li>
             </ul>

@@ -63,6 +63,12 @@ import ProfileUpdate from "../auth/ProfileUpdate.js";
 import CurrentPlan from "../pages/admin/subscription/CurrentPlan.jsx"
 import PlanHistory from "../pages/admin/subscription/PlanHistory.jsx"
 import ViewStaff from "../pages/admin/settings/ViewStaff.jsx";
+import StockReports from "../pages/admin/Reports/StockReports.js";
+
+import ProductQtyWise from "../pages/admin/Reports/ProductQtyWise.js";
+import ProductValueWise from "../pages/admin/Reports/ProductValueWise.js";
+import ManufacturerW from "../pages/admin/Reports/ManufacturerW.js";
+
 import ManageDeliveryChallan from "../pages/admin/sales/ManageDeliveryChallan.js";
 import ManageSalesReturn from "../pages/admin/sales/ManageSalesReturn.js";
 const AdminRoute = () => {
@@ -158,6 +164,11 @@ const AdminRoute = () => {
         <Route path="PayOut" element={<PayOut />} />
         <Route path="ManagePayOut" element={<ManagePayOut />} />
         <Route path="profileupdate" element={<ProfileUpdate />} />
+        <Route path="stockreports" element={<StockReports />} />
+
+        <Route path="ManufacturerW" element={<ManufacturerW />} />
+        <Route path="ProductQtyWise" element={<ProductQtyWise />} />
+        <Route path="ProductValueWise" element={<ProductValueWise />} />
 
         <Route path="current-plan" element={<CurrentPlan/>}/>
         <Route path ="plan-history" element={<PlanHistory/>}/>
