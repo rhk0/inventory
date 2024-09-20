@@ -502,12 +502,12 @@ const CreateDeliveryChallan = () => {
         netAmount: netAmount.toFixed(2),
       };
       const response = await axios.post(
-        "/api/v1/salesReturnRoute/createreturn",
+        "/api/v1/salesReturnRoute/createsalesreturn",
         updatedFormData
       );
 
       if (response) {
-        toast.success("Sales delivery challan created successfully...");
+        toast.success(" delivery challan created successfully...");
       }
       setFormData({
         date: "",

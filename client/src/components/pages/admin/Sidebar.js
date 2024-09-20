@@ -47,7 +47,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showExpenses, setExpenses] = useState(false);
 
   const [showAccount, SetShowAccount] = useState(false);
-  const [showSubscription,setSubscription] = useState(false)
+  const [showSubscription, setSubscription] = useState(false);
   const sidebarRef = useRef(null);
 
   const closeAll = () => {
@@ -550,7 +550,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to=""
+                  to="/admin/manageDeliveryChallan"
                   className="flex items-center text-white nestitemhover"
                 >
                   Delivery Challan List
@@ -628,14 +628,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <button
             onClick={() => {
               setPurches(!showPurches);
-              togglePurches(); // Call togglePurches function
+              togglePurches();
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="flex ">
               {" "}
               <FaShoppingCart className="mr-2 mt-2" />
-              Purchas
+              Purchase
             </span>
             {!showPurches ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
@@ -718,7 +718,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="flex">     <FaMoneyBillWave className="mr-2 mt-2" />cash</span>
+            <span className="flex">
+              {" "}
+              <FaMoneyBillWave className="mr-2 mt-2" />
+              cash
+            </span>
             {!showCash ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showCash && (
@@ -767,7 +771,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist sidebar-list-item justify-between focus:outline-none text-white p-1"
           >
-            <span className="flex">  <MdAccountBalance className="mr-2 mt-2" />Account</span>
+            <span className="flex">
+              {" "}
+              <MdAccountBalance className="mr-2 mt-2" />
+              Account
+            </span>
             {!showAccount ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showAccount && (
@@ -837,7 +845,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                         to="/admin/ManageExpense"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Expenses List 
+                        Expenses List
                       </Link>
                     </li>
                   </ul>
@@ -887,7 +895,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="flex">  <MdSettings className="mr-2 mt-2" />Settings</span>
+            <span className="flex">
+              {" "}
+              <MdSettings className="mr-2 mt-2" />
+              Settings
+            </span>
             {!showSettings ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showSettings && (
@@ -913,7 +925,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   to="/admin/manage-staff"
                   className="flex items-center text-white nestitemhover"
                 >
-                Manage Staff
+                  Manage Staff
                 </Link>
               </li>
               <li className="">
@@ -936,8 +948,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           )}
         </li>
 
-
-         {/* subscription */}
+        {/* subscription */}
 
         <li className="px-1 py-2 ">
           <button
@@ -947,7 +958,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="flex">  <MdSettings className="mr-2 mt-2" />Subscription</span>
+            <span className="flex">
+              {" "}
+              <MdSettings className="mr-2 mt-2" />
+              Subscription
+            </span>
             {!showSubscription ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showSubscription && (
@@ -957,7 +972,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   to="/admin/current-plan"
                   className="flex items-center text-white nestitemhover "
                 >
-                Current Plan
+                  Current Plan
                 </Link>
               </li>
               <li className="nestedlist innerlist sidebar-list-item">
@@ -965,11 +980,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   to="/admin/plan-history"
                   className="flex items-center text-white nestitemhover"
                 >
-                 history
+                  history
                 </Link>
               </li>
-             
-              
             </ul>
           )}
         </li>
@@ -979,7 +992,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           onClick={closeSidebar}
         >
           <Link to="/admin/log-out" class="">
-            <span className="flex"> <MdExitToApp className="mr-2 mt-2" />Log Out</span>
+            <span className="flex">
+              {" "}
+              <MdExitToApp className="mr-2 mt-2" />
+              Log Out
+            </span>
           </Link>
         </li>
       </ul>

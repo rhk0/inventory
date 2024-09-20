@@ -1,9 +1,8 @@
-import returnModel from "../models/returnModel.js";
+import returnModel from "../models/salesReturnModel.js";
 
 export const createReturnController = async (req, res) => {
   try {
     const {
-      userId,
       date,
       salesType,
       creditNoteNo,
@@ -20,50 +19,52 @@ export const createReturnController = async (req, res) => {
       gstType,
       reasonForReturn,
       rows,
-      otherChargesDescription,
-      othercharges,
+      otherChargesDescriptions,
+      otherCharges,
       narration,
       grossAmount,
       GstAmount,
       netAmount,
     } = req.body;
 
-    const requiredFields = [
-      "userId",
-      "date",
-      "salesType",
-      "creditNoteNo",
-      "customerName",
-      "placeOfSupply",
-      "paymentTerm",
-      "dueDate",
-      "dispatchedThrough",
-      "destination",
-      "carrierNameAgent",
-      "billOfLading",
-      "billingAddress",
-      "reverseCharge",
-      "gstType",
-      "reasonForReturn",
-      "rows",
-      "otherChargesDescription",
-      "othercharges",
-      "narration",
-      "grossAmount",
-      "GstAmount",
-      "netAmount",
-    ];
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
+    // const requiredFields = [
+    //   // "userId",
+    //   "date",
+    //   "salesType",
+    //   "creditNoteNo",
+    //   "customerName",
+    //   "placeOfSupply",
+    //   "paymentTerm",
+    //   "dueDate",
+    //   "dispatchedThrough",
+    //   "destination",
+    //   "carrierNameAgent",
+    //   "billOfLading",
+    //   "billingAddress",
+    //   "reverseCharge",
+    //   "gstType",
+    //   "reasonForReturn",
+    //   "rows",
+    //   "otherChargesDescriptions",
+    //   "otherCharges",
+    //   "narration",
+    //   "grossAmount",
+    //   "GstAmount",
+    //   "netAmount",
+    // ];
+    // const missingFields = requiredFields.filter((field) => !req.body[field]);
+    // if (missingFields.length > 0) {
+    //   return res.status(400).send({
+    //     message: "Required fields are missing",
+    //     missingFields: missingFields,
+    //   });
+    // }
 
     try {
+      const { _id } = req.user;
+
       const newSalesReturn = new returnModel({
-        userId,
+        admin: _id,
         date,
         salesType,
         creditNoteNo,
@@ -80,8 +81,8 @@ export const createReturnController = async (req, res) => {
         gstType,
         reasonForReturn,
         rows,
-        otherChargesDescription,
-        othercharges,
+        otherChargesDescriptions,
+        otherCharges,
         narration,
         grossAmount,
         GstAmount,
@@ -121,8 +122,8 @@ export const getAllReturnCOntroller = async (req, res) => {
 };
 export const getAllReturnByIdController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const response = await returnModel.find(id);
+    const { _id } = req.params;
+    const response = await returnModel.findById(_id);
     if (!response) {
       return res.status(404).json({
         success: false,
@@ -183,9 +184,12 @@ export const updateReturnByIDController = async (req, res) => {
     salesreturn.userId = updateData.userId || salesreturn.userId;
     salesreturn.date = updateData.date || salesreturn.date;
     salesreturn.salesType = updateData.salesType || salesreturn.salesType;
-    salesreturn.creditNoteNo = updateData.creditNoteNo || salesreturn.creditNoteNo;
-    salesreturn.customerName = updateData.customerName || salesreturn.customerName;
-    salesreturn.placeOfSupply = updateData.placeOfSupply || salesreturn.placeOfSupply;
+    salesreturn.creditNoteNo =
+      updateData.creditNoteNo || salesreturn.creditNoteNo;
+    salesreturn.customerName =
+      updateData.customerName || salesreturn.customerName;
+    salesreturn.placeOfSupply =
+      updateData.placeOfSupply || salesreturn.placeOfSupply;
     salesreturn.paymentTerm = updateData.paymentTerm || salesreturn.paymentTerm;
     salesreturn.dueDate = updateData.dueDate || salesreturn.dueDate;
     salesreturn.dispatchedThrough =
@@ -193,16 +197,21 @@ export const updateReturnByIDController = async (req, res) => {
     salesreturn.destination = updateData.destination || salesreturn.destination;
     salesreturn.carrierNameAgent =
       updateData.carrierNameAgent || salesreturn.carrierNameAgent;
-    salesreturn.billOfLading = updateData.billOfLading || salesreturn.billOfLading;
+    salesreturn.billOfLading =
+      updateData.billOfLading || salesreturn.billOfLading;
     salesreturn.billingAddress =
       updateData.billingAddress || salesreturn.billingAddress;
-    salesreturn.reverseCharge = updateData.reverseCharge || salesreturn.reverseCharge;
+    salesreturn.reverseCharge =
+      updateData.reverseCharge || salesreturn.reverseCharge;
     salesreturn.gstType = updateData.gstType || salesreturn.gstType;
-    salesreturn.reasonForReturn = updateData.reasonForReturn || salesreturn.reasonForReturn;
+    salesreturn.reasonForReturn =
+      updateData.reasonForReturn || salesreturn.reasonForReturn;
     salesreturn.rows = updateData.rows || salesreturn.rows;
-    salesreturn.otherChargesDescription =
-      updateData.otherChargesDescription || salesreturn.otherChargesDescription;
-    salesreturn.othercharges = updateData.othercharges || salesreturn.othercharges;
+    salesreturn.otherChargesDescriptions =
+      updateData.otherChargesDescriptions ||
+      salesreturn.otherChargesDescriptions;
+    salesreturn.othercharges =
+      updateData.othercharges || salesreturn.othercharges;
     salesreturn.narration = updateData.narration || salesreturn.narration;
     salesreturn.grossAmount = updateData.grossAmount || salesreturn.grossAmount;
     salesreturn.GstAmount = updateData.GstAmount || salesreturn.GstAmount;

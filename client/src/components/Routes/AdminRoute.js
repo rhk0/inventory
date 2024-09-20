@@ -63,6 +63,7 @@ import ProfileUpdate from "../auth/ProfileUpdate.js";
 import CurrentPlan from "../pages/admin/subscription/CurrentPlan.jsx"
 import PlanHistory from "../pages/admin/subscription/PlanHistory.jsx"
 import ViewStaff from "../pages/admin/settings/ViewStaff.jsx";
+import ManageDeliveryChallan from "../pages/admin/sales/ManageDeliveryChallan.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -138,6 +139,9 @@ const AdminRoute = () => {
 
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />
+        <Route path="manageDeliveryChallan" element={<ManageDeliveryChallan />} />
+
+
         <Route path="salesreturn" element={<CreateSalesReturn />} />
 
         <Route path="ManageProduct" element={<Manageproducts />} />
