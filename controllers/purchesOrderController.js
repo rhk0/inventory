@@ -30,7 +30,7 @@ export const createPurchesOrderController = async (req, res) => {
 
     // Creating a new purchase order
     const { _id } = req.user;
-    console.log(_id,"ytgyg")
+    
     const newInvoice = new purchesOrderModel({
       admin: _id,
       date,
@@ -170,7 +170,7 @@ export const updatePurchesOrderByIdController = async (req, res) => {
     }
 
     // Update fields
-    invoice.userId = updateData.userId || invoice.userId;
+
     invoice.date = updateData.date || invoice.date;
     invoice.orderNo = updateData.orderNo || invoice.orderNo;
     invoice.purchaseType = updateData.purchaseType || invoice.purchaseType;

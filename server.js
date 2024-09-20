@@ -42,6 +42,7 @@ import payInRoute from "./routes/payInRoute.js"
 import purchesOrderRoute from "./routes/purchesOrderRoute.js"
 import purchaseInvoiceRoute from "./routes/purchaseInvoiceRoute.js"
 import purchesReturnRoute from "./routes/purchesReturnRoute.js"
+import PayOutRoute from "./routes/PayOutRoute.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -118,7 +119,7 @@ app.use("/api/v1/payInRoute",payInRoute)
 app.use("/api/v1/purchesOrderRoute",purchesOrderRoute)
 app.use("/api/v1/purchaseInvoiceRoute",purchaseInvoiceRoute)
 app.use("/api/v1/purchesReturnRoute",purchesReturnRoute)
-
+app.use("/api/v1/PayOutRoute",PayOutRoute)
 //change 
 
 //subscription routes 

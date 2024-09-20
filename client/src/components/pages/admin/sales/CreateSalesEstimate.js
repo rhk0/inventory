@@ -651,7 +651,6 @@ const CreateSalesEstimate = () => {
                 </option>
               ))}
               {/* Add Customer option at the end of the list */}
-             
             </select>
           </div>
 

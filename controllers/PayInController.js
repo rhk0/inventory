@@ -3,7 +3,7 @@ import payInModel from "../models/PayInModel.js";
 export const createPayInController = async (req, res) => {
     try {
       const {
-        userId,
+    
         date,
         receiptNo,
         selectCustomer,
@@ -12,9 +12,9 @@ export const createPayInController = async (req, res) => {
         total,
         Narration,
       } = req.body;
-  
+      const { _id } = req.user;
       const requiredFields = [
-        "userId",
+     
         "date",
         "receiptNo",
         "selectCustomer",
@@ -34,7 +34,7 @@ export const createPayInController = async (req, res) => {
   
       try {
         const newPayIn = new payInModel({
-          userId,
+          admin:_id,
           date,
           receiptNo,
           selectCustomer,
@@ -150,7 +150,7 @@ export const createPayInController = async (req, res) => {
       }
   
       // Update fields if provided in the request body
-      payIn.userId = updateData.userId || payIn.userId;
+ 
       payIn.date = updateData.date || payIn.date;
       payIn.receiptNo = updateData.receiptNo || payIn.receiptNo;
       payIn.selectCustomer = updateData.selectCustomer || payIn.selectCustomer;
