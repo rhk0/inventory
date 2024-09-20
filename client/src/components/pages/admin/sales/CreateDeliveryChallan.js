@@ -65,10 +65,11 @@ const CreateDeliveryChallan = () => {
     ],
 
     narration: "",
+    otherCharges: "",
     otherChargesDescriptions: "",
     grossAmount: "",
     GstAmount: "",
-    otherCharges: "",
+    // otherCharges: "",
     netAmount: "",
   });
 
@@ -172,7 +173,7 @@ const CreateDeliveryChallan = () => {
     }));
   };
   // const handleCustomerTypeChange = (e) => {
-  //   const value = e.target.value;
+  //   const value = e.target.value;aq
   //   setCustomerType(value);
   //   setFormData((prev) => ({
   //     ...prev,
@@ -681,7 +682,7 @@ const CreateDeliveryChallan = () => {
             <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
               <h4 className="font-bold mb-4">Transport Details</h4>
               <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
+                {/* <div>
                   <label>Receipt Doc No.</label>
                   <input
                     type="text"
@@ -695,7 +696,7 @@ const CreateDeliveryChallan = () => {
                     }
                     className="border p-2 w-full  rounded"
                   />
-                </div>
+                </div> */}
                 <div>
                   <label>Dispatched Through</label>
                   <input

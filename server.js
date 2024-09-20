@@ -2,37 +2,32 @@ import express, { Router } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDb from "./config/db.js";
-// import staffRoute from "./routes/staffRoute.js"
-
-
-
-
-import comanyRoute from "./routes/companyRoute.js"
-import authRoute from './routes/authRoute.js'
-import supplierRoute from "./routes/supplierRoute.js"
-import customerRoute from "./routes/customerRoute.js"
-import transportRoute from "./routes/transportRoute.js"
-import vendorRoute from "./routes/vendorRoute.js"
-import cashRoute from "./routes/cashRoute.js"
-import bankRoute from "./routes/bankRoute.js"
-import bankTransctionRoute from "./routes/bankTransctionRoute.js"
-import InventoryCategoryRoute from "./routes/InventoryCategoryRoute.js"
-import InventorySubCategoryRoute from "./routes/InventorySubCategoryRoute.js"
-import InventoryBrandRoute from "./routes/InventoryBrandRoute.js"
-import InventroySubBrandRoute from "./routes/InventroySubBrandRoute.js"
-import InventoryStockUnitRoute from "./routes/InventoryStockUnitRoute.js"
-import InventoryCreateBranchesRoute from "./routes/InventoryCreateBranchesRoute.js"
-import productRoute from "./routes/productRoute.js"
-import salesQuationRoute from "./routes/salesQuationRoute.js"
-import salesInvoiceRoute from "./routes/salesInvoiceRoute.js"
-import deliveryChallanRoute from "./routes/deliveryChallanRoute.js"
-import manufacturerRoute from "./routes/manufacturerRoute.js"
-import salesEstimateRoute from "./routes/salesEstimateRoute.js"
-import expensesRoute from "./routes/expensesRoute.js"
-import incomeRoute from "./routes/incomeRoute.js"
-import formidable from 'express-formidable';
-import paymentRoute from "./routes/paymentRoute.js"
-import subscriptionRoute from "./routes/subsCriptionRoute.js"
+import comanyRoute from "./routes/companyRoute.js";
+import authRoute from "./routes/authRoute.js";
+import supplierRoute from "./routes/supplierRoute.js";
+import customerRoute from "./routes/customerRoute.js";
+import transportRoute from "./routes/transportRoute.js";
+import vendorRoute from "./routes/vendorRoute.js";
+import cashRoute from "./routes/cashRoute.js";
+import bankRoute from "./routes/bankRoute.js";
+import bankTransctionRoute from "./routes/bankTransctionRoute.js";
+import InventoryCategoryRoute from "./routes/InventoryCategoryRoute.js";
+import InventorySubCategoryRoute from "./routes/InventorySubCategoryRoute.js";
+import InventoryBrandRoute from "./routes/InventoryBrandRoute.js";
+import InventroySubBrandRoute from "./routes/InventroySubBrandRoute.js";
+import InventoryStockUnitRoute from "./routes/InventoryStockUnitRoute.js";
+import InventoryCreateBranchesRoute from "./routes/InventoryCreateBranchesRoute.js";
+import productRoute from "./routes/productRoute.js";
+import salesQuationRoute from "./routes/salesQuationRoute.js";
+import salesInvoiceRoute from "./routes/salesInvoiceRoute.js";
+import deliveryChallanRoute from "./routes/deliveryChallanRoute.js";
+import manufacturerRoute from "./routes/manufacturerRoute.js";
+import salesEstimateRoute from "./routes/salesEstimateRoute.js";
+import expensesRoute from "./routes/expensesRoute.js";
+import incomeRoute from "./routes/incomeRoute.js";
+import formidable from "express-formidable";
+import paymentRoute from "./routes/paymentRoute.js";
+import subscriptionRoute from "./routes/subsCriptionRoute.js";
 // subscription cron
 import subscription from "./middleware/subscriptionMiddleware.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js"
@@ -129,7 +124,7 @@ app.use("/api/v1/subscription",subscriptionRoute)
 app.use("/uploads",express.static("uploads"));
 //super admin routes
 
-app.use("/api/v1/super",superAdminRoutes)
+app.use("/api/v1/super", superAdminRoutes);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "./client/build")));

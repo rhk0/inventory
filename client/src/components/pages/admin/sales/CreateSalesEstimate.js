@@ -89,13 +89,24 @@ const CreateSalesEstimate = () => {
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
-
     setSelectedCustomer(value);
+
+    const selectedCustomerData = customer.find((cust) => cust._id === value);
+
     setFormData((prev) => ({
       ...prev,
-      customerName: value,
+      customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      placeOfSupply: selectedCustomerData
+        ? selectedCustomerData.state
+        : "",
     }));
+
+    setPlaceOfSupply(
+      selectedCustomerData ? selectedCustomerData.state : ""
+    );
   };
+
+
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
@@ -287,6 +298,7 @@ const CreateSalesEstimate = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
+        console.log(response, "dkfjk");
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
@@ -319,11 +331,14 @@ const CreateSalesEstimate = () => {
       const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       // Calculate taxable value based on salesTaxInclude
+      console.log(salesTaxInclude, "ksdjf");
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
           (100 + Number(selectedProduct.gstRate))
         : retailPrice * selectedProduct.quantity;
-
+      {
+        console.log(taxableValue, "tax");
+      }
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -1019,6 +1034,7 @@ const CreateSalesEstimate = () => {
                       }}
                     />
                   </td>
+
                   <td className="border">
                     {customerType === "Wholesaler" && (
                       <div className="p-1 flex gap-1">
@@ -1096,9 +1112,9 @@ const CreateSalesEstimate = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px", // Set a small minimum width to ensure visibility
-                                flexBasis: "70px", // Allow it to shrink, but still have a base width
-                                flexShrink: 1, // Allow it to shrink on mobile
+                                minWidth: "70px",
+                                flexBasis: "70px",
+                                flexShrink: 1,
                               }}
                             />
                           </td>

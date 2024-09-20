@@ -69,6 +69,7 @@ import ProductQtyWise from "../pages/admin/Reports/ProductQtyWise.js";
 import ProductValueWise from "../pages/admin/Reports/ProductValueWise.js";
 import ManufacturerW from "../pages/admin/Reports/ManufacturerW.js";
 
+import ManageDeliveryChallan from "../pages/admin/sales/ManageDeliveryChallan.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -144,6 +145,9 @@ const AdminRoute = () => {
 
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />
+        <Route path="manageDeliveryChallan" element={<ManageDeliveryChallan />} />
+
+
         <Route path="salesreturn" element={<CreateSalesReturn />} />
 
         <Route path="ManageProduct" element={<Manageproducts />} />

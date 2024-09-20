@@ -553,7 +553,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to=""
+                  to="/admin/manageDeliveryChallan"
                   className="flex items-center text-white nestitemhover"
                 >
                   Delivery Challan List
@@ -631,14 +631,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <button
             onClick={() => {
               setPurches(!showPurches);
-              togglePurches(); // Call togglePurches function
+              togglePurches();
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="flex ">
               {" "}
               <FaShoppingCart className="mr-2 mt-2" />
-              Purchas
+              Purchase
             </span>
             {!showPurches ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
