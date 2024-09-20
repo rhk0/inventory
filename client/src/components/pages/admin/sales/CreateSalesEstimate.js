@@ -89,13 +89,24 @@ const CreateSalesEstimate = () => {
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
-
     setSelectedCustomer(value);
+
+    const selectedCustomerData = customer.find((cust) => cust._id === value);
+
     setFormData((prev) => ({
       ...prev,
-      customerName: value,
+      customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      placeOfSupply: selectedCustomerData
+        ? selectedCustomerData.state
+        : "",
     }));
+
+    setPlaceOfSupply(
+      selectedCustomerData ? selectedCustomerData.state : ""
+    );
   };
+
+
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
@@ -320,13 +331,14 @@ const CreateSalesEstimate = () => {
       const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       // Calculate taxable value based on salesTaxInclude
-      console.log(salesTaxInclude,"ksdjf")
+      console.log(salesTaxInclude, "ksdjf");
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
           (100 + Number(selectedProduct.gstRate))
         : retailPrice * selectedProduct.quantity;
-{        console.log(taxableValue,"tax")
-}
+      {
+        console.log(taxableValue, "tax");
+      }
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
