@@ -23,12 +23,7 @@ const StockReports = () => {
         </Link>
         <Link to="/admin/ProductValueWise">
           <button
-            className={`px-6 py-28 rounded-lg shadow-md text-2xl font-semibold ${
-              activeReport === "value"
-                ? "bg-pink-500 text-white"
-                : "bg-pink-100"
-            }`}
-            onClick={() => handleReportChange("value")}
+            className={`px-6 py-28 rounded-lg bg-pink-100 hover:bg-pink-500 hover:text-white  shadow-md text-2xl font-semibold `}
           >
             Product Value Wise Report
           </button>
