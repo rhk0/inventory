@@ -632,16 +632,29 @@ const CreateSalesEstimate = () => {
             <select
               className="w-full p-2 border border-gray-300 rounded"
               value={selectedCustomer}
-              onChange={handleCustomerChange}
+              onChange={(e) => {
+                if (e.target.value === "add-new-customer") {
+                  // Navigate to the Create Customer page
+                  window.location.href = "/admin/CreateCustomer";
+                } else {
+                  handleCustomerChange(e);
+                }
+              }}
             >
               <option value="">Select Customer</option>
+              <option value="add-new-customer" className="text-blue-500">
+                + Add New Customer
+              </option>
               {customer.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
               ))}
+              {/* Add Customer option at the end of the list */}
+             
             </select>
           </div>
+
           <div>
             <label className="font-bold">Place of Supply</label>
             <input
