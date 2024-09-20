@@ -4,6 +4,20 @@ import axios from "axios";
 const PayIn = () => {
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [date, setDate] = useState("");
+  const [receiptNo, setReceiptNo] = useState("");
+  const [Narration, setNarration] = useState("");
+  const [receiptMode, setReceiptMode] = useState("Cash");
+
+  const [rows, setRows] = useState([
+    {
+      id: 1,
+      billNo: "",
+      billAmount: "",
+      receivedAmount: "",
+      balanceAmount: "",
+    },
+  ]);
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -21,17 +35,7 @@ const PayIn = () => {
     setSelectedCustomer(e.target.value);
   };
 
-  const [rows, setRows] = useState([
-    {
-      id: 1,
-      billNo: "",
-      billAmount: "",
-      receivedAmount: "",
-      balanceAmount: "",
-    },
-  ]);
-
-  const handleChange = (index, field, value) => {
+  const handleRowChange = (index, field, value) => {
     const newRows = [...rows];
     newRows[index][field] = value;
     setRows(newRows);
@@ -56,7 +60,39 @@ const PayIn = () => {
     }
   };
 
-  const [receiptMode, setReceiptMode] = useState("Cash");
+  const handleSave = async () => {
+    // Calculate the total received amount
+    const totalAmount = rows.reduce((total, row) => {
+      return total + parseFloat(row.receivedAmount || 0);
+    }, 0);
+
+    const dataToSubmit = {
+      date,
+      receiptNo,
+      selectCustomer: selectedCustomer,
+      receiptMode,
+      rows: rows.map((row) => ({
+        billNo: row.billNo,
+        billAmount: row.billAmount,
+        receivedAmount: row.receivedAmount,
+        balanceAmount: row.balanceAmount,
+      })),
+      total: totalAmount.toFixed(2),
+      Narration,
+    };
+
+    try {
+      const response = await axios.post(
+        "/api/v1/payInRoute/createsalespayin",
+        dataToSubmit
+      );
+      console.log("Data saved successfully:", response.data);
+      // Handle successful response, e.g., show a success message or redirect
+    } catch (error) {
+      console.error("Error saving data:", error);
+      // Handle error, e.g., show an error message
+    }
+  };
 
   return (
     <div
@@ -72,6 +108,8 @@ const PayIn = () => {
           <input
             type="date"
             className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
           />
         </div>
         <div className="flex flex-col">
@@ -79,6 +117,8 @@ const PayIn = () => {
           <input
             type="text"
             className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+            value={receiptNo}
+            onChange={(e) => setReceiptNo(e.target.value)}
           />
         </div>
         <div className="flex flex-col">
@@ -108,9 +148,9 @@ const PayIn = () => {
           >
             <option value="Cash">Cash</option>
             <option value="Bank">Bank</option>
-            {/* Add more options here if needed */}
           </select>
         </div>
+
         {receiptMode === "Bank" && (
           <>
             <div className="flex flex-col">
@@ -120,7 +160,6 @@ const PayIn = () => {
               <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
                 <option value="Bank1">Bank1</option>
                 <option value="Bank2">Bank2</option>
-                {/* Add more options here if needed */}
               </select>
             </div>
             <div className="flex flex-col">
@@ -128,7 +167,6 @@ const PayIn = () => {
               <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
                 <option value="Online">Online</option>
                 <option value="Cheque">Cheque</option>
-                {/* Add more options here if needed */}
               </select>
             </div>
             <div className="flex flex-col">
@@ -166,7 +204,7 @@ const PayIn = () => {
                     type="text"
                     value={row.billNo}
                     onChange={(e) =>
-                      handleChange(index, "billNo", e.target.value)
+                      handleRowChange(index, "billNo", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -176,7 +214,7 @@ const PayIn = () => {
                     type="text"
                     value={row.billAmount}
                     onChange={(e) =>
-                      handleChange(index, "billAmount", e.target.value)
+                      handleRowChange(index, "billAmount", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -186,7 +224,7 @@ const PayIn = () => {
                     type="text"
                     value={row.receivedAmount}
                     onChange={(e) =>
-                      handleChange(index, "receivedAmount", e.target.value)
+                      handleRowChange(index, "receivedAmount", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -196,12 +234,12 @@ const PayIn = () => {
                     type="text"
                     value={row.balanceAmount}
                     onChange={(e) =>
-                      handleChange(index, "balanceAmount", e.target.value)
+                      handleRowChange(index, "balanceAmount", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
-                <td className="  text-center flex gap-2 pl-1">
+                <td className="text-center flex gap-2 pl-1">
                   <button
                     onClick={addRow}
                     className="p-2 bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -252,6 +290,13 @@ const PayIn = () => {
         <label className="text-2xl font-bold text-black mr-2">Total</label>
         <input
           type="text"
+          value={rows
+            .reduce(
+              (total, row) => total + parseFloat(row.receivedAmount || 0),
+              0
+            )
+            .toFixed(2)}
+          readOnly
           className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
         />
       </div>
@@ -260,11 +305,16 @@ const PayIn = () => {
         <textarea
           type="text"
           className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
+          value={Narration}
+          onChange={(e) => setNarration(e.target.value)}
         />
       </div>
 
       <div className="text-center mt-8">
-        <button className="bg-black text-white py-2 px-16 rounded text-xl font-bold hover:bg-gray-700">
+        <button
+          onClick={handleSave}
+          className="bg-black text-white py-2 px-16 rounded text-xl font-bold hover:bg-gray-700"
+        >
           Save
         </button>
       </div>

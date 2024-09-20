@@ -568,7 +568,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to=""
+                  to="/admin/manageSalesReturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Sales Return

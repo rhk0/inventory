@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const payInSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     date: { type: String },
     receiptNo: { type: String },
     selectCustomer: { type: String },

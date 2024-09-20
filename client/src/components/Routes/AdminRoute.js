@@ -64,6 +64,7 @@ import CurrentPlan from "../pages/admin/subscription/CurrentPlan.jsx"
 import PlanHistory from "../pages/admin/subscription/PlanHistory.jsx"
 import ViewStaff from "../pages/admin/settings/ViewStaff.jsx";
 import ManageDeliveryChallan from "../pages/admin/sales/ManageDeliveryChallan.js";
+import ManageSalesReturn from "../pages/admin/sales/ManageSalesReturn.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -143,6 +144,8 @@ const AdminRoute = () => {
 
 
         <Route path="salesreturn" element={<CreateSalesReturn />} />
+        <Route path="manageSalesReturn" element={<ManageSalesReturn />} />
+
 
         <Route path="ManageProduct" element={<Manageproducts />} />
         <Route path="CreateSalesEstimate" element={<CreateSalesEstimate />} />

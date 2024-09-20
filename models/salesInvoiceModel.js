@@ -26,7 +26,7 @@ const salesInvoiceSchema = new mongoose.Schema(
         productName: { type: String },
         hsnCode: { type: String },
         qty: { type: Number },
-        uom: { type: Number },
+        units: { type: String },
         mrp: { type: Number },
         discountpercent: { type: Number },
         discountRS: { type: Number },

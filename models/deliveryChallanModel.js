@@ -7,6 +7,7 @@ const deliveryChallanSchema = new mongoose.Schema(
     salesType: { type: String },
     challanNo: { type: String },
     customerName: { type: String },
+    customerType:{type:String},
     placeOfSupply: { type: String },
     paymentTerm: { type: String },
     dueDate: { type: String },

@@ -96,17 +96,11 @@ const CreateSalesEstimate = () => {
     setFormData((prev) => ({
       ...prev,
       customerName: selectedCustomerData ? selectedCustomerData.name : "",
-      placeOfSupply: selectedCustomerData
-        ? selectedCustomerData.state
-        : "",
+      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
 
-    setPlaceOfSupply(
-      selectedCustomerData ? selectedCustomerData.state : ""
-    );
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
   };
-
-
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
@@ -649,7 +643,6 @@ const CreateSalesEstimate = () => {
               value={selectedCustomer}
               onChange={(e) => {
                 if (e.target.value === "add-new-customer") {
-                  // Navigate to the Create Customer page
                   window.location.href = "/admin/CreateCustomer";
                 } else {
                   handleCustomerChange(e);
@@ -666,7 +659,6 @@ const CreateSalesEstimate = () => {
                 </option>
               ))}
               {/* Add Customer option at the end of the list */}
-             
             </select>
           </div>
 
