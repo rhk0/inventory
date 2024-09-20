@@ -1,32 +1,30 @@
 import mongoose from "mongoose";
 
-const purchesOrderSchema = new mongoose.Schema(
+const purchesReturnSchema = new mongoose.Schema(
   {
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-    date: { type: String },
-    orderNo: { type: String },
-    purchaseType: { type: String },
     supplierName: { type: String },
-    placeOfSupply: { type: String },
+    date: { type: String },
+    debitNoteNo:{type:String},  
     paymentTerm: { type: String },
     dueDate: { type: String },
-    receiptDocNo: { type: String },
-    dispatchedThrough: { type: String },
-    destination: { type: String },
-    carrierNameAgent: { type: String },
-    billOfLading: { type: String },
-    motorVehicleNo: { type: String },
     billingAddress: { type: String },
-    reverseCharge: { type: String },
-    gstType: { type: String },
+    selectPurchase: { type: String },
+    reasonForReturn: { type: String },
+    taxType: { type: String },
     rows: [
       {
         itemCode: { type: String },
         productName: { type: String },
-        hsnCode: { type: String },
-        qty: { type: Number },
+        hsn: { type: String },
         uom: { type: Number },
+        qty: { type: Number },
+        freeQty:{type:String},
         mrp: { type: Number },
+        unitCost: { type: Number },
+        schemeMargin: { type: String },
+        discountpercent: { type: Number },
+        discountRs: { type: Number },
         taxable: { type: Number },
         cgstpercent: { type: Number },
         cgstRS: { type: Number },
@@ -43,10 +41,11 @@ const purchesOrderSchema = new mongoose.Schema(
     grossAmount: { type: String },
     GstAmount: { type: String },
     netAmount: { type: String },
+    documentPath: { type: String },
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.model("purchesOrder", purchesOrderSchema);
+export default mongoose.model("purchesReturn", purchesReturnSchema);

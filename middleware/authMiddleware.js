@@ -5,13 +5,13 @@ import userModel from "../models/userModel.js"
 export const requireSignIn=async(req,res,next)=>{
     try {
       
-    const decode= JWT.verify(req.headers.authorization, process.env.JWT_SECRET)
-   
+    const decode = JWT.verify(req.headers.authorization, process.env.JWT_SECRET)
+  
     req.user=decode;
     next();
 
     } catch (error) {
-        return res.send({ message: "Unauthorized" });
+        return res.send({ message: "Unauthorized",error });
     }
 }
 
@@ -19,6 +19,7 @@ export const requireSignIn=async(req,res,next)=>{
 //admin access
 export const isAdmin=async(req,res,next)=>{
     try {
+        console.log(req.user)
 
         const user=await userModel.findById(req.user._id)
       

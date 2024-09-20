@@ -1,9 +1,8 @@
-import SalesInvoice from "../models/salesInvoiceModel.js";
+import purchesOrderModel from "../models/purchesOrderModel.js";
 
 export const createPurchesOrderController = async (req, res) => {
   try {
     const {
-      userId,
       date,
       orderNo, // Make sure you're receiving this
       purchaseType, // Make sure you're receiving this
@@ -25,13 +24,15 @@ export const createPurchesOrderController = async (req, res) => {
       otherCharges,
       narration,
       grossAmount,
-      gstAmount,
+      GstAmount,
       netAmount,
     } = req.body;
 
-    // Creating a new sales invoice
-    const newInvoice = new SalesInvoice({
-      userId,
+    // Creating a new purchase order
+    const { _id } = req.user;
+    console.log(_id,"ytgyg")
+    const newInvoice = new purchesOrderModel({
+      admin: _id,
       date,
       orderNo, // Assign this correctly
       purchaseType, // Assign this correctly
@@ -53,34 +54,34 @@ export const createPurchesOrderController = async (req, res) => {
       otherCharges,
       narration,
       grossAmount,
-      gstAmount,
+      GstAmount,
       netAmount,
     });
 
     const savedInvoice = await newInvoice.save();
     res.status(201).send({
-      message: "Sales Invoice created successfully",
+      message: "Purchase Order created successfully",
       invoice: savedInvoice,
     });
   } catch (error) {
+    console.log(error)
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
-
 export const getAllPurchesOrderController = async (req, res) => {
   try {
-    const invoices = await SalesInvoice.find();
+    const invoices = await purchesOrderModel.find();
 
     if (!invoices.length) {
       return res.status(404).send({
         success: false,
-        message: "No sales invoices found",
+        message: "No purchase order found",
       });
     }
 
     res.status(200).send({
       success: true,
-      message: "Sales invoices retrieved successfully",
+      message: "Purchase Order retrieved successfully",
       invoices,
     });
   } catch (error) {
@@ -89,8 +90,8 @@ export const getAllPurchesOrderController = async (req, res) => {
 };
 export const getAllPurchesOrderByIdController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const response = await purchesOrderModel.findById(id);
+    const { _id } = req.params;
+    const response = await purchesOrderModel.findById(_id);
 
     if (!response) {
       return res.status(404).json({
@@ -105,7 +106,7 @@ export const getAllPurchesOrderByIdController = async (req, res) => {
       invoice: response, // Named it `invoice` for clarity
     });
   } catch (error) {
-    console.error("Error fetching sales invoice by ID:", error);
+    console.error("Error fetching purchase order by ID:", error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Issue",
@@ -116,18 +117,18 @@ export const getAllPurchesOrderByIdController = async (req, res) => {
 export const getPurchesOrderByIdController = async (req, res) => {
   try {
     const { id } = req.params;
-    const invoice = await SalesInvoice.findById(id);
+    const invoice = await purchesOrderModel.findById(id);
 
     if (!invoice) {
       return res.status(404).json({
         success: false,
-        message: "Sales invoice not found",
+        message: "Purchase Order not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Sales invoice found",
+      message: "Purchase Order found",
       invoice,
     });
   } catch (error) {
@@ -136,19 +137,19 @@ export const getPurchesOrderByIdController = async (req, res) => {
 };
 export const deletePurchesOrderByIdController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deletedInvoice = await SalesInvoice.findByIdAndDelete(id);
+    const { _id } = req.params;
+    const deletedInvoice = await purchesOrderModel.findByIdAndDelete(_id);
 
     if (!deletedInvoice) {
       return res.status(404).send({
         success: false,
-        message: "Sales invoice not found",
+        message: "Purchase Order not found",
       });
     }
 
     res.status(200).send({
       success: true,
-      message: "Sales invoice deleted successfully",
+      message: "Purchase Order deleted successfully",
       deletedInvoice,
     });
   } catch (error) {
@@ -157,14 +158,14 @@ export const deletePurchesOrderByIdController = async (req, res) => {
 };
 export const updatePurchesOrderByIdController = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { _id } = req.params;
     const updateData = req.body;
 
-    const invoice = await SalesInvoice.findById(id);
+    const invoice = await purchesOrderModel.findById(_id);
     if (!invoice) {
       return res.status(404).send({
         success: false,
-        message: "Sales invoice not found",
+        message: "Purchase Order not found",
       });
     }
 
@@ -196,14 +197,14 @@ export const updatePurchesOrderByIdController = async (req, res) => {
     invoice.otherCharges = updateData.otherCharges || invoice.otherCharges;
     invoice.narration = updateData.narration || invoice.narration;
     invoice.grossAmount = updateData.grossAmount || invoice.grossAmount;
-    invoice.gstAmount = updateData.gstAmount || invoice.gstAmount;
+    invoice.GstAmount = updateData.gstAmount || invoice.gstAmount;
     invoice.netAmount = updateData.netAmount || invoice.netAmount;
 
     const updatedInvoice = await invoice.save();
 
     res.status(200).send({
       success: true,
-      message: "Sales invoice updated successfully",
+      message: "Purchase Order updated successfully",
       updatedInvoice,
     });
   } catch (error) {

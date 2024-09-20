@@ -44,7 +44,7 @@ const Analytics = () => {
   if (loading) return <CircularProgress />;
 
   return (
-    <div className="responsive-container" style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <div className="responsive-container" style={{ maxWidth: '800px', margin: '0 auto' }} data-aos="zoom-in-up">
       <h2>User Creation Timeline</h2>
       <LineChart
         dataset={userData}

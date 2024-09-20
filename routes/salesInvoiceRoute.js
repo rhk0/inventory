@@ -6,13 +6,14 @@ import {
   getAllSalesInvoiceCOntroller,
   updateSalesInvoiceByIDController,
 } from "../controllers/salesInvoiceController.js";
+import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createsalesinvoice", createSalesInvoiceController);
-router.get("/getAllsalesinvoice", getAllSalesInvoiceCOntroller);
-router.get("/getAllsalesinvoiceById/:_id", getAllSalesInvoiceByIdController);
-router.put("/updatesalesinvoice/:_id", updateSalesInvoiceByIDController);
-router.delete("/deletesalesinvoice/:_id", deletSalesInvoiceByIDController);
+router.post("/createsalesinvoice",requireSignIn,isAdmin, createSalesInvoiceController);
+router.get("/getAllsalesinvoice",requireSignIn,isAdmin, getAllSalesInvoiceCOntroller);
+router.get("/getAllsalesinvoiceById/:_id",requireSignIn,isAdmin, getAllSalesInvoiceByIdController);
+router.put("/updatesalesinvoice/:_id",requireSignIn,isAdmin, updateSalesInvoiceByIDController);
+router.delete("/deletesalesinvoice/:_id",requireSignIn,isAdmin, deletSalesInvoiceByIDController);
 
 export default router;
