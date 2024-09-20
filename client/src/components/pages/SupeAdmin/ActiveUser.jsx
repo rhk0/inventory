@@ -75,7 +75,7 @@ const ActiveUser = () => {
   }
 
   return (
-    <div className="responsive-container">
+    <div className="responsive-container"  data-aos="zoom-in-up">
       <Typography 
         variant="h6" 
         sx={{ 
@@ -100,7 +100,7 @@ const ActiveUser = () => {
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[5, 10]}
-          checkboxSelection
+          // checkboxSelection
           sx={{ border: 0 }}
         />
       </Paper>

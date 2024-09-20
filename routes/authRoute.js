@@ -20,11 +20,6 @@ router.delete("/delete-staff/:_id",requireSignIn,isAdmin,deleteStaffController)
 
 
 
-
-
-
-
-
 router.get("/staff-auth", requireSignIn,isStaff, (req, res) => {
     res.status(200).send({ ok: true });
   });

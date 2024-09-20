@@ -1,5 +1,23 @@
+
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, Typography, Box, Paper, TextField, List, ListItem, ListItemText } from '@mui/material';
+import {
+  CircularProgress,
+  Typography,
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 import axios from 'axios';
 
 const UsersStaff = () => {
@@ -7,16 +25,15 @@ const UsersStaff = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [staffList, setStaffList] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get('/api/v1/super/all-users');
-        console.log(response);
-
-        // Extracting users from the response data
-        const users = response.data.users;
-        setUsers(users);
+        setUsers(response.data.users);
         setLoading(false);
       } catch (err) {
         setError(err);
@@ -27,7 +44,30 @@ const UsersStaff = () => {
     fetchData();
   }, []);
 
-  // Filter users based on the search term
+  const handleUserClick = async (user) => {
+    setSelectedUser(user);
+    setStaffList([]);
+    setOpenModal(true);
+
+    try {
+      const response = await axios.get(`/api/v1/super/users-staff/${user._id}`);
+      if (response.data && Array.isArray(response.data.staff)) {
+        setStaffList(response.data.staff);
+      } else {
+        setStaffList([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch staff details:', err);
+      setStaffList([]);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedUser(null);
+    setStaffList([]);
+  };
+
   const filteredUsers = users.filter((user) =>
     user.userName.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -54,7 +94,7 @@ const UsersStaff = () => {
   }
 
   return (
-    <div className="responsive-container">
+    <div className="responsive-container" data-aos="zoom-in-up">
       <Typography
         variant="h6"
         sx={{
@@ -71,7 +111,7 @@ const UsersStaff = () => {
             marginBottom: '4px',
           }}
         >
-        Select User
+          Select User
         </span>
       </Typography>
 
@@ -87,20 +127,93 @@ const UsersStaff = () => {
       </Box>
 
       <Paper sx={{ padding: 2 }}>
-        <List>
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
-              <ListItem key={user._id}>
-                <ListItemText primary={user.userName} />
-              </ListItem>
-            ))
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>User Name</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Contact</TableCell>
+                <TableCell>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <TableRow key={user._id}>
+                    <TableCell>{user.userName}</TableCell>
+                    <TableCell>{user.address}</TableCell>
+                    <TableCell>{user.contact}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleUserClick(user)}
+                      >
+                        View Staff
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    <Typography variant="body1" color="textSecondary">
+                      No users found.
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+
+      {/* Modal for staff details */}
+      <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="md">
+        <DialogTitle>
+          {selectedUser ? `${selectedUser.userName}'s Staff` : 'Staff Details'}
+        </DialogTitle>
+        <DialogContent>
+          {selectedUser && staffList.length > 0 ? (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Staff Name</TableCell>
+                    <TableCell>Address</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Father</TableCell>
+                    <TableCell>Pincode</TableCell>
+                    <TableCell>State</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {staffList.map((staff) => (
+                    <TableRow key={staff._id}>
+                      <TableCell>{staff.userName}</TableCell>
+                      <TableCell>{staff.address}</TableCell>
+                      <TableCell>{staff.email}</TableCell>
+                      <TableCell>{staff.fatherName}</TableCell>
+                      <TableCell>{staff.pincode}</TableCell>
+                      <TableCell>{staff.state}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           ) : (
             <Typography variant="body1" color="textSecondary">
-              No users found.
+              No staff details available.
             </Typography>
           )}
-        </List>
-      </Paper>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
