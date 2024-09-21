@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import Select from "react-select";
 
 const CreatePurchaseOrder = () => {
   const [date, setDate] = useState("");
   const [orderNo, setorderNo] = useState("");
   const [purchaseType, setpurchaseType] = useState("GST Invoice");
-  const [supplierType, setsupplierType] = useState("");
-  const [supplierName, setsupplierName] = useState("");
+  const [supplierType, setsupplierType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [transportDetails, setTransportDetails] = useState({
@@ -22,34 +24,104 @@ const CreatePurchaseOrder = () => {
   const [gstType, setGstType] = useState("CGST/SGST");
   const [rows, setRows] = useState([]);
   const [paymentTerm, setPaymentTerm] = useState(0);
-  const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
 
-  const [suppliers, setSuppliers] = useState([]);
-  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [supplier, setsupplier] = useState([]);
+  const [selectedsupplier, setSelectedsupplier] = useState("");
+  const [selectedAddress, setAddress] = useState("");
+
+  const [formData, setFormData] = useState({
+    date: "",
+    orderNo: "",
+    purchaseType: "",
+    supplierType: "",
+    supplierName: "",
+    placeOfSupply: "",
+    paymentTerm: "",
+    dueDate: "",
+    receiptDocNo: "",
+    dispatchedThrough: "",
+    destination: "",
+    carrierNameAgent: "",
+    billOfLading: "",
+    motorVehicleNo: "",
+    billingAddress: "",
+    reverseCharge: "",
+    gstType: "",
+
+    rows: [
+      {
+        itemCode: "",
+        productName: "",
+        hsnCode: "",
+        qty: null,
+        uom: null,
+        mrp: null,
+        discount: null,
+        cgst: null,
+        sgst: null,
+        igst: null,
+        totalValue: null,
+      },
+    ],
+
+    narration: "",
+    otherChargesDescriptions: "",
+    grossAmount: "",
+    GstAmount: "",
+    otherCharges: "",
+    netAmount: "",
+  });
+
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
   useEffect(() => {
-    const fetchSuppliers = async () => {
+    const fetchsupplier = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageSupplier");
-        console.log(response, "djkgh");
-        setSuppliers(response.data.data);
+        setsupplier(response.data.data);
+        console.log(response,"dskfkj")
       } catch (error) {
         console.error("Error fetching suppliers:", error);
       }
     };
 
-    fetchSuppliers();
+    fetchsupplier();
   }, []);
 
-  const handleSupplierChange = (e) => {
-    setSelectedSupplier(e.target.value);
+  const handlesupplierChange = (e) => {
+    const value = e.target.value;
+    setSelectedsupplier(value);
+
+    const selectedsupplierData = supplier.find((cust) => cust._id === value);
+
+    setFormData((prev) => ({
+      ...prev,
+      supplierName: selectedsupplierData ? selectedsupplierData.name : "",
+      billingAddress: selectedsupplierData ? selectedsupplierData.address : "",
+      placeOfSupply: selectedsupplierData ? selectedsupplierData.state : "",
+    }));
+
+    setPlaceOfSupply(selectedsupplierData ? selectedsupplierData.state : "");
+    setBillingAddress(selectedsupplierData ? selectedsupplierData.address : "");
   };
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
-    setTotalValue((prevTotal) => prevTotal + newCharges);
+
+    setFormData((prev) => ({
+      ...prev,
+      otherCharges: newCharges,
+    }));
+  };
+  const handleOtherChargesSave = () => {
+    setFormData((prev) => ({
+      ...prev,
+      otherCharges: otherCharges.toFixed(2),
+      otherChargesDescriptions: otherChargesDescriptions,
+    }));
+    setIsModalOtherChargesOpen(false);
   };
 
   useEffect(() => {
@@ -63,28 +135,93 @@ const CreatePurchaseOrder = () => {
       const formattedDueDate = `${day}-${month}-${year}`;
 
       setDueDate(formattedDueDate);
+      setFormData((prev) => ({
+        ...prev,
+        dueDate: formattedDueDate,
+      }));
     }
   }, [date, paymentTerm]);
 
+  const handlePaymentTermChange = (e) => {
+    const value = e.target.value;
+    setPaymentTerm(value);
+    setFormData((prev) => ({
+      ...prev,
+      paymentTerm: value,
+    }));
+  };
+
   const handleGstTypeChange = (e) => {
-    setGstType(e.target.value);
+    const value = e.target.value;
+    setGstType(value);
+    setFormData((prev) => ({
+      ...prev,
+      gstType: value,
+    }));
   };
 
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
-  const handleorderNoChange = (e) => setorderNo(e.target.value);
-  const handlepurchaseTypeChange = (e) => setpurchaseType(e.target.value);
-  const handlesupplierTypeChange = (e) => setsupplierType(e.target.value);
-  const handlesupplierNameChange = (e) => setsupplierName(e.target.value);
-  const handlePlaceOfSupplyChange = (e) => setPlaceOfSupply(e.target.value);
-  const handleBillingAddressChange = (e) => setBillingAddress(e.target.value);
-  const handleReverseChargeChange = (e) => setReverseCharge(e.target.value);
+  const handleorderNoChange = (e) => {
+    const value = e.target.value;
+    setorderNo(value);
+    setFormData((prev) => ({
+      ...prev,
+      orderNo: value,
+    }));
+  };
+  const handlepurchaseTypeChange = (e) => {
+    const value = e.target.value;
+    setpurchaseType(value);
+    setFormData((prev) => ({
+      ...prev,
+      purchaseType: value,
+    }));
+  };
+  const handlesupplierTypeChange = (e) => {
+    const value = e.target.value;
+    setsupplierType(value);
+    setFormData((prev) => ({
+      ...prev,
+      supplierType: value,
+    }));
+  };
+
+  const handlePlaceOfSupplyChange = (e) => {
+    const value = e.target.value;
+    setPlaceOfSupply(value);
+    setFormData((prev) => ({
+      ...prev,
+      placeOfSupply: value,
+    }));
+  };
+
+  const handleBillingAddressChange = (e) => {
+    const value = e.target.value;
+    setBillingAddress(selectedAddress);
+    setFormData((prev) => ({
+      ...prev,
+      billingAddress: value,
+    }));
+  };
+  const handleReverseChargeChange = (e) => {
+    const value = e.target.value;
+    setReverseCharge(value);
+    setFormData((prev) => ({
+      ...prev,
+      reverseCharge: value,
+    }));
+  };
 
   // Function to handle transport detail change
   const handleTransportDetailChange = (field, value) => {
     setTransportDetails((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
   const handleRowChange = (index, field, value) => {
     const newRows = [...rows];
@@ -138,414 +275,20 @@ const CreatePurchaseOrder = () => {
 
   const calculateTotals = () => {
     let grossAmount = 0;
-    let totalGstAmount = 0;
+    let GstAmount = 0;
 
-    rows.forEach((row) => {
-      grossAmount += row.taxableValue;
-      totalGstAmount += row.cgst + row.sgst + row.igst;
+    rows.forEach((rows) => {
+      grossAmount += rows.taxableValue;
+      GstAmount += rows.cgstrs + rows.sgstrs;
     });
 
-    const netAmount = grossAmount + totalGstAmount;
-    return { grossAmount, totalGstAmount, netAmount };
+    const netAmount = grossAmount + GstAmount + otherCharges + 0;
+    return { grossAmount, GstAmount, netAmount };
   };
 
-  const { grossAmount, totalGstAmount, netAmount } = calculateTotals();
+  const { grossAmount, GstAmount, netAmount } = calculateTotals();
 
   // Function to handle Save and Print
-  const handlePrintOnly = () => {
-    const printWindow = window.open("", "_blank");
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 10px;
-            }
-            .header, .section-header, .table th {
-              color: red;
-              font-weight: bold;
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 20px;
-              font-size: 24px;
-            }
-            .supplier-details .section-header {
-              color: green;
-               font-size: 16px;
-            }
-            .purchase-order .section-header {
-              color: blue;
-               font-size: 16px;
-            }
-            .transport-details .section-header, .amount-details .section-header {
-              color: blue;
-               font-size: 16px;
-            }
-            .terms .section-header {
-              color: red;
-            }
-            .table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-            }
-            .table th, .table td {
-              border: 1px solid black;
-              padding: 5px;
-              text-align: center;
-              font-size: 12px;
-            }
-            .table th {
-              background-color: #ff0000; /* Red header */
-              color: black;
-            }
-            .details {
-              font-size: 12px;
-              margin-bottom: 5px;
-            }
-            .signature {
-              text-align: right;
-              margin-top: 50px;
-              font-size: 12px;
-            }
-              .heades{
-               text-align: center;
-                color: blue;
-              font-size: 24px;
-              }
-          </style>
-        </head>
-        <body>
-         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
-          <div class="header">
-          
-            <div class="business-name">Business Name</div>
-            <div>Address: Your Address Here</div>
-            <div>GSTIN: Your GSTIN Here</div>
-          </div>
-  
-          <table class="table">
-             <tr>
-                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    purchase order
-                  </th>
-              </tr>
-
-
-         
-            <tr>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="supplier-details">
-                  <div class="section-header">supplier Details</div>
-                  <div class="details">Name: <span>John Doe</span></div>
-                  <div class="details">Address: <span>123 Main St, City</span></div>
-                  <div class="details">Contact: <span>9876543210</span></div>
-                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
-                </div>
-              </td>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="purchase-order">
-                  <div class="section-header"> order Details</div>
-                  <div class="details">order No: <span>12345</span></div>
-                  <div class="details">order Date: <span>01-Jan-2024</span></div>
-                  <div class="details">Place of Supply: <span>City Name</span></div>
-                </div>
-              </td>
-              <td style="width: 40%;">
-                <div style="text-align:left;" class="transport-details">
-                  <div class="section-header">Transport Details</div>
-                  <div class="details">Receipt Doc No.: <span>6789</span></div>
-                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
-                  <div class="details">Agent Name: <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
-                </div>
-              </td>
-            </tr>
-          </table>
-  
-          <table class="table">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Product Name</th>
-                <th>HSN Code</th>
-                <th>QTY</th>
-                <th>UOM</th>
-                <th>MRP</th>
-                <th>Disc.</th>
-                <th>Rate</th>
-                <th>Taxable Value</th>
-                <th>CGST</th>
-                <th>SGST</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Add your product rows here -->
-              <tr>
-                <td>1</td>
-                <td>Product Name</td>
-                <td>1234</td>
-                <td>10</td>
-                <td>KG</td>
-                <td>500</td>
-                <td>10%</td>
-                <td>450</td>
-                <td>4500</td>
-                <td>9%</td>
-                <td>9%</td>
-                <td>5310</td>
-              </tr>
-            </tbody>
-          </table>
-  
-          <table class="table">
-            <tr>
-              <td style="width: 50%;text-align:left;">
-                <div class="banking-details">
-                  <div class="section-header">Banking Details</div>
-                  <div class="details">Bank Name: XYZ Bank</div>
-                  <div class="details">IFSC Code: XYZ1234</div>
-                  <div class="details">Account No: 1234567890</div>
-                  <div class="details">Account Holder Name: John Doe</div>
-                  <div class="details">UPI ID: john@upi</div>
-                </div>
-              </td>
-              <td style="width: 50%;text-align:left;">
-                <div class="amount-details">
-                  <div class="section-header">Amount Details</div>
-                  <div class="details">Gross Total: ₹10000</div>
-                  <div class="details">GST Amount: ₹1800</div>
-                  <div class="details">Additional Charges: ₹200</div>
-                  <div class="details">Net Total: ₹12000</div>
-                  <div class="details">Amount in Words: Twelve Thousand Only</div>
-                </div>
-              </td>
-            </tr>
-          
-             
-              
-            
-          </table>
-             <div style="margin-top:100px" class="mt-10">
-                  <div class="section-header">Terms & Condition</div>
-                  <div class="details">Your terms and conditions go here...</div>
-                </div>
-  
-          <div  class="signature">
-         
-          
-            <div>For (Business Name)</div>
-            <div style="margin-top: 20px;">Signature</div>
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    printWindow.print();
-    printWindow.close();
-  };
-
-  const handlePrintOnlyWithoutGST = () => {
-    const printWindow = window.open("", "_blank");
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 10px;
-            }
-            .header, .section-header, .table th {
-              color: red;
-              font-weight: bold;
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 20px;
-              font-size: 24px;
-            }
-            .supplier-details .section-header {
-              color: green;
-               font-size: 16px;
-            }
-            .purchase-order .section-header {
-              color: blue;
-               font-size: 16px;
-            }
-            .transport-details .section-header, .amount-details .section-header {
-              color: blue;
-               font-size: 16px;
-            }
-            .terms .section-header {
-              color: red;
-            }
-            .table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-            }
-            .table th, .table td {
-              border: 1px solid black;
-              padding: 5px;
-              text-align: center;
-              font-size: 12px;
-            }
-            .table th {
-              background-color: #ff0000; /* Red header */
-              color: black;
-            }
-            .details {
-              font-size: 12px;
-              margin-bottom: 5px;
-            }
-            .signature {
-              text-align: right;
-              margin-top: 50px;
-              font-size: 12px;
-            }
-              .heades{
-               text-align: center;
-                color: blue;
-              font-size: 24px;
-              }
-          </style>
-        </head>
-        <body>
-         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
-          <div class="header">
-          
-            <div class="business-name">Business Name</div>
-            <div>Address: Your Address Here</div>
-            <div>GSTIN: Your GSTIN Here</div>
-          </div>
-  
-          <table class="table">
-             <tr>
-                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                    purchase order
-                  </th>
-              </tr>
-
-
-         
-            <tr>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="supplier-details">
-                  <div class="section-header">supplier Details</div>
-                  <div class="details">Name: <span>John Doe</span></div>
-                  <div class="details">Address: <span>123 Main St, City</span></div>
-                  <div class="details">Contact: <span>9876543210</span></div>
-                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
-                </div>
-              </td>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="purchase-order">
-                  <div class="section-header"> order Details</div>
-                  <div class="details">order No: <span>12345</span></div>
-                  <div class="details">order Date: <span>01-Jan-2024</span></div>
-                  <div class="details">Place of Supply: <span>City Name</span></div>
-                </div>
-              </td>
-              <td style="width: 40%;">
-                <div style="text-align:left;" class="transport-details">
-                  <div class="section-header">Transport Details</div>
-                  <div class="details">Receipt Doc No.: <span>6789</span></div>
-                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
-                  <div class="details">Agent Name: <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
-                </div>
-              </td>
-            </tr>
-          </table>
-  
-          <table class="table">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Product Name</th>
-                <th>HSN Code</th>
-                <th>QTY</th>
-                <th>UOM</th>
-                <th>MRP</th>
-                <th>Disc.</th>
-                <th>Rate</th>
-               
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Add your product rows here -->
-              <tr>
-                <td>1</td>
-                <td>Product Name</td>
-                <td>1234</td>
-                <td>10</td>
-                <td>KG</td>
-                <td>500</td>
-                <td>10%</td>
-                <td>450</td>
-                
-                <td>5310</td>
-              </tr>
-            </tbody>
-          </table>
-  
-          <table class="table">
-            <tr>
-              <td style="width: 50%;text-align:left;">
-                <div class="banking-details">
-                  <div class="section-header">Banking Details</div>
-                  <div class="details">Bank Name: XYZ Bank</div>
-                  <div class="details">IFSC Code: XYZ1234</div>
-                  <div class="details">Account No: 1234567890</div>
-                  <div class="details">Account Holder Name: John Doe</div>
-                  <div class="details">UPI ID: john@upi</div>
-                </div>
-              </td>
-              <td style="width: 50%;text-align:left;">
-                <div class="amount-details">
-                  <div class="section-header">Amount Details</div>
-                  <div class="details">Gross Total: ₹10000</div>
-                  <div class="details">Additional Charges: ₹200</div>
-                  <div class="details">Net Total: ₹12000</div>
-                  <div class="details">Amount in Words: Twelve Thousand Only</div>
-                </div>
-              </td>
-            </tr>
-          
-             
-              
-            
-          </table>
-             <div style="margin-top:100px" class="mt-10">
-                  <div class="section-header">Terms & Condition</div>
-                  <div class="details">Your terms and conditions go here...</div>
-                </div>
-  
-          <div  class="signature">
-         
-          
-            <div>For (Business Name)</div>
-            <div style="margin-top: 20px;">Signature</div>
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    printWindow.print();
-    printWindow.close();
-  };
 
   const [products, setProducts] = useState([]);
 
@@ -553,12 +296,12 @@ const CreatePurchaseOrder = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
+        console.log(response, "dkfjk");
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
           console.error("Unexpected response structure:", response.data);
         }
-        console.log(response, "API Response");
       } catch (error) {
         console.error("Error fetching products:", error);
         // toast.error("Failed to fetch products. Please try again.");
@@ -575,26 +318,281 @@ const CreatePurchaseOrder = () => {
 
     if (selectedProduct) {
       const updatedRows = [...rows];
+
+      // Calculate retail price
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      // Determine if sales tax is included from the fetched product data
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+
+      // Calculate taxable value based on salesTaxInclude
+      console.log(salesTaxInclude, "ksdjf");
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * selectedProduct.quantity;
+      {
+        console.log(taxableValue, "tax");
+      }
+      // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
         units: selectedProduct.units,
-        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice,
+        productName: selectedProduct.productName,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
         quantity: selectedProduct.quantity,
-        // Add any other fields you want to auto-fill here
+        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        wholeselerDiscountRS:
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.wholesalerDiscount) /
+          100,
+        retailDiscount: selectedProduct.retailDiscount,
+        retailDiscountRS:
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+          100,
+
+        // taxable value based on salesTaxInclude
+        taxableValue: taxableValue,
+
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
       };
 
       setRows(updatedRows);
     }
   };
+
+  const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
+    const selectedProduct = products.find(
+      (product) => product.itemCode === selectedItemCode
+    );
+
+    if (selectedProduct) {
+      const updatedRows = [...rows];
+
+      // Calculate retail price and taxable value based on the product details
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      const taxableValue = selectedProduct.salesTaxInclude
+        ? (retailPrice * selectedProduct.quantity * 100) /
+          (100 + selectedProduct.gstRate)
+        : retailPrice * selectedProduct.quantity;
+
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        productName: selectedProduct.productName,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        quantity: selectedProduct.quantity,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        wholeselerDiscountRS: (
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.wholesalerDiscount) /
+          100
+        ).toFixed(2),
+        retailDiscount: selectedProduct.retailDiscount,
+        retailDiscountRS: (
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+          100
+        ).toFixed(2),
+        taxableValue: taxableValue,
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const updatedFormData = {
+        ...formData,
+        rows: rows.map((row) => ({
+          itemCode: row.itemCode,
+          productName: row.productName,
+          hsnCode: row.hsnCode,
+          qty: row.quantity,
+          units: row.units,
+          mrp: row.maxmimunRetailPrice,
+
+          discountpercent:
+            supplierType === "Wholesaler"
+              ? row.wholesalerDiscount
+              : row.retailDiscount,
+          discountRS:
+            supplierType === "Wholesaler"
+              ? row.wholeselerDiscountRS
+              : row.retailDiscountRS,
+
+          taxable: row.taxableValue.toFixed(2),
+          cgstpercent: row.cgstp,
+          cgstRS: row.cgstrs,
+          sgstpercent: row.sgstp,
+          sgstRS: row.sgstrs,
+          igstpercent: row.igstp,
+          igstRS: row.igstrs,
+          totalValue: row.totalvalue,
+        })),
+        grossAmount: grossAmount.toFixed(2),
+        GstAmount: GstAmount.toFixed(2),
+        otherCharges: otherCharges.toFixed(2),
+        otherChargesDescriptions: otherChargesDescriptions,
+        purchaseType,
+        supplierType,
+        reverseCharge,
+        gstType,
+
+        netAmount: netAmount.toFixed(2),
+      };
+      const response = await axios.post(
+        "/api/v1/salesEstimateRoute/createSalesEstimatet",
+        updatedFormData
+      );
+      console.log(response);
+
+      if (response) {
+        toast.success("Sales estimate created successfully...");
+      }
+      setFormData({
+        date: "",
+        orderNo: "",
+        purchaseType: "",
+        supplierType: "",
+        supplierName: "",
+        placeOfSupply: "",
+        paymentTerm: "",
+        dueDate: "",
+        receiptDocNo: "",
+        dispatchedThrough: "",
+        destination: "",
+        carrierNameAgent: "",
+        billOfLading: "",
+        motorVehicleNo: "",
+        billingAddress: "",
+        reverseCharge: "",
+        gstType: "",
+        rows: [
+          {
+            itemCode: "",
+            productName: "",
+            hsnCode: "",
+            qty: null,
+            uom: null,
+            mrp: null,
+            discount: null,
+            cgst: null,
+            sgst: null,
+            igst: null,
+            totalValue: null,
+          },
+        ],
+        narration: "",
+        otherChargesDescriptions: "",
+        grossAmount: "",
+        GstAmount: "",
+        otherCharges: "",
+        netAmount: "",
+      });
+
+      // Clear other independent states
+      setDate("");
+      setorderNo("");
+      setpurchaseType("GST Invoice");
+      setsupplierType("Retailer");
+      setPlaceOfSupply("");
+      setDueDate("");
+      setTransportDetails({
+        receiptDocNo: "",
+        dispatchedThrough: "",
+        destination: "",
+        carrierNameAgent: "",
+        billOfLading: "",
+        motorVehicleNo: "",
+      });
+      setBillingAddress("");
+      setReverseCharge("No");
+      setGstType("CGST/SGST");
+      setRows([]);
+      setPaymentTerm(0);
+      setOtherCharges(0);
+      setOtherChargesDescriptions("");
+
+      setSelectedsupplier("");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to create sales estimate. Please try again.");
+    }
+  };
+
   return (
     <>
       <div
-        style={{ backgroundColor: "#82ac73" }}
+        style={{ backgroundColor: "##FFFFFF" }}
         className="p-4 responsive-container"
       >
         {/* Top Section */}
+        <h1 className="text-center font-bold text-3xl  text-black mb-5">
+          Purhcase Order
+        </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">Purchase Type</label>
@@ -603,17 +601,21 @@ const CreatePurchaseOrder = () => {
               onChange={handlepurchaseTypeChange}
               className="border p-2 w-full  rounded"
             >
-              <option value="GST ">GST </option>
-              <option value="Non GST">Non GST</option>
+              <option value="GST Invoice">GST Invoice</option>
+              <option value="Bill of Supply">Bill of Supply</option>
             </select>
           </div>
           <div>
             <label className="font-bold">
-              Date:
+              Date
               <input
                 type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                name="date"
+                value={formData.date}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  handleChange(e);
+                }}
                 className="border p-2 w-full   rounded"
               />
             </label>
@@ -621,32 +623,57 @@ const CreatePurchaseOrder = () => {
           <div>
             <label className="font-bold">Order No.</label>
             <input
+              name="orderNo"
               type="text"
               value={orderNo}
-              onChange={handleorderNoChange}
+              onChange={handleorderNoChange} // Update both local and formData states
               className="border p-2 w-full  rounded"
             />
           </div>
 
+          {/* <div>
+            <label className="font-bold">supplier Type</label>
+            <select
+              value={supplierType}
+              onChange={handlesupplierTypeChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="Retailer">Retailer</option>
+              <option value="Wholesaler">Wholesaler</option>
+            </select>
+          </div> */}
+
           <div>
-            <label className="font-bold">supplier Name</label>
+            <label className="font-bold">Supplier Name</label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedSupplier}
-              onChange={handleSupplierChange}
+              value={selectedsupplier}
+              onChange={(e) => {
+                if (e.target.value === "add-new-Supplier") {
+                  window.location.href = "/admin/CreateSupplier";
+                } else {
+                  handlesupplierChange(e);
+                }
+              }}
             >
               <option value="">Select Supplier</option>
-              {suppliers.map((supplier) => (
+              <option value="add-new-supplier" className="text-blue-500">
+                + Add New Supplier
+              </option>
+              {supplier.map((supplier) => (
                 <option key={supplier._id} value={supplier._id}>
                   {supplier.name}
                 </option>
               ))}
+              {/* Add supplier option at the end of the list */}
             </select>
           </div>
+
           <div>
             <label className="font-bold">Place of Supply</label>
             <input
               type="text"
+              name="placeOfSupply"
               value={placeOfSupply}
               onChange={handlePlaceOfSupplyChange}
               className="border p-2 w-full  rounded"
@@ -654,11 +681,12 @@ const CreatePurchaseOrder = () => {
           </div>
           <div>
             <label className="font-bold">
-              Payment Term:
+              Payment Term (days)
               <input
-                type="number"
+                type="text"
+                name="paymentTerm"
                 value={paymentTerm}
-                onChange={(e) => setPaymentTerm(e.target.value)}
+                onChange={handlePaymentTermChange}
                 className="border p-2 w-full  rounded"
               />
             </label>
@@ -668,11 +696,21 @@ const CreatePurchaseOrder = () => {
             <label className="font-bold">
               Due Date
               <input
+                name="dueDate"
                 type="text"
                 value={dueDate}
                 className="border p-2 w-full text-black rounded"
               />
             </label>
+          </div>
+
+          <div className="mb-4">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white p-2"
+            >
+              Transport Details
+            </button>
           </div>
         </div>
 
@@ -685,6 +723,7 @@ const CreatePurchaseOrder = () => {
                   <label>Receipt Doc No.</label>
                   <input
                     type="text"
+                    name="receiptDocNo"
                     value={transportDetails.receiptDocNo}
                     onChange={(e) =>
                       handleTransportDetailChange(
@@ -781,18 +820,11 @@ const CreatePurchaseOrder = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
-          <div className="mb-8">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-blue-500 text-white p-2"
-            >
-              Transport Details
-            </button>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div className="mb-4">
             <label className="font-bold">Billing Address</label>
             <textarea
+              name="billingAddress"
               value={billingAddress}
               onChange={handleBillingAddressChange}
               className="border p-2 w-full  rounded"
@@ -829,23 +861,22 @@ const CreatePurchaseOrder = () => {
 
         {/* Items Section */}
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse  overflow-x-auto">
+          <table className="w-full border-collapse overflow-x-auto">
             <thead>
               <tr>
-                <th className="border p-2">#</th>
-                <th className="border p-2">Item Code</th>
-                <th className="border p-2">Product Name</th>
-                <th className="border p-2">HSN Code</th>
-
-                <th className="border p-2">Qty</th>
-                <th className="border p-2">UOM</th>
-                <th className="border p-2">MRP</th>
-                {/* <th className="border p-2">
-                  Discount{" "}
+                <th className="border p-1">#</th>
+                <th className="border text-bold text-sm ">Item Code</th>
+                <th className="border ">Product Name</th>
+                <th className="border p-1 text-nowrap">HSN Code</th>
+                <th className="border p-1">Qty</th>
+                <th className="border p-1">Units</th>
+                <th className="border p-1">MRP</th>
+                <th className="border p-1">
+                  Discount
                   <div className="flex justify-between">
-                    <span className="mr-16">%</span> <span>RS</span>
+                    <span className="">%</span> <span>RS</span>
                   </div>
-                </th> */}
+                </th>
 
                 {purchaseType === "GST Invoice" && (
                   <>
@@ -855,13 +886,13 @@ const CreatePurchaseOrder = () => {
                         <th className="border p-2">
                           CGST{" "}
                           <div className="flex justify-between">
-                            <span className="mr-16">%</span> <span>RS</span>
+                            <span className="">%</span> <span>RS</span>
                           </div>
                         </th>
                         <th className="border p-2">
                           SGST{" "}
                           <div className="flex justify-between">
-                            <span className="mr-16">%</span> <span>RS</span>
+                            <span className="">%</span> <span>RS</span>
                           </div>
                         </th>
                       </>
@@ -870,7 +901,7 @@ const CreatePurchaseOrder = () => {
                       <th className="border p-2">
                         IGST{" "}
                         <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>RS</span>
+                          <span className="">%</span> <span>RS</span>
                         </div>
                       </th>
                     )}
@@ -882,38 +913,80 @@ const CreatePurchaseOrder = () => {
             <tbody>
               {rows.map((row, index) => (
                 <tr key={index}>
-                  <td className="border p-2">{index + 1}</td>
-                  <td className="border p-2">
-                    <input
-                      type="text"
-                      value={row.itemCode}
-                      onChange={(e) =>
-                        handleRowChange(index, "itemCode", e.target.value)
+                  <td className="border p-1">{index + 1}</td>
+                  <td className="border">
+                    <Select
+                      id="itemcode-select"
+                      value={
+                        rows[index].itemCode
+                          ? {
+                              label: rows[index].itemCode,
+                              value: rows[index].itemCode,
+                            }
+                          : null
                       }
-                      className="w-full"
+                      onChange={(selectedOption) =>
+                        handleItemCodeSelect(index, selectedOption.value)
+                      }
+                      options={products.map((product) => ({
+                        label: product.itemCode,
+                        value: product.itemCode,
+                      }))}
+                      isSearchable={true}
+                      placeholder="Select"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "120px",
+                          maxWidth: "300px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
                     />
                   </td>
-                  <td className="border p-2">
-                    <select
+
+                  <td className="border ">
+                    <Select
                       id="product-select"
-                      onChange={(e) =>
-                        handleProductSelect(index, e.target.value)
+                      value={
+                        rows[index].productName
+                          ? {
+                              label: rows[index].productName,
+                              value: rows[index].productName,
+                            }
+                          : null
                       }
-                      className="w-full"
-                    >
-                      <option value="">Select a Product</option>
-                      {products.length > 0 ? (
-                        products.map((product) => (
-                          <option key={product._id} value={product.productName}>
-                            {product.productName}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="">Loading...</option>
-                      )}
-                    </select>
+                      onChange={(selectedOption) =>
+                        handleProductSelect(index, selectedOption.value)
+                      }
+                      options={products.map((product) => ({
+                        label: product.productName,
+                        value: product.productName,
+                      }))}
+                      isSearchable={true}
+                      placeholder="Select a Product"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "200px",
+                          maxWidth: "500px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                    />
                   </td>
-                  <td className="border p-2">
+
+                  <td className="border p-1">
                     <input
                       type="text"
                       value={row.hsnCode}
@@ -923,17 +996,17 @@ const CreatePurchaseOrder = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-2">
+                  <td className="border p-1">
                     <input
-                      type="number"
+                      type="text"
                       value={row.quantity}
                       onChange={(e) =>
-                        handleRowChange(index, "qty", e.target.value)
+                        handleRowChange(index, "quantity", e.target.value)
                       }
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-2">
+                  <td className="border p-1">
                     <input
                       type="text"
                       value={row.units}
@@ -945,7 +1018,7 @@ const CreatePurchaseOrder = () => {
                   </td>
                   <td className="border p-2">
                     <input
-                      type="number"
+                      type="text"
                       value={row.maxmimunRetailPrice}
                       onChange={(e) =>
                         handleRowChange(
@@ -954,43 +1027,182 @@ const CreatePurchaseOrder = () => {
                           e.target.value
                         )
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px", // Set a small minimum width to ensure visibility
+                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}
                     />
                   </td>
-                  {/* <td className="border ">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="number"
-                        value={row.retailDiscount}
-                        onChange={(e) =>
-                          handleRowChange(
-                            index,
-                            "retailDiscount",
-                            e.target.value
-                          )
-                        }
-                        className="w-full"
-                      />
-                      <td className=""></td>
-                      <input
-                        type="number"
-                        value={row.discount}
-                        onChange={(e) =>
-                          handleRowChange(index, "discount", e.target.value)
-                        }
-                        className="w-full"
-                      />
-                    </div>
-                  </td> */}
 
+                  <td className="border">
+                    {supplierType === "Wholesaler" && (
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          value={row.wholesalerDiscount}
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              "discountpercent",
+                              e.target.value
+                            )
+                          }
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: "20px", // Set a small minimum width to ensure visibility
+                            flexBasis: "20px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}
+                        />
+                        <input
+                          type="text"
+                          value={row.wholeselerDiscountRS}
+                          onChange={(e) =>
+                            handleRowChange(index, "discountRS", e.target.value)
+                          }
+                          className="w-full"
+                        />
+                      </div>
+                    )}
+                    {supplierType === "Retailer" && (
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          value={row.retailDiscount}
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              "discountpercent",
+                              e.target.value
+                            )
+                          }
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: "20px", // Set a small minimum width to ensure visibility
+                            flexBasis: "20px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}
+                        />
+                        <input
+                          type="text"
+                          value={row.retailDiscountRS}
+                          onChange={(e) =>
+                            handleRowChange(index, "discountRS", e.target.value)
+                          }
+                          className="w-full"
+                        />
+                      </div>
+                    )}
+                  </td>
                   {purchaseType === "GST Invoice" && (
                     <>
                       {gstType === "CGST/SGST" && (
                         <>
-                          <td className="border p-2">
+                          <td className="border p-1">
                             <input
-                              type="number"
-                              value={row.taxableValue}
+                              type="text"
+                              value={row.taxableValue.toFixed(2)}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  index,
+                                  "taxableValue",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "70px",
+                                flexBasis: "70px",
+                                flexShrink: 1,
+                              }}
+                            />
+                          </td>
+                          <td className="border">
+                            <div className="p-1 flex gap-1">
+                              <input
+                                type="text"
+                                value={row.cgstp}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "cgstpercent",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                              <input
+                                type="text"
+                                value={row.cgstrs}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "cgstRS",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                            </div>
+                          </td>
+                          <td className="border">
+                            <div className="p-1 flex gap-1">
+                              <input
+                                type="text"
+                                value={row.sgstp}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "sgstpercent",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                              <input
+                                type="text"
+                                value={row.sgstrs}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "sgstRS",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </>
+                      )}
+                      {gstType === "IGST" && (
+                        <>
+                          <td className="border p-1">
+                            <input
+                              type="text"
+                              value={row.taxableValue.toFixed(2)}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -1001,81 +1213,70 @@ const CreatePurchaseOrder = () => {
                               className="w-full"
                             />
                           </td>
-                          <td className="border ">
-                            <div className="p-1 flex  gap-1">
+                          <td className="border p-1">
+                            <div className="flex gap-1">
                               <input
-                                type="number"
-                                value={row.sgst}
+                                type="text"
+                                value={row.igstp}
                                 onChange={(e) =>
-                                  handleRowChange(index, "sgst", e.target.value)
+                                  handleRowChange(
+                                    index,
+                                    "igstpercent",
+                                    e.target.value
+                                  )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
                               />
-                              <td className=""></td>
                               <input
-                                type="number"
-                                value={row.sgst}
+                                type="text"
+                                value={row.igstrs}
                                 onChange={(e) =>
-                                  handleRowChange(index, "sgst", e.target.value)
+                                  handleRowChange(
+                                    index,
+                                    "igstRS",
+                                    e.target.value
+                                  )
                                 }
-                                className="w-full"
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
                               />
                             </div>
                           </td>
                         </>
                       )}
-                      {gstType === "IGST" && (
-                        <td className="border p-2">
-                          <input
-                            type="number"
-                            value={row.taxableValue}
-                            onChange={(e) =>
-                              handleRowChange(index, "igst", e.target.value)
-                            }
-                            className="w-full"
-                          />
-                        </td>
-                      )}
-                      <td className="border p-2">
-                        <div className="flex">
-                          <input
-                            type="number"
-                            value={row.igst}
-                            onChange={(e) =>
-                              handleRowChange(index, "igst", e.target.value)
-                            }
-                            className="w-full"
-                          />
-                          <td className="p-1"></td>
-                          <input
-                            type="number"
-                            value={row.igst}
-                            onChange={(e) =>
-                              handleRowChange(index, "igst", e.target.value)
-                            }
-                            className="w-full"
-                          />
-                        </div>
-                      </td>
                     </>
                   )}
-                  <td className="border p-2">
+                  <td className="border p-1">
                     <input
-                      type="number"
-                      value={row.totalValue}
+                      type="text"
+                      value={row.totalvalue}
                       onChange={(e) =>
                         handleRowChange(index, "totalValue", e.target.value)
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
                     />
                   </td>
-                  <td className=" p-1 gap-2 flex">
+                  <td className="p-1 gap-2 flex">
                     <button
                       onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white p-1 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+                      className="bg-red-500 text-white p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
                     >
                       <svg
-                        xmlns="http//www.w3.org/2000/svg"
+                        xmlns="http://www.w3.org/2000/svg"
                         className="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -1095,6 +1296,7 @@ const CreatePurchaseOrder = () => {
             </tbody>
           </table>
         </div>
+
         <button
           onClick={addRow}
           className="bg-green-500 text-white p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
@@ -1149,17 +1351,21 @@ const CreatePurchaseOrder = () => {
                   <input
                     type="text"
                     id="other-charges"
-                    // value={otherChargesDescriptions}
-                    className="border p-2 w-full  rounded"
+                    value={otherChargesDescriptions} // Ensure this is controlled
+                    onChange={(e) =>
+                      setOtherChargesDescriptions(e.target.value)
+                    } // Ensure change handler updates state
+                    className="border p-2 w-full rounded"
                   />
                 </div>
                 <div>
                   <label>Other Charges</label>
                   <input
                     type="text"
-                    onChange={handleOtherChargesChange}
+                    value={otherCharges}
+                    onChange={(e) => handleOtherChargesChange(e)}
                     placeholder="Enter other charges"
-                    className="border p-2 w-full  rounded"
+                    className="border p-2 w-full rounded"
                   />
                 </div>
               </div>
@@ -1171,8 +1377,8 @@ const CreatePurchaseOrder = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-blue-500 text-white p-2"
+                  onClick={handleOtherChargesSave}
+                  className="bg-gray-500 text-white p-2 mr-2"
                 >
                   Save
                 </button>
@@ -1186,8 +1392,14 @@ const CreatePurchaseOrder = () => {
             <label className="font-bold">Narration</label>
             <br />
             <textarea
-              // value={billingAddress}
-              // onChange={handleBillingAddressChange}
+              name="narration"
+              value={formData.narration}
+              onChange={(e) => {
+                setFormData((prevData) => ({
+                  ...prevData,
+                  narration: e.target.value,
+                }));
+              }}
               className="bg-black text-white border p-1 w-full  rounded"
             />
           </div>
@@ -1208,7 +1420,7 @@ const CreatePurchaseOrder = () => {
                   GST Amount
                 </label>
                 <input
-                  value={totalGstAmount.toFixed(2)}
+                  value={GstAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
                   className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
                 />
@@ -1220,8 +1432,8 @@ const CreatePurchaseOrder = () => {
                 Other Charge
               </label>
               <input
-                value={otherCharges}
-                // onChange={handleBillingAddressChange}
+                value={otherCharges.toFixed(2)}
+                onChange={handleOtherChargesChange}
                 className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
@@ -1244,12 +1456,13 @@ const CreatePurchaseOrder = () => {
           <button
             // onClick={}
             className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-white p-2 mr-2"
+            onClick={handleSubmit}
           >
             Save
           </button>
           {purchaseType === "GST Invoice" && (
             <button
-              onClick={handlePrintOnly}
+              // onClick={handlePrintOnly}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
             >
               Save and Print
@@ -1257,7 +1470,7 @@ const CreatePurchaseOrder = () => {
           )}
           {purchaseType !== "GST Invoice" && (
             <button
-              onClick={handlePrintOnlyWithoutGST}
+              // onClick={handlePrintOnlyWithoutGST}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
             >
               Save and Print
@@ -1265,6 +1478,7 @@ const CreatePurchaseOrder = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

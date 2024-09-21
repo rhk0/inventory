@@ -9,7 +9,7 @@ const ProductValueWise = () => {
 
   return (
     <div className="min-h-screen shadow-md bg-gray-100 p-5 responsive-container">
-      <h1 className="text-3xl font-bold text-center mb-10"> Product Value Wise Report</h1>
+      <h1 className="text-3xl font-bold text-center mb-10"> 𝙿𝚛𝚘𝚍𝚞𝚌𝚝 𝚅𝚊𝚕𝚞𝚎 𝚆𝚒𝚜𝚎 𝚁𝚎𝚙𝚘𝚛𝚝</h1>
 
       {/* Conditional rendering of reports */}
       <div className="bg-white shadow-md rounded-lg p-10">

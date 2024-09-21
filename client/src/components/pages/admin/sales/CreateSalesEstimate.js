@@ -28,6 +28,7 @@ const CreateSalesEstimate = () => {
 
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [selectedAddress, setAddress] = useState("");
 
   const [formData, setFormData] = useState({
     date: "",
@@ -96,10 +97,12 @@ const CreateSalesEstimate = () => {
     setFormData((prev) => ({
       ...prev,
       customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
       placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
   };
 
   const handleOtherChargesChange = (event) => {
@@ -196,7 +199,7 @@ const CreateSalesEstimate = () => {
 
   const handleBillingAddressChange = (e) => {
     const value = e.target.value;
-    setBillingAddress(value);
+    setBillingAddress(selectedAddress);
     setFormData((prev) => ({
       ...prev,
       billingAddress: value,
@@ -503,6 +506,7 @@ const CreateSalesEstimate = () => {
         "/api/v1/salesEstimateRoute/createSalesEstimatet",
         updatedFormData
       );
+      console.log(response);
 
       if (response) {
         toast.success("Sales estimate created successfully...");
@@ -581,17 +585,17 @@ const CreateSalesEstimate = () => {
   return (
     <>
       <div
-        style={{ backgroundColor: "#82ac73" }}
+        style={{ backgroundColor: "##FFFFFF" }}
         className="p-4 responsive-container"
       >
         {/* Top Section */}
-        <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
-          Create Sales Estimate
+        <h1 className="text-center font-bold text-3xl  text-black mb-5">
+          Sales Estimate
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">
-              Date:
+              Date
               <input
                 type="date"
                 name="date"
@@ -674,7 +678,7 @@ const CreateSalesEstimate = () => {
           </div>
           <div>
             <label className="font-bold">
-              Payment Term (days):
+              Payment Term (days)
               <input
                 type="text"
                 name="paymentTerm"
@@ -817,6 +821,7 @@ const CreateSalesEstimate = () => {
           <div className="mb-4">
             <label className="font-bold">Billing Address</label>
             <textarea
+              name="billingAddress"
               value={billingAddress}
               onChange={handleBillingAddressChange}
               className="border p-2 w-full  rounded"
