@@ -28,6 +28,7 @@ const CreateSalesEstimate = () => {
 
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [selectedAddress, setAddress] = useState("");
 
   const [formData, setFormData] = useState({
     date: "",
@@ -92,10 +93,11 @@ const CreateSalesEstimate = () => {
     setSelectedCustomer(value);
 
     const selectedCustomerData = customer.find((cust) => cust._id === value);
-
+ 
     setFormData((prev) => ({
       ...prev,
       customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      address:selectedCustomerData?selectedCustomerData.address:"",
       placeOfSupply: selectedCustomerData
         ? selectedCustomerData.state
         : "",
@@ -104,6 +106,10 @@ const CreateSalesEstimate = () => {
     setPlaceOfSupply(
       selectedCustomerData ? selectedCustomerData.state : ""
     );
+    setBillingAddress(
+      selectedCustomerData ? selectedCustomerData.address : ""
+    );
+   
   };
 
 
@@ -202,7 +208,7 @@ const CreateSalesEstimate = () => {
 
   const handleBillingAddressChange = (e) => {
     const value = e.target.value;
-    setBillingAddress(value);
+    setBillingAddress(selectedAddress);
     setFormData((prev) => ({
       ...prev,
       billingAddress: value,
@@ -587,17 +593,17 @@ const CreateSalesEstimate = () => {
   return (
     <>
       <div
-        style={{ backgroundColor: "#82ac73" }}
+        style={{ backgroundColor: "##FFFFFF" }}
         className="p-4 responsive-container"
       >
         {/* Top Section */}
-        <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
-          Create Sales Estimate
+        <h1 className="text-center font-bold text-3xl  text-black mb-5">
+       Sales Estimate
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">
-              Date:
+              Date
               <input
                 type="date"
                 name="date"
@@ -681,7 +687,7 @@ const CreateSalesEstimate = () => {
           </div>
           <div>
             <label className="font-bold">
-              Payment Term (days):
+              Payment Term (days)
               <input
                 type="text"
                 name="paymentTerm"

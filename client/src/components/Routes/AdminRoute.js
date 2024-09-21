@@ -70,6 +70,7 @@ import ProductValueWise from "../pages/admin/Reports/ProductValueWise.js";
 import ManufacturerW from "../pages/admin/Reports/ManufacturerW.js";
 
 import ManageDeliveryChallan from "../pages/admin/sales/ManageDeliveryChallan.js";
+import SalesReports from "../pages/admin/Reports/SalesReports.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -161,11 +162,14 @@ const AdminRoute = () => {
         <Route path="PayOut" element={<PayOut />} />
         <Route path="ManagePayOut" element={<ManagePayOut />} />
         <Route path="profileupdate" element={<ProfileUpdate />} />
+{/* StockReports */}
         <Route path="stockreports" element={<StockReports />} />
-
         <Route path="ManufacturerW" element={<ManufacturerW />} />
         <Route path="ProductQtyWise" element={<ProductQtyWise />} />
         <Route path="ProductValueWise" element={<ProductValueWise />} />
+
+        {/* Sales Report */}
+        <Route path="salesreports" element={<SalesReports />} />
 
         <Route path="current-plan" element={<CurrentPlan/>}/>
         <Route path ="plan-history" element={<PlanHistory/>}/>
