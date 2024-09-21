@@ -25,7 +25,7 @@ const CreatePurchaseOrder = () => {
   const [totalValue, setTotalValue] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
 
-  const [suppliers, setSuppliers] = useState([]); // State to store supplier data
+  const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState("");
 
   useEffect(() => {

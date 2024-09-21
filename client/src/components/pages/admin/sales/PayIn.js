@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 
 const PayIn = () => {
   const [customer, setCustomer] = useState([]);
@@ -14,7 +16,7 @@ const PayIn = () => {
       id: 1,
       billNo: "",
       billAmount: "",
-      receivedAmount: "",
+      recievedAmount: "",
       balanceAmount: "",
     },
   ]);
@@ -48,7 +50,7 @@ const PayIn = () => {
         id: rows.length ? Math.max(...rows.map((row) => row.id)) + 1 : 1,
         billNo: "",
         billAmount: "",
-        receivedAmount: "",
+        recievedAmount: "",
         balanceAmount: "",
       },
     ]);
@@ -63,7 +65,7 @@ const PayIn = () => {
   const handleSave = async () => {
     // Calculate the total received amount
     const totalAmount = rows.reduce((total, row) => {
-      return total + parseFloat(row.receivedAmount || 0);
+      return total + parseFloat(row.recievedAmount || 0);
     }, 0);
 
     const dataToSubmit = {
@@ -74,7 +76,7 @@ const PayIn = () => {
       rows: rows.map((row) => ({
         billNo: row.billNo,
         billAmount: row.billAmount,
-        receivedAmount: row.receivedAmount,
+        recievedAmount: row.recievedAmount,
         balanceAmount: row.balanceAmount,
       })),
       total: totalAmount.toFixed(2),
@@ -86,11 +88,41 @@ const PayIn = () => {
         "/api/v1/payInRoute/createsalespayin",
         dataToSubmit
       );
-      console.log("Data saved successfully:", response.data);
-      // Handle successful response, e.g., show a success message or redirect
+
+      toast.success("Data saved successfully!", {
+        position: "top-right",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      setDate(""); // Clear date
+      setReceiptNo(""); // Clear receipt number
+      setSelectedCustomer(""); // Clear selected customer
+      setReceiptMode("Cash"); // Reset receipt mode to default (Cash)
+      setRows([
+        {
+          id: 1,
+          billNo: "",
+          billAmount: "",
+          recievedAmount: "",
+          balanceAmount: "",
+        },
+      ]); // Reset rows to a single empty row
+      setNarration(""); // Clear narration
     } catch (error) {
+      toast.error("Error saving data. Please try again!", {
+        position: "top-right",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       console.error("Error saving data:", error);
-      // Handle error, e.g., show an error message
     }
   };
 
@@ -181,7 +213,6 @@ const PayIn = () => {
           </>
         )}
       </div>
-
       <div className="overflow-x-auto mt-5">
         <table className="w-full border-collapse">
           <thead>
@@ -222,9 +253,9 @@ const PayIn = () => {
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"
-                    value={row.receivedAmount}
+                    value={row.recievedAmount}
                     onChange={(e) =>
-                      handleRowChange(index, "receivedAmount", e.target.value)
+                      handleRowChange(index, "recievedAmount", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -292,7 +323,7 @@ const PayIn = () => {
           type="text"
           value={rows
             .reduce(
-              (total, row) => total + parseFloat(row.receivedAmount || 0),
+              (total, row) => total + parseFloat(row.recievedAmount || 0),
               0
             )
             .toFixed(2)}
@@ -309,7 +340,6 @@ const PayIn = () => {
           onChange={(e) => setNarration(e.target.value)}
         />
       </div>
-
       <div className="text-center mt-8">
         <button
           onClick={handleSave}
@@ -318,6 +348,7 @@ const PayIn = () => {
           Save
         </button>
       </div>
+      <ToastContainer /> {/* Add this line to include the toast container */}
     </div>
   );
 };
