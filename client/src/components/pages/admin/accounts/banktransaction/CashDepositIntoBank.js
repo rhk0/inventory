@@ -146,7 +146,7 @@ function CashDepositeIntoBank() {
             </Grid>
             <Grid item xs={12} md={4}>
               <TextField
-                label=" To Amount"
+                label=" Amount"
                 type="text"
                 name="toAmount"
                 value={formData.toAmount}

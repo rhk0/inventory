@@ -43,7 +43,7 @@ import purchesOrderRoute from "./routes/purchesOrderRoute.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-
+import demoContactRoute from "./routes/demoContactRoute.js"
 dotenv.config();
 
 //calling the db funciton
@@ -78,7 +78,7 @@ app.use("/api/v1/deliveryChallanRoute", deliveryChallanRoute);
 app.use("/api/v1/salesEstimateRoute", salesEstimateRoute);
 app.use("/api/v1/expensesRoute", expensesRoute);
 app.use("/api/v1/incomeRoute", incomeRoute);
-
+app.use("/api/v1/contact",demoContactRoute)
 //change dheeru
 //change
 

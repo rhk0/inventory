@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
 import { FaUserAlt, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
-import Loader from "../loader/Loader.js"; // Import the Loader component
+import Loader from "../loader/LoaderHand"; // Import the Loader component
+
 const ResetPassword = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
@@ -28,6 +30,7 @@ const ResetPassword = () => {
     setLoading(true);
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
+      setLoading(false);
       return;
     }
     try {
@@ -40,100 +43,101 @@ const ResetPassword = () => {
           password: '',
           confirmPassword: '',
         });
-        setTimeout(()=>{
-            navigate('/');
-          },[3000])
-           
-         // Navigate to the login page
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
       toast.error('An error occurred. Please try again.');
-    }
-    finally {
+    } finally {
       setLoading(false); // Set loading to false after the request
     }
   };
 
+  const handleCancel = () => {
+    navigate(-1); // Navigate back to the previous page
+  };
+
   return (
-    <div>
-      <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center text-white font-montserrat">
+    <div className="bg-gray-100 min-h-screen flex justify-center items-center font-montserrat px-2">
       {loading ? (
-          <Loader />
-        ) : (
-        <div className="p-5 shadow-2xl rounded-lg login-card p-8 w-full max-w-md flex flex-col">
-          <div className="header mb-12">
-            <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-4 bg-white bg-opacity-10">
-              <div className="text-white text-6xl">
-                <FaUserAlt />
-              </div>
+        <Loader />
+      ) : (
+        <div className="p-6 shadow-lg rounded-lg bg-white w-full max-w-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+          <div className="text-center mb-6">
+            <div className="logo rounded-full w-16 h-16 mx-auto bg-blue-500 text-white flex justify-center items-center">
+              <FaUserAlt className="text-3xl" />
             </div>
+            <h2 className="text-2xl font-bold mt-4">Reset Password</h2>
           </div>
-          <form className="form" >
-            <div className="form-field username relative mb-6">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaUserAlt />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative">
+              <FaUserAlt className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="text"
                 name="email"
                 placeholder="Email"
-                className="pl-12 pr-4 py-2 w-full text-black bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
                 value={formData.email}
                 onChange={handleChange}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>     
-            <div className="form-field password relative mb-6">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaLock />
-              </div>
+            </div>
+            <div className="relative">
+              <FaLock className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="text"
                 name="otp"
                 placeholder="OTP"
-                className="pl-12 pr-4 py-2 w-full text-black bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
                 value={formData.otp}
                 onChange={handleChange}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="form-field password relative mb-6">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaLock />
-              </div>
+            <div className="relative">
+              <FaLock className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="password"
                 name="password"
                 placeholder="New Password"
-                className="pl-12 pr-4 py-2 w-full text-black bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
                 value={formData.password}
                 onChange={handleChange}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="form-field password relative mb-6">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaLock />
-              </div>
+            <div className="relative">
+              <FaLock className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="password"
                 name="confirmPassword"
                 placeholder="Confirm Password"
-                className="pl-12 pr-4 py-2 w-full text-black bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <button
-              type="submit"
-              onClick={handleSubmit}
-              className="bg-green-500 text-white py-3 px-4 w-full rounded-3xl uppercase font-bold mb-8 focus:outline-none transition duration-300 hover:bg-red-600 hover:text-white"
-            >
-              Reset Password
-            </button>
+            <div className="flex justify-between mt-6">
+              {/* Cancel Button */}
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="py-3 px-4 rounded-md bg-gradient-to-r from-red-400 to-blue-500 hover:from-teal-500 hover:to-orange-500"
+              >
+                Cancel
+              </button>
+              {/* Reset Button */}
+              <button
+                type="submit"
+                className="py-3 px-4 rounded-md bg-gradient-to-r from-teal-400 to-blue-500 hover:from-pink-500 hover:to-orange-500"
+                disabled={loading}
+              >
+                Reset
+              </button>
+            </div>
           </form>
         </div>
-  )}
-      </div>
+      )}
       <ToastContainer />
     </div>
   );
