@@ -281,7 +281,17 @@ const CreateSalesEstimate = () => {
       GstAmount += rows.cgstrs + rows.sgstrs;
     });
 
-    const netAmount = grossAmount + GstAmount + otherCharges + 0;
+    let netAmount;
+
+    // Check if otherChargesDescriptions includes "discount"
+    if (otherChargesDescriptions.includes("discount")) {
+      netAmount = grossAmount + GstAmount - otherCharges;
+    } else {
+      netAmount = grossAmount + GstAmount + otherCharges;
+    }
+
+    console.log(netAmount);
+
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -348,6 +358,8 @@ const CreateSalesEstimate = () => {
           : "0.00",
         quantity: selectedProduct.quantity,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
         wholeselerDiscountRS:
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.wholesalerDiscount) /
@@ -414,6 +426,8 @@ const CreateSalesEstimate = () => {
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
         quantity: selectedProduct.quantity,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
         wholeselerDiscountRS: (
           (selectedProduct.maxmimunRetailPrice *
@@ -704,7 +718,7 @@ const CreateSalesEstimate = () => {
           <div className="mb-4">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-blue-500 text-white p-2"
+              className="bg-blue-500 text-black p-2"
             >
               Transport Details
             </button>
@@ -802,13 +816,13 @@ const CreateSalesEstimate = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-blue-500 text-white p-2"
+                  className="bg-blue-500 text-black p-2"
                 >
                   Save
                 </button>
@@ -948,6 +962,7 @@ const CreateSalesEstimate = () => {
                   </td>
 
                   <td className="border ">
+                    {console.log(rows, "dheeru")}
                     <Select
                       id="product-select"
                       value={
@@ -981,6 +996,16 @@ const CreateSalesEstimate = () => {
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                     />
+                    <div style={{ marginTop: "10px", fontSize: "12px" }}>
+                      <div>
+                        Date:{" "}
+                        {row.expiryDate ? row.expiryDate : "N/A"}
+                      </div>
+                      <div>
+                        Batch Number:{" "}
+                        {row.batchNo ? row.batchNo : "N/A"}
+                      </div>
+                    </div>
                   </td>
 
                   <td className="border p-1">
@@ -1270,7 +1295,7 @@ const CreateSalesEstimate = () => {
                   <td className="p-1 gap-2 flex">
                     <button
                       onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+                      className="bg-red-500 text-black p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -1296,7 +1321,7 @@ const CreateSalesEstimate = () => {
 
         <button
           onClick={addRow}
-          className="bg-green-500 text-white p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+          className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
         >
           <svg
             xmlns="http//www.w3.org/2000/svg"
@@ -1342,9 +1367,7 @@ const CreateSalesEstimate = () => {
               <h4 className="font-bold mb-4">Other Charges Details</h4>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label htmlFor="other-charges">
-                    Other Charges Description
-                  </label>
+                  <label htmlFor="other-charges">Description</label>
                   <input
                     type="text"
                     id="other-charges"
@@ -1356,7 +1379,7 @@ const CreateSalesEstimate = () => {
                   />
                 </div>
                 <div>
-                  <label>Other Charges</label>
+                  <label>Amount</label>
                   <input
                     type="text"
                     value={otherCharges}
@@ -1369,13 +1392,13 @@ const CreateSalesEstimate = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleOtherChargesSave}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Save
                 </button>
@@ -1397,7 +1420,7 @@ const CreateSalesEstimate = () => {
                   narration: e.target.value,
                 }));
               }}
-              className="bg-black text-white border p-1 w-full  rounded"
+              className=" text-black border p-1 w-full  rounded"
             />
           </div>
           <div className="w-full lg:w-1/3">
@@ -1408,7 +1431,7 @@ const CreateSalesEstimate = () => {
               <input
                 value={grossAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
             {salesType === "GST Invoice" && (
@@ -1419,30 +1442,30 @@ const CreateSalesEstimate = () => {
                 <input
                   value={GstAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
-                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                  className=" text-black border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
             )}
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                Other Charge
+                {otherChargesDescriptions}
               </label>
               <input
                 value={otherCharges.toFixed(2)}
                 onChange={handleOtherChargesChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-bold lg:w-1/2 text-nowrap">
+              <label className="font-bold  lg:w-1/2 text-nowrap">
                 Net Amount
               </label>
               <input
-                value={netAmount.toFixed(2)}
+                value={Math.round(netAmount).toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 text-2xl w-full font-bold  rounded lg:w-2/3"
               />
             </div>
           </div>
@@ -1452,7 +1475,7 @@ const CreateSalesEstimate = () => {
         <div className="mt-8 flex justify-center">
           <button
             // onClick={}
-            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-white p-2 mr-2"
+            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2"
             onClick={handleSubmit}
           >
             Save
@@ -1460,7 +1483,7 @@ const CreateSalesEstimate = () => {
           {salesType === "GST Invoice" && (
             <button
               // onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
             </button>
@@ -1468,7 +1491,7 @@ const CreateSalesEstimate = () => {
           {salesType !== "GST Invoice" && (
             <button
               // onClick={handlePrintOnlyWithoutGST}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
             </button>

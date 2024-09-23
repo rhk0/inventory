@@ -125,12 +125,12 @@ const ManagePayIn = () => {
                     <td className="px-4 py-2 border">{row.balanceAmount}</td>
                     {rowIndex === 0 && (
                       <td
-                        className="px-6 py-2 border-r text-sm text-nowrap"
+                        className="px-6 py-2 border-r border-b border-white text-sm text-nowrap"
                         rowSpan={payIn.rows.length}
                       >
                         <button
                           onClick={() => openViewModal(payIn)}
-                          className="mx-1 text-white bg-green-500 rounded p-2 "
+                          className="mx-1 text-white bg-green-500 rounded p-2"
                         >
                           <MdRateReview className="text-xl" />
                         </button>
@@ -172,6 +172,10 @@ const ManagePayIn = () => {
               padding: "20px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
               borderRadius: "8px",
+              backgroundColor: "#fff", // Set the background color to white (or any color you prefer)
+            },
+            overlay: {
+              backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: dim the background overlay
             },
           }}
         >

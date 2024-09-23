@@ -536,7 +536,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to=""
+                  to="/admin/ManageSalesInvoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   Sales Invoice List
@@ -654,7 +654,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/ManagePurchaseOrder"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Order List

@@ -55,7 +55,7 @@ const CreatePurchaseOrder = () => {
         productName: "",
         hsnCode: "",
         qty: null,
-        uom: null,
+        units: null,
         mrp: null,
         discount: null,
         cgst: null,
@@ -80,7 +80,7 @@ const CreatePurchaseOrder = () => {
       try {
         const response = await axios.get("/api/v1/auth/manageSupplier");
         setsupplier(response.data.data);
-        console.log(response,"dskfkj")
+        console.log(response, "dskfkj");
       } catch (error) {
         console.error("Error fetching suppliers:", error);
       }
@@ -353,11 +353,6 @@ const CreatePurchaseOrder = () => {
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.wholesalerDiscount) /
           100,
-        retailDiscount: selectedProduct.retailDiscount,
-        retailDiscountRS:
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-          100,
 
         // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
@@ -421,12 +416,7 @@ const CreatePurchaseOrder = () => {
             selectedProduct.wholesalerDiscount) /
           100
         ).toFixed(2),
-        retailDiscount: selectedProduct.retailDiscount,
-        retailDiscountRS: (
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-          100
-        ).toFixed(2),
+
         taxableValue: taxableValue,
         cgstp: selectedProduct.gstRate / 2,
         sgstp: selectedProduct.gstRate / 2,
@@ -474,14 +464,9 @@ const CreatePurchaseOrder = () => {
           units: row.units,
           mrp: row.maxmimunRetailPrice,
 
-          discountpercent:
-            supplierType === "Wholesaler"
-              ? row.wholesalerDiscount
-              : row.retailDiscount,
-          discountRS:
-            supplierType === "Wholesaler"
-              ? row.wholeselerDiscountRS
-              : row.retailDiscountRS,
+          discountpercent: row.wholesalerDiscount,
+
+          discountRS: row.wholeselerDiscountRS,
 
           taxable: row.taxableValue.toFixed(2),
           cgstpercent: row.cgstp,
@@ -504,13 +489,12 @@ const CreatePurchaseOrder = () => {
         netAmount: netAmount.toFixed(2),
       };
       const response = await axios.post(
-        "/api/v1/salesEstimateRoute/createSalesEstimatet",
+        "/api/v1/purchesOrderRoute/createpurchesorder",
         updatedFormData
       );
-      console.log(response);
 
       if (response) {
-        toast.success("Sales estimate created successfully...");
+        toast.success("purchase order created successfully...");
       }
       setFormData({
         date: "",
@@ -871,12 +855,12 @@ const CreatePurchaseOrder = () => {
                 <th className="border p-1">Qty</th>
                 <th className="border p-1">Units</th>
                 <th className="border p-1">MRP</th>
-                <th className="border p-1">
+                {/* <th className="border p-1">
                   Discount
                   <div className="flex justify-between">
                     <span className="">%</span> <span>RS</span>
                   </div>
-                </th>
+                </th> */}
 
                 {purchaseType === "GST Invoice" && (
                   <>
@@ -1036,66 +1020,35 @@ const CreatePurchaseOrder = () => {
                     />
                   </td>
 
-                  <td className="border">
-                    {supplierType === "Wholesaler" && (
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.wholesalerDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px", // Set a small minimum width to ensure visibility
-                            flexBasis: "20px", // Allow it to shrink, but still have a base width
-                            flexShrink: 1, // Allow it to shrink on mobile
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.wholeselerDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    )}
-                    {supplierType === "Retailer" && (
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.retailDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px", // Set a small minimum width to ensure visibility
-                            flexBasis: "20px", // Allow it to shrink, but still have a base width
-                            flexShrink: 1, // Allow it to shrink on mobile
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.retailDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    )}
-                  </td>
+                  {/* <td className="border">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={row.wholesalerDiscount}
+                        onChange={(e) =>
+                          handleRowChange(
+                            index,
+                            "discountpercent",
+                            e.target.value
+                          )
+                        }
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: "20px", // Set a small minimum width to ensure visibility
+                          flexBasis: "20px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}
+                      />
+                      <input
+                        type="text"
+                        value={row.wholeselerDiscountRS}
+                        onChange={(e) =>
+                          handleRowChange(index, "discountRS", e.target.value)
+                        }
+                        className="w-full"
+                      />
+                    </div>
+                  </td> */}
                   {purchaseType === "GST Invoice" && (
                     <>
                       {gstType === "CGST/SGST" && (
