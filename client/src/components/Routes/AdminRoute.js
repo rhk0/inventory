@@ -71,6 +71,19 @@ import ManufacturerW from "../pages/admin/Reports/ManufacturerW.js";
 
 import ManageDeliveryChallan from "../pages/admin/sales/ManageDeliveryChallan.js";
 import SalesReports from "../pages/admin/Reports/SalesReports.js";
+import CustomerLedger from "../pages/admin/Reports/CustomerLedger.js";
+import SalesRegister from "../pages/admin/Reports/SalesRegister.js";
+import InvoicewiseSales from "../pages/admin/Reports/InvoicewiseSales.js";
+import CustomerWiseReport from "../pages/admin/Reports/CustomerWiseReport.js";
+import PointOfSalesReport from "../pages/admin/Reports/PointOfSalesReport.js";
+import ManuFactureWiseReport from "../pages/admin/Reports/ManuFactureWiseReport.js";
+import DayBook from "../pages/admin/Reports/DayBook.js";
+import PurchesReport from "../pages/admin/Reports/PurchesReport/PurchesReport.js";
+import InvoiceWisePurches from "../pages/admin/Reports/PurchesReport/InvoiceWisePurches.js";
+import SupplierWiseReport from "../pages/admin/Reports/PurchesReport/SupplierWiseReport.js";
+import ManufactureWiseReport from "../pages/admin/Reports/PurchesReport/ManufactureWiseReport.js";
+import PurchesRegister from "../pages/admin/Reports/PurchesReport/PurchesRegister.js";
+import SupplierLedger from "../pages/admin/Reports/PurchesReport/SupplierLedger.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -162,7 +175,7 @@ const AdminRoute = () => {
         <Route path="PayOut" element={<PayOut />} />
         <Route path="ManagePayOut" element={<ManagePayOut />} />
         <Route path="profileupdate" element={<ProfileUpdate />} />
-{/* StockReports */}
+         {/* StockReports */}
         <Route path="stockreports" element={<StockReports />} />
         <Route path="ManufacturerW" element={<ManufacturerW />} />
         <Route path="ProductQtyWise" element={<ProductQtyWise />} />
@@ -171,6 +184,25 @@ const AdminRoute = () => {
         {/* Sales Report */}
         <Route path="salesreports" element={<SalesReports />} />
 
+
+        <Route path="InvoicewiseSales" element={<InvoicewiseSales />} />
+        <Route path="CustomerWiseReport" element={<CustomerWiseReport />} />
+
+        <Route path="CustomerLedger" element={<CustomerLedger />} />
+        <Route path="SalesRegister" element={<SalesRegister />} />
+        <Route path="ManufacturerWise" element={<ManuFactureWiseReport />} />
+        <Route path="PointOfSalesReport" element={<PointOfSalesReport />} />
+        <Route path="DayBook" element={<DayBook />} />
+
+        {/*PurchesReport  */}
+        <Route path="purchesreports" element={<PurchesReport />} />
+        <Route path="Invoicewisepurches" element={<InvoiceWisePurches />} />
+        <Route path="supplierWiseReport" element={<SupplierWiseReport />} />
+        <Route path="ManufacturerWisereport" element={<ManufactureWiseReport />} />
+        <Route path="purchesregister" element={<PurchesRegister />} />
+        <Route path="supplierledger" element={<SupplierLedger />} />
+        
+        
         <Route path="current-plan" element={<CurrentPlan/>}/>
         <Route path ="plan-history" element={<PlanHistory/>}/>
         <Route path="log-out" element={<Logout />} />

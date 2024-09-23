@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
-
+import { GoRepoTemplate } from "react-icons/go";
+import { MdSubscriptions } from 'react-icons/md'; // Material Icons
 import {
   MdDashboard,
   MdInventory,
@@ -963,7 +964,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           >
             <span className="flex">
               {" "}
-              <MdSettings className="mr-2 mt-2" />
+              <MdSubscriptions className="mr-2 mt-2" />
               Subscription
             </span>
             {!showSubscription ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -999,7 +1000,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="flex">
-              <MdSettings className="mr-2 mt-2" />
+              <GoRepoTemplate className="mr-2 mt-2" />
               Reports
             </span>
             {!showReports ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -1032,7 +1033,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="nestedlist innerlist sidebar-list-item">
                 <Link
-                  to="/admin/daybook"
+                  to="/admin/DayBook"
                   className="flex items-center text-white nestitemhover"
                 >
                   Day Book

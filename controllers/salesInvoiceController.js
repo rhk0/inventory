@@ -52,8 +52,7 @@ export const createSalesInvoiceController = async (req, res) => {
       "reverseCharge",
       "gstType",
       "rows",
-      "cash",
-      "bank",
+     
       "otherChargesDescription",
       "othercharges",
       "narration",
