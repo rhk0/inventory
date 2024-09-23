@@ -3,7 +3,6 @@ import pointOfSaleModel from "../models/PointOfSaleModel.js";
 export const createPOFController = async (req, res) => {
   try {
     const {
-      userId,
       date,
       invoicNo, // Use invoicNo as in the schema
       customerDetail, // Use customerDetail instead of customerName
@@ -13,30 +12,14 @@ export const createPOFController = async (req, res) => {
       GstAmount,
       netAmount,
     } = req.body;
+    const { _id } = req.user;
+    
 
-    const requiredFields = [
-      "userId",
-      "date",
-      "invoicNo",
-      "customerDetail",
-      "paymentType",
-      "rows",
-      "grossAmount",
-      "GstAmount",
-      "netAmount",
-    ];
-
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
+   
 
     try {
       const newPointOfSale = new pointOfSaleModel({
-        userId,
+        admin:_id,
         date,
         invoicNo,
         customerDetail,
@@ -149,7 +132,6 @@ export const updatePOFByIDController = async (req, res) => {
     }
 
     // Update fields if provided in the request body
-    pos.userId = updateData.userId || pos.userId;
     pos.date = updateData.date || pos.date;
     pos.invoicNo = updateData.invoicNo || pos.invoicNo;
     pos.customerDetail = updateData.customerDetail || pos.customerDetail;

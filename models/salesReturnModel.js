@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 
-const salesReturnSchema = new mongoose.Schema(  {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+const salesReturnSchema = new mongoose.Schema(
+  {
+    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     date: { type: String },
     salesType: { type: String },
     creditNoteNo: { type: String },
     customerName: { type: String },
+    customerType: { type: String },
     placeOfSupply: { type: String },
     paymentTerm: { type: String },
     dueDate: { type: String },
@@ -23,7 +25,7 @@ const salesReturnSchema = new mongoose.Schema(  {
         productName: { type: String },
         hsnCode: { type: String },
         qty: { type: Number },
-        uom: { type: Number },
+        units: { type: String },
         mrp: { type: Number },
         discountpercent: { type: Number },
         discountRS: { type: Number },
@@ -37,8 +39,8 @@ const salesReturnSchema = new mongoose.Schema(  {
         totalValue: { type: Number },
       },
     ],
-    otherChargesDescription: { type: String },
-    othercharges: { type: String },
+    otherChargesDescriptions: { type: String },
+    otherCharges: { type: String },
     narration: { type: String },
     grossAmount: { type: String },
     GstAmount: { type: String },

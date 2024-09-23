@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 
-const salesInvoiceSchema = new mongoose.Schema(
+const purchesOrderSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-  
+    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     date: { type: String },
-    orderNo: { type: String, required: true }, 
-    purchaseType: { type: String, required: true }, 
-    supplierName: { type: String, required: true },
+    orderNo: { type: String },
+    purchaseType: { type: String },
+    supplierName: { type: String },
     placeOfSupply: { type: String },
     paymentTerm: { type: String },
     dueDate: { type: String },
@@ -26,9 +25,9 @@ const salesInvoiceSchema = new mongoose.Schema(
         productName: { type: String },
         hsnCode: { type: String },
         qty: { type: Number },
-        uom: { type: Number },
+        units: { type: String },
         mrp: { type: Number },
-        taxable: { type: Number },       
+        taxable: { type: Number },
         cgstpercent: { type: Number },
         cgstRS: { type: Number },
         sgstpercent: { type: Number },
@@ -38,8 +37,8 @@ const salesInvoiceSchema = new mongoose.Schema(
         totalValue: { type: Number },
       },
     ],
-    otherChargesDescription: { type: String },
-    othercharges: { type: String },
+    otherChargesDescriptions: { type: String },
+    otherCharges: { type: String },
     narration: { type: String },
     grossAmount: { type: String },
     GstAmount: { type: String },
@@ -50,4 +49,4 @@ const salesInvoiceSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("salesinvoice", salesInvoiceSchema);
+export default mongoose.model("purchesOrder", purchesOrderSchema);

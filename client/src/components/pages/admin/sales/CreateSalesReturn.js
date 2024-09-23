@@ -91,14 +91,18 @@ const CreateDeliveryChallan = () => {
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
-
     setSelectedCustomer(value);
+
+    const selectedCustomerData = customer.find((cust) => cust._id === value);
+
     setFormData((prev) => ({
       ...prev,
-      customerName: value,
+      customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
-  };
 
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+  };
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
@@ -173,14 +177,14 @@ const CreateDeliveryChallan = () => {
       salesType: value,
     }));
   };
-  // const handleCustomerTypeChange = (e) => {
-  //   const value = e.target.value;
-  //   setCustomerType(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     customerType: value,
-  //   }));
-  // };
+  const handleCustomerTypeChange = (e) => {
+    const value = e.target.value;
+    setCustomerType(value);
+    setFormData((prev) => ({
+      ...prev,
+      customerType: value,
+    }));
+  };
 
   const handlePlaceOfSupplyChange = (e) => {
     const value = e.target.value;
@@ -502,18 +506,18 @@ const CreateDeliveryChallan = () => {
         netAmount: netAmount.toFixed(2),
       };
       const response = await axios.post(
-        "/api/v1/salesReturnRoute/createreturn",
+        "/api/v1/salesReturnRoute/createsalesreturn",
         updatedFormData
       );
 
       if (response) {
-        toast.success("Sales delivery challan created successfully...");
+        toast.success(" sales return created successfully...");
       }
       setFormData({
         date: "",
         creditNoteNo: "",
         salesType: "",
-        // customerType: "",
+        customerType: "",
         customerName: "",
         placeOfSupply: "",
         paymentTerm: "",
@@ -534,7 +538,7 @@ const CreateDeliveryChallan = () => {
             productName: "",
             hsnCode: "",
             qty: null,
-            uom: null,
+            units: null,
             mrp: null,
             discount: null,
             cgst: null,
@@ -573,11 +577,11 @@ const CreateDeliveryChallan = () => {
       setPaymentTerm(0);
       setOtherCharges(0);
       setOtherChargesDescriptions("");
-
+      setReasonForReturn("");
       setSelectedCustomer("");
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Failed to create sales estimate. Please try again.");
+      toast.error("Failed to create sales return. Please try again.");
     }
   };
 
@@ -634,14 +638,24 @@ const CreateDeliveryChallan = () => {
             <select
               className="w-full p-2 border border-gray-300 rounded"
               value={selectedCustomer}
-              onChange={handleCustomerChange}
+              onChange={(e) => {
+                if (e.target.value === "add-new-customer") {
+                  window.location.href = "/admin/CreateCustomer";
+                } else {
+                  handleCustomerChange(e);
+                }
+              }}
             >
               <option value="">Select Customer</option>
+              <option value="add-new-customer" className="text-blue-500">
+                + Add New Customer
+              </option>
               {customer.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
               ))}
+              {/* Add Customer option at the end of the list */}
             </select>
           </div>
           <div>
@@ -653,6 +667,18 @@ const CreateDeliveryChallan = () => {
               onChange={handlePlaceOfSupplyChange}
               className="border p-2 w-full  rounded"
             />
+          </div>
+
+          <div>
+            <label className="font-bold">Customer Type</label>
+            <select
+              value={customerType}
+              onChange={handleCustomerTypeChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="Retailer">Retailer</option>
+              <option value="Wholesaler">Wholesaler</option>
+            </select>
           </div>
           <div>
             <label className="font-bold">

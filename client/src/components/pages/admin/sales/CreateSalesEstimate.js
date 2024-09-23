@@ -28,6 +28,7 @@ const CreateSalesEstimate = () => {
 
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [selectedAddress, setAddress] = useState("");
 
   const [formData, setFormData] = useState({
     date: "",
@@ -89,12 +90,19 @@ const CreateSalesEstimate = () => {
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
-
     setSelectedCustomer(value);
+
+    const selectedCustomerData = customer.find((cust) => cust._id === value);
+
     setFormData((prev) => ({
       ...prev,
-      customerName: value,
+      customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
+      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
+
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
   };
 
   const handleOtherChargesChange = (event) => {
@@ -191,7 +199,7 @@ const CreateSalesEstimate = () => {
 
   const handleBillingAddressChange = (e) => {
     const value = e.target.value;
-    setBillingAddress(value);
+    setBillingAddress(selectedAddress);
     setFormData((prev) => ({
       ...prev,
       billingAddress: value,
@@ -273,7 +281,17 @@ const CreateSalesEstimate = () => {
       GstAmount += rows.cgstrs + rows.sgstrs;
     });
 
-    const netAmount = grossAmount + GstAmount + otherCharges + 0;
+    let netAmount;
+
+    // Check if otherChargesDescriptions includes "discount"
+    if (otherChargesDescriptions.includes("discount")) {
+      netAmount = grossAmount + GstAmount - otherCharges;
+    } else {
+      netAmount = grossAmount + GstAmount + otherCharges;
+    }
+
+    console.log(netAmount);
+
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -287,7 +305,8 @@ const CreateSalesEstimate = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
-        if (response.data && Array.isArray(response.data.data)) {
+        console.log(response, "dkfjk");
+        if (response.data && Array.isArray(response.data.data))  {
           setProducts(response.data.data);
         } else {
           console.error("Unexpected response structure:", response.data);
@@ -319,11 +338,14 @@ const CreateSalesEstimate = () => {
       const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       // Calculate taxable value based on salesTaxInclude
+      console.log(salesTaxInclude, "ksdjf");
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
           (100 + Number(selectedProduct.gstRate))
         : retailPrice * selectedProduct.quantity;
-
+      {
+        console.log(taxableValue, "tax");
+      }
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -336,6 +358,8 @@ const CreateSalesEstimate = () => {
           : "0.00",
         quantity: selectedProduct.quantity,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
         wholeselerDiscountRS:
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.wholesalerDiscount) /
@@ -402,6 +426,8 @@ const CreateSalesEstimate = () => {
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
         quantity: selectedProduct.quantity,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
         wholeselerDiscountRS: (
           (selectedProduct.maxmimunRetailPrice *
@@ -494,6 +520,7 @@ const CreateSalesEstimate = () => {
         "/api/v1/salesEstimateRoute/createSalesEstimatet",
         updatedFormData
       );
+      console.log(response);
 
       if (response) {
         toast.success("Sales estimate created successfully...");
@@ -572,17 +599,17 @@ const CreateSalesEstimate = () => {
   return (
     <>
       <div
-        style={{ backgroundColor: "#82ac73" }}
+        style={{ backgroundColor: "##FFFFFF" }}
         className="p-4 responsive-container"
       >
         {/* Top Section */}
-        <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
-          Create Sales Estimate
+        <h1 className="text-center font-bold text-3xl  text-black mb-5">
+          Sales Estimate
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">
-              Date:
+              Date
               <input
                 type="date"
                 name="date"
@@ -632,16 +659,27 @@ const CreateSalesEstimate = () => {
             <select
               className="w-full p-2 border border-gray-300 rounded"
               value={selectedCustomer}
-              onChange={handleCustomerChange}
+              onChange={(e) => {
+                if (e.target.value === "add-new-customer") {
+                  window.location.href = "/admin/CreateCustomer";
+                } else {
+                  handleCustomerChange(e);
+                }
+              }}
             >
               <option value="">Select Customer</option>
+              <option value="add-new-customer" className="text-blue-500">
+                + Add New Customer
+              </option>
               {customer.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
               ))}
+              {/* Add Customer option at the end of the list */}
             </select>
           </div>
+
           <div>
             <label className="font-bold">Place of Supply</label>
             <input
@@ -654,7 +692,7 @@ const CreateSalesEstimate = () => {
           </div>
           <div>
             <label className="font-bold">
-              Payment Term (days):
+              Payment Term (days)
               <input
                 type="text"
                 name="paymentTerm"
@@ -680,7 +718,7 @@ const CreateSalesEstimate = () => {
           <div className="mb-4">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-blue-500 text-white p-2"
+              className="bg-gray-500 text-black rounded text-black p-2"
             >
               Transport Details
             </button>
@@ -778,13 +816,13 @@ const CreateSalesEstimate = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-blue-500 text-white p-2"
+                  className="bg-blue-500 text-black p-2"
                 >
                   Save
                 </button>
@@ -797,6 +835,7 @@ const CreateSalesEstimate = () => {
           <div className="mb-4">
             <label className="font-bold">Billing Address</label>
             <textarea
+              name="billingAddress"
               value={billingAddress}
               onChange={handleBillingAddressChange}
               className="border p-2 w-full  rounded"
@@ -923,6 +962,7 @@ const CreateSalesEstimate = () => {
                   </td>
 
                   <td className="border ">
+                    {console.log(rows, "dheeru")}
                     <Select
                       id="product-select"
                       value={
@@ -956,6 +996,16 @@ const CreateSalesEstimate = () => {
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                     />
+                    <div style={{ marginTop: "10px", fontSize: "12px" }}>
+                      <div>
+                        Date:{" "}
+                        {row.expiryDate ? row.expiryDate : "N/A"}
+                      </div>
+                      <div>
+                        Batch Number:{" "}
+                        {row.batchNo ? row.batchNo : "N/A"}
+                      </div>
+                    </div>
                   </td>
 
                   <td className="border p-1">
@@ -1007,6 +1057,7 @@ const CreateSalesEstimate = () => {
                       }}
                     />
                   </td>
+
                   <td className="border">
                     {customerType === "Wholesaler" && (
                       <div className="p-1 flex gap-1">
@@ -1084,9 +1135,9 @@ const CreateSalesEstimate = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px", // Set a small minimum width to ensure visibility
-                                flexBasis: "70px", // Allow it to shrink, but still have a base width
-                                flexShrink: 1, // Allow it to shrink on mobile
+                                minWidth: "70px",
+                                flexBasis: "70px",
+                                flexShrink: 1,
                               }}
                             />
                           </td>
@@ -1244,7 +1295,7 @@ const CreateSalesEstimate = () => {
                   <td className="p-1 gap-2 flex">
                     <button
                       onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+                      className="bg-red-500 text-black p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -1270,7 +1321,7 @@ const CreateSalesEstimate = () => {
 
         <button
           onClick={addRow}
-          className="bg-green-500 text-white p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+          className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
         >
           <svg
             xmlns="http//www.w3.org/2000/svg"
@@ -1291,7 +1342,7 @@ const CreateSalesEstimate = () => {
 
         <button
           onClick={() => setIsModalOtherChargesOpen(true)}
-          className=" text-blue-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+          className=" text-gary-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
         >
           <svg
             xmlns="http//www.w3.org/2000/svg"
@@ -1316,9 +1367,7 @@ const CreateSalesEstimate = () => {
               <h4 className="font-bold mb-4">Other Charges Details</h4>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label htmlFor="other-charges">
-                    Other Charges Description
-                  </label>
+                  <label htmlFor="other-charges">Description</label>
                   <input
                     type="text"
                     id="other-charges"
@@ -1330,7 +1379,7 @@ const CreateSalesEstimate = () => {
                   />
                 </div>
                 <div>
-                  <label>Other Charges</label>
+                  <label>Amount</label>
                   <input
                     type="text"
                     value={otherCharges}
@@ -1343,13 +1392,13 @@ const CreateSalesEstimate = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleOtherChargesSave}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Save
                 </button>
@@ -1371,7 +1420,7 @@ const CreateSalesEstimate = () => {
                   narration: e.target.value,
                 }));
               }}
-              className="bg-black text-white border p-1 w-full  rounded"
+              className=" text-black border p-1 w-full  rounded"
             />
           </div>
           <div className="w-full lg:w-1/3">
@@ -1382,7 +1431,7 @@ const CreateSalesEstimate = () => {
               <input
                 value={grossAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
             {salesType === "GST Invoice" && (
@@ -1393,30 +1442,30 @@ const CreateSalesEstimate = () => {
                 <input
                   value={GstAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
-                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                  className=" text-black border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
             )}
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                Other Charge
+                {otherChargesDescriptions ? otherChargesDescriptions:"Other Charges"}
               </label>
               <input
                 value={otherCharges.toFixed(2)}
                 onChange={handleOtherChargesChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-bold lg:w-1/2 text-nowrap">
+              <label className="font-bold  lg:w-1/2 text-nowrap">
                 Net Amount
               </label>
               <input
-                value={netAmount.toFixed(2)}
+                value={Math.round(netAmount).toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 text-2xl w-full font-bold  rounded lg:w-2/3"
               />
             </div>
           </div>
@@ -1426,7 +1475,7 @@ const CreateSalesEstimate = () => {
         <div className="mt-8 flex justify-center">
           <button
             // onClick={}
-            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-white p-2 mr-2"
+            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2"
             onClick={handleSubmit}
           >
             Save
@@ -1434,7 +1483,7 @@ const CreateSalesEstimate = () => {
           {salesType === "GST Invoice" && (
             <button
               // onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
             </button>
@@ -1442,7 +1491,7 @@ const CreateSalesEstimate = () => {
           {salesType !== "GST Invoice" && (
             <button
               // onClick={handlePrintOnlyWithoutGST}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
             </button>

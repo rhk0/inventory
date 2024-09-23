@@ -1,9 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 
 const PayIn = () => {
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [date, setDate] = useState("");
+  const [receiptNo, setReceiptNo] = useState("");
+  const [Narration, setNarration] = useState("");
+  const [receiptMode, setReceiptMode] = useState("Cash");
+
+  const [rows, setRows] = useState([
+    {
+      id: 1,
+      billNo: "",
+      billAmount: "",
+      recievedAmount: "",
+      balanceAmount: "",
+    },
+  ]);
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -21,17 +37,7 @@ const PayIn = () => {
     setSelectedCustomer(e.target.value);
   };
 
-  const [rows, setRows] = useState([
-    {
-      id: 1,
-      billNo: "",
-      billAmount: "",
-      receivedAmount: "",
-      balanceAmount: "",
-    },
-  ]);
-
-  const handleChange = (index, field, value) => {
+  const handleRowChange = (index, field, value) => {
     const newRows = [...rows];
     newRows[index][field] = value;
     setRows(newRows);
@@ -44,7 +50,7 @@ const PayIn = () => {
         id: rows.length ? Math.max(...rows.map((row) => row.id)) + 1 : 1,
         billNo: "",
         billAmount: "",
-        receivedAmount: "",
+        recievedAmount: "",
         balanceAmount: "",
       },
     ]);
@@ -56,7 +62,69 @@ const PayIn = () => {
     }
   };
 
-  const [receiptMode, setReceiptMode] = useState("Cash");
+  const handleSave = async () => {
+    // Calculate the total received amount
+    const totalAmount = rows.reduce((total, row) => {
+      return total + parseFloat(row.recievedAmount || 0);
+    }, 0);
+
+    const dataToSubmit = {
+      date,
+      receiptNo,
+      selectCustomer: selectedCustomer,
+      receiptMode,
+      rows: rows.map((row) => ({
+        billNo: row.billNo,
+        billAmount: row.billAmount,
+        recievedAmount: row.recievedAmount,
+        balanceAmount: row.balanceAmount,
+      })),
+      total: totalAmount.toFixed(2),
+      Narration,
+    };
+
+    try {
+      const response = await axios.post(
+        "/api/v1/payInRoute/createsalespayin",
+        dataToSubmit
+      );
+
+      toast.success("Data saved successfully!", {
+        position: "top-right",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      setDate(""); // Clear date
+      setReceiptNo(""); // Clear receipt number
+      setSelectedCustomer(""); // Clear selected customer
+      setReceiptMode("Cash"); // Reset receipt mode to default (Cash)
+      setRows([
+        {
+          id: 1,
+          billNo: "",
+          billAmount: "",
+          recievedAmount: "",
+          balanceAmount: "",
+        },
+      ]); // Reset rows to a single empty row
+      setNarration(""); // Clear narration
+    } catch (error) {
+      toast.error("Error saving data. Please try again!", {
+        position: "top-right",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      console.error("Error saving data:", error);
+    }
+  };
 
   return (
     <div
@@ -72,6 +140,8 @@ const PayIn = () => {
           <input
             type="date"
             className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
           />
         </div>
         <div className="flex flex-col">
@@ -79,6 +149,8 @@ const PayIn = () => {
           <input
             type="text"
             className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+            value={receiptNo}
+            onChange={(e) => setReceiptNo(e.target.value)}
           />
         </div>
         <div className="flex flex-col">
@@ -108,9 +180,9 @@ const PayIn = () => {
           >
             <option value="Cash">Cash</option>
             <option value="Bank">Bank</option>
-            {/* Add more options here if needed */}
           </select>
         </div>
+
         {receiptMode === "Bank" && (
           <>
             <div className="flex flex-col">
@@ -120,7 +192,6 @@ const PayIn = () => {
               <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
                 <option value="Bank1">Bank1</option>
                 <option value="Bank2">Bank2</option>
-                {/* Add more options here if needed */}
               </select>
             </div>
             <div className="flex flex-col">
@@ -128,7 +199,6 @@ const PayIn = () => {
               <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
                 <option value="Online">Online</option>
                 <option value="Cheque">Cheque</option>
-                {/* Add more options here if needed */}
               </select>
             </div>
             <div className="flex flex-col">
@@ -143,7 +213,6 @@ const PayIn = () => {
           </>
         )}
       </div>
-
       <div className="overflow-x-auto mt-5">
         <table className="w-full border-collapse">
           <thead>
@@ -166,7 +235,7 @@ const PayIn = () => {
                     type="text"
                     value={row.billNo}
                     onChange={(e) =>
-                      handleChange(index, "billNo", e.target.value)
+                      handleRowChange(index, "billNo", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -176,7 +245,7 @@ const PayIn = () => {
                     type="text"
                     value={row.billAmount}
                     onChange={(e) =>
-                      handleChange(index, "billAmount", e.target.value)
+                      handleRowChange(index, "billAmount", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -184,9 +253,9 @@ const PayIn = () => {
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"
-                    value={row.receivedAmount}
+                    value={row.recievedAmount}
                     onChange={(e) =>
-                      handleChange(index, "receivedAmount", e.target.value)
+                      handleRowChange(index, "recievedAmount", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -196,12 +265,12 @@ const PayIn = () => {
                     type="text"
                     value={row.balanceAmount}
                     onChange={(e) =>
-                      handleChange(index, "balanceAmount", e.target.value)
+                      handleRowChange(index, "balanceAmount", e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
-                <td className="  text-center flex gap-2 pl-1">
+                <td className="text-center flex gap-2 pl-1">
                   <button
                     onClick={addRow}
                     className="p-2 bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -252,6 +321,13 @@ const PayIn = () => {
         <label className="text-2xl font-bold text-black mr-2">Total</label>
         <input
           type="text"
+          value={rows
+            .reduce(
+              (total, row) => total + parseFloat(row.recievedAmount || 0),
+              0
+            )
+            .toFixed(2)}
+          readOnly
           className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
         />
       </div>
@@ -260,14 +336,19 @@ const PayIn = () => {
         <textarea
           type="text"
           className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
+          value={Narration}
+          onChange={(e) => setNarration(e.target.value)}
         />
       </div>
-
       <div className="text-center mt-8">
-        <button className="bg-black text-white py-2 px-16 rounded text-xl font-bold hover:bg-gray-700">
+        <button
+          onClick={handleSave}
+          className="bg-black text-white py-2 px-16 rounded text-xl font-bold hover:bg-gray-700"
+        >
           Save
         </button>
       </div>
+      <ToastContainer /> {/* Add this line to include the toast container */}
     </div>
   );
 };

@@ -3,7 +3,6 @@ import salesInvoiceModel from "../models/salesInvoiceModel.js";
 export const createSalesInvoiceController = async (req, res) => {
   try {
     const {
-      userId,
       date,
       InvoiceNo,
       salesType,
@@ -12,66 +11,30 @@ export const createSalesInvoiceController = async (req, res) => {
       placeOfSupply,
       paymentTerm,
       dueDate,
-      receiptDocNo,
+      // receiptDocNo,
       dispatchedThrough,
       destination,
       carrierNameAgent,
       billOfLading,
-      motorVehicleNo,
+      // motorVehicleNo,
       billingAddress,
       reverseCharge,
       gstType,
       rows,
       cash,
       bank,
-      otherChargesDescription,
-      othercharges,
+      otherChargesDescriptions,
+      otherCharges,
       narration,
       grossAmount,
       GstAmount,
       netAmount,
     } = req.body;
 
-    const requiredFields = [
-      "userId",
-      "date",
-      "InvoiceNo",
-      "salesType",
-      "customerType",
-      "customerName",
-      "placeOfSupply",
-      "paymentTerm",
-      "dueDate",
-      "receiptDocNo",
-      "dispatchedThrough",
-      "destination",
-      "carrierNameAgent",
-      "billOfLading",
-      "motorVehicleNo",
-      "billingAddress",
-      "reverseCharge",
-      "gstType",
-      "rows",
-      "cash",
-      "bank",
-      "otherChargesDescription",
-      "othercharges",
-      "narration",
-      "grossAmount",
-      "GstAmount",
-      "netAmount",
-    ];
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
-
+    const { _id } = req.user;
     try {
       const newInvoice = new salesInvoiceModel({
-        userId,
+        admin: _id,
         date,
         InvoiceNo,
         salesType,
@@ -80,20 +43,20 @@ export const createSalesInvoiceController = async (req, res) => {
         placeOfSupply,
         paymentTerm,
         dueDate,
-        receiptDocNo,
+        // receiptDocNo,
         dispatchedThrough,
         destination,
         carrierNameAgent,
         billOfLading,
-        motorVehicleNo,
+        // motorVehicleNo,
         billingAddress,
         reverseCharge,
         gstType,
         rows,
         cash,
         bank,
-        otherChargesDescription,
-        othercharges,
+        otherChargesDescriptions,
+        otherCharges,
         narration,
         grossAmount,
         GstAmount,
@@ -217,8 +180,8 @@ export const updateSalesInvoiceByIDController = async (req, res) => {
     invoice.rows = updateData.rows || invoice.rows;
     invoice.cash = updateData.cash || invoice.cash;
     invoice.bank = updateData.bank || invoice.bank;
-    invoice.otherChargesDescription =
-      updateData.otherChargesDescription || invoice.otherChargesDescription;
+    invoice.otherChargesDescriptions =
+      updateData.otherChargesDescriptions || invoice.otherChargesDescriptions;
     invoice.othercharges = updateData.othercharges || invoice.othercharges;
     invoice.narration = updateData.narration || invoice.narration;
     invoice.grossAmount = updateData.grossAmount || invoice.grossAmount;
