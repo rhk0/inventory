@@ -31,46 +31,7 @@ export const createSalesInvoiceController = async (req, res) => {
       netAmount,
     } = req.body;
 
-<<<<<<< HEAD
-    const requiredFields = [
-      "userId",
-      "date",
-      "InvoiceNo",
-      "salesType",
-      "customerType",
-      "customerName",
-      "placeOfSupply",
-      "paymentTerm",
-      "dueDate",
-      "receiptDocNo",
-      "dispatchedThrough",
-      "destination",
-      "carrierNameAgent",
-      "billOfLading",
-      "motorVehicleNo",
-      "billingAddress",
-      "reverseCharge",
-      "gstType",
-      "rows",
-     
-      "otherChargesDescription",
-      "othercharges",
-      "narration",
-      "grossAmount",
-      "GstAmount",
-      "netAmount",
-    ];
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
-
-=======
     const { _id } = req.user;
->>>>>>> 4d276313607f1769a744ceaf95fcca432ac8d576
     try {
       const newInvoice = new salesInvoiceModel({
         admin: _id,
