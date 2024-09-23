@@ -3,9 +3,9 @@ import axios from "axios";
 import { FaTimes } from "react-icons/fa";
 import Select from "react-select";
 
-const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
+const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
   const [date, setDate] = useState("");
-  const [challanNo, setchallanNo] = useState("");
+  const [creditNoteNo, setcreditNoteNo] = useState("");
   const [salesType, setSalesType] = useState("");
   const [customerType, setCustomerType] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -35,7 +35,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
-      setchallanNo(estimate.challanNo || "");
+      setcreditNoteNo(estimate.creditNoteNo || "");
       setSalesType(estimate.salesType || "");
       setCustomerType(estimate.customerType || "");
       setCustomerName(getCustomerName(estimate.customerId) || "");
@@ -90,8 +90,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       case "date":
         setDate(value);
         break;
-      case "challanNo":
-        setchallanNo(value);
+      case "creditNoteNo":
+        setcreditNoteNo(value);
         break;
       case "salesType":
         setSalesType(value);
@@ -369,7 +369,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     try {
       const updatedEstimate = {
         date,
-        challanNo,
+        creditNoteNo,
         salesType,
         customerType,
         customerName,
@@ -441,7 +441,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     <div style={{ backgroundColor: "#82ac73" }} className="p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          Edit Delivery Challan 
+          Edit Delivery Challan
         </h1>
         <button
           type="button"
@@ -465,11 +465,11 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           </label>
         </div>
         <div>
-          <label className="font-bold">Challan No.</label>
+          <label className="font-bold">Credit Note No.</label>
           <input
             type="text"
-            name="challanNo"
-            value={challanNo}
+            name="creditNoteNo"
+            value={creditNoteNo}
             onChange={handleChange}
             className="border p-2 w-full rounded"
           />
@@ -558,7 +558,6 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
             <h4 className="font-bold mb-4">Transport Details</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
-
               <div>
                 <label>Dispatched Through</label>
                 <input
@@ -599,7 +598,6 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                   className="border p-2 w-full rounded"
                 />
               </div>
-
             </div>
             <div className="flex justify-end">
               <button
@@ -1204,4 +1202,4 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
   );
 };
 
-export default EditEstimateModal;
+export default EditSalesReturnModal;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import ViewChallanModal from "../modals/ViewChallanModal";
+import ViewPurchaseOrder from "../modals/ViewPurchaseOrder";
+import EditPurchaseOrder from "../modals/EditPurchaseOrder";
 import Modal from "react-modal";
 import axios from "axios";
-import EditChallanModal from "../modals/EditChallanModal";
 
-const ManageDeliveryChallan = () => {
+const ManagePurchaseOrder = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedEstimate, setSelectedEstimate] = useState(null);
@@ -15,20 +15,21 @@ const ManageDeliveryChallan = () => {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    fetchChallan();
+    fetchEstimate();
     fetchCustomers();
   }, []);
 
-  const fetchChallan = async () => {
+  const fetchEstimate = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        "/api/v1/deliveryChallanRoute/getAllchallan"
+        "/api/v1/purchesOrderRoute/getAllpurchesorder"
       );
-      setSalesEstimates(response.data.response);
+      console.log(response, "skjad");
+      setSalesEstimates(response.data.invoices);
     } catch (error) {
-      setError("Error fetching sales estimates.");
+      setError("Error fetching sales order.");
     } finally {
       setLoading(false);
     }
@@ -45,15 +46,15 @@ const ManageDeliveryChallan = () => {
   };
 
   const handleDelete = async (estimateId) => {
-    if (window.confirm("Are you sure you want to delete this estimate?")) {
+    if (window.confirm("Are you sure you want to delete this order?")) {
       setLoading(true);
       try {
         await axios.delete(
-          `/api/v1/deliveryChallanRoute/deletechallan/${estimateId}`
+          `/api/v1/purchesOrderRoute/deletepurchesorder/${estimateId}`
         );
-        fetchChallan();
+        fetchEstimate();
       } catch (error) {
-        setError("Error deleting the sales estimate.");
+        setError("Error deleting the order.");
       } finally {
         setLoading(false);
       }
@@ -62,7 +63,7 @@ const ManageDeliveryChallan = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
+      const response = await axios.get("/api/v1/auth/manageSupplier");
       console.log(response, "ldsf");
       setCustomers(response.data.data);
     } catch (error) {
@@ -70,7 +71,7 @@ const ManageDeliveryChallan = () => {
     }
   };
 
-  const getCustomerName = (customerId) => {
+  const getSupplierName = (customerId) => {
     const customer = customers.find((c) => c.id === customerId);
     return customer ? customer.name : "Unknown Customer";
   };
@@ -83,7 +84,7 @@ const ManageDeliveryChallan = () => {
   // Filter sales estimates based on search term
   const filteredEstimates = salesEstimates.filter(
     (estimate) =>
-      estimate.challanNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      estimate.orderNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       estimate.customerName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -93,7 +94,7 @@ const ManageDeliveryChallan = () => {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by Estimate number, Customer Name"
+          placeholder="Search by order No, supplier Name"
           className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -112,15 +113,13 @@ const ManageDeliveryChallan = () => {
                 {[
                   "No.",
                   "Date",
-                  "Challan No.",
-                  "Sales Type",
-                  "Customer Name",
+                  "Order  No.",
+                  "Supplier Name",
                   "Place of Supply",
                   "Payment Term",
                   "Due Date",
                   "GST Type",
                   "Product Code",
-                  "Product Name",
                   "UOM",
                   "MRP",
                   "QTY",
@@ -151,13 +150,11 @@ const ManageDeliveryChallan = () => {
                       {estimate.date}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.challanNo}
+                      {estimate.orderNo}
                     </td>
+
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.salesType}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {getCustomerName(estimate.customerId)}
+                      {getSupplierName(estimate.customerId)}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -175,9 +172,7 @@ const ManageDeliveryChallan = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.itemCode || "-"}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.productName || "-"}
-                    </td>
+
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.units || "-"}
                     </td>
@@ -225,7 +220,7 @@ const ManageDeliveryChallan = () => {
                     colSpan="17"
                     className="text-center p-4 border border-gray-300"
                   >
-                    No sales estimates found.
+                    No order found.
                   </td>
                 </tr>
               )}
@@ -251,11 +246,11 @@ const ManageDeliveryChallan = () => {
           },
         }}
       >
-        <ViewChallanModal
+        <ViewPurchaseOrder
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-          getCustomerName={getCustomerName}
+          getSupplierName={getSupplierName}
         />
       </Modal>
 
@@ -276,15 +271,15 @@ const ManageDeliveryChallan = () => {
           },
         }}
       >
-        <EditChallanModal
+        <EditPurchaseOrder
           isOpen={editModalOpen}
           estimate={selectedEstimate}
           closeModal={closeModal}
-          getCustomerName={getCustomerName}
+          getSupplierName={getSupplierName}
         />
       </Modal>
     </div>
   );
 };
 
-export default ManageDeliveryChallan;
+export default ManagePurchaseOrder;

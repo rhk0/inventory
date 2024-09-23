@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
+import Modal from "react-modal";
 
-const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
-  console.log(estimate, "aj");
+const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   const [date, setDate] = useState("");
-  const [challanNo, setchallanNo] = useState("");
+  const [InvoiceNo, setInvoiceNo] = useState("");
   const [salesType, setSalesType] = useState("");
   const [customerType, setCustomerType] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -29,6 +29,9 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
   const [grossAmount, setGrossAmount] = useState("");
   const [GstAmount, setGstAmount] = useState("");
   const [netAmount, setNetAmount] = useState("");
+  const [viewModal, setViewModal] = useState(false);
+  const [bank, setBank] = useState([]);
+  const [cash, setCash] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
@@ -36,13 +39,54 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
-      setchallanNo(estimate.challanNo || "");
+      setInvoiceNo(estimate.InvoiceNo || "");
       setSalesType(estimate.salesType || "");
       setCustomerType(estimate.customerType || "");
       setCustomerName(getCustomerName(estimate.customerId) || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
+
+      if (estimate.bank) {
+        setBank({
+          selectBankType: estimate.bank.selectBankType || "",
+          transactionDate: estimate.bank.transactionDate || "",
+          chequeNo: estimate.bank.chequeNo || "",
+          transactionNo: estimate.bank.transactionNo || "",
+          Amount: estimate.bank.Amount || "",
+          Advance: estimate.bank.Advance || "",
+          Received: estimate.bank.Received || "",
+          Balance: estimate.bank.Balance || "",
+        });
+      } else {
+        setBank({
+          selectBankType: "",
+          transactionDate: "",
+          chequeNo: "",
+          transactionNo: "",
+          Amount: "",
+          Advance: "",
+          Received: "",
+          Balance: "",
+        });
+      }
+
+      if (estimate.cash) {
+        setCash({
+          Amount: estimate.cash.Amount || "",
+          Advance: estimate.cash.Advance || "",
+          Received: estimate.cash.Received || "",
+          Balance: estimate.cash.Balance || "",
+        });
+      } else {
+        setCash({
+          Amount: "",
+          Advance: "",
+          Received: "",
+          Balance: "",
+        });
+      }
+
       setTransportDetails({
         receiptDocNo: estimate.receiptDocNo || "",
         dispatchedThrough: estimate.dispatchedThrough || "",
@@ -64,6 +108,23 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
     }
   }, [estimate, getCustomerName]);
 
+  console.log(cash, "dskfj");
+
+  const openViewModal = (suppliers) => {
+    setViewModal(true);
+  };
+
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [subPaymentType, setSubPaymentType] = useState("");
+
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
+  const handleSubPaymentTypeChange = (e) => {
+    setSubPaymentType(e.target.value);
+  };
+
   return (
     <div
       style={{ backgroundColor: "#82ac73" }}
@@ -71,7 +132,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
     >
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          View Delivery Challan
+          View sales Invoice
         </h1>
         <button
           type="button"
@@ -94,6 +155,15 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
           </label>
         </div>
         <div>
+          <label className="font-bold">Invoice No.</label>
+          <input
+            type="text"
+            value={InvoiceNo}
+            disabled
+            className="border p-2 w-full rounded"
+          />
+        </div>
+        <div>
           <label className="font-bold">Sales Type</label>
           <select
             value={salesType}
@@ -103,15 +173,6 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
             <option value="GST Invoice">GST Invoice</option>
             <option value="Bill of Supply">Bill of Supply</option>
           </select>
-        </div>
-        <div>
-          <label className="font-bold">Challan No.</label>
-          <input
-            type="text"
-            value={challanNo}
-            disabled
-            className="border p-2 w-full rounded"
-          />
         </div>
 
         <div>
@@ -123,19 +184,6 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
             className="border p-2 w-full rounded"
           />
         </div>
-
-        <div>
-          <label className="font-bold">Customer Type</label>
-          <select
-            value={customerType}
-            disabled
-            className="border p-2 w-full rounded"
-          >
-            <option value="Retailer">Retailer</option>
-            <option value="Wholesaler">Wholesaler</option>
-          </select>
-        </div>
-
         <div>
           <label className="font-bold">Place of Supply</label>
           <input
@@ -184,15 +232,6 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
             <h4 className="font-bold mb-4">Transport Details</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              {/* <div>
-                <label>Receipt Doc No.</label>
-                <input
-                  type="text"
-                  value={transportDetails.receiptDocNo}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div> */}
               <div>
                 <label>Dispatched Through</label>
                 <input
@@ -229,15 +268,6 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
                   className="border p-2 w-full rounded"
                 />
               </div>
-              {/* <div>
-                <label>Motor Vehicle No.</label>
-                <input
-                  type="text"
-                  value={transportDetails.motorVehicleNo}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div> */}
             </div>
             <div className="flex justify-end">
               <button
@@ -602,9 +632,200 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
             />
           </div>
         </div>
+        <div className="mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={() => openViewModal()}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Add Receipt
+          </button>
+
+          <Modal
+            isOpen={viewModal}
+            onRequestClose={closeModal}
+            contentLabel="View Item Modal"
+            style={{
+              content: {
+                width: "80%",
+                height: "90%",
+                maxWidth: "800px",
+                margin: "auto",
+                padding: "5px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                borderRadius: "5px",
+              },
+            }}
+          >
+            <div className="bg-white p-4 rounded shadow-lg w-full relative">
+              <button
+                onClick={closeModal}
+                className="absolute text-3xl top-2 right-2 text-gray-500 hover:text-gray-700"
+              >
+                &times;
+              </button>
+              <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
+
+              {/* Radio buttons to select payment method */}
+              <div className="gap-5 mb-4">
+                <label className="font-bold">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Cash"
+                    onChange={handlePaymentMethodChange}
+                  />
+                  Cash
+                </label>
+                <label className="ml-5 font-bold">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Bank"
+                    onChange={handlePaymentMethodChange}
+                  />
+                  Bank
+                </label>
+              </div>
+
+              {/* Conditional form rendering based on payment method */}
+              <form>
+                {paymentMethod === "Cash" && (
+                  <>
+                    <label className="font-bold">Amount</label>
+                    <input
+                      type="text"
+                      name="Amount"
+                      value={cash.Amount}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Advance</label>
+                    <input
+                      type="text"
+                      name="Advance"
+                      value={cash.Advance}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Received</label>
+                    <input
+                      type="text"
+                      name="Received"
+                      value={cash.Received}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Balance</label>
+                    <input
+                      type="text"
+                      name="Balance"
+                      value={cash.Balance}
+                      className="border p-2 mb-2 w-full"
+                    />
+                  </>
+                )}
+
+                {paymentMethod === "Bank" && (
+                  <>
+                    <label className="font-bold">Select Bank</label>
+                    <select
+                      name="selectBankType"
+                      className="border p-2 mb-2 w-full"
+                      value={bank.selectBankType}
+                    >
+                      <option value="">Select Bank</option>
+                      <option value="Bank 1">Bank 1</option>
+                      <option value="Bank 2">Bank 2</option>
+                    </select>
+                    <select
+                      name="subPaymentType"
+                      className="border p-2 mb-2 w-full"
+                      onChange={handleSubPaymentTypeChange}
+                    >
+                      <option value="">Select Payment Type</option>
+                      <option value="Online">Online</option>
+                      <option value="Cheque">Cheque</option>
+                    </select>
+                    {subPaymentType === "Online" && (
+                      <>
+                        <label className="font-bold">Transaction Date</label>
+                        <input
+                          type="text"
+                          name="transactionDate"
+                          className="border p-2 mb-2 w-full"
+                        />
+                        <label className="font-bold">Transaction No</label>
+                        <input
+                          type="text"
+                          name="transactionNo"
+                          value={bank.transactionNo}
+                          className="border p-2 mb-2 w-full"
+                        />
+                      </>
+                    )}
+                    {subPaymentType === "Cheque" && (
+                      <>
+                        <label className="font-bold">Transaction Date</label>
+                        <input
+                          type="text"
+                          name="transactionDate"
+                          value={bank.transactionDate}
+                          className="border p-2 mb-2 w-full"
+                        />
+                        <label className="font-bold">Cheque No</label>
+                        <input
+                          type="text"
+                          name="chequeNo"
+                          value={bank.chequeNo}
+                          className="border p-2 mb-2 w-full"
+                        />
+                      </>
+                    )}
+                    <label className="font-bold">Amount</label>
+                    <input
+                      type="text"
+                      name="Amount"
+                      value={bank.Amount}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Advance</label>
+                    <input
+                      type="text"
+                      name="Advance"
+                      value={bank.Advance}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Received</label>
+                    <input
+                      type="text"
+                      name="Received"
+                      value={bank.Received}
+                      className="border p-2 mb-2 w-full"
+                    />{" "}
+                    <label className="font-bold">Balance</label>
+                    <input
+                      type="text"
+                      name="Balance"
+                      value={bank.Balance}
+                      className="border p-2 mb-2 w-full"
+                    />{" "}
+                  </>
+                )}
+
+                {/* Submit button */}
+                <div className="flex justify-center items-center">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 h-10"
+                    onClick={closeModal}
+                  >
+                    save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Modal>
+        </div>
       </div>
     </div>
   );
 };
 
-export default ViewChallanModal;
+export default ViewSalesInvoiceModal;

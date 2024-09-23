@@ -20,7 +20,7 @@ export const createPurchesOrderController = async (req, res) => {
       reverseCharge,
       gstType,
       rows,
-      otherChargesDescription,
+      otherChargesDescriptions,
       otherCharges,
       narration,
       grossAmount,
@@ -30,7 +30,7 @@ export const createPurchesOrderController = async (req, res) => {
 
     // Creating a new purchase order
     const { _id } = req.user;
-    
+
     const newInvoice = new purchesOrderModel({
       admin: _id,
       date,
@@ -50,7 +50,7 @@ export const createPurchesOrderController = async (req, res) => {
       reverseCharge,
       gstType,
       rows,
-      otherChargesDescription,
+      otherChargesDescriptions,
       otherCharges,
       narration,
       grossAmount,
@@ -64,7 +64,7 @@ export const createPurchesOrderController = async (req, res) => {
       invoice: savedInvoice,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
@@ -192,8 +192,8 @@ export const updatePurchesOrderByIdController = async (req, res) => {
     invoice.reverseCharge = updateData.reverseCharge || invoice.reverseCharge;
     invoice.gstType = updateData.gstType || invoice.gstType;
     invoice.rows = updateData.rows || invoice.rows;
-    invoice.otherChargesDescription =
-      updateData.otherChargesDescription || invoice.otherChargesDescription;
+    invoice.otherChargesDescriptions =
+      updateData.otherChargesDescriptions || invoice.otherChargesDescriptions;
     invoice.otherCharges = updateData.otherCharges || invoice.otherCharges;
     invoice.narration = updateData.narration || invoice.narration;
     invoice.grossAmount = updateData.grossAmount || invoice.grossAmount;

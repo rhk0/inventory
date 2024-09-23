@@ -65,11 +65,10 @@ const CreateDeliveryChallan = () => {
     ],
 
     narration: "",
-    otherCharges: "",
     otherChargesDescriptions: "",
     grossAmount: "",
     GstAmount: "",
-    // otherCharges: "",
+    otherCharges: "",
     netAmount: "",
   });
 
@@ -90,12 +89,17 @@ const CreateDeliveryChallan = () => {
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
-
     setSelectedCustomer(value);
+
+    const selectedCustomerData = customer.find((cust) => cust._id === value);
+
     setFormData((prev) => ({
       ...prev,
-      customerName: value,
+      customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
+
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
   };
 
   const handleOtherChargesChange = (event) => {
@@ -172,14 +176,14 @@ const CreateDeliveryChallan = () => {
       salesType: value,
     }));
   };
-  // const handleCustomerTypeChange = (e) => {
-  //   const value = e.target.value;aq
-  //   setCustomerType(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     customerType: value,
-  //   }));
-  // };
+  const handleCustomerTypeChange = (e) => {
+    const value = e.target.value;
+    setCustomerType(value);
+    setFormData((prev) => ({
+      ...prev,
+      customerType: value,
+    }));
+  };
 
   const handlePlaceOfSupplyChange = (e) => {
     const value = e.target.value;
@@ -280,14 +284,13 @@ const CreateDeliveryChallan = () => {
 
   const { grossAmount, GstAmount, netAmount } = calculateTotals();
 
-  // Function to handle Save and Print
-
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
+        console.log(response, "dkfjk");
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
@@ -320,11 +323,14 @@ const CreateDeliveryChallan = () => {
       const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       // Calculate taxable value based on salesTaxInclude
+      console.log(salesTaxInclude, "ksdjf");
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
           (100 + Number(selectedProduct.gstRate))
         : retailPrice * selectedProduct.quantity;
-
+      {
+        console.log(taxableValue, "tax");
+      }
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -382,6 +388,7 @@ const CreateDeliveryChallan = () => {
     if (selectedProduct) {
       const updatedRows = [...rows];
 
+      // Calculate retail price and taxable value based on the product details
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
@@ -496,13 +503,13 @@ const CreateDeliveryChallan = () => {
       );
 
       if (response) {
-        toast.success("Sales delivery challan created successfully...");
+        toast.success("delivery challan created successfully...");
       }
       setFormData({
         date: "",
         challanNo: "",
         salesType: "",
-        // customerType: "",
+        customerType: "",
         customerName: "",
         placeOfSupply: "",
         paymentTerm: "",
@@ -565,7 +572,7 @@ const CreateDeliveryChallan = () => {
       setSelectedCustomer("");
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Failed to create sales estimate. Please try again.");
+      toast.error("Failed to create delivery challan. Please try again.");
     }
   };
 
@@ -596,6 +603,16 @@ const CreateDeliveryChallan = () => {
             </label>
           </div>
           <div>
+            <label className="font-bold">Challan No.</label>
+            <input
+              name="challanNo"
+              type="text"
+              value={challanNo} // Bind to local state
+              onChange={handlechallanNoChange} // Update both local and formData states
+              className="border p-2 w-full  rounded"
+            />
+          </div>
+          <div>
             <label className="font-bold">Sales Type</label>
             <select
               value={salesType}
@@ -607,31 +624,42 @@ const CreateDeliveryChallan = () => {
             </select>
           </div>
           <div>
-            <label className="font-bold">Challan No.</label>
-            <input
-              name="challanNo"
-              type="text"
-              value={challanNo} // Bind to local state
-              onChange={handlechallanNoChange} // Update both local and formData states
+            <label className="font-bold">Customer Type</label>
+            <select
+              value={customerType}
+              onChange={handleCustomerTypeChange}
               className="border p-2 w-full  rounded"
-            />
+            >
+              <option value="Retailer">Retailer</option>
+              <option value="Wholesaler">Wholesaler</option>
+            </select>
           </div>
-
           <div>
             <label className="font-bold">Customer Name</label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
               value={selectedCustomer}
-              onChange={handleCustomerChange}
+              onChange={(e) => {
+                if (e.target.value === "add-new-customer") {
+                  window.location.href = "/admin/CreateCustomer";
+                } else {
+                  handleCustomerChange(e);
+                }
+              }}
             >
               <option value="">Select Customer</option>
+              <option value="add-new-customer" className="text-blue-500">
+                + Add New Customer
+              </option>
               {customer.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
               ))}
+              {/* Add Customer option at the end of the list */}
             </select>
           </div>
+
           <div>
             <label className="font-bold">Place of Supply</label>
             <input
@@ -666,15 +694,15 @@ const CreateDeliveryChallan = () => {
               />
             </label>
           </div>
-        </div>
 
-        <div className="mb-4">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-white p-2"
-          >
-            Transport Details
-          </button>
+          <div className="mb-4">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white p-2"
+            >
+              Transport Details
+            </button>
+          </div>
         </div>
 
         {isModalOpen && (
@@ -682,21 +710,6 @@ const CreateDeliveryChallan = () => {
             <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
               <h4 className="font-bold mb-4">Transport Details</h4>
               <div className="grid grid-cols-2 gap-4 mb-4">
-                {/* <div>
-                  <label>Receipt Doc No.</label>
-                  <input
-                    type="text"
-                    name="receiptDocNo"
-                    value={transportDetails.receiptDocNo}
-                    onChange={(e) =>
-                      handleTransportDetailChange(
-                        "receiptDocNo",
-                        e.target.value
-                      )
-                    }
-                    className="border p-2 w-full  rounded"
-                  />
-                </div> */}
                 <div>
                   <label>Dispatched Through</label>
                   <input
@@ -750,20 +763,6 @@ const CreateDeliveryChallan = () => {
                     className="border p-2 w-full  rounded"
                   />
                 </div>
-                {/* <div>
-                  <label>Motor Vehicle No.</label>
-                  <input
-                    type="text"
-                    value={transportDetails.motorVehicleNo}
-                    onChange={(e) =>
-                      handleTransportDetailChange(
-                        "motorVehicleNo",
-                        e.target.value
-                      )
-                    }
-                    className="border p-2 w-full  rounded"
-                  />
-                </div> */}
               </div>
               <div className="flex justify-end">
                 <button
@@ -997,6 +996,7 @@ const CreateDeliveryChallan = () => {
                       }}
                     />
                   </td>
+
                   <td className="border">
                     {customerType === "Wholesaler" && (
                       <div className="p-1 flex gap-1">
@@ -1074,9 +1074,9 @@ const CreateDeliveryChallan = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px", // Set a small minimum width to ensure visibility
-                                flexBasis: "70px", // Allow it to shrink, but still have a base width
-                                flexShrink: 1, // Allow it to shrink on mobile
+                                minWidth: "70px",
+                                flexBasis: "70px",
+                                flexShrink: 1,
                               }}
                             />
                           </td>

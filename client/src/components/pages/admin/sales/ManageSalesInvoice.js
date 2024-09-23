@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import ViewChallanModal from "../modals/ViewChallanModal";
+import ViewSalesInvoiceModal from "../modals/ViewSalesInvoiceModal";
+import EditSalesInvoiceModal from "../modals/EditSalesInvoiceModal";
 import Modal from "react-modal";
 import axios from "axios";
-import EditChallanModal from "../modals/EditChallanModal";
 
-const ManageDeliveryChallan = () => {
+const ManageSalesInvoice = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedEstimate, setSelectedEstimate] = useState(null);
@@ -15,18 +15,19 @@ const ManageDeliveryChallan = () => {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    fetchChallan();
+    fetchEstimate();
     fetchCustomers();
   }, []);
 
-  const fetchChallan = async () => {
+  const fetchEstimate = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        "/api/v1/deliveryChallanRoute/getAllchallan"
+        "/api/v1/salesInvoiceRoute/getAllsalesinvoice"
       );
       setSalesEstimates(response.data.response);
+      console.log(response, "ksdfj");
     } catch (error) {
       setError("Error fetching sales estimates.");
     } finally {
@@ -45,15 +46,15 @@ const ManageDeliveryChallan = () => {
   };
 
   const handleDelete = async (estimateId) => {
-    if (window.confirm("Are you sure you want to delete this estimate?")) {
+    if (window.confirm("Are you sure you want to delete this invoice?")) {
       setLoading(true);
       try {
         await axios.delete(
-          `/api/v1/deliveryChallanRoute/deletechallan/${estimateId}`
+          `/api/v1/salesInvoiceRoute/deletesalesinvoice/${estimateId}`
         );
-        fetchChallan();
+        fetchEstimate();
       } catch (error) {
-        setError("Error deleting the sales estimate.");
+        setError("Error deleting the sales invoice.");
       } finally {
         setLoading(false);
       }
@@ -81,11 +82,18 @@ const ManageDeliveryChallan = () => {
   };
 
   // Filter sales estimates based on search term
-  const filteredEstimates = salesEstimates.filter(
-    (estimate) =>
-      estimate.challanNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      estimate.customerName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredEstimates = salesEstimates.filter((estimate) => {
+    const invoiceNo = estimate.InvoiceNo
+      ? estimate.InvoiceNo.toLowerCase()
+      : "";
+    const customerName = estimate.customerName
+      ? estimate.customerName.toLowerCase()
+      : "";
+    return (
+      invoiceNo.includes(searchTerm.toLowerCase()) ||
+      customerName.includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
     <div className="responsive-container p-4">
@@ -93,7 +101,7 @@ const ManageDeliveryChallan = () => {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by Estimate number, Customer Name"
+          placeholder="Search by Invoice number, Customer Name"
           className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -112,7 +120,7 @@ const ManageDeliveryChallan = () => {
                 {[
                   "No.",
                   "Date",
-                  "Challan No.",
+                  "Estimate No.",
                   "Sales Type",
                   "Customer Name",
                   "Place of Supply",
@@ -120,7 +128,7 @@ const ManageDeliveryChallan = () => {
                   "Due Date",
                   "GST Type",
                   "Product Code",
-                  "Product Name",
+
                   "UOM",
                   "MRP",
                   "QTY",
@@ -151,7 +159,7 @@ const ManageDeliveryChallan = () => {
                       {estimate.date}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.challanNo}
+                      {estimate.InvoiceNo}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.salesType}
@@ -175,9 +183,7 @@ const ManageDeliveryChallan = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.itemCode || "-"}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.productName || "-"}
-                    </td>
+
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.units || "-"}
                     </td>
@@ -188,6 +194,9 @@ const ManageDeliveryChallan = () => {
                       {estimate.rows?.[0]?.qty || "-"}
                     </td>
 
+                    {/* <td className="border border-gray-300 p-2 text-center">
+            {estimate.rows?.[0]?.rate || "-"}
+          </td> */}
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.totalValue || "-"}
                     </td>
@@ -225,7 +234,7 @@ const ManageDeliveryChallan = () => {
                     colSpan="17"
                     className="text-center p-4 border border-gray-300"
                   >
-                    No sales estimates found.
+                    No sales invoice found.
                   </td>
                 </tr>
               )}
@@ -251,7 +260,7 @@ const ManageDeliveryChallan = () => {
           },
         }}
       >
-        <ViewChallanModal
+        <ViewSalesInvoiceModal
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
@@ -276,7 +285,7 @@ const ManageDeliveryChallan = () => {
           },
         }}
       >
-        <EditChallanModal
+        <EditSalesInvoiceModal
           isOpen={editModalOpen}
           estimate={selectedEstimate}
           closeModal={closeModal}
@@ -287,4 +296,4 @@ const ManageDeliveryChallan = () => {
   );
 };
 
-export default ManageDeliveryChallan;
+export default ManageSalesInvoice;

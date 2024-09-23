@@ -3,12 +3,12 @@ import axios from "axios";
 import { FaTimes } from "react-icons/fa";
 import Select from "react-select";
 
-const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
+const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
   const [date, setDate] = useState("");
-  const [challanNo, setchallanNo] = useState("");
-  const [salesType, setSalesType] = useState("");
+  const [orderNo, setorderNo] = useState("");
+  const [purchaseType, setpurchaseType] = useState("");
   const [customerType, setCustomerType] = useState("");
-  const [customerName, setCustomerName] = useState("");
+  const [supplierName, setsupplierName] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [paymentTerm, setPaymentTerm] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -35,10 +35,10 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
-      setchallanNo(estimate.challanNo || "");
-      setSalesType(estimate.salesType || "");
+      setorderNo(estimate.orderNo || "");
+      setpurchaseType(estimate.purchaseType || "");
       setCustomerType(estimate.customerType || "");
-      setCustomerName(getCustomerName(estimate.customerId) || "");
+      setsupplierName(getSupplierName(estimate.customerId) || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
@@ -59,7 +59,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
     }
-  }, [estimate, getCustomerName]);
+  }, [estimate, getSupplierName]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,17 +90,17 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       case "date":
         setDate(value);
         break;
-      case "challanNo":
-        setchallanNo(value);
+      case "orderNo":
+        setorderNo(value);
         break;
-      case "salesType":
-        setSalesType(value);
+      case "purchaseType":
+        setpurchaseType(value);
         break;
       case "customerType":
         setCustomerType(value);
         break;
-      case "customerName":
-        setCustomerName(value);
+      case "supplierName":
+        setsupplierName(value);
         break;
       case "placeOfSupply":
         setPlaceOfSupply(value);
@@ -205,7 +205,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       sgstRS = 0,
       igstRS = 0;
 
-    if (salesType === "GST Invoice") {
+    if (purchaseType === "GST Invoice") {
       if (gstType === "CGST/SGST") {
         cgstRS = (taxableValue * row.cgstpercent) / 100;
         sgstRS = (taxableValue * row.sgstpercent) / 100;
@@ -369,10 +369,10 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     try {
       const updatedEstimate = {
         date,
-        challanNo,
-        salesType,
+        orderNo,
+        purchaseType,
         customerType,
-        customerName,
+        supplierName,
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -421,19 +421,20 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       };
 
       const response = await axios.put(
-        `/api/v1/salesEstimateRoute/updateSalesEstimatetByID/${estimate._id}`,
+        `/api/v1/purchesOrderRoute/updatepurchesorder/${estimate._id}`,
         updatedEstimate
       );
+      console.log(response, "skdfj");
 
       if (response.data.success) {
-        alert("Estimate updated successfully");
+        alert("order updated successfully");
         // closeModal();
       } else {
-        alert("Failed to update estimate: " + response.data.message);
+        alert("Failed to update order: " + response.data.message);
       }
     } catch (error) {
-      console.error("Error updating estimate:", error);
-      alert("Error updating estimate: " + error.message);
+      console.error("Error updating order:", error);
+      alert("Error updating order: " + error.message);
     }
   };
 
@@ -441,7 +442,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     <div style={{ backgroundColor: "#82ac73" }} className="p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          Edit Delivery Challan 
+          Edit sales Estimate
         </h1>
         <button
           type="button"
@@ -465,20 +466,10 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           </label>
         </div>
         <div>
-          <label className="font-bold">Challan No.</label>
-          <input
-            type="text"
-            name="challanNo"
-            value={challanNo}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-        <div>
-          <label className="font-bold">Sales Type</label>
+          <label className="font-bold">Purchase Type</label>
           <select
-            value={salesType}
-            name="salesType"
+            value={purchaseType}
+            name="purchaseType"
             onChange={handleChange}
             className="border p-2 w-full rounded"
           >
@@ -487,6 +478,17 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
         <div>
+          <label className="font-bold">Order No.</label>
+          <input
+            type="text"
+            name="orderNo"
+            value={orderNo}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        {/* <div>
           <label className="font-bold">Customer Type</label>
           <select
             value={customerType}
@@ -497,13 +499,13 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
             <option value="Retailer">Retailer</option>
             <option value="Wholesaler">Wholesaler</option>
           </select>
-        </div>
+        </div> */}
         <div>
-          <label className="font-bold">Customer Name</label>
+          <label className="font-bold">Supplier Name</label>
           <input
             type="text"
-            name="customerName"
-            value={customerName}
+            name="supplierName"
+            value={supplierName}
             onChange={handleChange}
             className="border p-2 w-full rounded"
           />
@@ -558,7 +560,16 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
             <h4 className="font-bold mb-4">Transport Details</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
-
+              <div>
+                <label>Receipt Doc No.</label>
+                <input
+                  type="text"
+                  name="receiptDocNo"
+                  value={receiptDocNo}
+                  onChange={handleChange}
+                  className="border p-2 w-full rounded"
+                />
+              </div>
               <div>
                 <label>Dispatched Through</label>
                 <input
@@ -599,7 +610,16 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                   className="border p-2 w-full rounded"
                 />
               </div>
-
+              <div>
+                <label>Motor Vehicle No.</label>
+                <input
+                  type="text"
+                  name="motorVehicleNo"
+                  value={motorVehicleNo}
+                  onChange={handleChange}
+                  className="border p-2 w-full rounded"
+                />
+              </div>
             </div>
             <div className="flex justify-end">
               <button
@@ -635,7 +655,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
 
-        {salesType === "GST Invoice" && (
+        {purchaseType === "GST Invoice" && (
           <div className="mb-4 w-full">
             <label className="font-bold">GST Type:</label>
             <select
@@ -662,13 +682,13 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
               <th className="border p-2">Qty</th>
               <th className="border p-2">Units</th>
               <th className="border p-2">MRP</th>
-              <th className="border p-2">
+              {/* <th className="border p-2">
                 Discount
                 <div className="flex justify-between">
                   <span className="mr-16">%</span> <span>₹</span>
                 </div>
-              </th>
-              {salesType === "GST Invoice" && (
+              </th> */}
+              {purchaseType === "GST Invoice" && (
                 <>
                   <th className="border p-2">Taxable Value</th>
                   {gstType === "CGST/SGST" && (
@@ -819,7 +839,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     className="w-full"
                   />
                 </td>
-                <td className="border">
+                {/* <td className="border">
                   {row.discountpercent && row.discountRS ? (
                     // If discountpercent and discountRS exist, show these fields
                     <div className="p-1 flex gap-1">
@@ -913,8 +933,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       )}
                     </>
                   )}
-                </td>
-                {salesType === "GST Invoice" && (
+                </td> */}
+                {purchaseType === "GST Invoice" && (
                   <>
                     <td className="border p-2">
                       <input
@@ -1147,7 +1167,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {salesType === "GST Invoice" && (
+          {purchaseType === "GST Invoice" && (
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 GST Amount
@@ -1204,4 +1224,4 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
   );
 };
 
-export default EditEstimateModal;
+export default EditPurchaseOrder;

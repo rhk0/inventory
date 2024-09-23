@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 
-const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
-  console.log(estimate, "aj");
+const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
+  console.log(getSupplierName);
   const [date, setDate] = useState("");
-  const [challanNo, setchallanNo] = useState("");
-  const [salesType, setSalesType] = useState("");
+  const [orderNo, setorderNo] = useState("");
+  const [purchaseType, setpurchaseType] = useState("");
   const [customerType, setCustomerType] = useState("");
-  const [customerName, setCustomerName] = useState("");
+  const [supplierName, setsupplierName] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [paymentTerm, setPaymentTerm] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -36,10 +36,10 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
-      setchallanNo(estimate.challanNo || "");
-      setSalesType(estimate.salesType || "");
+      setorderNo(estimate.orderNo || "");
+      setpurchaseType(estimate.purchaseType || "");
       setCustomerType(estimate.customerType || "");
-      setCustomerName(getCustomerName(estimate.customerId) || "");
+      setsupplierName(getSupplierName(estimate.supplierId) || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
@@ -61,8 +61,10 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
       setGrossAmount(estimate.grossAmount || "");
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
+      console.log("purchaseType:", estimate.discountpercent);
+      console.log("GST Type:", estimate.discountRS);
     }
-  }, [estimate, getCustomerName]);
+  }, [estimate, getSupplierName]);
 
   return (
     <div
@@ -71,7 +73,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
     >
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          View Delivery Challan
+          View Purchase Order
         </h1>
         <button
           type="button"
@@ -93,10 +95,11 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
             />
           </label>
         </div>
+
         <div>
-          <label className="font-bold">Sales Type</label>
+          <label className="font-bold">Purchase Type</label>
           <select
-            value={salesType}
+            value={purchaseType}
             disabled
             className="border p-2 w-full rounded"
           >
@@ -105,25 +108,15 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
         <div>
-          <label className="font-bold">Challan No.</label>
+          <label className="font-bold">Order No.</label>
           <input
             type="text"
-            value={challanNo}
+            value={orderNo}
             disabled
             className="border p-2 w-full rounded"
           />
         </div>
-
-        <div>
-          <label className="font-bold">Customer Name</label>
-          <input
-            type="text"
-            value={customerName}
-            disabled
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
+        {/* 
         <div>
           <label className="font-bold">Customer Type</label>
           <select
@@ -134,8 +127,16 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
             <option value="Retailer">Retailer</option>
             <option value="Wholesaler">Wholesaler</option>
           </select>
+        </div> */}
+        <div>
+          <label className="font-bold">Supplier Name</label>
+          <input
+            type="text"
+            value={supplierName}
+            disabled
+            className="border p-2 w-full rounded"
+          />
         </div>
-
         <div>
           <label className="font-bold">Place of Supply</label>
           <input
@@ -184,7 +185,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
             <h4 className="font-bold mb-4">Transport Details</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              {/* <div>
+              <div>
                 <label>Receipt Doc No.</label>
                 <input
                   type="text"
@@ -192,7 +193,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
                   disabled
                   className="border p-2 w-full rounded"
                 />
-              </div> */}
+              </div>
               <div>
                 <label>Dispatched Through</label>
                 <input
@@ -229,7 +230,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
                   className="border p-2 w-full rounded"
                 />
               </div>
-              {/* <div>
+              <div>
                 <label>Motor Vehicle No.</label>
                 <input
                   type="text"
@@ -237,7 +238,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
                   disabled
                   className="border p-2 w-full rounded"
                 />
-              </div> */}
+              </div>
             </div>
             <div className="flex justify-end">
               <button
@@ -272,7 +273,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
 
-        {salesType === "GST Invoice" && (
+        {purchaseType === "GST Invoice" && (
           <div className="mb-4 w-full">
             <label className="font-bold">GST Type:</label>
             <select
@@ -299,13 +300,13 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
               <th className="border p-2">Qty</th>
               <th className="border p-2">Units</th>
               <th className="border p-2">MRP</th>
-              <th className="border p-2">
+              {/* <th className="border p-2">
                 Discount
                 <div className="flex justify-between">
                   <span className="mr-16">%</span> <span>₹</span>
                 </div>
-              </th>
-              {salesType === "GST Invoice" && (
+              </th> */}
+              {purchaseType === "GST Invoice" && (
                 <>
                   <th className="border p-2">Taxable Value</th>
                   {gstType === "CGST/SGST" && (
@@ -389,7 +390,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
                     className="w-full"
                   />
                 </td>
-                <td className="border p-2">
+                {/* <td className="border p-2">
                   <div className="flex gap-1">
                     <input
                       type="number"
@@ -404,8 +405,8 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
                       className="w-full"
                     />
                   </div>
-                </td>
-                {salesType === "GST Invoice" && (
+                </td> */}
+                {purchaseType === "GST Invoice" && (
                   <>
                     <td className="border p-2">
                       <input
@@ -568,7 +569,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {salesType === "GST Invoice" && (
+          {purchaseType === "GST Invoice" && (
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 GST Amount
@@ -607,4 +608,4 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
   );
 };
 
-export default ViewChallanModal;
+export default ViewPurchaseOrder;

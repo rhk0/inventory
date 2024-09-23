@@ -97,7 +97,7 @@ const CreateSalesEstimate = () => {
     setFormData((prev) => ({
       ...prev,
       customerName: selectedCustomerData ? selectedCustomerData.name : "",
-      address: selectedCustomerData ? selectedCustomerData.address : "",
+      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
       placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
 
@@ -358,6 +358,8 @@ const CreateSalesEstimate = () => {
           : "0.00",
         quantity: selectedProduct.quantity,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
         wholeselerDiscountRS:
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.wholesalerDiscount) /
@@ -424,6 +426,8 @@ const CreateSalesEstimate = () => {
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
         quantity: selectedProduct.quantity,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
         wholeselerDiscountRS: (
           (selectedProduct.maxmimunRetailPrice *
@@ -516,6 +520,7 @@ const CreateSalesEstimate = () => {
         "/api/v1/salesEstimateRoute/createSalesEstimatet",
         updatedFormData
       );
+      console.log(response);
 
       if (response) {
         toast.success("Sales estimate created successfully...");
@@ -656,7 +661,6 @@ const CreateSalesEstimate = () => {
               value={selectedCustomer}
               onChange={(e) => {
                 if (e.target.value === "add-new-customer") {
-                  // Navigate to the Create Customer page
                   window.location.href = "/admin/CreateCustomer";
                 } else {
                   handleCustomerChange(e);
@@ -831,6 +835,7 @@ const CreateSalesEstimate = () => {
           <div className="mb-4">
             <label className="font-bold">Billing Address</label>
             <textarea
+              name="billingAddress"
               value={billingAddress}
               onChange={handleBillingAddressChange}
               className="border p-2 w-full  rounded"
@@ -957,7 +962,7 @@ const CreateSalesEstimate = () => {
                   </td>
 
                   <td className="border ">
-                    {console.log(rows,"dheeru")}
+                    {console.log(rows, "dheeru")}
                     <Select
                       id="product-select"
                       value={
@@ -993,13 +998,12 @@ const CreateSalesEstimate = () => {
                     />
                     <div style={{ marginTop: "10px", fontSize: "12px" }}>
                       <div>
-                        Date: {products.expiryDate ? products.expiryDate : "N/A"}
+                        Date:{" "}
+                        {row.expiryDate ? row.expiryDate : "N/A"}
                       </div>
                       <div>
                         Batch Number:{" "}
-                        {products.batchNo
-                          ? products.batchNo
-                          : "N/A"}
+                        {row.batchNo ? row.batchNo : "N/A"}
                       </div>
                     </div>
                   </td>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 
-const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
-  console.log(estimate, "aj");
+const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
+  console.log(estimate);
   const [date, setDate] = useState("");
-  const [challanNo, setchallanNo] = useState("");
+  const [creditNoteNo, setcreditNoteNo] = useState("");
   const [salesType, setSalesType] = useState("");
   const [customerType, setCustomerType] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -35,8 +35,9 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
 
   useEffect(() => {
     if (estimate) {
+
       setDate(estimate.date || "");
-      setchallanNo(estimate.challanNo || "");
+      setcreditNoteNo(estimate.creditNoteNo || "");
       setSalesType(estimate.salesType || "");
       setCustomerType(estimate.customerType || "");
       setCustomerName(getCustomerName(estimate.customerId) || "");
@@ -71,7 +72,7 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
     >
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          View Delivery Challan
+          View Sales Return
         </h1>
         <button
           type="button"
@@ -105,10 +106,10 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
         <div>
-          <label className="font-bold">Challan No.</label>
+          <label className="font-bold">Credit Note No.</label>
           <input
             type="text"
-            value={challanNo}
+            value={creditNoteNo}
             disabled
             className="border p-2 w-full rounded"
           />
@@ -125,6 +126,16 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
         </div>
 
         <div>
+          <label className="font-bold">Place of Supply</label>
+          <input
+            type="text"
+            value={placeOfSupply}
+            disabled
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        <div>
           <label className="font-bold">Customer Type</label>
           <select
             value={customerType}
@@ -134,16 +145,6 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
             <option value="Retailer">Retailer</option>
             <option value="Wholesaler">Wholesaler</option>
           </select>
-        </div>
-
-        <div>
-          <label className="font-bold">Place of Supply</label>
-          <input
-            type="text"
-            value={placeOfSupply}
-            disabled
-            className="border p-2 w-full rounded"
-          />
         </div>
         <div>
           <label className="font-bold">
@@ -607,4 +608,4 @@ const ViewChallanModal = ({ closeModal, estimate, getCustomerName }) => {
   );
 };
 
-export default ViewChallanModal;
+export default ViewSalesReturnModal;

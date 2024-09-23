@@ -3,7 +3,6 @@ import salesInvoiceModel from "../models/salesInvoiceModel.js";
 export const createSalesInvoiceController = async (req, res) => {
   try {
     const {
-      userId,
       date,
       InvoiceNo,
       salesType,
@@ -12,26 +11,27 @@ export const createSalesInvoiceController = async (req, res) => {
       placeOfSupply,
       paymentTerm,
       dueDate,
-      receiptDocNo,
+      // receiptDocNo,
       dispatchedThrough,
       destination,
       carrierNameAgent,
       billOfLading,
-      motorVehicleNo,
+      // motorVehicleNo,
       billingAddress,
       reverseCharge,
       gstType,
       rows,
       cash,
       bank,
-      otherChargesDescription,
-      othercharges,
+      otherChargesDescriptions,
+      otherCharges,
       narration,
       grossAmount,
       GstAmount,
       netAmount,
     } = req.body;
 
+<<<<<<< HEAD
     const requiredFields = [
       "userId",
       "date",
@@ -68,9 +68,12 @@ export const createSalesInvoiceController = async (req, res) => {
       });
     }
 
+=======
+    const { _id } = req.user;
+>>>>>>> 4d276313607f1769a744ceaf95fcca432ac8d576
     try {
       const newInvoice = new salesInvoiceModel({
-        userId,
+        admin: _id,
         date,
         InvoiceNo,
         salesType,
@@ -79,20 +82,20 @@ export const createSalesInvoiceController = async (req, res) => {
         placeOfSupply,
         paymentTerm,
         dueDate,
-        receiptDocNo,
+        // receiptDocNo,
         dispatchedThrough,
         destination,
         carrierNameAgent,
         billOfLading,
-        motorVehicleNo,
+        // motorVehicleNo,
         billingAddress,
         reverseCharge,
         gstType,
         rows,
         cash,
         bank,
-        otherChargesDescription,
-        othercharges,
+        otherChargesDescriptions,
+        otherCharges,
         narration,
         grossAmount,
         GstAmount,
@@ -216,8 +219,8 @@ export const updateSalesInvoiceByIDController = async (req, res) => {
     invoice.rows = updateData.rows || invoice.rows;
     invoice.cash = updateData.cash || invoice.cash;
     invoice.bank = updateData.bank || invoice.bank;
-    invoice.otherChargesDescription =
-      updateData.otherChargesDescription || invoice.otherChargesDescription;
+    invoice.otherChargesDescriptions =
+      updateData.otherChargesDescriptions || invoice.otherChargesDescriptions;
     invoice.othercharges = updateData.othercharges || invoice.othercharges;
     invoice.narration = updateData.narration || invoice.narration;
     invoice.grossAmount = updateData.grossAmount || invoice.grossAmount;
