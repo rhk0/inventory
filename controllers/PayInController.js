@@ -10,27 +10,15 @@ export const createPayInController = async (req, res) => {
       rows,
       total,
       Narration,
+      selectBank,          // New field
+      method,              // New field
+      transactionCheckNo    // New field
     } = req.body;
     const { _id } = req.user;
-    const requiredFields = [
-      "date",
-      "receiptNo",
-      "selectCustomer",
-      "receiptMode",
-      "rows",
-      "total",
-      "Narration",
-    ];
+  
 
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
-    // dyfyudguyfgfuyg
-    // ghbufbnuihgvn
+
+
     try {
       const newPayIn = new payInModel({
         admin: _id,
@@ -41,6 +29,9 @@ export const createPayInController = async (req, res) => {
         rows,
         total,
         Narration,
+        selectBank,          // Add new fields in the document creation
+        method,
+        transactionCheckNo
       });
       const savedPayIn = await newPayIn.save();
       res.status(201).send({
@@ -54,6 +45,7 @@ export const createPayInController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
+
 
 export const getAllPayInController = async (req, res) => {
   try {
@@ -149,7 +141,6 @@ export const updatePayInByIdController = async (req, res) => {
     }
 
     // Update fields if provided in the request body
-
     payIn.date = updateData.date || payIn.date;
     payIn.receiptNo = updateData.receiptNo || payIn.receiptNo;
     payIn.selectCustomer = updateData.selectCustomer || payIn.selectCustomer;
@@ -157,6 +148,9 @@ export const updatePayInByIdController = async (req, res) => {
     payIn.rows = updateData.rows || payIn.rows;
     payIn.total = updateData.total || payIn.total;
     payIn.Narration = updateData.Narration || payIn.Narration;
+    payIn.selectBank = updateData.selectBank || payIn.selectBank;            // New field
+    payIn.method = updateData.method || payIn.method;                        // New field
+    payIn.transactionCheckNo = updateData.transactionCheckNo || payIn.transactionCheckNo;  // New field
 
     try {
       const updatedPayIn = await payIn.save();
@@ -181,3 +175,4 @@ export const updatePayInByIdController = async (req, res) => {
     });
   }
 };
+

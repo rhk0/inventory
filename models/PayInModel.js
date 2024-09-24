@@ -7,6 +7,10 @@ const payInSchema = new mongoose.Schema(
     receiptNo: { type: String },
     selectCustomer: { type: String },
     receiptMode: { type: String },
+
+    selectBank: { type: String },
+    method: { type: String },
+    transactionCheckNo: { type: String },
     rows: [
       {
         billNo: { type: String },

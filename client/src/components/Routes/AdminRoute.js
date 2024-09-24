@@ -186,26 +186,21 @@ const AdminRoute = () => {
         <Route path="PayOut" element={<PayOut />} />
         <Route path="ManagePayOut" element={<ManagePayOut />} />
         <Route path="profileupdate" element={<ProfileUpdate />} />
-         {/* StockReports */}
+        
         {/* StockReports */}
         <Route path="stockreports" element={<StockReports />} />
         <Route path="ManufacturerW" element={<ManufacturerW />} />
         <Route path="ProductQtyWise" element={<ProductQtyWise />} />
         <Route path="ProductValueWise" element={<ProductValueWise />} />
-
         {/* Sales Report */}
         <Route path="salesreports" element={<SalesReports />} />
-
-
         <Route path="InvoicewiseSales" element={<InvoicewiseSales />} />
         <Route path="CustomerWiseReport" element={<CustomerWiseReport />} />
-
         <Route path="CustomerLedger" element={<CustomerLedger />} />
         <Route path="SalesRegister" element={<SalesRegister />} />
         <Route path="ManufacturerWise" element={<ManuFactureWiseReport />} />
         <Route path="PointOfSalesReport" element={<PointOfSalesReport />} />
         <Route path="DayBook" element={<DayBook />} />
-
         {/*PurchesReport  */}
         <Route path="purchesreports" element={<PurchesReport />} />
         <Route path="Invoicewisepurches" element={<InvoiceWisePurches />} />
