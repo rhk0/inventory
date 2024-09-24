@@ -77,8 +77,6 @@ app.use("/api/v1/salesEstimateRoute", salesEstimateRoute);
 app.use("/api/v1/expensesRoute", expensesRoute);
 app.use("/api/v1/incomeRoute", incomeRoute);
 app.use("/api/v1/contact",demoContactRoute)
-//change dheeru
-//change
 
 //subscription routes
 app.use("/api/v1/payment", paymentRoute);

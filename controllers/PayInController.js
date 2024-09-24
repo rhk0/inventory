@@ -8,7 +8,7 @@ export const createPayInController = async (req, res) => {
       selectCustomer,
       receiptMode,
       rows,
-      total,
+      grandtotal,
       Narration,
       selectBank,          // New field
       method,              // New field
@@ -27,7 +27,7 @@ export const createPayInController = async (req, res) => {
         selectCustomer,
         receiptMode,
         rows,
-        total,
+        grandtotal,
         Narration,
         selectBank,          // Add new fields in the document creation
         method,
@@ -146,7 +146,7 @@ export const updatePayInByIdController = async (req, res) => {
     payIn.selectCustomer = updateData.selectCustomer || payIn.selectCustomer;
     payIn.receiptMode = updateData.receiptMode || payIn.receiptMode;
     payIn.rows = updateData.rows || payIn.rows;
-    payIn.total = updateData.total || payIn.total;
+    payIn.grandtotal = updateData.grandtotal || payIn.grandtotal;
     payIn.Narration = updateData.Narration || payIn.Narration;
     payIn.selectBank = updateData.selectBank || payIn.selectBank;            // New field
     payIn.method = updateData.method || payIn.method;                        // New field
