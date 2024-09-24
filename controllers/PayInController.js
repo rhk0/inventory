@@ -160,14 +160,16 @@ export const updatePayInByIdController = async (req, res) => {
         payIn: updatedPayIn,
       });
     } catch (error) {
+      console.log(error)
       return res.status(500).send({
         success: false,
-        message: "Error updating Pay In",
+        message: "Error updating Pay In",error,
         error: error.message,
       });
     }
   } catch (error) {
     console.error("Error updating Pay In by ID:", error);
+    console.log(error)
     return res.status(500).send({
       success: false,
       message: "Internal Server Issue",
