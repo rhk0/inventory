@@ -30,18 +30,18 @@ import paymentRoute from "./routes/paymentRoute.js";
 import subscriptionRoute from "./routes/subsCriptionRoute.js";
 // subscription cron
 import subscription from "./middleware/subscriptionMiddleware.js";
-import superAdminRoutes from "./routes/superAdminRoutes.js"
-import salesReturnRoute from "./routes/salesReturnRoute.js"
-import pointOfSaleRoute from "./routes/pointOfSaleRoute.js"
-import payInRoute from "./routes/payInRoute.js"
-import purchesOrderRoute from "./routes/purchesOrderRoute.js"
-import purchaseInvoiceRoute from "./routes/purchaseInvoiceRoute.js"
-import purchesReturnRoute from "./routes/purchesReturnRoute.js"
-import PayOutRoute from "./routes/PayOutRoute.js"
+import superAdminRoutes from "./routes/superAdminRoutes.js";
+import salesReturnRoute from "./routes/salesReturnRoute.js";
+import pointOfSaleRoute from "./routes/pointOfSaleRoute.js";
+import payInRoute from "./routes/payInRoute.js";
+import purchesOrderRoute from "./routes/purchesOrderRoute.js";
+import purchaseInvoiceRoute from "./routes/purchaseInvoiceRoute.js";
+import purchesReturnRoute from "./routes/purchesReturnRoute.js";
+import PayOutRoute from "./routes/PayOutRoute.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import demoContactRoute from "./routes/demoContactRoute.js"
+import demoContactRoute from "./routes/demoContactRoute.js";
 dotenv.config();
 
 //calling the db funciton
@@ -76,7 +76,7 @@ app.use("/api/v1/deliveryChallanRoute", deliveryChallanRoute);
 app.use("/api/v1/salesEstimateRoute", salesEstimateRoute);
 app.use("/api/v1/expensesRoute", expensesRoute);
 app.use("/api/v1/incomeRoute", incomeRoute);
-app.use("/api/v1/contact",demoContactRoute)
+app.use("/api/v1/contact", demoContactRoute);
 //change dheeru
 //change
 
@@ -85,43 +85,43 @@ app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/subscription", subscriptionRoute);
 app.use("/uploads", express.static("uploads"));
 
-app.use("/api/v1/company",comanyRoute)
-app.use("/api/v1/auth",authRoute)
-app.use("/api/v1/supplier",supplierRoute)
-app.use("/api/v1/customer",customerRoute)
-app.use("/api/v1/transport",transportRoute)
-app.use("/api/v1/vendor",vendorRoute)
-app.use("/api/v1/bank",bankRoute)
-app.use("/api/v1/cash",cashRoute);
-app.use("/api/v1/bankTransaction",bankTransctionRoute)
-app.use("/api/v1/inventoryCategory",InventoryCategoryRoute)
-app.use("/api/v1/inventorySubCategory",InventorySubCategoryRoute)
-app.use("/api/v1/inventoryBrand",InventoryBrandRoute)
-app.use("/api/v1/inventorySubBrand",InventroySubBrandRoute)
-app.use("/api/v1/invenotryStock",InventoryStockUnitRoute)
-app.use("/api/v1/inentoryBranch",InventoryCreateBranchesRoute)
-app.use("/api/v1/product",productRoute)
-app.use("/api/v1/manufacturer",manufacturerRoute)
-app.use("/api/v1/salesQuotation",salesQuationRoute)
-app.use("/api/v1/salesInvoiceRoute",salesInvoiceRoute)
-app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
-app.use("/api/v1/salesEstimateRoute",salesEstimateRoute)
-app.use("/api/v1/expensesRoute",expensesRoute)
-app.use("/api/v1/incomeRoute",incomeRoute)
-app.use("/api/v1/salesReturnRoute",salesReturnRoute)
-app.use("/api/v1/pointOfSaleRoute",pointOfSaleRoute)
-app.use("/api/v1/payInRoute",payInRoute)
-app.use("/api/v1/purchesOrderRoute",purchesOrderRoute)
-app.use("/api/v1/purchaseInvoiceRoute",purchaseInvoiceRoute)
-app.use("/api/v1/purchesReturnRoute",purchesReturnRoute)
-app.use("/api/v1/PayOutRoute",PayOutRoute)
-//change 
+app.use("/api/v1/company", comanyRoute);
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/supplier", supplierRoute);
+app.use("/api/v1/customer", customerRoute);
+app.use("/api/v1/transport", transportRoute);
+app.use("/api/v1/vendor", vendorRoute);
+app.use("/api/v1/bank", bankRoute);
+app.use("/api/v1/cash", cashRoute);
+app.use("/api/v1/bankTransaction", bankTransctionRoute);
+app.use("/api/v1/inventoryCategory", InventoryCategoryRoute);
+app.use("/api/v1/inventorySubCategory", InventorySubCategoryRoute);
+app.use("/api/v1/inventoryBrand", InventoryBrandRoute);
+app.use("/api/v1/inventorySubBrand", InventroySubBrandRoute);
+app.use("/api/v1/invenotryStock", InventoryStockUnitRoute);
+app.use("/api/v1/inentoryBranch", InventoryCreateBranchesRoute);
+app.use("/api/v1/product", productRoute);
+app.use("/api/v1/manufacturer", manufacturerRoute);
+app.use("/api/v1/salesQuotation", salesQuationRoute);
+app.use("/api/v1/salesInvoiceRoute", salesInvoiceRoute);
+app.use("/api/v1/deliveryChallanRoute", deliveryChallanRoute);
+app.use("/api/v1/salesEstimateRoute", salesEstimateRoute);
+app.use("/api/v1/expensesRoute", expensesRoute);
+app.use("/api/v1/incomeRoute", incomeRoute);
+app.use("/api/v1/salesReturnRoute", salesReturnRoute);
+app.use("/api/v1/pointOfSaleRoute", pointOfSaleRoute);
+app.use("/api/v1/payInRoute", payInRoute);
+app.use("/api/v1/purchesOrderRoute", purchesOrderRoute);
+app.use("/api/v1/purchaseInvoiceRoute", purchaseInvoiceRoute);
+app.use("/api/v1/purchesReturnRoute", purchesReturnRoute);
+app.use("/api/v1/PayOutRoute", PayOutRoute);
+//change
 
-//subscription routes 
- app.use("/api/v1/payment",paymentRoute)
-app.use("/api/v1/subscription",subscriptionRoute)
+//subscription routes
+app.use("/api/v1/payment", paymentRoute);
+app.use("/api/v1/subscription", subscriptionRoute);
 
-app.use("/uploads",express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 //super admin routes
 
 app.use("/api/v1/super", superAdminRoutes);
@@ -140,4 +140,4 @@ app.listen(process.env.PORT, async () => {
     `Server is Running on port ${process.env.PORT} in ${process.env.DEV_MODE} mode`
   );
 });
-// changes in server 
+// changes in server
