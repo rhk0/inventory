@@ -80,7 +80,7 @@ export const isStaff =async(req,res,next)=>{
     }catch (error) {
 
       
-        res.status(401).send({success:false,message:"You r not an Admin , UnAuthorized Access...!",error})
+        res.status(401).send({success:false,message:"You r not an Staff , UnAuthorized Access...!",error})
         
     }
 }

@@ -306,7 +306,7 @@ const CreateSalesEstimate = () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
         console.log(response, "dkfjk");
-        if (response.data && Array.isArray(response.data.data)) {
+        if (response.data && Array.isArray(response.data.data))  {
           setProducts(response.data.data);
         } else {
           console.error("Unexpected response structure:", response.data);
@@ -718,7 +718,7 @@ const CreateSalesEstimate = () => {
           <div className="mb-4">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-blue-500 text-black p-2"
+              className="bg-gray-500 text-black rounded text-black p-2"
             >
               Transport Details
             </button>
@@ -1342,7 +1342,7 @@ const CreateSalesEstimate = () => {
 
         <button
           onClick={() => setIsModalOtherChargesOpen(true)}
-          className=" text-blue-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+          className=" text-gary-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
         >
           <svg
             xmlns="http//www.w3.org/2000/svg"
@@ -1449,7 +1449,7 @@ const CreateSalesEstimate = () => {
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                {otherChargesDescriptions}
+                {otherChargesDescriptions ? otherChargesDescriptions:"Other Charges"}
               </label>
               <input
                 value={otherCharges.toFixed(2)}

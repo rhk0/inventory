@@ -122,7 +122,7 @@ const Navbar = (props) => {
             "&:hover": {
               backgroundColor: "#0056b3",
             },
-          }}
+          }}                     
         >
           Book a Demo
         </Button>

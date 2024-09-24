@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CustomerLedger = () => {
+const SupplierLedger = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState('');
@@ -8,10 +8,10 @@ const CustomerLedger = () => {
   // Dummy customer list and ledger data
   const customers = ["Customer 1", "Customer 2", "Customer 3"];
   const ledgerData = [
-    { date: "01-04-2024", particular: "Opening Balance", voucherType: "", voucherNo: "", debit: "******", credit: "" },
+    { date: "01-04-2024", particular: "Opening Balance", voucherType: "", voucherNo: "", debit: "", credit: "******" },
     { date: "02-04-2024", particular: "To Sales", voucherType: "Sales", voucherNo: "123", debit: "******", credit: "" },
-    { date: "03-04-2024", particular: "By Bank", voucherType: "Pay In", voucherNo: "124", debit: "", credit: "******" },
-    { date: "04-04-2024", particular: "Closing Balance", voucherType: "", voucherNo: "", debit: "", credit: "******" }
+    { date: "03-04-2024", particular: "By Bank", voucherType: "Pay In", voucherNo: "124", debit: "", credit: "" },
+    { date: "04-04-2024", particular: "Closing Balance", voucherType: "", voucherNo: "", debit: "*******", credit: "" }
   ];
 
   const handleCustomerChange = (event) => {
@@ -20,7 +20,7 @@ const CustomerLedger = () => {
 
   return (
     <div className='responsive-container' style={{ backgroundColor: '#FFFFFF', color: 'black', padding: '20px' }}>
-      <h2 className='text-center text-3xl '>Customer Ledger</h2>
+      <h2 className='text-center text-3xl '>Supplier Ledger</h2>
       <div class=" p-1 rounded-lg  flex gap-3">
         <div class="mb-4 w-1/4">
           <label
@@ -51,7 +51,7 @@ const CustomerLedger = () => {
         <div class="mt-5 w-1/4">
           <select className=" block w-full border p-3 border-gray-300 rounded-md shadow-sm  focus:ring focus:ring-blue-200 focus:outline-none">
             <option value="Select Customer" className="">
-              Select Customer
+              Select Supplier
             </option>
           </select>
         </div>
@@ -94,4 +94,4 @@ const CustomerLedger = () => {
   );
 };
 
-export default CustomerLedger;
+export default SupplierLedger;

@@ -1,27 +1,227 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import Select from "react-select";
 const Pos = () => {
-  const [rows, setRows] = useState([
-    {
-      id: 1,
-      code: "",
-      name: "",
-      qty: "",
-      mrp: "",
-      retailPrice: "",
-      taxableValue: "",
-      cgstPercent: "",
-      cgstRs: "",
-      sgstPercent: "",
-      sgstRs: "",
-      igstPercent: "",
-      igstRs: "",
-    },
-  ]);
+  const [rows, setRows] = useState([]);
+  const calculateTotals = () => {
+    let grossAmount = 0;
+    let GstAmount = 0;
+    rows.forEach((rows) => {
+      grossAmount += rows.taxableValue;
+      GstAmount += rows.cgstrs + rows.sgstrs;
+    });
+    let netAmount;
+    netAmount = grossAmount + GstAmount;
+    return { grossAmount, GstAmount, netAmount };
+  };
+  const [date, setDate] = useState("");
+  const [products, setProducts] = useState([]);
+  const { grossAmount, GstAmount, netAmount } = calculateTotals();
 
-  const handleChange = (index, field, value) => {
+  const [gstType, setGstType] = useState("CGST/SGST");
+
+  const [customer, setCustomer] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+
+  const [formData, setFormData] = useState({
+    date: "",
+    invoicNo: "",
+    customerDetail: "",
+    paymentType: "",
+    rows: [
+      {
+        itemCode: "",
+        productName: "",
+        qty: null,
+        units: null,
+        mrp: null,
+        retailPrice: null,
+        totalValue: null,
+      },
+    ],
+    grossAmount: "",
+    CGSTAmount: "",
+    SGSTAmount: "",
+
+    netAmount: "",
+  });
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageCustomer");
+        console.log(response.data.data, "ygdgdggdwgedg");
+        setCustomer(response.data.data);
+      } catch (error) {
+        console.error("Error fetching Customers:", error);
+      }
+    };
+
+    fetchCustomer();
+  }, []);
+
+  const handleProductSelect = (rowIndex, selectedProductName) => {
+    const selectedProduct = products.find(
+      (product) => product.productName === selectedProductName
+    );
+    console.log(selectedProductName, "fygdfdd");
+    if (selectedProduct) {
+      const updatedRows = [...rows];
+
+      // Calculate retail price
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      // Determine if sales tax is included from the fetched product data
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * selectedProduct.quantity;
+
+      // Update the row with the new values
+
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        productName: selectedProduct.productName,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        quantity: selectedProduct.quantity,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        wholeselerDiscountRS:
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.wholesalerDiscount) /
+          100,
+        retailDiscount: selectedProduct.retailDiscount,
+        retailDiscountRS:
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+          100,
+
+        // taxable value based on salesTaxInclude
+        taxableValue: taxableValue,
+        retailPrice: retailPrice,
+
+        retailPricer: selectedProductName.retailPrice,
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
+    }
+  };
+
+  const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
+    const selectedProduct = products.find(
+      (product) => product.itemCode === selectedItemCode
+    );
+
+    if (selectedProduct) {
+      const updatedRows = [...rows];
+
+      // Calculate retail price and taxable value based on the product details
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      const taxableValue = selectedProduct.salesTaxInclude
+        ? (retailPrice * selectedProduct.quantity * 100) /
+          (100 + selectedProduct.gstRate)
+        : retailPrice * selectedProduct.quantity;
+
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        productName: selectedProduct.productName,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        quantity: selectedProduct.quantity,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        wholeselerDiscountRS: (
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.wholesalerDiscount) /
+          100
+        ).toFixed(2),
+        retailDiscount: selectedProduct.retailDiscount,
+        retailDiscountRS: (
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+          100
+        ).toFixed(2),
+        taxableValue: taxableValue,
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+        retailPrice: retailPrice,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
+    }
+  };
+
+  const handleRowChange = (index, field, value) => {
     const newRows = [...rows];
-    newRows[index][field] = value;
+    const newValue = parseFloat(value) || 0;
+    newRows[index] = { ...newRows[index], [field]: newValue };
+
+    // Calculate taxable value, GST, and total value
+    const { qty, mrp, discount } = newRows[index];
+    const taxableValue = qty * mrp - discount;
+    const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
+    const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
+    const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
+    const totalValue = taxableValue + cgst + sgst + igst;
+
+    newRows[index] = {
+      ...newRows[index],
+      taxableValue,
+      cgst,
+      sgst,
+      igst,
+      totalValue,
+    };
     setRows(newRows);
   };
 
@@ -31,10 +231,11 @@ const Pos = () => {
       {
         itemCode: "",
         productName: "",
-        hsnCode: "",
+
         qty: 0,
         uom: "",
         mrp: 0,
+        retailPrice: 0,
         discount: 0,
         taxableValue: 0,
         cgst: 0,
@@ -44,7 +245,106 @@ const Pos = () => {
       },
     ]);
   };
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageproduct");
+        console.log(response, "dkfjk");
+        if (response.data && Array.isArray(response.data.data)) {
+          setProducts(response.data.data);
+        } else {
+          console.error("Unexpected response structure:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        // toast.error("Failed to fetch products. Please try again.");
+      }
+    };
 
+    fetchProducts();
+  }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const updatedFormData = {
+        ...formData, // This should include customerDetail
+        rows: rows.map((row) => ({
+          itemCode: row.itemCode,
+          productName: row.productName,
+          qty: row.quantity,
+          units: row.units,
+          retailPrice: row.retailPrice,
+          mrp: row.maxmimunRetailPrice,
+          taxable: row.taxableValue.toFixed(2),
+          cgstpercent: row.cgstp,
+          cgstRS: row.cgstrs,
+          sgstpercent: row.sgstp,
+          sgstRS: row.sgstrs,
+          igstpercent: row.igstp,
+          igstRS: row.igstrs,
+          totalValue: row.totalvalue,
+        })),
+        grossAmount: grossAmount.toFixed(2),
+        GstAmount: GstAmount.toFixed(2),
+        netAmount: netAmount.toFixed(2),
+      };
+  
+      const response = await axios.post(
+        "/api/v1/pointOfSaleRoute/createsalespof",
+        updatedFormData
+      );
+      console.log(response,"response")
+  
+      if (response) {
+        toast.success("Point Of SALE created successfully...");
+      }
+  
+      // Reset formData
+      setFormData({
+        date: "",
+        invoicNo: "",
+        customerDetail: "", // Reset customerDetail
+        paymentType: "",
+        rows: [
+          {
+            itemCode: "",
+            productName: "",
+            qty: null,
+            uom: null,
+            mrp: null,
+            retailPrice: null,
+            discount: null,
+            cgst: null,
+            sgst: null,
+            igst: null,
+            totalValue: null,
+          },
+        ],
+        grossAmount: "",
+        GstAmount: "",
+        netAmount: "",
+      });
+  
+      setDate("");
+      setRows([]);
+      setSelectedCustomer("");
+      window.print();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to create point of sale estimate. Please try again.");
+    }
+  };
+  
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value, // Correctly update the formData field
+    });
+  };
+  
   const removeRow = (index) => {
     if (rows.length > 1) {
       setRows(rows.filter((_, i) => i !== index));
@@ -57,7 +357,7 @@ const Pos = () => {
 
   return (
     <div
-      style={{ backgroundColor: "pink" }}
+      style={{ backgroundColor: "#FFFFFF", color: "black" }}
       className="responsive-container bg-pink-200 p-4 rounded-md w-full mx-auto"
     >
       <style>
@@ -99,14 +399,20 @@ const Pos = () => {
               }
         `}
       </style>
-      <h1 className="text-center text-3xl bg-gray-500 text-white cucolor">
-        Point Of Sale
+      <h1 className="text-center text-4xl  mb-5 text-black font-bold cucolor">
+        𝙿𝚘𝚒𝚗𝚝 𝙾𝚏 𝚂𝚊𝚕𝚎
       </h1>
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col">
           <label className="text-md font-bold text-black">Date</label>
           <input
             type="date"
+            name="date"
+            value={formData.date}
+            onChange={(e) => {
+              setDate(e.target.value);
+              handleChange(e);
+            }}
             className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
           />
         </div>
@@ -114,22 +420,38 @@ const Pos = () => {
           <label className="text-md font-bold text-black">Invoice No.</label>
           <input
             type="text"
+            name="invoicNo"
+            value={formData.invoicNo}
+            onChange={handleChange} // Remove unnecessary setDate
             className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
           />
         </div>
+
         <div className="flex flex-col">
           <label className="text-md font-bold text-black">
             Customer Detail
           </label>
           <input
             type="text"
+            name="customerDetail"
+            value={formData.customerDetail}
+            onChange={handleChange} // Remove unnecessary setDate
             className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
             placeholder="Contact or name"
           />
         </div>
+
         <div className="flex flex-col">
           <label className="text-md font-bold text-black">Payment Type</label>
-          <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
+          <select
+            name="paymentType"
+            onChange={(e) => {
+              setDate(e.target.value);
+              handleChange(e);
+            }}
+            value={formData.paymentType}
+            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+          >
             <option value="Cash">Cash</option>
             <option value="Online">Online</option>
           </select>
@@ -140,201 +462,188 @@ const Pos = () => {
         <table className="w-full border-collapse overflow-x-auto">
           <thead>
             <tr>
-              <th className="border border-gray-500 p-1">#</th>
-              <th className="border border-gray-500 p-1">Item Code</th>
-              <th className="border border-gray-500 p-1 text-nowrap pl-16 pr-16">
-                Product Name
-              </th>
-              <th className="border border-gray-500 p-1">Qty</th>
-              <th className="border border-gray-500 p-1">MRP</th>
-              <th className="border border-gray-500 p-1 text-nowrap">
-                Retail Price
-              </th>
-              <th className="border border-gray-500 p-1 text-nowrap">
-                Taxable Value
-              </th>
-              <th className="border border-gray-500 p-1 text-xs">
-                CGST
-                <span className="mt-1 gap-10 flex text-center justify-center">
-                  <span>%</span>
-                  <span>RS</span>
-                </span>
-              </th>
-              <th className="border border-gray-500 p-1 text-xs">
-                SGST
-                <span className="mt-1 gap-10 flex text-center justify-center">
-                  <span>%</span>
-                  <span>RS</span>
-                </span>
-              </th>
-              <th className="border border-gray-500 p-1 text-xs">
-                IGST
-                <span className="mt-1 gap-10 flex text-center justify-center">
-                  <span>%</span>
-                  <span>RS</span>
-                </span>
-              </th>
+              <th className="border p-1">#</th>
+              <th className="border text-bold text-sm ">Item Code</th>
+              <th className="border ">Product Name</th>
+
+              <th className="border p-1">Qty</th>
+              <th className="border p-1">Units</th>
+              <th className="border p-1">MRP</th>
+              <th className="border p-2">Retail Price</th>
+              <th className="border p-2">Total Value</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, index) => (
-              <tr key={row.id}>
-                <td className="border border-gray-500 p-1 text-center">
-                  {index + 1} {/* Serial Number */}
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.code}
-                    onChange={(e) =>
-                      handleChange(index, "code", e.target.value)
+              <tr key={index}>
+                {console.log(rows, "row")}
+                <td className="border p-1">{index + 1}</td>
+                <td className="border">
+                  <Select
+                    id="itemcode-select"
+                    value={
+                      rows[index].itemCode
+                        ? {
+                            label: rows[index].itemCode,
+                            value: rows[index].itemCode,
+                          }
+                        : null
                     }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.name}
-                    onChange={(e) =>
-                      handleChange(index, "name", e.target.value)
+                    onChange={(selectedOption) =>
+                      handleItemCodeSelect(index, selectedOption.value)
                     }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    options={products.map((product) => ({
+                      label: product.itemCode,
+                      value: product.itemCode,
+                    }))}
+                    isSearchable={true}
+                    placeholder="Select"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        minWidth: "120px",
+                        maxWidth: "300px",
+                        fontSize: "14px",
+                        minHeight: "34px",
+                        height: "34px",
+                      }),
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    }}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
                   />
                 </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.qty}
-                    onChange={(e) => handleChange(index, "qty", e.target.value)}
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.mrp}
-                    onChange={(e) => handleChange(index, "mrp", e.target.value)}
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.retailPrice}
-                    onChange={(e) =>
-                      handleChange(index, "retailPrice", e.target.value)
+
+                <td className="border ">
+                  {console.log(rows, "dheeru")}
+                  <Select
+                    id="product-select"
+                    value={
+                      rows[index].productName
+                        ? {
+                            label: rows[index].productName,
+                            value: rows[index].productName,
+                          }
+                        : null
                     }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(selectedOption) =>
+                      handleProductSelect(index, selectedOption.value)
+                    }
+                    options={products.map((product) => ({
+                      label: product.productName,
+                      value: product.productName,
+                    }))}
+                    isSearchable={true}
+                    placeholder="Select a Product"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        minWidth: "200px",
+                        maxWidth: "500px",
+                        fontSize: "14px",
+                        minHeight: "34px",
+                        height: "34px",
+                      }),
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    }}
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
                   />
                 </td>
-                <td className="border border-gray-500 p-1">
+
+                <td className="border p-1">
                   <input
                     type="text"
-                    value={row.taxableValue}
+                    value={row.quantity}
                     onChange={(e) =>
-                      handleChange(index, "taxableValue", e.target.value)
+                      handleRowChange(index, "quantity", e.target.value)
                     }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full"
                   />
                 </td>
-                <td className="border border-gray-500 p-1">
-                  <div className="flex space-x-1">
+                <td className="border p-1">
+                  <input
+                    type="text"
+                    value={row.units}
+                    onChange={(e) =>
+                      handleRowChange(index, "units", e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={row.maxmimunRetailPrice}
+                    onChange={(e) =>
+                      handleRowChange(
+                        index,
+                        "maxmimunRetailPrice",
+                        e.target.value
+                      )
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "70px", // Set a small minimum width to ensure visibility
+                      flexBasis: "70px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}
+                  />
+                </td>
+
+                <td className="border">
+                  <div className="p-1 flex gap-1">
                     <input
                       type="text"
-                      value={row.cgstPercent}
+                      value={row.retailPrice}
                       onChange={(e) =>
-                        handleChange(index, "cgstPercent", e.target.value)
+                        handleRowChange(
+                          index,
+                          "discountpercent",
+                          e.target.value
+                        )
                       }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      value={row.cgstRs}
-                      onChange={(e) =>
-                        handleChange(index, "cgstRs", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "20px", // Set a small minimum width to ensure visibility
+                        flexBasis: "20px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}
                     />
                   </div>
                 </td>
-                <td className="border border-gray-500 p-1">
-                  <div className="flex space-x-1">
-                    <input
-                      type="text"
-                      value={row.sgstPercent}
-                      onChange={(e) =>
-                        handleChange(index, "sgstPercent", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      value={row.sgstRs}
-                      onChange={(e) =>
-                        handleChange(index, "sgstRs", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+
+                <td className="border p-1">
+                  <input
+                    type="text"
+                    value={row.totalvalue}
+                    onChange={(e) =>
+                      handleRowChange(index, "totalValue", e.target.value)
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "70px",
+                      flexBasis: "70px",
+                      flexShrink: 1,
+                    }}
+                  />
                 </td>
-                <td className="border border-gray-500 p-1">
-                  <div className="flex space-x-1">
-                    <input
-                      type="text"
-                      value={row.igstPercent}
-                      onChange={(e) =>
-                        handleChange(index, "igstPercent", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      value={row.igstRs}
-                      onChange={(e) =>
-                        handleChange(index, "igstRs", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </td>
-                <td className="p-1 text-center hide-on-print flex gap-2 items-center justify-center">
-                  <button
-                    onClick={addRow}
-                    className="bg-green-500 text-white rounded p-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    aria-label="Add row"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="h-5 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 5v14m7-7H5"
-                      />
-                    </svg>
-                  </button>
+                <td className="p-1 gap-2 flex">
                   <button
                     onClick={() => removeRow(index)}
-                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    aria-label="Remove row"
+                    className="bg-red-500 text-black p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="h-5 w-4"
+                      className="h-4 w-4"
                       fill="none"
+                      viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth="2"
+                        strokeWidth={2}
                         d="M6 18L18 6M6 6l12 12"
                       />
                     </svg>
@@ -345,29 +654,69 @@ const Pos = () => {
           </tbody>
         </table>
       </div>
+      <button
+        onClick={addRow}
+        className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+      >
+        <svg
+          xmlns="http//www.w3.org/2000/svg"
+          className="h-4 w-4 "
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Add New Row
+      </button>
 
-      <div className="mt-4 flex justify-end">
-        <div className="flex flex-col mr-8">
-          <label className="text-md font-bold text-black">Gross Amount</label>
+      <div className="flex flex-col items-end gap-5 mt-10">
+        <div className="flex flex-row justify-left  gap-3">
+          <label className="text-1xl font-bold text-black mt-2">
+            Gross Amount
+          </label>
           <input
             type="text"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
+            value={grossAmount.toFixed(2)}
+            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
             placeholder="Gross Amount"
           />
         </div>
-        <div className="flex flex-col mr-8">
-          <label className="text-md font-bold text-black">GST Amount</label>
+        <div className="flex flex-row justify-left  gap-3">
+          <label className="text-1xl font-bold text-black mt-2">
+            CGST Amount
+          </label>
           <input
             type="text"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
+            value={(GstAmount / 2).toFixed(2)}
+            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
             placeholder="GST Amount"
           />
         </div>
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">Net Amount</label>
+        <div className="flex flex-row justify-left  gap-3">
+          <label className="text-1xl font-bold text-black mt-2">
+            SGST Amount
+          </label>
           <input
             type="text"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
+            value={(GstAmount / 2).toFixed(2)}
+            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+            placeholder="GST Amount"
+          />
+        </div>
+        <div className="flex flex-row justify-left  gap-3">
+          <label className="text-1xl font-bold text-black mt-2">
+            Net Amount
+          </label>
+          <input
+            type="text"
+            value={Math.round(netAmount).toFixed(2)}
+            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
             placeholder="Net Amount"
           />
         </div>
@@ -375,12 +724,13 @@ const Pos = () => {
 
       <div className="text-center mt-8">
         <button
-          onClick={print}
+          onClick={handleSubmit}
           className="bg-black hide-on-print text-white py-2 rounded px-10 text-xl font-bold hover:bg-gray-700"
         >
           Save & Print
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 };

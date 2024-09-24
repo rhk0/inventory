@@ -16,6 +16,8 @@ import FreeTriel from "./landing/FreeTriel.js";
 import { SuperAdminProtectedRoute } from "./components/Routes/SuperAdminProtectedRoute.js";
 import SuperAdminRoute from "./components/Routes/SuperAdminRoute.js";
 import SubscriptionCheckout from "./components/middlewares/SubscriptionCheckout.js";
+import { StaffProtectedRoute } from "./components/Routes/StaffProtectedRoute.js";
+import StaffRoute from "./components/Routes/StaffRoute.js";
 
 function App() {
   return (
@@ -38,6 +40,13 @@ function App() {
           </Route>
           <Route path="/superadmin/*" element={<SuperAdminProtectedRoute />}>
             <Route path="*" element={<SuperAdminRoute />} />
+          
+          </Route>
+           
+           
+
+          <Route path="/staff/*" element={<StaffProtectedRoute />}>
+            <Route path="*" element={<StaffRoute />} />
           
           </Route>
           <Route path="/*" element={<Test />} />

@@ -1,44 +1,82 @@
-import { State } from 'country-state-city'; // import State data
+import { State } from 'country-state-city';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import img1 from './assets/demo.jpeg'; // Importing the image
+import img1 from './assets/demo.jpeg';
+import { toast, ToastContainer } from 'react-toastify';
+import LoaderHand from '../components/loader/LoaderHand'; // Import your loader component
 
 const DemoForm = () => {
   const [open, setOpen] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
-    businessName: '',
-    contactNumber: '',
+    business: '',
+    contact: '',
     city: '',
-    email:'',
-    state:''
+    email: '',
+    state: ''
   });
-  const [apiResponse, setApiResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({}); // State to track errors
 
-  // Handle form field changes
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({
       ...formData,
       [name]: value,
     });
+    setErrors({
+      ...errors,
+      [name]: '' // Clear error on change
+    });
   };
 
-  // Handle form submission
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name) newErrors.name = 'Name is required';
+    if (!formData.business) newErrors.business = 'Business Name is required';
+    if (!formData.contact) {
+      newErrors.contact = 'Contact Number is required';
+    } else if (!/^\d{10}$/.test(formData.contact)) {
+      newErrors.contact = 'Contact Number must be 10 digits';
+    }
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is not valid';
+    }
+    if (!formData.city) newErrors.city = 'City is required';
+    if (!formData.state) newErrors.state = 'State is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) return; // Stop submission if validation fails
+
+    setLoading(true);
     try {
-      const response = await axios.post('https://jsonplaceholder.typicode.com/posts', formData); // Dummy API
-      setApiResponse(response.data);
-      handleClose(); // Close dialog on successful submission
+      const response = await axios.post('/api/v1/contact/create', formData);
+      console.log(response);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setTimeout(handleClose, 3000);
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
       console.error('Error submitting data:', error);
+      toast.error('Submission failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleClose = () => {
     setOpen(false);
+    window.location.reload();
   };
 
   return (
@@ -60,20 +98,18 @@ const DemoForm = () => {
               <CloseIcon />
             </IconButton>
           </DialogTitle>
-          <DialogContent dividers>
-            {/* Image Section */}
+          <DialogContent dividers sx={{ position: 'relative' }}>
             <Box sx={{ textAlign: 'center', marginBottom: 2 }}>
-              <img 
-                src={img1} 
-                alt="Demo" 
-                style={{ 
-                  maxWidth: '100%', 
-                  height: 'auto', 
-                  borderRadius: 8 
-                }} 
+              <img
+                src={img1}
+                alt="Demo"
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                  borderRadius: 8
+                }}
               />
             </Box>
-            {/* Form Fields */}
             <TextField
               autoFocus
               margin="dense"
@@ -84,30 +120,36 @@ const DemoForm = () => {
               variant="outlined"
               value={formData.name}
               onChange={handleChange}
+              error={!!errors.name}
+              helperText={errors.name}
               sx={{ mb: 2 }}
             />
             <TextField
               margin="dense"
               label="Business Name"
               type="text"
-              name="businessName"
+              name="business"
               fullWidth
               variant="outlined"
-              value={formData.businessName}
+              value={formData.business}
               onChange={handleChange}
+              error={!!errors.business}
+              helperText={errors.business}
               sx={{ mb: 2 }}
             />
             <TextField
               margin="dense"
               label="Contact Number"
               type="tel"
-              name="contactNumber"
+              name="contact"
               fullWidth
               variant="outlined"
-              value={formData.contactNumber}
+              value={formData.contact}
               onChange={handleChange}
+              error={!!errors.contact}
+              helperText={errors.contact}
               sx={{ mb: 2 }}
-            />  
+            />
             <TextField
               margin="dense"
               label="Email"
@@ -117,6 +159,8 @@ const DemoForm = () => {
               variant="outlined"
               value={formData.email}
               onChange={handleChange}
+              error={!!errors.email}
+              helperText={errors.email}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -128,12 +172,12 @@ const DemoForm = () => {
               variant="outlined"
               value={formData.city}
               onChange={handleChange}
+              error={!!errors.city}
+              helperText={errors.city}
               sx={{ mb: 2 }}
             />
-            
-            {/* State Dropdown */}
             <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
-              <InputLabel id="state-label">Select state</InputLabel>
+              <InputLabel id="state-label">State</InputLabel>
               <Select
                 labelId="state-label"
                 id="state"
@@ -141,6 +185,7 @@ const DemoForm = () => {
                 value={formData.state}
                 onChange={handleChange}
                 label="State"
+                error={!!errors.state}
               >
                 {State.getStatesOfCountry('IN').map((state) => (
                   <MenuItem key={state.isoCode} value={state.isoCode}>
@@ -148,15 +193,19 @@ const DemoForm = () => {
                   </MenuItem>
                 ))}
               </Select>
+              {errors.state && <Box color="error.main" sx={{ mt: 1 }}>{errors.state}</Box>}
             </FormControl>
-
-            {/* Display API response */}
-            {apiResponse && (
-              <Box sx={{ mt: 2 }}>
-                <h3>API Response:</h3>
-                <p><strong>ID:</strong> {apiResponse.id}</p>
-                <p><strong>Title:</strong> {apiResponse.title}</p>
-                <p><strong>Body:</strong> {apiResponse.body}</p>
+            {loading && (
+              <Box 
+                sx={{ 
+                  position: 'absolute', 
+                  top: '50%', 
+                  left: '50%', 
+                  transform: 'translate(-50%, -50%)', // Center the loader
+                  zIndex: 10 
+                }}
+              >
+                <LoaderHand /> {/* Your custom loader component */}
               </Box>
             )}
           </DialogContent>
@@ -164,10 +213,11 @@ const DemoForm = () => {
             <Button onClick={handleClose} color="secondary">
               Cancel
             </Button>
-            <Button onClick={handleSubmit} color="primary" variant="contained">
-              Book a Demo
+            <Button onClick={handleSubmit} color="primary" variant="contained" disabled={loading}>
+              {loading ? 'Booking...' : 'Book a Demo'}
             </Button>
           </DialogActions>
+          <ToastContainer />
         </Dialog>
       )}
     </>

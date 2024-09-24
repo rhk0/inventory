@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ManufacturerW = () => {
+const ManufactureWiseReport = () => {
   const [activeReport, setActiveReport] = useState("");
 
   const handleReportChange = (report) => {
@@ -10,7 +10,7 @@ const ManufacturerW = () => {
   return (
     <div className=" bg-gray-100 p-10 shadow-md responsive-container">
       <h1 className="text-3xl font-bold text-center mb-10">
-        𝙼𝚊𝚗𝚞𝚏𝚊𝚌𝚝𝚞𝚛𝚎𝚛 𝚆𝚒𝚜𝚎 𝚁𝚎𝚙𝚘𝚛𝚝
+        𝙼𝚊𝚗𝚞𝚏𝚊𝚌𝚝𝚞𝚛𝚎𝚛 𝚆𝚒𝚜𝚎 𝙿𝚞𝚛𝚌𝚑𝚎𝚜 𝚁𝚎𝚙𝚘𝚛𝚝
       </h1>
 
       {/* Conditional rendering of reports */}
@@ -43,17 +43,25 @@ const ManufacturerW = () => {
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
               />
             </div>
-          
+            <div class="mt-5 w-1/4">
+              <select className=" block w-full border border-gray-300 p-3 rounded-md shadow-sm  focus:ring focus:ring-blue-200 focus:outline-none">
+                <option value="Select Customer" className="">
+                  Select Manufacture 
+                </option>
+              </select>
+            </div>
           </div>
           <table className="min-w-full shadow-md table-auto">
             <thead className="">
               <tr>
                 <th className=" py-2">S.No.</th>
-                <th className="px-4 py-2">Product Name</th>
-                <th className="px-4 py-2">Opening Qty</th>
-                <th className="px-4 py-2">Inward Qty</th>
-                <th className="px-4 py-2">Outward Qty</th>
-                <th className="px-4 py-2">Closing Qty</th>
+                <th className="px-4 py-2">Date</th>
+                <th className="px-4 py-2">Invoice No.</th>
+                <th className="px-4 py-2">Supplier Name</th>
+                <th className="px-4 py-2">Place Of Supply</th>
+                <th className="px-4 py-2">Brand Name</th>
+                <th className="px-4 py-2">Total Value</th>
+                <th className="px-4 py-2">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -64,6 +72,8 @@ const ManufacturerW = () => {
                 <td className="border px-4 py-2">105</td>
                 <td className="border px-4 py-2">70</td>
                 <td className="border px-4 py-2">60</td>
+                <td className="border px-4 py-2">70</td>
+                <td className="border px-4 py-2">View</td>
               </tr>
             </tbody>
           </table>
@@ -81,4 +91,4 @@ const ManufacturerW = () => {
   );
 };
 
-export default ManufacturerW;
+export default ManufactureWiseReport;

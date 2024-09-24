@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
-import { GoRepoTemplate } from "react-icons/go";
-import { MdSubscriptions } from 'react-icons/md'; // Material Icons
+
 import {
   MdDashboard,
   MdInventory,
@@ -15,7 +14,7 @@ import {
 } from "react-icons/md";
 import { FaUsers, FaShoppingCart, FaMoneyBillWave } from "react-icons/fa";
 
-function Sidebar({ openSidebarToggle, OpenSidebar }) {
+function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
   const [showParties, setParties] = useState(false);
   const [showTransport, setTransport] = useState(false);
   const [showCustomer, setCustomer] = useState(false);
@@ -44,10 +43,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const [showSettings, setSettings] = useState(false);
   const [showBankTransaction, setShowBankTransction] = useState(false);
   const [showCash, setCash] = useState(false);
+
   const [showExpenses, setExpenses] = useState(false);
+
   const [showAccount, SetShowAccount] = useState(false);
-  const [showSubscription, setSubscription] = useState(false);
-  const [showReports, setReports] = useState(false);
+  const [showSubscription,setSubscription] = useState(false)
   const sidebarRef = useRef(null);
 
   const closeAll = () => {
@@ -118,10 +118,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     closeAll();
     setReport(!showReport);
   };
-  const toggleReports = () => {
-    closeAll();
-    setReports(!showReports);
-  };
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -141,7 +137,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   }, [openSidebarToggle, OpenSidebar]);
   const toggleSettings = () => {
     closeAll();
-    setSubscription(!showSubscription);
+    setSettings(!showSettings);
   };
   const closeSidebar = () => {
     if (openSidebarToggle) {
@@ -178,10 +174,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
             <Link
-              to="/admin/dash"
+              to="/staff/dash"
               className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white "
             >
-              <MdDashboard className="mr-2" /> <span>Admin Dashboard</span>
+              <MdDashboard className="mr-2" /> <span>Staff Dashboard</span>
             </Link>
           </a>
         </li>
@@ -219,7 +215,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/CreateSupplier"
+                        to="/staff/CreateSupplier"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Supplier
@@ -227,7 +223,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageSupplier"
+                        to="/staff/ManageSupplier"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Supplier List
@@ -249,7 +245,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/CreateCustomer"
+                        to="/staff/CreateCustomer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Customer
@@ -257,7 +253,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageCustomer"
+                        to="/staff/ManageCustomer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Customer List
@@ -285,7 +281,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/CreateManufacturer"
+                        to="/staff/CreateManufacturer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Manufacturer
@@ -293,7 +289,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageManufacturer"
+                        to="/staff/ManageManufacturer"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manufacturer List
@@ -316,7 +312,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/createvendors"
+                        to="/staff/createvendors"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Create Vendor
@@ -324,7 +320,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/manageVendor"
+                        to="/staff/manageVendor"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Vendor
@@ -347,7 +343,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/createtranspoter"
+                        to="/staff/createtranspoter"
                         className="flex items-center text-white nesteditem  p-1"
                       >
                         Create Transporter
@@ -355,7 +351,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/managetranspoter"
+                        to="/staff/managetranspoter"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Transporter
@@ -388,14 +384,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/addcategory"
+                  to="/staff/addcategory"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Category
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/ManageCategory"
+                    to="/staff/ManageCategory"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Category
@@ -405,14 +401,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/addsubcategory"
+                  to="/staff/addsubcategory"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Sub Category
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/managesubcategory"
+                    to="/staff/managesubcategory"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Sub Category
@@ -422,7 +418,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/addbrand"
+                  to="/staff/addbrand"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Brand
@@ -430,7 +426,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
                 <li className=" ">
                   <Link
-                    to="/admin/manageBrand"
+                    to="/staff/manageBrand"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Brand
@@ -440,14 +436,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/AddSubBrand"
+                  to="/staff/AddSubBrand"
                   className="flex items-center text-white nestitemhover"
                 >
                   Add Sub Brand
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/manageSubBrand"
+                    to="/staff/manageSubBrand"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Sub Brand
@@ -457,14 +453,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/addstock"
+                  to="/staff/addstock"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Unit
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/managestockunit"
+                    to="/staff/managestockunit"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Unit
@@ -474,14 +470,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className=" ">
                 <Link
-                  to="/admin/createproduct"
+                  to="/staff/createproduct"
                   className="flex items-center text-white nestitemhover"
                 >
                   Add Product
                 </Link>
                 <li className=" ">
                   <Link
-                    to="/admin/manageproduct"
+                    to="/staff/manageproduct"
                     className="flex items-center text-white nestitemhover"
                   >
                     Manage Product
@@ -512,7 +508,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4">
               <li>
                 <Link
-                  to="/admin/CreateSalesEstimate"
+                  to="/staff/CreateSalesEstimate"
                   className="flex items-center text-white nestitemhover "
                 >
                   Create Sales Estimate
@@ -520,7 +516,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li>
                 <Link
-                  to="/admin/ManageSalesEstimate"
+                  to="/staff/ManageSalesEstimate"
                   className="flex items-center text-white nestitemhover "
                 >
                   Sales Estimate List
@@ -528,7 +524,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/invoice"
+                  to="/staff/invoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   create Sales Invoice
@@ -537,7 +533,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/ManageSalesInvoice"
+                  to=""
                   className="flex items-center text-white nestitemhover"
                 >
                   Sales Invoice List
@@ -546,7 +542,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/deliverychallan"
+                  to="/staff/deliverychallan"
                   className="flex items-center text-white nestitemhover"
                 >
                   create Delivery challan
@@ -554,7 +550,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/manageDeliveryChallan"
+                  to=""
                   className="flex items-center text-white nestitemhover"
                 >
                   Delivery Challan List
@@ -563,7 +559,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/salesreturn"
+                  to="/staff/salesreturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Create Sales Return
@@ -572,7 +568,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/manageSalesReturn"
+                  to=""
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Sales Return
@@ -581,7 +577,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/pos"
+                  to="/staff/pos"
                   className="flex items-center text-white nestitemhover"
                 >
                   Point of Sales
@@ -599,7 +595,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/payin"
+                  to="/staff/payin"
                   className="flex items-center text-white nestitemhover"
                 >
                   Pay In
@@ -608,7 +604,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/ManagePayIn"
+                  to="/staff/ManagePayIn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Pay In
@@ -617,7 +613,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to="/admin/TotalSalesList"
+                  to="/staff/TotalSalesList"
                   className="flex items-center text-white nestitemhover"
                 >
                   Total Sales List
@@ -632,14 +628,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <button
             onClick={() => {
               setPurches(!showPurches);
-              togglePurches();
+              togglePurches(); // Call togglePurches function
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="flex ">
               {" "}
               <FaShoppingCart className="mr-2 mt-2" />
-              Purchase
+              Purchas
             </span>
             {!showPurches ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
@@ -647,7 +643,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4">
               <li className=" ">
                 <Link
-                  to="/admin/CreatePurchaseOrder"
+                  to="/staff/CreatePurchaseOrder"
                   className="flex items-center text-white nestitemhover "
                 >
                   Create Purchase Order
@@ -655,7 +651,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/ManagePurchaseOrder"
+                  to="/staff/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Order List
@@ -663,7 +659,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/purchesInvoice"
+                  to="/staff/purchesInvoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Invoice
@@ -671,7 +667,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/staff/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Invoice List
@@ -679,7 +675,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/purchasereturn"
+                  to="/staff/purchasereturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Return
@@ -687,7 +683,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/staff/dashboard/manageperformance"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Return List
@@ -695,7 +691,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>{" "}
               <li className="">
                 <Link
-                  to="/admin/PayOut"
+                  to="/staff/PayOut"
                   className="flex items-center text-white nestitemhover"
                 >
                   Pay Out
@@ -703,7 +699,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>{" "}
               <li className="">
                 <Link
-                  to="/admin/ManagePayOut"
+                  to="/staff/ManagePayOut"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Pay out
@@ -722,42 +718,23 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
-            <span className="flex">
-              {" "}
-              <FaMoneyBillWave className="mr-2 mt-2" />
-              cash
-            </span>
+            <span className="flex">     <FaMoneyBillWave className="mr-2 mt-2" />cash</span>
             {!showCash ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showCash && (
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/cash"
+                  to="/staff/cash"
                   className="flex items-center text-white nestitemhover "
                 >
                   Manage cash
                 </Link>
               </li>
-              {/* <li className="">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  Manage Cash
-                </Link>
-              </li> 
+            
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  Add Bank
-                </Link>
-              </li>{" "} */}
-              <li className="">
-                <Link
-                  to="/admin/addbank"
+                  to="/staff/addbank"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Bank
@@ -775,11 +752,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             }}
             className="w-full sidebar-list-item flex items-center innerlist sidebar-list-item justify-between focus:outline-none text-white p-1"
           >
-            <span className="flex">
-              {" "}
-              <MdAccountBalance className="mr-2 mt-2" />
-              Account
-            </span>
+            <span className="flex">  <MdAccountBalance className="mr-2 mt-2" />Account</span>
             {!showAccount ? <IoIosArrowForward /> : <IoIosArrowDown />}
           </button>
           {showAccount && (
@@ -801,7 +774,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/bankTobankTransfer"
+                        to="/staff/bankTobankTransfer"
                         className="flex items-center  text-white nesteditem p-1"
                       >
                         Bank to Bank Transfer
@@ -809,7 +782,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/CashDepositIntoBank"
+                        to="/staff/CashDepositIntoBank"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Cash Deposit Into Bank
@@ -817,7 +790,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/cashwithdrawfrombank"
+                        to="/staff/cashwithdrawfrombank"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Cash Withdraw from Bank
@@ -838,7 +811,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/AddExpense"
+                        to="/staff/AddExpense"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Expenses
@@ -846,10 +819,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageExpense"
+                        to="/staff/ManageExpense"
                         className="flex items-center text-white nesteditem p-1"
                       >
-                        Expenses List
+                        Expenses List 
                       </Link>
                     </li>
                   </ul>
@@ -869,7 +842,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <ul className="ml-4">
                     <li>
                       <Link
-                        to="/admin/AddIncome"
+                        to="/staff/AddIncome"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Add Income
@@ -877,7 +850,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
-                        to="/admin/ManageIncome"
+                        to="/staff/ManageIncome"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Manage Income
@@ -890,169 +863,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           )}
         </li>
 
-        {/* Settings */}
-        <li className="px-1 py-2 ">
-          <button
-            onClick={() => {
-              setSettings(!showSettings);
-              toggleSettings();
-            }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
-          >
-            <span className="flex">
-              {" "}
-              <MdSettings className="mr-2 mt-2" />
-              Settings
-            </span>
-            {!showSettings ? <IoIosArrowForward /> : <IoIosArrowDown />}
-          </button>
-          {showSettings && (
-            <ul className="ml-4   ">
-              <li className=" ">
-                <Link
-                  to="/admin/companyregistration"
-                  className="flex items-center text-white nestitemhover "
-                >
-                  Business Details
-                </Link>
-              </li>
-              <li className="">
-                <Link
-                  to="/admin/createstaff"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  Add Staff
-                </Link>
-              </li>
-              <li className="">
-                <Link
-                  to="/admin/manage-staff"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  Manage Staff
-                </Link>
-              </li>
-              <li className="">
-                <Link
-                  to="/admin/profileupdate"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  Change Profile
-                </Link>
-              </li>
-              <li className="">
-                <Link
-                  to="/admin/dashboard/manageperformance"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  Account Settings
-                </Link>
-              </li>
-            </ul>
-          )}
-        </li>
-
-        {/* subscription */}
-
-        <li className="px-1 py-2 ">
-          <button
-            onClick={() => {
-              setSubscription(!showSubscription);
-              toggleSettings();
-            }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
-          >
-            <span className="flex">
-              {" "}
-              <MdSubscriptions className="mr-2 mt-2" />
-              Subscription
-            </span>
-            {!showSubscription ? <IoIosArrowForward /> : <IoIosArrowDown />}
-          </button>
-          {showSubscription && (
-            <ul className="ml-4   ">
-              <li className="nestedlist innerlist sidebar-list-item ">
-                <Link
-                  to="/admin/current-plan"
-                  className="flex items-center text-white nestitemhover "
-                >
-                  Current Plan
-                </Link>
-              </li>
-              <li className="nestedlist innerlist sidebar-list-item">
-                <Link
-                  to="/admin/plan-history"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  history
-                </Link>
-              </li>
-            </ul>
-          )}
-        </li>
-        {/* Reports */}
-        <li className="px-1 py-2 ">
-          <button
-            onClick={() => {
-              setReports(!showReports);
-              toggleReports();
-            }}
-            className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
-          >
-            <span className="flex">
-              <GoRepoTemplate className="mr-2 mt-2" />
-              Reports
-            </span>
-            {!showReports ? <IoIosArrowForward /> : <IoIosArrowDown />}
-          </button>
-          {showReports && (
-            <ul className="ml-4   ">
-              <li className="nestedlist innerlist sidebar-list-item ">
-                <Link
-                  to="/admin/stockreports"
-                  className="flex items-center text-white nestitemhover "
-                >
-                  Stock Reports
-                </Link>
-              </li>
-              <li className="nestedlist innerlist sidebar-list-item ">
-                <Link
-                  to="/admin/salesreports"
-                  className="flex items-center text-white nestitemhover "
-                >
-                  Sales Reports
-                </Link>
-              </li>
-              <li className="nestedlist text-nowrap innerlist sidebar-list-item">
-                <Link
-                  to="/admin/purchesreports"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  Purches Reports
-                </Link>
-              </li>
-              <li className="nestedlist innerlist sidebar-list-item">
-                <Link
-                  to="/admin/DayBook"
-                  className="flex items-center text-white nestitemhover"
-                >
-                  Day Book
-                </Link>
-              </li>
-            </ul>
-          )}
-        </li>
+       
         {/* Logout */}
         <li
           className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   "
           onClick={closeSidebar}
         >
-          <Link to="/admin/log-out" class="">
-            <span className="flex">
-              {" "}
-              <MdExitToApp className="mr-2 mt-2" />
-              Log Out
-            </span>
+          <Link to="/staff/log-out" class="">
+            <span className="flex"> <MdExitToApp className="mr-2 mt-2" />Log Out</span>
           </Link>
         </li>
       </ul>
@@ -1060,4 +878,4 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   );
 }
 
-export default Sidebar;
+export default StaffSidebar;

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Header from "../pages/admin/Header";
 import Home from "../pages/admin/Home";
-import Sidebar from "../pages/admin/Sidebar";
+
 import Test from "./Test";
 import { useAuth } from "../context/Auth";
 import CreateSupplier from "../pages/admin/parties/CreateSupplier.js";
@@ -53,40 +53,16 @@ import TotalSalesList from "../pages/admin/sales/TotalSalesList.js";
 import PurchesReturn from "../pages/admin/purchase/PurchesReturn.js";
 import CompanyRegistration from "../auth/CompanyRegistration.js";
 import PurchesInvoice from "../pages/admin/purchase/PurchesInvoice.js";
-
 import CreatePurchaseOrder from "../pages/admin/purchase/CreatePurchaseOrder.js";
 import PayOut from "../pages/admin/purchase/PayOut.js";
 import ManagePayOut from "../pages/admin/purchase/ManagePayOut.js";
 import Logout from "../pages/admin/Logout.js";
 import ProfileUpdate from "../auth/ProfileUpdate.js";
-import CurrentPlan from "../pages/admin/subscription/CurrentPlan.jsx";
-import PlanHistory from "../pages/admin/subscription/PlanHistory.jsx";
+import CurrentPlan from "../pages/admin/subscription/CurrentPlan.jsx"
+import PlanHistory from "../pages/admin/subscription/PlanHistory.jsx"
 import ViewStaff from "../pages/admin/settings/ViewStaff.jsx";
-import StockReports from "../pages/admin/Reports/StockReports.js";
-
-import ProductQtyWise from "../pages/admin/Reports/ProductQtyWise.js";
-import ProductValueWise from "../pages/admin/Reports/ProductValueWise.js";
-import ManufacturerW from "../pages/admin/Reports/ManufacturerW.js";
-
-import ManageDeliveryChallan from "../pages/admin/sales/ManageDeliveryChallan.js";
-import ManageSalesReturn from "../pages/admin/sales/ManageSalesReturn.js";
-import SalesReports from "../pages/admin/Reports/SalesReports.js";
-import CustomerLedger from "../pages/admin/Reports/CustomerLedger.js";
-import SalesRegister from "../pages/admin/Reports/SalesRegister.js";
-import InvoicewiseSales from "../pages/admin/Reports/InvoicewiseSales.js";
-import CustomerWiseReport from "../pages/admin/Reports/CustomerWiseReport.js";
-import PointOfSalesReport from "../pages/admin/Reports/PointOfSalesReport.js";
-import ManuFactureWiseReport from "../pages/admin/Reports/ManuFactureWiseReport.js";
-import DayBook from "../pages/admin/Reports/DayBook.js";
-import PurchesReport from "../pages/admin/Reports/PurchesReport/PurchesReport.js";
-import InvoiceWisePurches from "../pages/admin/Reports/PurchesReport/InvoiceWisePurches.js";
-import SupplierWiseReport from "../pages/admin/Reports/PurchesReport/SupplierWiseReport.js";
-import ManufactureWiseReport from "../pages/admin/Reports/PurchesReport/ManufactureWiseReport.js";
-import PurchesRegister from "../pages/admin/Reports/PurchesReport/PurchesRegister.js";
-import SupplierLedger from "../pages/admin/Reports/PurchesReport/SupplierLedger.js";
-import ManagePurchaseOrder from "../pages/admin/purchase/ManagePurchaseOrder.js";
-import ManageSalesInvoice from "../pages/admin/sales/ManageSalesInvoice.js";
-const AdminRoute = () => {
+import StaffSidebar from './../pages/staff/StaffSidebar';
+const StaffRoute = () => {
   const [auth] = useAuth();
 
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -98,7 +74,7 @@ const AdminRoute = () => {
   return (
     <div className="grid-container">
       <Header OpenSidebar={OpenSidebar} />
-      <Sidebar
+      <StaffSidebar
         openSidebarToggle={openSidebarToggle}
         OpenSidebar={OpenSidebar}
       />
@@ -141,7 +117,7 @@ const AdminRoute = () => {
 
         {/* staff  */}
         <Route path="createstaff" element={<CreateStaff />} />
-        <Route path="manage-staff" element={<ViewStaff />} />
+        <Route path ="manage-staff" element={<ViewStaff/>}/>
         <Route path="addbank" element={<AddBank />} />
         <Route path="purchesInvoice" element={<PurchesInvoice />} />
 
@@ -152,9 +128,6 @@ const AdminRoute = () => {
 
         {/* <Route path="invoice" element={<Invoice />} /> */}
         <Route path="invoice" element={<CreateSalesInvoice />} />
-        <Route path="ManageSalesInvoice" element={<ManageSalesInvoice />} />
-
-
         <Route path="pos" element={<Pos />} />
         <Route path="payin" element={<PayIn />} />
         <Route path="ManagePayIn" element={<ManagePayIn />} />
@@ -164,13 +137,7 @@ const AdminRoute = () => {
 
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />
-        <Route
-          path="manageDeliveryChallan"
-          element={<ManageDeliveryChallan />}
-        />
-
         <Route path="salesreturn" element={<CreateSalesReturn />} />
-        <Route path="manageSalesReturn" element={<ManageSalesReturn />} />
 
         <Route path="ManageProduct" element={<Manageproducts />} />
         <Route path="CreateSalesEstimate" element={<CreateSalesEstimate />} />
@@ -180,49 +147,16 @@ const AdminRoute = () => {
         <Route path="AddIncome" element={<AddIncome />} />
         <Route path="ManageIncome" element={<ManageIncome />} />
         <Route path="CreatePurchaseOrder" element={<CreatePurchaseOrder />} />
-        <Route path="ManagePurchaseOrder" element={<ManagePurchaseOrder />} />
-
-        
         <Route path="PayOut" element={<PayOut />} />
         <Route path="ManagePayOut" element={<ManagePayOut />} />
         <Route path="profileupdate" element={<ProfileUpdate />} />
-         {/* StockReports */}
-        {/* StockReports */}
-        <Route path="stockreports" element={<StockReports />} />
-        <Route path="ManufacturerW" element={<ManufacturerW />} />
-        <Route path="ProductQtyWise" element={<ProductQtyWise />} />
-        <Route path="ProductValueWise" element={<ProductValueWise />} />
 
-        {/* Sales Report */}
-        <Route path="salesreports" element={<SalesReports />} />
-
-
-        <Route path="InvoicewiseSales" element={<InvoicewiseSales />} />
-        <Route path="CustomerWiseReport" element={<CustomerWiseReport />} />
-
-        <Route path="CustomerLedger" element={<CustomerLedger />} />
-        <Route path="SalesRegister" element={<SalesRegister />} />
-        <Route path="ManufacturerWise" element={<ManuFactureWiseReport />} />
-        <Route path="PointOfSalesReport" element={<PointOfSalesReport />} />
-        <Route path="DayBook" element={<DayBook />} />
-
-        {/*PurchesReport  */}
-        <Route path="purchesreports" element={<PurchesReport />} />
-        <Route path="Invoicewisepurches" element={<InvoiceWisePurches />} />
-        <Route path="supplierWiseReport" element={<SupplierWiseReport />} />
-        <Route path="ManufacturerWisereport" element={<ManufactureWiseReport />} />
-        <Route path="purchesregister" element={<PurchesRegister />} />
-        <Route path="supplierledger" element={<SupplierLedger />} />
-        
-        
         <Route path="current-plan" element={<CurrentPlan/>}/>
         <Route path ="plan-history" element={<PlanHistory/>}/>
-        <Route path="current-plan" element={<CurrentPlan />} />
-        <Route path="plan-history" element={<PlanHistory />} />
         <Route path="log-out" element={<Logout />} />
       </Routes>
     </div>
   );
 };
 
-export default AdminRoute;
+export default StaffRoute;

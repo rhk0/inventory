@@ -1,9 +1,9 @@
 import React from 'react';
 
-const SalesRegister = () => {
+const PurchesRegister = () => {
   return (
     <div className="p-5 bg-blue-900 text-black responsive-container">
-      <h1 className="text-2xl font-bold mb-5">Sales register</h1>
+      <h1 className="text-3xl font-bold mb-5 text-center">𝙿𝚞𝚛𝚌𝚑𝚎𝚜 𝚛𝚎𝚐𝚒𝚜𝚝𝚎𝚛</h1>
       {/* Sales Summary Table */}
       <table className="table-auto w-full border border-black">
         <thead>
@@ -64,4 +64,5 @@ const SalesRegister = () => {
   );
 };
 
-export default SalesRegister;
+export default PurchesRegister;
+
