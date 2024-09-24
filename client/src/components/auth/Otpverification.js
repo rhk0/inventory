@@ -1,9 +1,10 @@
+
 import React, { useState } from "react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for react-toastify
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const OtpVerification = () => {
   const navigate = useNavigate();
@@ -35,60 +36,56 @@ const OtpVerification = () => {
       if (response.data.success) {
         toast.success(response.data.message);
         
-        setTimeout(()=>{
+        setTimeout(() => {
           navigate("/");
-        },[3000])
-       
+        }, 3000);  // Wait for 3 seconds before navigating
+        
         clearData();
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error("Error verifying OTP:", error);
-      // toast.error("An error occurred while verifying the OTP.");
+      toast.error("Error verifying OTP");
     }
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center text-white font-montserrat">
-      <div className="p-5 shadow-2xl rounded-lg login-card p-8 w-full max-w-md flex flex-col">
-        <div className=" mb-12">
-          <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-4 bg-white bg-opacity-10">
-            <div className="text-white text-6xl">
-              <FaUserAlt />
-            </div>
+    <div className="bg-gray-100 min-h-screen flex justify-center items-center font-montserrat">
+      <div className="p-6 shadow-lg rounded-lg bg-white w-full max-w-md">
+        {/* Logo and title */}
+        <div className="text-center mb-6">
+          <div className="logo rounded-full w-16 h-16 mx-auto bg-blue-500 text-white flex justify-center items-center">
+            <FaUserAlt className="text-3xl" />
           </div>
+          <h2 className="text-2xl font-bold mt-4">OTP Verification</h2>
         </div>
-        <form className="form" onSubmit={handleSubmit}>
-          <div className="form-field username relative mb-6">
-            <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-              <FaUserAlt />
-            </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative">
+            <FaUserAlt className="absolute left-3 top-3 text-gray-500" />
             <input
               type="text"
-              placeholder="Email"
               name="email"
-              className="pl-12 pr-4 py-2 w-full bg-opacity-10 border text-black border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+              placeholder="Email"
               value={formData.email}
               onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <div className="form-field password relative mb-6">
-            <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-              <FaLock />
-            </div>
+          <div className="relative">
+            <FaLock className="absolute left-3 top-3 text-gray-500" />
             <input
               type="text"
-              placeholder="OTP"
               name="otp"
-              className="pl-12 pr-4 py-2 w-full text-black bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+              placeholder="OTP"
               value={formData.otp}
               onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <button
             type="submit"
-            className="bg-green-500 text-white py-3 px-4 w-full rounded-3xl uppercase font-bold mb-8 focus:outline-none transition duration-300 hover:bg-red-600 hover:text-white"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 focus:outline-none transition duration-300"
           >
             Verify
           </button>

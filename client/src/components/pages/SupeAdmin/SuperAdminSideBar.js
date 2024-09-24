@@ -86,6 +86,15 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             <span>Subscription Plans</span>
           </li>
         </Link>
+        <Link to="/superadmin/contactList" className="w-full">
+          <li
+            className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
+            onClick={closeSidebar}
+          >
+            <MdPeople className="mr-2" />
+            <span>Contact List</span>
+          </li>
+        </Link>
         <Link to="/superadmin/all-users" className="w-full">
           <li
             className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
@@ -150,7 +159,7 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
             <span> Revenue Analytics</span>
           </li>
         </Link>
-        <Link to="/superadmin/log-out" className="w-full">
+        <Link to="/superadmin/log-out"  className="w-full">
           <li
             className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
             onClick={closeSidebar}

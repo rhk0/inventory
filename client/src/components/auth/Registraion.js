@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import axios from "axios";
-import Loader from "../loader/Loader.js";
+import Loader from "../loader/LoaderHand.css";
 import {
   FaUserAlt,
   FaLock,
@@ -15,7 +16,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 const Registration = () => {
   const [loading, setLoading] = useState(false);
-  const nevigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     businessName: "",
     userName: "",
@@ -33,6 +34,7 @@ const Registration = () => {
       [name]: value,
     });
   };
+
   const clearData = () => {
     setFormData({
       businessName: "",
@@ -44,160 +46,173 @@ const Registration = () => {
       businessType: "",
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { businessName, userName, address, contact, email, password, businessType } = formData;
+    if (!businessName) return toast.error("Business Name is required");
+    if (!userName) return toast.error("Username is required");
+    if (!address) return toast.error("Address is required");
+    if (!contact) return toast.error("Contact is required");
+    if (!email) return toast.error("Email is required");
+    if (!password) return toast.error("Password is required");
+    if (!businessType) return toast.error("Business Type is required");
+
     setLoading(true);
-    // Handle form submission logic here
-    const response = await axios.post("/api/v1/auth/register", formData);
-    if (response.data.success) {
-      toast.success(response.data.message);
-      clearData();
-      setTimeout(()=>{
-        nevigate("/otpverification");
-      },[3000])
-      return;
-    } else {
-      toast.error(response.data.message);
-      return;
+
+    try {
+      const response = await axios.post("/api/v1/auth/register", formData);
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        clearData();
+        setTimeout(() => {
+          navigate("/otpverification");
+        }, 3000);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data.message || "An error occurred. Please try again.");
+      } else if (error.request) {
+        toast.error("No response from the server. Please check your network connection.");
+      } else {
+        toast.error("An error occurred while sending the request.");
+      }
+    } finally {
+      setLoading(false);
     }
-  
-    setLoading(false); // Set loading to false after the request
-  
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-500 to-yellow-500 h-screen flex justify-center items-center  font-montserrat">
-       {loading ? (
-          <Loader />
-        ) : (
-      <div className="p-5 hover:scale-95 shadow-2xl rounded-lg  login-card p-8 w-full max-w-md flex flex-col">
-        <div className=" mb-12">
-          <div className="logo rounded-full w-32 h-32 flex justify-center items-center mx-auto mb-0 bg-white bg-opacity-10">
-            <div className="text-white text-6xl">
-              <FaUserAlt />
+    <div className="bg-gray-100 min-h-screen flex justify-center items-center font-montserrat px-2 mt-2" data-aos="fade-left">
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="p-6 shadow-lg rounded-lg bg-white w-full max-w-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+          {/* Logo and title */}
+          <div className="text-center mb-6" data-aos="zoom-in-down" data-aos-delay="300">
+            <div className="logo rounded-full w-16 h-16 mx-auto bg-blue-500 text-white flex justify-center items-center">
+              <FaUserAlt className="text-3xl" />
             </div>
+            <h2 className="text-2xl font-bold mt-4" data-aos="zoom-in-down" data-aos-delay="400">Sign up</h2>
           </div>
-        </div>
-        <div>
-          <form  className="form">
-            <div className="form-field relative mb-4">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaBuilding />
-              </div>
+          {/* Form */}
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="relative" data-aos="zoom-in-down" data-aos-delay="500">
+              <FaBuilding className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="text"
                 name="businessName"
                 placeholder="Business Name"
                 value={formData.businessName}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="form-field relative mb-4">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaUserAlt />
-              </div>
+            <div className="relative" data-aos="zoom-in-down" data-aos-delay="600">
+              <FaUserAlt className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="text"
                 name="userName"
                 placeholder="Username"
                 value={formData.userName}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 text-black border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="form-field relative mb-4">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaAddressCard />
-              </div>
+            <div className="relative" data-aos="zoom-in-down" data-aos-delay="700"> 
+              <FaAddressCard className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="text"
                 name="address"
                 placeholder="Address"
                 value={formData.address}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 text-black border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="form-field relative mb-4">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaPhone />
-              </div>
+            <div className="relative" data-aos="zoom-in-down" data-aos-delay="800">
+              <FaPhone className="absolute left-3 top-3 text-gray-500" />
               <input
-                type="text"
+                type="number"
                 name="contact"
                 placeholder="Contact"
                 value={formData.contact}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="form-field relative mb-4">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaEnvelope />
-              </div>
+            <div className="relative" data-aos="zoom-in-down" data-aos-delay="900">
+              <FaEnvelope className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 text-black border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="form-field relative mb-4">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaLock />
-              </div>
+            <div className="relative" data-aos="zoom-in-down" data-aos-delay="1000">
+              <FaLock className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border text-black border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="form-field relative mb-4">
-              <div className="icon absolute bg-white text-black left-0 top-0 flex justify-center items-center w-10 h-10 rounded-full">
-                <FaBuilding />
-              </div>
+            <div className="relative" data-aos="zoom-in-down" data-aos-delay="1100">
+              <FaBuilding className="absolute left-3 top-3 text-gray-500" />
               <input
                 type="text"
                 name="businessType"
                 placeholder="Business Type"
                 value={formData.businessType}
                 onChange={handleChange}
-                className="pl-12 pr-4 py-2 w-full bg-opacity-10 border border-white rounded-lg focus:bg-white focus:text-black focus:outline-none transition duration-300"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
-            <button
-              type="submit"
-              onClick={handleSubmit}
-              className="bg-green-500 text-white py-3 px-4 w-full rounded-full uppercase font-bold mb-8 focus:outline-none transition duration-300 hover:bg-red-600 hover:text-white"
-            >
-              Sign Up
-            </button>
+            <div className="flex justify-center space-x-4 mt-6" data-aos="zoom-in-down">
+              {/* Cancel Button */}
+              <button
+                type="button"
+                className="py-3 px-4 rounded-md bg-gradient-to-r from-red-400 to-blue-500 hover:from-teal-500 hover:to-orange-500"
+                onClick={() => navigate('/')}
+              >
+                Cancel
+              </button>
+              {/* Sign Up Button */}
+              <button data-aos="zoom-in-down"
+                type="submit"
+                className="py-3 px-4 rounded-md bg-gradient-to-r from-teal-400 to-blue-500 hover:from-pink-500 hover:to-orange-500"
+                disabled={loading}
+              >
+                Sign Up
+              </button>
+            </div>
           </form>
+          <div className="text-center mt-4">
+            <p className="text-sm">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="text-white-500 hover:underline border border-white px-4 py-2 rounded-md bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-teal-500 hover:to-blue-500"
+              >
+                Login
+              </Link>
+            </p>
+          </div>
         </div>
-        <div className="text-white text-center">
-          Already have an account?{" "}
-          <Link
-            to="/"
-            className="font-bold hover:text-yellow-400 text-blue-500"
-          >
-            Login
-          </Link>
-        </div>
-      </div>
-          
-        )}
+      )}
       <ToastContainer />
     </div>
   );
 };
 
 export default Registration;
-
-

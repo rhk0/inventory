@@ -6,7 +6,7 @@ import Loader from "../loader/Loader.js";
 
 export const SuperAdminProtectedRoute = () => {
   const [ok, setOk] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); 
   const [auth] = useAuth();
   const navigate = useNavigate();
 
@@ -14,29 +14,36 @@ export const SuperAdminProtectedRoute = () => {
     const authCheck = async () => {
       try {
         const response = await axios.get("/api/v1/auth/superAdmin-auth");
-        // console.log(response, "res");
-
         if (response.data.ok) {
-          setOk(true);
+          setOk(true);  
         } else {
-          setOk(false); // Redirect to a "No Access" page or another appropriate action
+          setOk(false); 
         }
       } catch (error) {
         console.error("Error during authentication check", error);
-        <div>Access Denied</div>; // Redirect to an error page or another appropriate action
-      } finally {
-        setLoading(false);
+        setOk(false);  
       }
     };
 
     if (auth?.AccessToken) {
-      authCheck();
+      authCheck(); 
     } else {
-      setOk(false);
-    
+      setOk(false); 
     }
-  }, [auth, navigate]);
 
+   
+    const loaderTimeout = setTimeout(() => {
+      setLoading(false);
+      if (!ok) {
+        navigate("/access-denied"); 
+      }
+    }, 2000);
+
+    
+    return () => clearTimeout(loaderTimeout);
+  }, [auth, navigate, ok]);
+
+ 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -45,6 +52,7 @@ export const SuperAdminProtectedRoute = () => {
     );
   }
 
-  return ok ? <Outlet /> : navigate("/");
+  return ok ? <Outlet /> : null; // Render child components or nothing if not authenticated
+
 };
 

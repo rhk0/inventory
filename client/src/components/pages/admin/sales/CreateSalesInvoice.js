@@ -100,7 +100,10 @@ const CreateSalesInvoice = () => {
 
   const handleBankDetailsChange = (e) => {
     const { name, value } = e.target;
-    setBankDetails((prev) => ({ ...prev, [name]: value }));
+    setBankDetails((prev) => ({
+      ...prev,
+      [name]: value, // Update the corresponding field in bankDetails
+    }));
   };
 
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -117,8 +120,9 @@ const CreateSalesInvoice = () => {
   };
 
   const handleSubPaymentTypeChange = (e) => {
-    const { name, value } = e.target;
-    setBankDetails((prev) => ({ ...prev, [name]: value }));
+    const { value } = e.target;
+    setSubPaymentType(value); // Set the subPaymentType state
+    setBankDetails((prev) => ({ ...prev, selectBankType: value })); // Update bankDetails
   };
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
@@ -563,7 +567,7 @@ const CreateSalesInvoice = () => {
         gstType,
         netAmount: netAmount.toFixed(2),
         cash: paymentMethod === "Cash" ? cashDetails : {},
-        bank: paymentMethod === "Bank" ? bankDetails : {},
+        bank: paymentMethod === "Bank" ? bankDetails : {}, // Ensure bank details are sent correctly
       };
       const response = await axios.post(
         "/api/v1/salesInvoiceRoute/createsalesinvoice",
@@ -1610,7 +1614,7 @@ const CreateSalesInvoice = () => {
                   <>
                     <label className="font-bold">Select Bank</label>
                     <select
-                      name="selectBankType"
+                      name="bank"
                       value={bankDetails.bank}
                       onChange={handleBankDetailsChange}
                       className="border p-2 mb-2 w-full"
@@ -1621,7 +1625,7 @@ const CreateSalesInvoice = () => {
                     </select>
                     <select
                       name="subPaymentType"
-                      value={bankDetails.selectBankType}
+                      value={subPaymentType}
                       onChange={handleSubPaymentTypeChange}
                       className="border p-2 mb-2 w-full"
                     >
@@ -1633,7 +1637,7 @@ const CreateSalesInvoice = () => {
                       <>
                         <label className="font-bold">Transaction Date</label>
                         <input
-                          type="text"
+                          type="date"
                           name="transactionDate"
                           value={bankDetails.transactionDate}
                           onChange={handleBankDetailsChange}
@@ -1653,7 +1657,7 @@ const CreateSalesInvoice = () => {
                       <>
                         <label className="font-bold">Transaction Date</label>
                         <input
-                          type="text"
+                          type="date"
                           name="transactionDate"
                           value={bankDetails.transactionDate}
                           onChange={handleBankDetailsChange}

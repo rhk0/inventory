@@ -1,12 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/Auth.js";
 import axios from "axios";
+import Loader from "../loader/LoaderHand.js";
 
-import Loader from './../loader/LoaderHand';
-
-export const AdminProtectedRoute = () => {
+export const StaffProtectedRoute = () => {
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(true); 
   const [auth] = useAuth();
@@ -15,7 +13,7 @@ export const AdminProtectedRoute = () => {
   useEffect(() => {
     const authCheck = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/Admin-auth");
+        const response = await axios.get("/api/v1/auth/staff-auth");
         if (response.data.ok) {
           setOk(true);  
         } else {
@@ -54,7 +52,7 @@ export const AdminProtectedRoute = () => {
     );
   }
 
-  return ok ? <Outlet /> : null; // Render child components or nothing if not authenticated
+  return ok ? <Outlet /> : null; 
+
 };
 
-export default AdminProtectedRoute;
