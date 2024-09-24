@@ -63,7 +63,7 @@ const ManageSalesInvoice = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
+      const response = await axios.get("/api/v1/customer/manageCustomer");
       console.log(response, "ldsf");
       setCustomers(response.data.data);
     } catch (error) {

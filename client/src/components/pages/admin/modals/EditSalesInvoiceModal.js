@@ -340,7 +340,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
+        const response = await axios.get("/api/v1/product/manageproduct");
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
