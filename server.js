@@ -30,18 +30,18 @@ import paymentRoute from "./routes/paymentRoute.js";
 import subscriptionRoute from "./routes/subsCriptionRoute.js";
 // subscription cron
 import subscription from "./middleware/subscriptionMiddleware.js";
-import superAdminRoutes from "./routes/superAdminRoutes.js"
-import salesReturnRoute from "./routes/salesReturnRoute.js"
-import pointOfSaleRoute from "./routes/pointOfSaleRoute.js"
-import payInRoute from "./routes/payInRoute.js"
-import purchesOrderRoute from "./routes/purchesOrderRoute.js"
-import purchaseInvoiceRoute from "./routes/purchaseInvoiceRoute.js"
-import purchesReturnRoute from "./routes/purchesReturnRoute.js"
-import PayOutRoute from "./routes/PayOutRoute.js"
+import superAdminRoutes from "./routes/superAdminRoutes.js";
+import salesReturnRoute from "./routes/salesReturnRoute.js";
+import pointOfSaleRoute from "./routes/pointOfSaleRoute.js";
+import payInRoute from "./routes/payInRoute.js";
+import purchesOrderRoute from "./routes/purchesOrderRoute.js";
+import purchaseInvoiceRoute from "./routes/purchaseInvoiceRoute.js";
+import purchesReturnRoute from "./routes/purchesReturnRoute.js";
+import PayOutRoute from "./routes/PayOutRoute.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import demoContactRoute from "./routes/demoContactRoute.js"
+import demoContactRoute from "./routes/demoContactRoute.js";
 dotenv.config();
 
 //calling the db funciton
@@ -83,9 +83,7 @@ app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/subscription", subscriptionRoute);
 app.use("/uploads", express.static("uploads"));
 
-app.use("/api/v1/company",comanyRoute)
-app.use("/api/v1/auth",authRoute)
-app.use("/api/v1/auth",supplierRoute)
+
 app.use("/api/v1/auth",customerRoute)
 app.use("/api/v1/auth",transportRoute)
 app.use("/api/v1/auth",vendorRoute)
@@ -116,10 +114,10 @@ app.use("/api/v1/PayOutRoute",PayOutRoute)
 //change 
 
 //subscription routes 
- app.use("/api/v1/payment",paymentRoute)
+
 app.use("/api/v1/subscription",subscriptionRoute)
 
-app.use("/uploads",express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 //super admin routes
 
 app.use("/api/v1/super", superAdminRoutes);

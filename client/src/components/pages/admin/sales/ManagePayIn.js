@@ -38,10 +38,15 @@ const ManagePayIn = () => {
   };
 
   // Open edit modal
+  // Open edit modal
   const openEditModal = (payIn) => {
     setSelectedPayIn(payIn);
+    setNarration(payIn.Narration || ""); // Set Narration from selectedPayIn
+    // setTotalReceivedAmount(payIn.total || 0); // Set total from selectedPayIn
     setEditModalIsOpen(true);
   };
+
+  // Calculate or fetch the total received amount
 
   // Close modals
   const closeModals = () => {
@@ -50,28 +55,42 @@ const ManagePayIn = () => {
     setSelectedPayIn(null);
   };
   const calculateTotalReceivedAmount = () => {
-    return selectedPayIn.rows.reduce((total, row) => {
-      const receivedAmount = parseFloat(row.receivedAmount) || 0; // Ensure it's a number
-      return total + receivedAmount;
-    }, 0);
+    if (selectedPayIn) {
+      return selectedPayIn.rows.reduce((total, row) => {
+        const receivedAmount = parseFloat(row.recievedAmount) || 0;
+        return total + receivedAmount;
+      }, 0);
+    }
+    return 0;
   };
 
   // Save changes after edit
-  const handleSaveEdit = async () => {
-    try {
-      await axios.put(
-        `/api/v1/payments/updatePayIn/${selectedPayIn._id}`,
-        selectedPayIn
-      );
-      toast.success("Record updated successfully");
-      closeModals();
-      const response = await axios.get("/api/v1/payInRoute/getAllpayin");
-      setPayIns(response.data.payInList);
-    } catch (error) {
-      toast.error("Error updating record");
-      console.error("Error updating record:", error);
-    }
-  };
+  // Save changes and close the modal without submitting the form
+// Save changes after edit
+const handleSaveEdit = async () => {
+  try {
+    // Include Narration and total in the selectedPayIn object before saving
+    const updatedPayIn = {
+      ...selectedPayIn,
+      Narration: Narration,
+      total: calculateTotalReceivedAmount(),
+    };
+    
+    await axios.put(`/api/v1/payInRoute/updatepayin/${updatedPayIn._id}`, updatedPayIn);
+    toast.success("Record updated successfully");
+    
+    // Close the modal
+    closeModals();
+    
+    // Refresh the data list
+    const response = await axios.get("/api/v1/payInRoute/getAllpayin");
+    setPayIns(response.data.payInList);
+  } catch (error) {
+    toast.error("Error updating record");
+    console.error("Error updating record:", error);
+  }
+};
+
 
   // Handle input change for PayIn
   const handleInputChange = (field, value) => {
@@ -207,38 +226,37 @@ const ManagePayIn = () => {
       </div>
 
       {/* View Modal */}
-      {/* Edit Modal */}
       {selectedPayIn && (
         <Modal
-          isOpen={editModalIsOpen}
+          isOpen={viewModalIsOpen}
           onRequestClose={closeModals}
-          contentLabel="Edit Pay In"
-          className="modal overflow-y-auto"
+          contentLabel="View Pay In"
+          className="modal"
           style={{
             content: {
-              width: "100%",
+              width: "80%",
+              height: "80%",
               maxWidth: "800px",
               margin: "auto",
               padding: "20px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
               borderRadius: "8px",
-              backgroundColor: "#fff",
+              backgroundColor: "#fff", // Set the background color to black (or any color you prefer)
             },
             overlay: {
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: dim the background overlay
             },
           }}
         >
-          <h2 className="text-2xl text-center font-bold">Edit Pay In</h2>
-
+          <h2 className="text-2xl text-center font-bold">Pay In Details</h2>
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div className="flex flex-col">
               <label className="text-md font-bold text-black">Date</label>
               <input
                 type="date"
-                value={selectedPayIn.date.split("T")[0]}
-                onChange={(e) => handleInputChange("date", e.target.value)}
-                className="mt-1 p-1 border border-gray-500 rounded-md"
+                value={selectedPayIn.date}
+                readOnly
+                className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
               />
             </div>
             <div className="flex flex-col">
@@ -248,8 +266,8 @@ const ManagePayIn = () => {
               <input
                 type="text"
                 value={selectedPayIn.receiptNo}
-                onChange={(e) => handleInputChange("receiptNo", e.target.value)}
-                className="mt-1 p-1 border border-gray-500 rounded-md"
+                readOnly
+                className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
               />
             </div>
             <div className="flex flex-col">
@@ -259,214 +277,78 @@ const ManagePayIn = () => {
               <input
                 type="text"
                 value={selectedPayIn.selectCustomer}
-                onChange={(e) =>
-                  handleInputChange("selectCustomer", e.target.value)
-                }
-                className="mt-1 p-1 border border-gray-500 rounded-md"
+                readOnly
+                className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
               />
             </div>
             <div className="flex flex-col">
               <label className="text-md font-bold text-black">
                 Receipt Mode
               </label>
-              <select
-                value={receiptMode}
-                onChange={(e) => {
-                  setReceiptMode(e.target.value);
-                  handleInputChange("receiptMode", e.target.value); // Update selectedPayIn state
-                }}
+              <input
+                type="text"
+                value={selectedPayIn.receiptMode}
+                readOnly
                 className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
-              >
-                <option value="Cash">Cash</option>
-                <option value="Bank">Bank</option>
-              </select>
+              />
             </div>
-            {receiptMode === "Bank" && (
-              <>
-                <div className="flex flex-col">
-                  <label className="text-md font-bold text-black">
-                    Select Bank
-                  </label>
-                  <select
-                    value={selectBank}
-                    onChange={(e) => {
-                      setSelectBank(e.target.value);
-                      handleInputChange("selectBank", e.target.value); // Update selectedPayIn state
-                    }}
-                    className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
-                  >
-                    <option value="Bank1">Bank1</option>
-                    <option value="Bank2">Bank2</option>
-                  </select>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-md font-bold text-black">Method</label>
-                  <select
-                    value={method}
-                    onChange={(e) => {
-                      setMethod(e.target.value);
-                      handleInputChange("method", e.target.value); // Update selectedPayIn state
-                    }}
-                    className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
-                  >
-                    <option value="Online">Online</option>
-                    <option value="Cheque">Cheque</option>
-                  </select>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-md font-bold text-black">
-                    Transaction / Cheque No
-                  </label>
-                  <input
-                    type="text"
-                    value={transactionCheckNo}
-                    onChange={(e) => {
-                      setTransactionCheckNo(e.target.value);
-                      handleInputChange("transactionCheckNo", e.target.value); // Update selectedPayIn state
-                    }}
-                    className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
-                  />
-                </div>
-              </>
-            )}
           </div>
 
-          {/* Edit Bill Details */}
-          <div className="mt-6">
-            <h3 className="text-xl font-bold text-center">Edit Bill Details</h3>
-            <div className="mt-4">
-              <table className="min-w-full text-black border-collapse border border-gray-300">
-                <thead>
-                  <tr>
-                    <th className="px-4 py-2 border text-black">#</th>
-                    <th className="px-4 py-2 border text-black">Bill No</th>
-                    <th className="px-4 py-2 border text-black">Bill Amount</th>
-                    <th className="px-4 py-2 border text-black">
-                      Received Amount
-                    </th>
-                    <th className="px-4 py-2 border text-black">Balance</th>
-                    <th className="px-4 py-2 border text-black">Action</th>
+          <h3 className="text-lg font-bold mt-4">Bill Details:</h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-black mt-2">
+              <thead>
+                <tr className="bg-green-600">
+                  <th className="px-4 py-2 border text-black">Bill No.</th>
+                  <th className="px-4 py-2 border text-black">Bill Amount</th>
+                  <th className="px-4 py-2 border text-black">
+                    Received Amount
+                  </th>
+                  <th className="px-4 py-2 border text-black">
+                    Balance Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedPayIn.rows.map((row) => (
+                  <tr className="text-black" key={row._id}>
+                    <td className="px-4 py-2 border">{row.billNo}</td>
+                    <td className="px-4 py-2 border">{row.billAmount}</td>
+                    <td className="px-4 py-2 border">{row.recievedAmount}</td>
+                    <td className="px-4 py-2 border">{row.balanceAmount}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {selectedPayIn.rows.map((row, index) => (
-                    <tr key={index}>
-                      <td className="px-4 py-2 border text-black">
-                        {index + 1}
-                      </td>
-                      <td className="px-4 py-2 border text-black">
-                        <input
-                          type="text"
-                          value={row.billNo}
-                          onChange={(e) =>
-                            handleBillRowChange(index, "billNo", e.target.value)
-                          }
-                          className="p-1 w-full border border-gray-500 rounded-md"
-                        />
-                      </td>
-                      <td className="px-4 py-2 border text-black">
-                        <input
-                          type="number"
-                          value={row.billAmount}
-                          onChange={(e) =>
-                            handleBillRowChange(
-                              index,
-                              "billAmount",
-                              e.target.value
-                            )
-                          }
-                          className="p-1 w-full border border-gray-500 rounded-md"
-                        />
-                      </td>
-                      <td className="px-4 py-2 border text-black">
-                        <input
-                          type="number"
-                          value={row.receivedAmount}
-                          onChange={(e) =>
-                            handleBillRowChange(
-                              index,
-                              "receivedAmount",
-                              e.target.value
-                            )
-                          }
-                          className="p-1 w-full border border-gray-500 rounded-md"
-                        />
-                      </td>
-                      <td className="px-4 py-2 border text-black">
-                        <input
-                          type="number"
-                          value={row.balanceAmount}
-                          onChange={(e) =>
-                            handleBillRowChange(
-                              index,
-                              "balanceAmount",
-                              e.target.value
-                            )
-                          }
-                          className="p-1 w-full border border-gray-500 rounded-md"
-                        />
-                      </td>
-                      <td className="px-4 py-2 border text-black">
-                        <button
-                          onClick={() => removeRow(index)}
-                          className="bg-red-500 text-white p-1 rounded-md"
-                        >
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="text-center mt-4">
-                <button
-                  onClick={addRow}
-                  className="bg-green-500 text-white p-2 rounded-md"
-                >
-                  Add Row
-                </button>
-              </div>
-            </div>
-            <div className="flex flex-row justify-end items-center gap-5 mt-3 mb-3 lg:mr-28">
-              <label className="text-2xl font-bold text-black mr-2">
+                ))}
+              </tbody>
+            </table>
+            <div className="flex flex-row justify-end items-center gap-5  mt-10">
+              <label className="text-1xl font-bold text-black mr-2">
                 Total
               </label>
               <input
                 type="text"
-                value={calculateTotalReceivedAmount()} // Show calculated total
+                value={selectedPayIn.total}
                 readOnly
                 className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
               />
             </div>
-
-            {/* Narration */}
-            <div className="flex flex-row justify-left gap-5">
-              <label className="text-2xl font-bold text-black mr-2">
+            <div className="flex flex-row justify-left gap-5 mt-10">
+              <label className="text-2xl font-bold text-black mr-2 mt-3">
                 Narration
               </label>
               <textarea
+                type="text"
                 className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
-                value={Narration}
-                onChange={(e) => setNarration(e.target.value)}
+                value={selectedPayIn.Narration}
               />
             </div>
           </div>
 
-          {/* Save and Close Buttons */}
-          <div className="text-center mt-6">
-            <button
-              onClick={handleSaveEdit}
-              className="bg-blue-500 text-white p-2 rounded-md mr-4"
-            >
-              Save
-            </button>
-            <button
-              onClick={closeModals}
-              className="bg-gray-500 text-white p-2 rounded-md"
-            >
-              Cancel
-            </button>
-          </div>
+          <button
+            onClick={closeModals}
+            className="mt-4 p-2 bg-blue-500 text-black rounded"
+          >
+            Close
+          </button>
         </Modal>
       )}
 
@@ -623,11 +505,11 @@ const ManagePayIn = () => {
                       <td className="px-4 py-2 border text-black">
                         <input
                           type="number"
-                          value={row.receivedAmount}
+                          value={row.recievedAmount}
                           onChange={(e) =>
                             handleBillRowChange(
                               index,
-                              "receivedAmount",
+                              "recievedAmount",
                               e.target.value
                             )
                           }

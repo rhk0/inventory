@@ -120,7 +120,7 @@ const ManageSalesEstimate = () => {
                   "Due Date",
                   "GST Type",
                   "Product Code",
-                 
+
                   "UOM",
                   "MRP",
                   "QTY",
@@ -138,8 +138,8 @@ const ManageSalesEstimate = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEstimates.length > 0 ? (
-                filteredEstimates.map((estimate, index) => (
+              {filteredEstimates?.length > 0 ? (
+                filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}
                     className="hover:bg-gray-200 transition-all"
@@ -175,7 +175,7 @@ const ManageSalesEstimate = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.itemCode || "-"}
                     </td>
-                   
+
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.units || "-"}
                     </td>
@@ -186,9 +186,7 @@ const ManageSalesEstimate = () => {
                       {estimate.rows?.[0]?.qty || "-"}
                     </td>
 
-                    {/* <td className="border border-gray-300 p-2 text-center">
-            {estimate.rows?.[0]?.rate || "-"}
-          </td> */}
+  
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.totalValue || "-"}
                     </td>

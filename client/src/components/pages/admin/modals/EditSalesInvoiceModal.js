@@ -133,11 +133,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   };
 
   const handleBankChange = (e) => {
-    setBank({ ...bank, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setBank({ ...bank, [name]: value });
   };
 
   const handleSubPaymentTypeChange = (e) => {
-    setSubPaymentType(e.target.value);
+    setBank({ ...bank, selectBankType: e.target.value });
   };
 
   const handleChange = (e) => {
@@ -314,17 +315,10 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
     // If we're handling discount changes, ensure we set the right type
     if (field === "discountpercent") {
-      if (customerType === "Retailer") {
-        updatedRows[index].retailDiscount = value;
-      } else if (customerType === "Wholesaler") {
-        updatedRows[index].wholesalerDiscount = value;
-      }
+      updatedRows[index].wholesalerDiscount = value;
     } else if (field === "discountRS") {
-      if (customerType === "Retailer") {
-        updatedRows[index].retailDiscountRS = value;
-      } else if (customerType === "Wholesaler") {
-        updatedRows[index].wholesalerDiscountRS = value;
-      }
+      updatedRows[index].retailDiscountRS = value;
+      updatedRows[index].wholesalerDiscountRS = value;
     } else {
       // For any other field, update it directly
       updatedRows[index] = {
@@ -414,11 +408,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           selectedProduct.wholesalerDiscount) /
         100
       ).toFixed(2), // Calculate wholesaler discount in ₹
-      retailDiscount: selectedProduct.retailDiscount || 0, // Map retail discount
-      retailDiscountRS: (
-        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100
-      ).toFixed(2), // Calculate retail discount in ₹
+
       taxable: taxableValue.toFixed(2), // Map taxable value
 
       // GST rates
@@ -473,14 +463,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           units: row.units,
           mrp: row.mrp,
 
-          discountpercent:
-            customerType === "Wholesaler"
-              ? row.wholesalerDiscount
-              : row.retailDiscount,
-          discountRS:
-            customerType === "Wholesaler"
-              ? row.wholesalerDiscountRS
-              : row.retailDiscountRS,
+          discountpercent: row.wholesalerDiscount,
+          discountRS: row.wholesalerDiscountRS,
 
           taxable: row.taxable,
           cgstpercent: row.cgstpercent,
@@ -497,6 +481,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         grossAmount,
         GstAmount,
         netAmount,
+        cash,
+        bank,
       };
 
       const response = await axios.put(
@@ -925,73 +911,34 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                   ) : (
                     // If discountpercent and discountRS do not exist, show these input boxes
                     <>
-                      {customerType === "Wholesaler" && (
-                        <div className="p-1 flex gap-1">
-                          <input
-                            type="text"
-                            value={row.wholesalerDiscount}
-                            onChange={(e) =>
-                              handleRowChange(
-                                index,
-                                "discountpercent",
-                                e.target.value
-                              )
-                            }
-                            className="w-full flex-grow"
-                            style={{
-                              minWidth: "20px",
-                              flexBasis: "20px",
-                              flexShrink: 1,
-                            }}
-                          />
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          value={row.wholesalerDiscount}
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              "discountpercent",
+                              e.target.value
+                            )
+                          }
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: "20px",
+                            flexBasis: "20px",
+                            flexShrink: 1,
+                          }}
+                        />
 
-                          <input
-                            type="text"
-                            value={row.wholesalerDiscountRS}
-                            onChange={(e) =>
-                              handleRowChange(
-                                index,
-                                "discountRS",
-                                e.target.value
-                              )
-                            }
-                            className="w-full"
-                          />
-                        </div>
-                      )}
-                      {customerType === "Retailer" && (
-                        <div className="p-1 flex gap-1">
-                          <input
-                            type="text"
-                            value={row.retailDiscount}
-                            onChange={(e) =>
-                              handleRowChange(
-                                index,
-                                "discountpercent",
-                                e.target.value
-                              )
-                            }
-                            className="w-full flex-grow"
-                            style={{
-                              minWidth: "20px",
-                              flexBasis: "20px",
-                              flexShrink: 1,
-                            }}
-                          />
-                          <input
-                            type="text"
-                            value={row.retailDiscountRS}
-                            onChange={(e) =>
-                              handleRowChange(
-                                index,
-                                "discountRS",
-                                e.target.value
-                              )
-                            }
-                            className="w-full"
-                          />
-                        </div>
-                      )}
+                        <input
+                          type="text"
+                          value={row.wholesalerDiscountRS}
+                          onChange={(e) =>
+                            handleRowChange(index, "discountRS", e.target.value)
+                          }
+                          className="w-full"
+                        />
+                      </div>
                     </>
                   )}
                 </td>
@@ -1365,16 +1312,17 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                   {paymentMethod === "Bank" && (
                     <>
                       <label className="font-bold">Select Bank</label>
-                      <select
+                      <input
                         name="selectBankType"
                         className="border p-2 mb-2 w-full"
                         value={bank.bank}
                         onChange={handleBankChange}
+                        readOnly
                       >
-                        <option value="">Select Bank</option>
+                        {/* <option value="">Select Bank</option>
                         <option value="Bank 1">Bank 1</option>
-                        <option value="Bank 2">Bank 2</option>
-                      </select>
+                        <option value="Bank 2">Bank 2</option> */}
+                      </input>
                       <select
                         name="subPaymentType"
                         className="border p-2 mb-2 w-full"
@@ -1392,6 +1340,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                             type="text"
                             name="transactionDate"
                             className="border p-2 mb-2 w-full"
+                            value={bank.transactionDate}
                             onChange={handleBankChange}
                           />
                           <label className="font-bold">Transaction No</label>
