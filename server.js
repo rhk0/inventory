@@ -87,21 +87,21 @@ app.use("/uploads", express.static("uploads"));
 
 app.use("/api/v1/company",comanyRoute)
 app.use("/api/v1/auth",authRoute)
-app.use("/api/v1/auth",supplierRoute)
-app.use("/api/v1/auth",customerRoute)
-app.use("/api/v1/auth",transportRoute)
-app.use("/api/v1/auth",vendorRoute)
-app.use("/api/v1/auth",bankRoute)
-app.use("/api/v1/auth",cashRoute);
-app.use("/api/v1/auth",bankTransctionRoute)
-app.use("/api/v1/auth",InventoryCategoryRoute)
-app.use("/api/v1/auth",InventorySubCategoryRoute)
-app.use("/api/v1/auth",InventoryBrandRoute)
-app.use("/api/v1/auth",InventroySubBrandRoute)
-app.use("/api/v1/auth",InventoryStockUnitRoute)
-app.use("/api/v1/auth",InventoryCreateBranchesRoute)
-app.use("/api/v1/auth",productRoute)
-app.use("/api/v1/auth",manufacturerRoute)
+// app.use("/api/v1/auth",supplierRoute)
+// app.use("/api/v1/auth",customerRoute)
+// app.use("/api/v1/auth",transportRoute)
+// app.use("/api/v1/auth",vendorRoute)
+// app.use("/api/v1/auth",bankRoute)
+// app.use("/api/v1/auth",cashRoute);
+// app.use("/api/v1/auth",bankTransctionRoute)
+// app.use("/api/v1/auth",InventoryCategoryRoute)
+// app.use("/api/v1/auth",InventorySubCategoryRoute)
+// app.use("/api/v1/auth",InventoryBrandRoute)
+// app.use("/api/v1/auth",InventroySubBrandRoute)
+// app.use("/api/v1/auth",InventoryStockUnitRoute)
+// app.use("/api/v1/auth",InventoryCreateBranchesRoute)
+// app.use("/api/v1/auth",productRoute)
+// app.use("/api/v1/auth",manufacturerRoute)
 app.use("/api/v1/salesQuationRoute",salesQuationRoute)
 app.use("/api/v1/salesInvoiceRoute",salesInvoiceRoute)
 app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
@@ -140,3 +140,4 @@ app.listen(process.env.PORT, async () => {
     `Server is Running on port ${process.env.PORT} in ${process.env.DEV_MODE} mode`
   );
 });
+// changes in server 
