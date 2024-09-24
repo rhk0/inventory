@@ -52,48 +52,71 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-
-
-app.use("/api/v1/contact",demoContactRoute)
-app.use("/api/v1/payment", paymentRoute);
-app.use("/api/v1/subscription", subscriptionRoute);
-app.use("/uploads", express.static("uploads"));
-
 app.use("/api/v1/company", comanyRoute);
 app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/supplier", supplierRoute);
-app.use("/api/v1/customer", customerRoute);
-app.use("/api/v1/transport", transportRoute);
-app.use("/api/v1/vendor", vendorRoute);
-app.use("/api/v1/bank", bankRoute);
-app.use("/api/v1/cash", cashRoute);
-app.use("/api/v1/bankTransaction", bankTransctionRoute);
-app.use("/api/v1/inventoryCategory", InventoryCategoryRoute);
-app.use("/api/v1/inventorySubCategory", InventorySubCategoryRoute);
-app.use("/api/v1/inventoryBrand", InventoryBrandRoute);
-app.use("/api/v1/inventorySubBrand", InventroySubBrandRoute);
-app.use("/api/v1/invenotryStock", InventoryStockUnitRoute);
-app.use("/api/v1/inentoryBranch", InventoryCreateBranchesRoute);
-app.use("/api/v1/product", productRoute);
-app.use("/api/v1/manufacturer", manufacturerRoute);
-app.use("/api/v1/salesQuotation", salesQuationRoute);
+app.use("/api/v1/auth", supplierRoute);
+app.use("/api/v1/auth", customerRoute);
+app.use("/api/v1/auth", transportRoute);
+app.use("/api/v1/auth", vendorRoute);
+// app.use("/api/v1/auth",staffRoute)
+app.use("/api/v1/auth", bankRoute);
+app.use("/api/v1/auth", cashRoute);
+app.use("/api/v1/auth", bankTransctionRoute);
+app.use("/api/v1/auth", InventoryCategoryRoute);
+app.use("/api/v1/auth", InventorySubCategoryRoute);
+app.use("/api/v1/auth", InventoryBrandRoute);
+app.use("/api/v1/auth", InventroySubBrandRoute);
+app.use("/api/v1/auth", InventoryStockUnitRoute);
+app.use("/api/v1/auth", InventoryCreateBranchesRoute);
+app.use("/api/v1/auth", productRoute);
+app.use("/api/v1/auth", manufacturerRoute);
+app.use("/api/v1/salesQuationRoute", salesQuationRoute);
 app.use("/api/v1/salesInvoiceRoute", salesInvoiceRoute);
 app.use("/api/v1/deliveryChallanRoute", deliveryChallanRoute);
 app.use("/api/v1/salesEstimateRoute", salesEstimateRoute);
 app.use("/api/v1/expensesRoute", expensesRoute);
 app.use("/api/v1/incomeRoute", incomeRoute);
-app.use("/api/v1/salesReturnRoute", salesReturnRoute);
-app.use("/api/v1/pointOfSaleRoute", pointOfSaleRoute);
-app.use("/api/v1/payInRoute", payInRoute);
-app.use("/api/v1/purchesOrderRoute", purchesOrderRoute);
-app.use("/api/v1/purchaseInvoiceRoute", purchaseInvoiceRoute);
-app.use("/api/v1/purchesReturnRoute", purchesReturnRoute);
-app.use("/api/v1/PayOutRoute", PayOutRoute);
+app.use("/api/v1/contact",demoContactRoute)
+//change dheeru
 //change
 
+//subscription routes
+app.use("/api/v1/payment", paymentRoute);
+app.use("/api/v1/subscription", subscriptionRoute);
+app.use("/uploads", express.static("uploads"));
+
+
+app.use("/api/v1/auth",customerRoute)
+app.use("/api/v1/auth",transportRoute)
+app.use("/api/v1/auth",vendorRoute)
+app.use("/api/v1/auth",bankRoute)
+app.use("/api/v1/auth",cashRoute);
+app.use("/api/v1/auth",bankTransctionRoute)
+app.use("/api/v1/auth",InventoryCategoryRoute)
+app.use("/api/v1/auth",InventorySubCategoryRoute)
+app.use("/api/v1/auth",InventoryBrandRoute)
+app.use("/api/v1/auth",InventroySubBrandRoute)
+app.use("/api/v1/auth",InventoryStockUnitRoute)
+app.use("/api/v1/auth",InventoryCreateBranchesRoute)
+app.use("/api/v1/auth",productRoute)
+app.use("/api/v1/auth",manufacturerRoute)
+app.use("/api/v1/salesQuationRoute",salesQuationRoute)
+app.use("/api/v1/salesInvoiceRoute",salesInvoiceRoute)
+app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
+app.use("/api/v1/salesEstimateRoute",salesEstimateRoute)
+app.use("/api/v1/expensesRoute",expensesRoute)
+app.use("/api/v1/incomeRoute",incomeRoute)
+app.use("/api/v1/salesReturnRoute",salesReturnRoute)
+app.use("/api/v1/pointOfSaleRoute",pointOfSaleRoute)
+app.use("/api/v1/payInRoute",payInRoute)
+app.use("/api/v1/purchesOrderRoute",purchesOrderRoute)
+app.use("/api/v1/purchaseInvoiceRoute",purchaseInvoiceRoute)
+app.use("/api/v1/purchesReturnRoute",purchesReturnRoute)
+app.use("/api/v1/PayOutRoute",PayOutRoute)
+//change 
+
 //subscription routes 
-app.use("/api/v1/payment",paymentRoute)
+
 app.use("/api/v1/subscription",subscriptionRoute)
 
 app.use("/uploads", express.static("uploads"));
@@ -115,4 +138,3 @@ app.listen(process.env.PORT, async () => {
     `Server is Running on port ${process.env.PORT} in ${process.env.DEV_MODE} mode`
   );
 });
-// changes in server

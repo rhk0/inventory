@@ -133,11 +133,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   };
 
   const handleBankChange = (e) => {
-    setBank({ ...bank, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setBank({ ...bank, [name]: value });
   };
 
   const handleSubPaymentTypeChange = (e) => {
-    setSubPaymentType(e.target.value);
+    setBank({ ...bank, selectBankType: e.target.value });
   };
 
   const handleChange = (e) => {
@@ -340,7 +341,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("/api/v1/product/manageproduct");
+        const response = await axios.get("/api/v1/auth/manageproduct");
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
@@ -1311,16 +1312,17 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                   {paymentMethod === "Bank" && (
                     <>
                       <label className="font-bold">Select Bank</label>
-                      <select
+                      <input
                         name="selectBankType"
                         className="border p-2 mb-2 w-full"
                         value={bank.bank}
                         onChange={handleBankChange}
+                        readOnly
                       >
-                        <option value="">Select Bank</option>
+                        {/* <option value="">Select Bank</option>
                         <option value="Bank 1">Bank 1</option>
-                        <option value="Bank 2">Bank 2</option>
-                      </select>
+                        <option value="Bank 2">Bank 2</option> */}
+                      </input>
                       <select
                         name="subPaymentType"
                         className="border p-2 mb-2 w-full"
