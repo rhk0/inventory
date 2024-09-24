@@ -47,7 +47,7 @@ const salesInvoiceSchema = new mongoose.Schema(
       Balance: { type: Number },
     },
     bank: {
-      bank: { type: Number },
+      bank: { type: String },
       selectBankType: { type: String },
       transactionDate: { type: String },
       chequeNo: { type: Number },

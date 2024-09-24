@@ -49,6 +49,7 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
       if (estimate.bank) {
         setBank({
+          bank: estimate.bank.bank || "",
           selectBankType: estimate.bank.selectBankType || "",
           transactionDate: estimate.bank.transactionDate || "",
           chequeNo: estimate.bank.chequeNo || "",
@@ -60,6 +61,7 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         });
       } else {
         setBank({
+          bank: "",
           selectBankType: "",
           transactionDate: "",
           chequeNo: "",
@@ -108,10 +110,10 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
     }
   }, [estimate, getCustomerName]);
 
-  console.log(cash, "dskfj");
-
-  const openViewModal = (suppliers) => {
+  const openViewModal = () => {
     setViewModal(true);
+    setPaymentMethod(""); // Resetting payment method on opening the modal
+    setSubPaymentType(""); // Resetting subPaymentType on opening the modal
   };
 
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -119,6 +121,7 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
+    setSubPaymentType(""); // Resetting subPaymentType when payment method changes
   };
 
   const handleSubPaymentTypeChange = (e) => {
@@ -632,197 +635,200 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
             />
           </div>
         </div>
-        <div className="mt-8 flex justify-center">
-          <button
-            type="button"
-            onClick={() => openViewModal()}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Add Receipt
-          </button>
+      </div>
+      <div className="mt-8 flex justify-center">
+        <button
+          type="button"
+          onClick={openViewModal}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          View Receipt
+        </button>
 
-          <Modal
-            isOpen={viewModal}
-            onRequestClose={closeModal}
-            contentLabel="View Item Modal"
-            style={{
-              content: {
-                width: "80%",
-                height: "90%",
-                maxWidth: "800px",
-                margin: "auto",
-                padding: "5px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                borderRadius: "5px",
-              },
-            }}
-          >
-            <div className="bg-white p-4 rounded shadow-lg w-full relative">
-              <button
-                onClick={closeModal}
-                className="absolute text-3xl top-2 right-2 text-gray-500 hover:text-gray-700"
-              >
-                &times;
-              </button>
-              <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
+        <Modal
+          isOpen={viewModal}
+          onRequestClose={closeModal}
+          contentLabel="View Item Modal"
+          style={{
+            content: {
+              width: "80%",
+              height: "90%",
+              maxWidth: "800px",
+              margin: "auto",
+              padding: "5px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "5px",
+            },
+          }}
+        >
+          <div className="bg-white p-4 rounded shadow-lg w-full relative">
+            <button
+              onClick={closeModal}
+              className="absolute text-3xl top-2 right-2 text-gray-500 hover:text-gray-700"
+            >
+              &times;
+            </button>
+            <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
 
-              {/* Radio buttons to select payment method */}
-              <div className="gap-5 mb-4">
-                <label className="font-bold">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="Cash"
-                    onChange={handlePaymentMethodChange}
-                  />
-                  Cash
-                </label>
-                <label className="ml-5 font-bold">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="Bank"
-                    onChange={handlePaymentMethodChange}
-                  />
-                  Bank
-                </label>
-              </div>
-
-              {/* Conditional form rendering based on payment method */}
-              <form>
-                {paymentMethod === "Cash" && (
-                  <>
-                    <label className="font-bold">Amount</label>
-                    <input
-                      type="text"
-                      name="Amount"
-                      value={cash.Amount}
-                      className="border p-2 mb-2 w-full"
-                    />
-                    <label className="font-bold">Advance</label>
-                    <input
-                      type="text"
-                      name="Advance"
-                      value={cash.Advance}
-                      className="border p-2 mb-2 w-full"
-                    />
-                    <label className="font-bold">Received</label>
-                    <input
-                      type="text"
-                      name="Received"
-                      value={cash.Received}
-                      className="border p-2 mb-2 w-full"
-                    />
-                    <label className="font-bold">Balance</label>
-                    <input
-                      type="text"
-                      name="Balance"
-                      value={cash.Balance}
-                      className="border p-2 mb-2 w-full"
-                    />
-                  </>
-                )}
-
-                {paymentMethod === "Bank" && (
-                  <>
-                    <label className="font-bold">Select Bank</label>
-                    <select
-                      name="selectBankType"
-                      className="border p-2 mb-2 w-full"
-                      value={bank.selectBankType}
-                    >
-                      <option value="">Select Bank</option>
-                      <option value="Bank 1">Bank 1</option>
-                      <option value="Bank 2">Bank 2</option>
-                    </select>
-                    <select
-                      name="subPaymentType"
-                      className="border p-2 mb-2 w-full"
-                      onChange={handleSubPaymentTypeChange}
-                    >
-                      <option value="">Select Payment Type</option>
-                      <option value="Online">Online</option>
-                      <option value="Cheque">Cheque</option>
-                    </select>
-                    {subPaymentType === "Online" && (
-                      <>
-                        <label className="font-bold">Transaction Date</label>
-                        <input
-                          type="text"
-                          name="transactionDate"
-                          className="border p-2 mb-2 w-full"
-                        />
-                        <label className="font-bold">Transaction No</label>
-                        <input
-                          type="text"
-                          name="transactionNo"
-                          value={bank.transactionNo}
-                          className="border p-2 mb-2 w-full"
-                        />
-                      </>
-                    )}
-                    {subPaymentType === "Cheque" && (
-                      <>
-                        <label className="font-bold">Transaction Date</label>
-                        <input
-                          type="text"
-                          name="transactionDate"
-                          value={bank.transactionDate}
-                          className="border p-2 mb-2 w-full"
-                        />
-                        <label className="font-bold">Cheque No</label>
-                        <input
-                          type="text"
-                          name="chequeNo"
-                          value={bank.chequeNo}
-                          className="border p-2 mb-2 w-full"
-                        />
-                      </>
-                    )}
-                    <label className="font-bold">Amount</label>
-                    <input
-                      type="text"
-                      name="Amount"
-                      value={bank.Amount}
-                      className="border p-2 mb-2 w-full"
-                    />
-                    <label className="font-bold">Advance</label>
-                    <input
-                      type="text"
-                      name="Advance"
-                      value={bank.Advance}
-                      className="border p-2 mb-2 w-full"
-                    />
-                    <label className="font-bold">Received</label>
-                    <input
-                      type="text"
-                      name="Received"
-                      value={bank.Received}
-                      className="border p-2 mb-2 w-full"
-                    />{" "}
-                    <label className="font-bold">Balance</label>
-                    <input
-                      type="text"
-                      name="Balance"
-                      value={bank.Balance}
-                      className="border p-2 mb-2 w-full"
-                    />{" "}
-                  </>
-                )}
-
-                {/* Submit button */}
-                <div className="flex justify-center items-center">
-                  <button
-                    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 h-10"
-                    onClick={closeModal}
-                  >
-                    save
-                  </button>
-                </div>
-              </form>
+            {/* Radio buttons to select payment method */}
+            <div className="gap-5 mb-4">
+              <label className="font-bold">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="Cash"
+                  onChange={handlePaymentMethodChange}
+                  checked={paymentMethod === "Cash"}
+                />
+                Cash
+              </label>
+              <label className="ml-5 font-bold">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="Bank"
+                  onChange={handlePaymentMethodChange}
+                  checked={paymentMethod === "Bank"}
+                />
+                Bank
+              </label>
             </div>
-          </Modal>
-        </div>
+
+            {/* Conditional form rendering based on payment method */}
+            <form>
+              {paymentMethod === "Cash" && (
+                <>
+                  <label className="font-bold">Amount</label>
+                  <input
+                    type="text"
+                    name="Amount"
+                    value={cash.Amount}
+                    className="border p-2 mb-2 w-full"
+                    readOnly
+                  />
+                  <label className="font-bold">Advance</label>
+                  <input
+                    type="text"
+                    name="Advance"
+                    value={cash.Advance}
+                    className="border p-2 mb-2 w-full"
+                    readOnly
+                  />
+                  <label className="font-bold">Received</label>
+                  <input
+                    type="text"
+                    name="Received"
+                    value={cash.Received}
+                    className="border p-2 mb-2 w-full"
+                    readOnly
+                  />
+                  <label className="font-bold">Balance</label>
+                  <input
+                    type="text"
+                    name="Balance"
+                    value={cash.Balance}
+                    className="border p-2 mb-2 w-full"
+                    readOnly
+                  />
+                </>
+              )}
+
+              {paymentMethod === "Bank" && (
+                <>
+                  <label className="font-bold">Select Bank</label>
+                  <input
+                    name="bank"
+                    className="border p-2 mb-2 w-full"
+                    value={bank.bank}
+                    readOnly
+                  ></input>
+                  <label className="font-bold">Payment Type</label>
+                  <input
+                    name="selectBankType"
+                    className="border p-2 mb-2 w-full"
+                    onChange={handleSubPaymentTypeChange}
+                    value={bank.selectBankType}
+                    readOnly
+                  ></input>
+
+                  {bank.selectBankType === "Online" && (
+                    <>
+                      <label className="font-bold">Transaction Date</label>
+                      <input
+                        type="text"
+                        name="transactionDate"
+                        value={bank.transactionDate}
+                        className="border p-2 mb-2 w-full"
+                        readOnly
+                      />
+                      <label className="font-bold">Transaction No</label>
+                      <input
+                        type="text"
+                        name="transactionNo"
+                        value={bank.transactionNo}
+                        className="border p-2 mb-2 w-full"
+                        readOnly
+                      />
+                    </>
+                  )}
+                  {bank.selectBankType === "Cheque" && (
+                    <>
+                      <label className="font-bold">Transaction Date</label>
+                      <input
+                        type="text"
+                        name="transactionDate"
+                        value={bank.transactionDate}
+                        className="border p-2 mb-2 w-full"
+                        readOnly
+                      />
+                      <label className="font-bold">Cheque No</label>
+                      <input
+                        type="text"
+                        name="chequeNo"
+                        value={bank.chequeNo}
+                        className="border p-2 mb-2 w-full"
+                        readOnly
+                      />
+                    </>
+                  )}
+
+                  <label className="font-bold">Amount</label>
+                  <input
+                    type="text"
+                    name="Amount"
+                    value={bank.Amount}
+                    className="border p-2 mb-2 w-full"
+                    readOnly
+                  />
+                  <label className="font-bold">Advance</label>
+                  <input
+                    type="text"
+                    name="Advance"
+                    value={bank.Advance}
+                    className="border p-2 mb-2 w-full"
+                    readOnly
+                  />
+                  <label className="font-bold">Received</label>
+                  <input
+                    type="text"
+                    name="Received"
+                    value={bank.Received}
+                    className="border p-2 mb-2 w-full"
+                    readOnly
+                  />
+                  <label className="font-bold">Balance</label>
+                  <input
+                    type="text"
+                    name="Balance"
+                    value={bank.Balance}
+                    className="border p-2 mb-2 w-full"
+                    readOnly
+                  />
+                </>
+              )}
+            </form>
+          </div>
+        </Modal>
       </div>
     </div>
   );

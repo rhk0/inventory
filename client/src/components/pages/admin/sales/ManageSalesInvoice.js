@@ -147,7 +147,7 @@ const ManageSalesInvoice = () => {
             </thead>
             <tbody>
               {filteredEstimates.length > 0 ? (
-                filteredEstimates.map((estimate, index) => (
+                filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}
                     className="hover:bg-gray-200 transition-all"
