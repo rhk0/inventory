@@ -11,6 +11,10 @@ const PayIn = () => {
   const [Narration, setNarration] = useState("");
   const [receiptMode, setReceiptMode] = useState("Cash");
 
+  const [selectBank, setSelectBank] = useState("");
+  const [method, setMethod] = useState("");
+  const [transactionCheckNo, setTransactionCheckNo] = useState("Cash");
+
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -73,6 +77,9 @@ const PayIn = () => {
       receiptNo,
       selectCustomer: selectedCustomer,
       receiptMode,
+      selectBank,
+      method,
+      transactionCheckNo,
       rows: rows.map((row) => ({
         billNo: row.billNo,
         billAmount: row.billAmount,
@@ -128,12 +135,10 @@ const PayIn = () => {
 
   return (
     <div
-      style={{ backgroundColor: "#41B3A2" }}
+      style={{ backgroundColor: "#FFFFFF" }}
       className="responsive-container bg-pink-200 p-4 rounded-md w-full mx-auto"
     >
-      <h1 className="text-center text-3xl bg-gray-500 text-white cucolor">
-        Pay In
-      </h1>
+      <h1 className="text-center text-3xl  text-black mb-5 cucolor">Pay In</h1>
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col">
           <label className="text-md font-bold text-black">Date</label>
@@ -164,7 +169,7 @@ const PayIn = () => {
           >
             <option value="">Select Customer</option>
             {customer.map((customer) => (
-              <option key={customer._id} value={customer._id}>
+              <option key={customer._id} value={customer.name}>
                 {customer.name}
               </option>
             ))}
@@ -189,14 +194,24 @@ const PayIn = () => {
               <label className="text-md font-bold text-black">
                 Select Bank
               </label>
-              <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
+              <select
+                value={selectBank}
+                onChange={(e) => setSelectBank(e.target.value)}
+                className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+              >
+                <option value="">Select Bank</option>
                 <option value="Bank1">Bank1</option>
                 <option value="Bank2">Bank2</option>
               </select>
             </div>
             <div className="flex flex-col">
               <label className="text-md font-bold text-black">Method</label>
-              <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
+              <select
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+              >
+                <option value="">Select Method</option>
                 <option value="Online">Online</option>
                 <option value="Cheque">Cheque</option>
               </select>
@@ -207,6 +222,8 @@ const PayIn = () => {
               </label>
               <input
                 type="text"
+                value={transactionCheckNo}
+                onChange={(e) => setTransactionCheckNo(e.target.value)}
                 className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
               />
             </div>
