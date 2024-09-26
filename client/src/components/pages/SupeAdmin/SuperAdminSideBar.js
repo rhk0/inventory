@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowForward, IoMdClose } from "react-icons/io";
 import { MdDashboard, MdSubscriptions, MdPeople, MdPerson, MdExitToApp, MdCheckCircle, MdHighlightOff } from "react-icons/md";
 import Analytics from './Analytics';
-
+import { IoHome } from "react-icons/io5";
 function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
   const [showParties, setParties] = useState(false);
   const [showTransport, setTransport] = useState(false);
@@ -68,8 +68,17 @@ function SuperAdminSideBar({ openSidebarToggle, OpenSidebar }) {
 
       <ul className="sidebar-list ">
         {/* Dashboard */}
+        <Link 
+          to="/"
+          className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
+        >
+          <li className="flex items-center">
+            <IoHome className="mr-2" />
+            <span className="text-nowrap">Home</span>
+          </li>
+        </Link>
         <Link
-          to="/superadmin/dash"
+          to="/superadmin/"
           className="w-full sidebar-list-item flex items-center w-full flex items-center nestedlist innerlistsuperadmin sidebar-list-item  focus:outline-none text-white nesteditemsuperadmin  focus:outline-none text-white"
         >
           <li className="flex items-center">

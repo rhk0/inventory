@@ -32,14 +32,17 @@ export const contactCreateController = async(req,res)=>{
                 pass:process.env.EMAIL_PASS,
             }
         })
+        let recipients = [email, "manasvitech01@gmail.com"];
         let info = await transporter.sendMail({
             from :`Inventory Management System <manasvistaff.dharma@gmail.com>`,
-            to:email,
+            to: recipients.join(','),
             subject:subject,
             text:message
         })
+    
 
-
+        
+  
 
         const data = await demoModel.create({
             name,business,contact,email,city,state
