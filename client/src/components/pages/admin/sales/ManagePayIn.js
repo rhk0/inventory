@@ -326,8 +326,8 @@ let grandtotal=0;
         </table>
       </div>
 
-      {/* View Modal */}
-      {selectedPayIn && (
+     {/* View Modal */}
+     {selectedPayIn && (
         <Modal
           isOpen={viewModalIsOpen}
           onRequestClose={closeModals}
