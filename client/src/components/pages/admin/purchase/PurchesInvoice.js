@@ -1351,11 +1351,12 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
+import Modal from "react-modal";
 
-const PurchesInvoice = () => {
+const CreateSalesInvoice = () => {
   const [date, setDate] = useState("");
-  const [invoiceNo, setinvoiceNo] = useState("");
-  const [purchaseType, setpurchaseType] = useState("GST Invoice");
+  const [InvoiceNo, setInvoiceNo] = useState("");
+  const [salesType, setSalesType] = useState("GST Invoice");
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -1373,17 +1374,17 @@ const PurchesInvoice = () => {
   const [rows, setRows] = useState([]);
   const [paymentTerm, setPaymentTerm] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
+  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
 
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedAddress, setAddress] = useState("");
-  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
+  const [viewModal, setViewModal] = useState(false);
 
   const [formData, setFormData] = useState({
     date: "",
-    invoiceNo: "",
-    supplierInvoiceNo: "",
-    purchaseType: "",
+    InvoiceNo: "",
+    salesType: "",
     customerType: "",
     customerName: "",
     placeOfSupply: "",
@@ -1422,6 +1423,56 @@ const PurchesInvoice = () => {
     otherCharges: "",
     netAmount: "",
   });
+
+  const [cashDetails, setCashDetails] = useState({
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+  const [bankDetails, setBankDetails] = useState({
+    bank: "",
+    selectBankType: "",
+    transactionDate: "",
+    chequeNo: "",
+    transactionNo: "",
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+
+  const handleCashDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setCashDetails((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleBankDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setBankDetails((prev) => ({
+      ...prev,
+      [name]: value, // Update the corresponding field in bankDetails
+    }));
+  };
+
+  const [paymentMethod, setPaymentMethod] = useState("");
+
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+  const [paymentType, setPaymentType] = useState("");
+  const [subPaymentType, setSubPaymentType] = useState("");
+
+  const handlePaymentTypeChange = (e) => {
+    setPaymentType(e.target.value);
+    setSubPaymentType(""); // Reset subPaymentType when paymentType changes
+  };
+
+  const handleSubPaymentTypeChange = (e) => {
+    const { value } = e.target;
+    setSubPaymentType(value); // Set the subPaymentType state
+    setBankDetails((prev) => ({ ...prev, selectBankType: value })); // Update bankDetails
+  };
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
@@ -1513,12 +1564,12 @@ const PurchesInvoice = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
-  const handleinvoiceNoChange = (e) => {
+  const handleInvoiceNoChange = (e) => {
     const value = e.target.value;
-    setinvoiceNo(value);
+    setInvoiceNo(value);
     setFormData((prev) => ({
       ...prev,
-      invoiceNo: value,
+      InvoiceNo: value,
     }));
   };
 
@@ -1530,13 +1581,12 @@ const PurchesInvoice = () => {
       supplierInvoiceNo: value,
     }));
   };
-
-  const handlepurchaseTypeChange = (e) => {
+  const handleSalesTypeChange = (e) => {
     const value = e.target.value;
-    setpurchaseType(value);
+    setSalesType(value);
     setFormData((prev) => ({
       ...prev,
-      purchaseType: value,
+      salesType: value,
     }));
   };
   const handleCustomerTypeChange = (e) => {
@@ -1869,16 +1919,16 @@ const PurchesInvoice = () => {
         GstAmount: GstAmount.toFixed(2),
         otherCharges: otherCharges.toFixed(2),
         otherChargesDescriptions: otherChargesDescriptions,
-        purchaseType,
+        salesType,
         customerType,
         reverseCharge,
         gstType,
-        supplierInvoiceNo,
-
         netAmount: netAmount.toFixed(2),
+        cash: paymentMethod === "Cash" ? cashDetails : {},
+        bank: paymentMethod === "Bank" ? bankDetails : {}, // Ensure bank details are sent correctly
       };
       const response = await axios.post(
-        "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
+        "/api/v1/salesInvoiceRoute/createsalesinvoice",
         updatedFormData
       );
       console.log(response);
@@ -1888,9 +1938,8 @@ const PurchesInvoice = () => {
       }
       setFormData({
         date: "",
-        invoiceNo: "",
-        supplierInvoiceNo: "",
-        purchaseType: "",
+        InvoiceNo: "",
+        salesType: "",
         customerType: "",
         customerName: "",
         placeOfSupply: "",
@@ -1920,18 +1969,34 @@ const PurchesInvoice = () => {
             totalValue: null,
           },
         ],
+
         narration: "",
         otherChargesDescriptions: "",
         grossAmount: "",
         GstAmount: "",
         otherCharges: "",
         netAmount: "",
+
+        cash: {},
+        bank: {},
+      });
+
+      setCashDetails({ amount: "", advance: "", received: "", balance: "" });
+      setBankDetails({
+        selectBankType: "",
+        transactionDate: "",
+        chequeNo: "",
+        transactionNo: "",
+        amount: "",
+        advance: "",
+        received: "",
+        balance: "",
       });
 
       // Clear other independent states
       setDate("");
-      setinvoiceNo("");
-      setpurchaseType("GST Invoice");
+      setInvoiceNo("");
+      setSalesType("GST Invoice");
       setCustomerType("Retailer");
       setPlaceOfSupply("");
       setDueDate("");
@@ -1950,12 +2015,18 @@ const PurchesInvoice = () => {
       setPaymentTerm(0);
       setOtherCharges(0);
       setOtherChargesDescriptions("");
-
       setSelectedCustomer("");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to create sales estimate. Please try again.");
     }
+  };
+
+  const openViewModal = (suppliers) => {
+    setViewModal(true);
+  };
+  const closeModal = () => {
+    setViewModal(false);
   };
 
   return (
@@ -1966,20 +2037,9 @@ const PurchesInvoice = () => {
       >
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
-          Purchase Invoice
+          Sales Invoice
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
-          <div>
-            <label className="font-bold">Purchase Type</label>
-            <select
-              value={purchaseType}
-              onChange={handlepurchaseTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="GST Invoice">GST Invoice</option>
-              <option value="Bill of Supply">Bill of Supply</option>
-            </select>
-          </div>
           <div>
             <label className="font-bold">
               Date
@@ -1996,12 +2056,23 @@ const PurchesInvoice = () => {
             </label>
           </div>
           <div>
+            <label className="font-bold">Sales Type</label>
+            <select
+              value={salesType}
+              onChange={handleSalesTypeChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="GST Invoice">GST Invoice</option>
+              <option value="Bill of Supply">Bill of Supply</option>
+            </select>
+          </div>
+          <div>
             <label className="font-bold">Invoice No.</label>
             <input
-              name="invoiceNo"
+              name="InvoiceNo"
               type="text"
-              value={invoiceNo}
-              onChange={handleinvoiceNoChange}
+              value={InvoiceNo} // Bind to local state
+              onChange={handleInvoiceNoChange} // Update both local and formData states
               className="border p-2 w-full  rounded"
             />
           </div>
@@ -2016,6 +2087,18 @@ const PurchesInvoice = () => {
               className="border p-2 w-full  rounded"
             />
           </div>
+
+          {/* <div>
+            <label className="font-bold">Customer Type</label>
+            <select
+              value={customerType}
+              onChange={handleCustomerTypeChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="Retailer">Retailer</option>
+              <option value="Wholesaler">Wholesaler</option>
+            </select>
+          </div> */}
 
           <div>
             <label className="font-bold">Customer Name</label>
@@ -2094,21 +2177,6 @@ const PurchesInvoice = () => {
               <h4 className="font-bold mb-4">Transport Details</h4>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label>Receipt Doc No.</label>
-                  <input
-                    type="text"
-                    name="receiptDocNo"
-                    value={transportDetails.receiptDocNo}
-                    onChange={(e) =>
-                      handleTransportDetailChange(
-                        "receiptDocNo",
-                        e.target.value
-                      )
-                    }
-                    className="border p-2 w-full  rounded"
-                  />
-                </div>
-                <div>
                   <label>Dispatched Through</label>
                   <input
                     type="text"
@@ -2161,20 +2229,6 @@ const PurchesInvoice = () => {
                     className="border p-2 w-full  rounded"
                   />
                 </div>
-                <div>
-                  <label>Motor Vehicle No.</label>
-                  <input
-                    type="text"
-                    value={transportDetails.motorVehicleNo}
-                    onChange={(e) =>
-                      handleTransportDetailChange(
-                        "motorVehicleNo",
-                        e.target.value
-                      )
-                    }
-                    className="border p-2 w-full  rounded"
-                  />
-                </div>
               </div>
               <div className="flex justify-end">
                 <button
@@ -2218,7 +2272,7 @@ const PurchesInvoice = () => {
           </div>
 
           {/* GST Type Section */}
-          {purchaseType === "GST Invoice" && (
+          {salesType === "GST Invoice" && (
             <div className="mb-4 w-full">
               <label className="font-bold">GST Type:</label>
               <select
@@ -2243,13 +2297,8 @@ const PurchesInvoice = () => {
                 <th className="border ">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
-                <th className="border p-1">Free Qty</th>
-
                 <th className="border p-1">Units</th>
                 <th className="border p-1">MRP</th>
-                <th className="border p-1">Unit Cost</th>
-                <th className="border p-1">Scheme Margin Cost</th>
-
                 <th className="border p-1">
                   Discount
                   <div className="flex justify-between">
@@ -2257,7 +2306,7 @@ const PurchesInvoice = () => {
                   </div>
                 </th>
 
-                {purchaseType === "GST Invoice" && (
+                {salesType === "GST Invoice" && (
                   <>
                     <th className="border p-2">Taxable Value</th>
                     {gstType === "CGST/SGST" && (
@@ -2482,7 +2531,7 @@ const PurchesInvoice = () => {
                       </div>
                     )}
                   </td>
-                  {purchaseType === "GST Invoice" && (
+                  {salesType === "GST Invoice" && (
                     <>
                       {gstType === "CGST/SGST" && (
                         <>
@@ -2798,7 +2847,7 @@ const PurchesInvoice = () => {
                 className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
-            {purchaseType === "GST Invoice" && (
+            {salesType === "GST Invoice" && (
               <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
                 <label className="font-bold lg:w-1/2 text-nowrap">
                   GST Amount
@@ -2835,6 +2884,213 @@ const PurchesInvoice = () => {
           </div>
         </div>
 
+        <div className="mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={() => openViewModal()}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Add Receipt
+          </button>
+
+          <Modal
+            isOpen={viewModal}
+            onRequestClose={closeModal}
+            contentLabel="View Item Modal"
+            style={{
+              content: {
+                width: "80%",
+                height: "90%",
+                maxWidth: "800px",
+                margin: "auto",
+                padding: "5px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                borderRadius: "5px",
+              },
+            }}
+          >
+            <div className="bg-white p-4 rounded shadow-lg w-full relative">
+              <button
+                onClick={closeModal}
+                className="absolute text-3xl top-2 right-2 text-gray-500 hover:text-gray-700"
+              >
+                &times;
+              </button>
+              <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
+
+              {/* Radio buttons to select payment method */}
+              <div className="gap-5 mb-4">
+                <label className="font-bold">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Cash"
+                    onChange={handlePaymentMethodChange}
+                  />
+                  Cash
+                </label>
+                <label className="ml-5 font-bold">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Bank"
+                    onChange={handlePaymentMethodChange}
+                  />
+                  Bank
+                </label>
+              </div>
+
+              {/* Conditional form rendering based on payment method */}
+              <form onSubmit={handleSubmit}>
+                {paymentMethod === "Cash" && (
+                  <>
+                    <label className="font-bold">Amount</label>
+                    <input
+                      type="text"
+                      name="Amount"
+                      value={cashDetails.Amount}
+                      onChange={handleCashDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Advance</label>
+                    <input
+                      type="text"
+                      name="Advance"
+                      value={cashDetails.Advance}
+                      onChange={handleCashDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Received</label>
+                    <input
+                      type="text"
+                      name="Received"
+                      value={cashDetails.Received}
+                      onChange={handleCashDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Balance</label>
+                    <input
+                      type="text"
+                      name="Balance"
+                      value={cashDetails.Balance}
+                      onChange={handleCashDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                  </>
+                )}
+
+                {paymentMethod === "Bank" && (
+                  <>
+                    <label className="font-bold">Select Bank</label>
+                    <select
+                      name="bank"
+                      value={bankDetails.bank}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    >
+                      <option value="">Select Bank</option>
+                      <option value="Bank 1">Bank 1</option>
+                      <option value="Bank 2">Bank 2</option>
+                    </select>
+                    <select
+                      name="subPaymentType"
+                      value={subPaymentType}
+                      onChange={handleSubPaymentTypeChange}
+                      className="border p-2 mb-2 w-full"
+                    >
+                      <option value="">Select Payment Type</option>
+                      <option value="Online">Online</option>
+                      <option value="Cheque">Cheque</option>
+                    </select>
+                    {subPaymentType === "Online" && (
+                      <>
+                        <label className="font-bold">Transaction Date</label>
+                        <input
+                          type="date"
+                          name="transactionDate"
+                          value={bankDetails.transactionDate}
+                          onChange={handleBankDetailsChange}
+                          className="border p-2 mb-2 w-full"
+                        />
+                        <label className="font-bold">Transaction No</label>
+                        <input
+                          type="text"
+                          name="transactionNo"
+                          value={bankDetails.transactionNo}
+                          onChange={handleBankDetailsChange}
+                          className="border p-2 mb-2 w-full"
+                        />
+                      </>
+                    )}
+                    {subPaymentType === "Cheque" && (
+                      <>
+                        <label className="font-bold">Transaction Date</label>
+                        <input
+                          type="date"
+                          name="transactionDate"
+                          value={bankDetails.transactionDate}
+                          onChange={handleBankDetailsChange}
+                          className="border p-2 mb-2 w-full"
+                        />
+                        <label className="font-bold">Cheque No</label>
+                        <input
+                          type="text"
+                          name="chequeNo"
+                          value={bankDetails.chequeNo}
+                          onChange={handleBankDetailsChange}
+                          className="border p-2 mb-2 w-full"
+                        />
+                      </>
+                    )}
+                    <label className="font-bold">Amount</label>
+                    <input
+                      type="text"
+                      name="Amount"
+                      value={bankDetails.Amount}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Advance</label>
+                    <input
+                      type="text"
+                      name="Advance"
+                      value={bankDetails.Advance}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Received</label>
+                    <input
+                      type="text"
+                      name="Received"
+                      value={bankDetails.Received}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />{" "}
+                    <label className="font-bold">Balance</label>
+                    <input
+                      type="text"
+                      name="Balance"
+                      value={bankDetails.Balance}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />{" "}
+                  </>
+                )}
+
+                {/* Submit button */}
+                <div className="flex justify-center items-center">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 h-10"
+                    onClick={closeModal}
+                  >
+                    save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Modal>
+        </div>
+
         {/* Buttons for saving and printing */}
         <div className="mt-8 flex justify-center">
           <button
@@ -2844,7 +3100,7 @@ const PurchesInvoice = () => {
           >
             Save
           </button>
-          {purchaseType === "GST Invoice" && (
+          {salesType === "GST Invoice" && (
             <button
               // onClick={handlePrintOnly}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
@@ -2852,7 +3108,7 @@ const PurchesInvoice = () => {
               Save and Print
             </button>
           )}
-          {purchaseType !== "GST Invoice" && (
+          {salesType !== "GST Invoice" && (
             <button
               // onClick={handlePrintOnlyWithoutGST}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
@@ -2867,4 +3123,4 @@ const PurchesInvoice = () => {
   );
 };
 
-export default PurchesInvoice;
+export default CreateSalesInvoice;

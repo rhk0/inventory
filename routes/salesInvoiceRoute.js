@@ -2,6 +2,7 @@ import express from "express";
 import {
   createSalesInvoiceController,
   deletSalesInvoiceByIDController,
+  getAllSalesByNameInvoiceController,
   getAllSalesInvoiceByIdController,
   getAllSalesInvoiceCOntroller,
   updateSalesInvoiceByIDController,
@@ -12,6 +13,8 @@ const router = express.Router();
 
 router.post("/createsalesinvoice",requireSignIn,isAdmin, createSalesInvoiceController);
 router.get("/getAllsalesinvoice",requireSignIn,isAdmin, getAllSalesInvoiceCOntroller);
+router.get('/salesinvoicesByName/:customerName', getAllSalesByNameInvoiceController);
+
 router.get("/getAllsalesinvoiceById/:_id",requireSignIn,isAdmin, getAllSalesInvoiceByIdController);
 router.put("/updatesalesinvoice/:_id",requireSignIn,isAdmin, updateSalesInvoiceByIDController);
 router.delete("/deletesalesinvoice/:_id",requireSignIn,isAdmin, deletSalesInvoiceByIDController);

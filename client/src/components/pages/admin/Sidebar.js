@@ -76,6 +76,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     setCRM(false);
     setReport(false);
     setSettings(false);
+    setSubscription(false);
   };
 
   const togglePurches = () => {
@@ -140,6 +141,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     };
   }, [openSidebarToggle, OpenSidebar]);
   const toggleSettings = () => {
+    closeAll();
+    setSettings(!showSettings);
+  };
+    const toggleSubscription = () => {
     closeAll();
     setSubscription(!showSubscription);
   };
@@ -958,12 +963,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <button
             onClick={() => {
               setSubscription(!showSubscription);
-              toggleSettings();
+              toggleSubscription();
             }}
             className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white   p-1"
           >
             <span className="flex">
-              {" "}
               <MdSubscriptions className="mr-2 mt-2" />
               Subscription
             </span>

@@ -15,11 +15,12 @@ const payInSchema = new mongoose.Schema(
       {
         billNo: { type: String },
         billAmount: { type: String },
+        paidAmount:{type:String},
         recievedAmount: { type: Number },
         balanceAmount: { type: Number },
       },
     ],
-    total: { type: String },
+    grandtotal: { type: String },
     Narration: { type: String },
   },
   {

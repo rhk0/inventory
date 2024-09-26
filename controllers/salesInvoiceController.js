@@ -94,6 +94,32 @@ export const getAllSalesInvoiceCOntroller = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
+export const getAllSalesByNameInvoiceController = async (req, res) => {
+  try {
+    const { customerName } = req.params;
+
+    // If name is provided, filter by name; otherwise, return all documents
+    const filter = customerName ? { customerName: new RegExp(customerName, "i") } : {};
+
+    const response = await salesInvoiceModel.find(filter);
+
+    if (!response || response.length === 0) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Data not found" });
+    }
+
+    return res
+      .status(200)
+      .send({ success: true, message: "Data found", response });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Issue" });
+  }
+};
+
 export const getAllSalesInvoiceByIdController = async (req, res) => {
   try {
     const { id } = req.params;
