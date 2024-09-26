@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/Auth.js";
 import axios from "axios";
-import Loader from "../loader/Loader.js";
+import Loader from "../loader/LoaderHand.js";
 
 export const SuperAdminProtectedRoute = () => {
   const [ok, setOk] = useState(false);
