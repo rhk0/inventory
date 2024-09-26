@@ -83,8 +83,8 @@ const ManageSalesEstimate = () => {
   // Filter sales estimates based on search term
   const filteredEstimates = salesEstimates.filter(
     (estimate) =>
-      estimate.estimateNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      estimate.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+      estimate.estimateNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      estimate.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

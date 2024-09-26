@@ -2,48 +2,81 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
-
+import { AiOutlinePlus, AiOutlineClose } from 'react-icons/ai';
 const PayIn = () => {
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [date, setDate] = useState("");
   const [receiptNo, setReceiptNo] = useState("");
-  const [Narration, setNarration] = useState("");
+  const [Narration, setNarration] = useState(""); // Ensure narration is defined
   const [receiptMode, setReceiptMode] = useState("Cash");
-
   const [selectBank, setSelectBank] = useState("");
-  const [method, setMethod] = useState("");
-  const [transactionCheckNo, setTransactionCheckNo] = useState("Cash");
-
+  const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState([]);
+  
   const [rows, setRows] = useState([
     {
       id: 1,
       billNo: "",
       billAmount: "",
+      paidAmount: "",
       recievedAmount: "",
       balanceAmount: "",
     },
   ]);
 
+  // Add new states for method and transactionCheckNo
+  const [method, setMethod] = useState(""); // Added state for method
+  const [transactionCheckNo, setTransactionCheckNo] = useState(""); // Added state for transaction check number
+
   useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageCustomer");
-        setCustomer(response.data.data);
-      } catch (error) {
-        console.error("Error fetching customer:", error);
-      }
-    };
     fetchCustomer();
   }, []);
 
-  const handleCustomerChange = (e) => {
-    setSelectedCustomer(e.target.value);
+  const fetchCustomer = async () => {
+    try {
+      const response = await axios.get("/api/v1/auth/manageCustomer");
+      setCustomer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching customer:", error);
+    }
   };
 
-  const handleRowChange = (index, field, value) => {
+  const salesinvoicesCustomerByName = async (selectedCustomer) => {
+    try {
+      const response = await axios.get(
+        `/api/v1/salesInvoiceRoute/salesinvoicesByName/${selectedCustomer}`
+      );
+      setSelctedCustomerInvoiceData(response.data.response);
+    } catch (error) {
+      console.error("Error fetching customer invoices:", error);
+    }
+  };
+
+  const handleCustomerChange = (e) => {
+    setSelectedCustomer(e.target.value);
+    salesinvoicesCustomerByName(e.target.value);
+  };
+
+  const handleRowChange = (index, key, value) => {
     const newRows = [...rows];
-    newRows[index][field] = value;
+    if (key === "billNo") {
+      const selectedInvoice = selctedCustomerInvoiceData.find(
+        (item) => item.InvoiceNo === value
+      );
+      if (selectedInvoice) {
+        const paymentData = selectedInvoice.cash
+          ? selectedInvoice.cash
+          : selectedInvoice.bank;
+        newRows[index] = {
+          ...newRows[index],
+          billNo: selectedInvoice.InvoiceNo,
+          billAmount: selectedInvoice.netAmount,
+          paidAmount: paymentData ? paymentData.Received : 0,
+        };
+      }
+    } else {
+      newRows[index][key] = value;
+    }
     setRows(newRows);
   };
 
@@ -54,6 +87,7 @@ const PayIn = () => {
         id: rows.length ? Math.max(...rows.map((row) => row.id)) + 1 : 1,
         billNo: "",
         billAmount: "",
+        paidAmount: "",
         recievedAmount: "",
         balanceAmount: "",
       },
@@ -65,74 +99,78 @@ const PayIn = () => {
       setRows(rows.filter((row) => row.id !== id));
     }
   };
+let grandtotal=0;
+  const calculateBalance = (billAmount, paidAmount, receivedAmount) => {
+    const bill = parseFloat(billAmount) || 0;
+    const credit = parseFloat(paidAmount) || 0;
+    const received = parseFloat(receivedAmount) || 0;
+    grandtotal+=(bill - credit - received)
+    return (bill - credit - received).toFixed(2);
+  };
+
+  let alltotal=0;
+  const GrandTotal = (billAmount, paidAmount, receivedAmount) => {
+    const bill = parseFloat(billAmount) || 0;
+    const credit = parseFloat(paidAmount) || 0;
+    const received = parseFloat(receivedAmount) || 0;
+    alltotal+=(bill - credit - received)
+    return alltotal;
+  };
+  const calculateTotalReceived = () => {
+    return rows.reduce((total, row) => {
+      return total + parseFloat(row.recievedAmount || 0);
+    }, 0).toFixed(2);
+  };
+  
 
   const handleSave = async () => {
-    // Calculate the total received amount
-    const totalAmount = rows.reduce((total, row) => {
-      return total + parseFloat(row.recievedAmount || 0);
-    }, 0);
+    const totalAmount = calculateTotalReceived(); // This needs to be defined correctly
+   const grandTotal= GrandTotal();
+    grandtotal = grandTotal; // Ensure grandtotal is set correctly
 
-    const dataToSubmit = {
-      date,
-      receiptNo,
-      selectCustomer: selectedCustomer,
-      receiptMode,
-      selectBank,
-      method,
-      transactionCheckNo,
-      rows: rows.map((row) => ({
-        billNo: row.billNo,
-        billAmount: row.billAmount,
-        recievedAmount: row.recievedAmount,
-        balanceAmount: row.balanceAmount,
-      })),
-      total: totalAmount.toFixed(2),
-      Narration,
-    };
+  const dataToSubmit = {
+    date,
+    receiptNo,
+    selectCustomer: selectedCustomer,
+    receiptMode,
+    selectBank,
+    method,
+    transactionCheckNo,
+    rows: rows.map((row) => ({
+      billNo: row.billNo,
+      billAmount: row.billAmount,
+      paidAmount: row.paidAmount, // Ensure this is defined and sent
+      recievedAmount: row.recievedAmount,
+      balanceAmount: calculateBalance(row.billAmount, row.paidAmount, row.recievedAmount),
+    })),
+    grandtotal, // Ensure grandtotal is set correctly
+    Narration,
+  };
+
 
     try {
-      const response = await axios.post(
-        "/api/v1/payInRoute/createsalespayin",
-        dataToSubmit
-      );
-
+      await axios.post("/api/v1/payInRoute/createsalespayin", dataToSubmit);
       toast.success("Data saved successfully!", {
         position: "top-right",
-        autoClose: 3000, // Auto close after 3 seconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+        autoClose: 3000,
       });
-      setDate(""); // Clear date
-      setReceiptNo(""); // Clear receipt number
-      setSelectedCustomer(""); // Clear selected customer
-      setReceiptMode("Cash"); // Reset receipt mode to default (Cash)
-      setRows([
-        {
-          id: 1,
-          billNo: "",
-          billAmount: "",
-          recievedAmount: "",
-          balanceAmount: "",
-        },
-      ]); // Reset rows to a single empty row
-      setNarration(""); // Clear narration
+      // Reset form
+      setDate("");
+      setReceiptNo("");
+      setSelectedCustomer("");
+      setReceiptMode("Cash");
+      setMethod(""); // Reset method
+      setTransactionCheckNo(""); // Reset transaction check number
+      setRows([{ id: 1, billNo: "", billAmount: "", paidAmount: "", recievedAmount: "", balanceAmount: "" }]);
+      setNarration("");
     } catch (error) {
       toast.error("Error saving data. Please try again!", {
         position: "top-right",
-        autoClose: 3000, // Auto close after 3 seconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+        autoClose: 3000,
       });
       console.error("Error saving data:", error);
     }
   };
-
   return (
     <div
       style={{ backgroundColor: "#FFFFFF" }}
@@ -231,61 +269,49 @@ const PayIn = () => {
         )}
       </div>
       <div className="overflow-x-auto mt-5">
-        <table className="w-full border-collapse">
+      <table className="w-full border-collapse">
           <thead>
             <tr>
               <th className="border border-gray-500 p-1">#</th>
               <th className="border border-gray-500 p-1">Bill NO</th>
               <th className="border border-gray-500 p-1">Bill Amount</th>
+              <th className="border border-gray-500 p-1">Credit Amount</th>
               <th className="border border-gray-500 p-1">Received Amount</th>
               <th className="border border-gray-500 p-1">Balance Amount</th>
+              <th className="border border-gray-500 p-1">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {rows.map((row, index) => (
               <tr key={row.id}>
-                <td className="border border-gray-500 p-1 text-center">
-                  {index + 1}
-                </td>
+                <td className="border border-gray-500 p-1 text-center">{index + 1}</td>
                 <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
+                  <select
                     value={row.billNo}
-                    onChange={(e) =>
-                      handleRowChange(index, "billNo", e.target.value)
-                    }
+                    onChange={(e) => handleRowChange(index, "billNo", e.target.value)}
+                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option className="text-black">Select</option>
+                    {selctedCustomerInvoiceData.map((item, idx) => (
+                      <option key={idx} value={item.InvoiceNo}>
+                        {item.InvoiceNo ? item.InvoiceNo : "NA"}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td className="border border-gray-500 p-1">{row.billAmount || "NA"}</td>
+                <td className="border border-gray-500 p-1">{row.paidAmount || "NA"}</td>
+                <td className="border border-gray-500 p-1">
+                  <input
+                    type="text"
+                    value={row.recievedAmount || ""}
+                    onChange={(e) => handleRowChange(index, "recievedAmount", e.target.value)}
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
                 <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.billAmount}
-                    onChange={(e) =>
-                      handleRowChange(index, "billAmount", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.recievedAmount}
-                    onChange={(e) =>
-                      handleRowChange(index, "recievedAmount", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.balanceAmount}
-                    onChange={(e) =>
-                      handleRowChange(index, "balanceAmount", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  {calculateBalance(row.billAmount, row.paidAmount, row.recievedAmount)}
                 </td>
                 <td className="text-center flex gap-2 pl-1">
                   <button
@@ -293,57 +319,36 @@ const PayIn = () => {
                     className="p-2 bg-green-500 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="Add row"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="h-5 w-4 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 5v14m7-7H5"
-                      />
-                    </svg>
+                    <AiOutlinePlus className="h-5 w-4 text-white" />
                   </button>
                   <button
                     onClick={() => removeRow(row.id)}
                     className="p-2 bg-red-500 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="Remove row"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="h-5 w-4 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    <AiOutlineClose className="h-5 w-4 text-white" />
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={4} className="border border-gray-500 p-1 text-right font-bold">Total Received Amount:</td>
+              <td className="border border-gray-500 p-1 font-bold">
+                {calculateTotalReceived()}
+              </td>
+              <td className="border border-gray-500 p-1"></td>
+             
+            </tr>
+          </tfoot>
         </table>
       </div>
       <div className="flex flex-row justify-end items-center gap-5 lg:mr-28 mt-10">
         <label className="text-2xl font-bold text-black mr-2">Total</label>
         <input
           type="text"
-          value={rows
-            .reduce(
-              (total, row) => total + parseFloat(row.recievedAmount || 0),
-              0
-            )
-            .toFixed(2)}
+          value={grandtotal.toFixed(2)}
           readOnly
           className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
         />
@@ -365,7 +370,7 @@ const PayIn = () => {
           Save
         </button>
       </div>
-      <ToastContainer /> {/* Add this line to include the toast container */}
+      <ToastContainer />
     </div>
   );
 };
