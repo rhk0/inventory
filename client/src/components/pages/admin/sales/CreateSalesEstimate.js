@@ -3,7 +3,6 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
-import logo from "../../../../assets/images/logo.png";
 import { useAuth } from "../../../context/Auth.js";
 const CreateSalesEstimate = () => {
   const [date, setDate] = useState("");
