@@ -65,7 +65,12 @@ const supplierSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    Admin:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"user"
+    },
   },
+
   {
     timestamps: true,
   }
