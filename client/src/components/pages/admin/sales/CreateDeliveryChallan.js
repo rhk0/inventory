@@ -115,8 +115,9 @@ const CreateDeliveryChallan = () => {
   
  
     companyData(); // Fetch company data on component mount
-  }, []); // Empty dependency array ensures this only runs once, on mount
+  }, [userid]); // Empty dependency array ensures this only runs once, on mount
   
+
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
@@ -310,7 +311,23 @@ const CreateDeliveryChallan = () => {
       GstAmount += rows.cgstrs + rows.sgstrs;
     });
 
-    const netAmount = grossAmount + GstAmount + otherCharges + 0;
+    let netAmount;
+
+    // Check if otherChargesDescriptions includes "discount"
+
+    if (salesType === "Bill of Supply") {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount - otherCharges; // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges; // Do not add GstAmount
+      }
+    } else {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount + GstAmount - otherCharges;
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges;
+      }
+    }
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -802,6 +819,12 @@ const CreateDeliveryChallan = () => {
           </style>
         </head>
         <body>
+        <div class="header">
+          
+            <div class="business-name"> ${company?.businessName || "----------"} </div>
+              <div> ${company?.address || "---------"} </div>
+              <div>GSTIN: ${company?.gstIn || "---------"}</div>
+            </div>
                 <table class="table">
              <tr>
                   <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
@@ -892,11 +915,11 @@ const CreateDeliveryChallan = () => {
                 <td style="width: 33.33%; text-align: left;">
                   <div class="banking-details">
                     <div class="section-header">Banking Details</div>
-                    <div class="details">Bank Name: ${company.bank_name || "-"}</div>
-                    <div class="details">IFSC Code: ${company.ifce_code || "-"}</div>
-                    <div class="details">Account No:${company.accountNumber || "-"}</div>
-                    <div class="details">Account Holder Name: ${company.account_holder_name || "-"}</div>
-                    <div class="details">UPI ID: ${company.upiId || "-"}</div>
+                    <div class="details">Bank Name: ${company?.bank_name || "-"}</div>
+                    <div class="details">IFSC Code: ${company?.ifce_code || "-"}</div>
+                    <div class="details">Account No:${company?.accountNumber || "-"}</div>
+                    <div class="details">Account Holder Name: ${company?.account_holder_name || "-"}</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
                   </div>
                 </td>
              
@@ -1116,6 +1139,12 @@ const CreateDeliveryChallan = () => {
           </style>
         </head>
         <body>
+        <div class="header">
+          
+            <div class="business-name"> ${company?.businessName || "---------"} </div>
+              <div> ${company?.address || "---------"} </div>
+              <div>GSTIN: ${company?.gstIn || "---------"}</div>
+            </div>
           <table class="table">
             <tr>
               <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;">
@@ -1202,23 +1231,11 @@ const CreateDeliveryChallan = () => {
               <td style="width: 33.33%; text-align: left;">
                 <div class="banking-details">
                   <div class="section-header">Banking Details</div>
-                  <div class="details">Bank Name: XYZ Bank</div>
-                  <div class="details">IFSC Code: XYZ1234</div>
-                  <div class="details">Account No: 1234567890</div>
-                  <div class="details">Account Holder Name: John Doe</div>
-                  <div class="details">UPI ID: john@upi</div>
-                </div>
-              </td>
-              <td style="width: 33.33%; text-align: left;">
-                <div class="receipt-details">
-                  <div class="section-header">Receipt Mode</div>
-                  <div class="details">Bank Name: XYZ Bank</div>
-                  <div class="details">Transaction date: XYZ1234</div>
-                  <div class="details">Transaction /cheque No: 1234567890</div>
-                  <div class="details">Total Amount: John Doe</div>
-                  <div class="details">Advance Received: 1000</div>
-                  <div class="details">Amount Received: 1000</div>
-                  <div class="details">Balance Amount: 1000</div>
+                 <div class="details">Bank Name: ${company?.bank_name || "-"}</div>
+                    <div class="details">IFSC Code: ${company?.ifce_code || "-"}</div>
+                    <div class="details">Account No:${company?.accountNumber || "-"}</div>
+                    <div class="details">Account Holder Name: ${company?.account_holder_name || "-"}</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
                 </div>
               </td>
               <td style="width: 33.33%; text-align: left;">

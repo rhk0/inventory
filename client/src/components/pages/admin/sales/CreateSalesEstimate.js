@@ -3,7 +3,8 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
-
+import logo from "../../../../assets/images/logo.png";
+import { useAuth } from "../../../context/Auth.js";
 const CreateSalesEstimate = () => {
   const [date, setDate] = useState("");
   const [estimateNo, setEstimateNo] = useState("");
@@ -11,7 +12,12 @@ const CreateSalesEstimate = () => {
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [userid, setUserId] = useState("");
+  const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
+
+ 
+  const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -89,6 +95,30 @@ const CreateSalesEstimate = () => {
     fetchCustomer();
   }, []);
 
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    const companyData = async () => {
+      try {
+        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+        
+      }
+    };
+
+    companyData(); // Fetch company data on component mount
+  }, [userid]); // Empty dependency array ensures this only runs once, on mount
+ 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
     setSelectedCustomer(value);
@@ -285,13 +315,20 @@ const CreateSalesEstimate = () => {
     let netAmount;
 
     // Check if otherChargesDescriptions includes "discount"
-    if (otherChargesDescriptions.includes("discount")) {
-      netAmount = grossAmount + GstAmount - otherCharges;
-    } else {
-      netAmount = grossAmount + GstAmount + otherCharges;
-    }
 
-    
+    if (salesType === "Bill of Supply") {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount - otherCharges; // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges; // Do not add GstAmount
+      }
+    } else {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount + GstAmount - otherCharges;
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges;
+      }
+    }
 
     return { grossAmount, GstAmount, netAmount };
   };
@@ -306,8 +343,8 @@ const CreateSalesEstimate = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
-    
-        if (response.data && Array.isArray(response.data.data))  {
+
+        if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
           console.error("Unexpected response structure:", response.data);
@@ -343,7 +380,7 @@ const CreateSalesEstimate = () => {
         ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
           (100 + Number(selectedProduct.gstRate))
         : retailPrice * selectedProduct.quantity;
-   
+
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -472,9 +509,8 @@ const CreateSalesEstimate = () => {
   };
 
   const handleSubmit = async (e) => {
-   
     e.preventDefault();
-  
+
     try {
       const updatedFormData = {
         ...formData,
@@ -520,7 +556,6 @@ const CreateSalesEstimate = () => {
         "/api/v1/salesEstimateRoute/createSalesEstimatet",
         updatedFormData
       );
-  
 
       if (response) {
         toast.success("Sales estimate created successfully...");
@@ -597,8 +632,9 @@ const CreateSalesEstimate = () => {
   };
 
   const handlePrintOnly = () => {
+  
     const printWindow = window.open("", "_blank");
-
+   
     const updatedFormData = {
       ...formData,
       rows: rows.map((row) => ({
@@ -635,7 +671,7 @@ const CreateSalesEstimate = () => {
       gstType,
       netAmount: netAmount.toFixed(2),
     };
-  
+
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {
       const ones = [
@@ -711,7 +747,7 @@ const CreateSalesEstimate = () => {
       updatedFormData.gstType === "CGST/SGST"
         ? `<th>CGST</th><th>SGST</th>`
         : `<th>IGST</th>`;
-
+        const logoBase64 = 'https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png';
     const gstRows =
       updatedFormData.gstType === "CGST/SGST"
         ? updatedFormData.rows
@@ -792,7 +828,15 @@ const CreateSalesEstimate = () => {
           </style>
         </head>
         <body>
-                <table class="table">
+           <div class="header">
+          
+            <div class="business-name"> ${company?.businessName || "---------"} </div>
+              <div> ${company?.address || "---------"} </div>
+              <div>GSTIN: ${company?.gstIn || "---------"}</div>
+            </div>
+  
+        
+        <table class="table">
              <tr>
                   <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
                   Sales Estimate
@@ -839,8 +883,8 @@ const CreateSalesEstimate = () => {
                   <div class="section-header">Transport Details</div>
                  
                    <div class="details">Receipt Doc No.: <span>${
-                    updatedFormData.receiptDocNo
-                  }</span></div>
+                     updatedFormData.receiptDocNo
+                   }</span></div>
 
                   <div class="details">Dispatch Through: <span>${
                     updatedFormData.dispatchedThrough
@@ -855,8 +899,8 @@ const CreateSalesEstimate = () => {
                     updatedFormData.billOfLading
                   }</span></div>
                    <div class="details">Motor Vehicle No.: <span>${
-                    updatedFormData.motorVehicleNo
-                  }</span></div>
+                     updatedFormData.motorVehicleNo
+                   }</span></div>
                 </div>
               </td>
             </tr>
@@ -882,30 +926,29 @@ const CreateSalesEstimate = () => {
               ${gstRows}
             </tbody>
           </table>
+       
            <table class="table">
               <tr>
                 <td style="width: 33.33%; text-align: left;">
                   <div class="banking-details">
                     <div class="section-header">Banking Details</div>
-                    <div class="details">Bank Name: XYZ Bank</div>
-                    <div class="details">IFSC Code: XYZ1234</div>
-                    <div class="details">Account No: 1234567890</div>
-                    <div class="details">Account Holder Name: John Doe</div>
-                    <div class="details">UPI ID: john@upi</div>
+                      <div class="details">Bank Name: ${
+                        company?.bank_name || "-"
+                      }</div>
+                    <div class="details">IFSC Code: ${
+                      company?.ifce_code || "-"
+                    }</div>
+                    <div class="details">Account No:${
+                      company?.accountNumber || "-"
+                    }</div>
+                    <div class="details">Account Holder Name: ${
+                      company?.account_holder_name || "-"
+                    }</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                </div>
                   </div>
                 </td>
-                <td style="width: 33.33%; text-align: left;">
-                  <div class="receipt-details">
-                    <div class="section-header">Receipt Mode</div>
-                    <div class="details">Bank Name: XYZ Bank</div>
-                    <div class="details">Transaction date: XYZ1234</div>
-                    <div class="details">Transaction /cheque No: 1234567890</div>
-                    <div class="details">Total Amount: John Doe</div>
-                    <div class="details">Advance Received:1000</div>
-                    <div class="details">Amount Received:1000</div>
-                    <div class="details">Balance Amount:1000</div>
-                  </div>
-                </td>
+               
                 <td style="width: 33.33%; text-align: left;">
                   <div class="amount-details">
                     <div class="section-header">Amount Details</div>
@@ -946,28 +989,26 @@ const CreateSalesEstimate = () => {
 
     printWindow.document.close();
     printWindow.focus();
-  
+
     printWindow.onafterprint = () => {
       printWindow.close(); // Close the print window after printing
-    
+
       // Create a fake event object (optional)
       const dummyEvent = {
-        preventDefault: () => {
-
-        }
+        preventDefault: () => {},
       };
-      
+
       handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
     };
-    
-  
+
     // Trigger the print dialog
     printWindow.print();
   };
-
-  const handlePrintOnlyWithoutGST = () => {
-    const printWindow = window.open("", "_blank");
   
+  const handlePrintOnlyWithoutGST = () => {
+   
+    const printWindow = window.open("", "_blank");
+   
     const updatedFormData = {
       ...formData,
       rows: rows.map((row) => ({
@@ -978,9 +1019,13 @@ const CreateSalesEstimate = () => {
         units: row.units,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
-          customerType === "Wholesaler" ? row.wholesalerDiscount : row.retailDiscount,
+          customerType === "Wholesaler"
+            ? row.wholesalerDiscount
+            : row.retailDiscount,
         discountRS:
-          customerType === "Wholesaler" ? row.wholeselerDiscountRS : row.retailDiscountRS,
+          customerType === "Wholesaler"
+            ? row.wholeselerDiscountRS
+            : row.retailDiscountRS,
         taxable: row.taxableValue.toFixed(2),
         totalValue: row.totalvalue, // GST details removed
       })),
@@ -992,9 +1037,7 @@ const CreateSalesEstimate = () => {
       reverseCharge,
       netAmount: netAmount.toFixed(2),
     };
-  
-  
-  
+
     function numberToWords(num) {
       const ones = [
         "",
@@ -1065,6 +1108,7 @@ const CreateSalesEstimate = () => {
 
       return words;
     }
+   
     const gstRows = updatedFormData.rows
       .map(
         (row, index) => `
@@ -1082,7 +1126,7 @@ const CreateSalesEstimate = () => {
         </tr>`
       )
       .join("");
-  
+
     printWindow.document.write(`
       <html>
         <head>
@@ -1123,6 +1167,15 @@ const CreateSalesEstimate = () => {
           </style>
         </head>
         <body>
+      
+
+           <div class="header">
+          
+            <div class="business-name"> ${company?.businessName || "---------"} </div>
+            <div> ${company?.address || "---------"} </div>
+            <div>GSTIN: ${company?.gstIn || "---------"}</div>
+          </div>
+  
           <table class="table">
             <tr>
               <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;">
@@ -1133,18 +1186,32 @@ const CreateSalesEstimate = () => {
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
                   <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>${chooseUser.name}</span></div>
-                  <div class="details">Address: <span>${chooseUser.address}</span></div>
-                  <div class="details">Contact: <span>${chooseUser.contact}</span></div>
-                  <div class="details">GSTIN: <span>${chooseUser.gstin}</span></div>
+                  <div class="details">Name: <span>${
+                    chooseUser.name
+                  }</span></div>
+                  <div class="details">Address: <span>${
+                    chooseUser.address
+                  }</span></div>
+                  <div class="details">Contact: <span>${
+                    chooseUser.contact
+                  }</span></div>
+                  <div class="details">GSTIN: <span>${
+                    chooseUser.gstin
+                  }</span></div>
                 </div>
               </td>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="sales-estimate">
                   <div class="section-header">Estimate Details</div>
-                  <div class="details">Estimate No: <span>${updatedFormData.estimateNo}</span></div>
-                  <div class="details">Estimate Date: <span>${updatedFormData.date}</span></div>
-                  <div class="details">Place of Supply: <span>${updatedFormData.placeOfSupply}</span></div>
+                  <div class="details">Estimate No: <span>${
+                    updatedFormData.estimateNo
+                  }</span></div>
+                  <div class="details">Estimate Date: <span>${
+                    updatedFormData.date
+                  }</span></div>
+                  <div class="details">Place of Supply: <span>${
+                    updatedFormData.placeOfSupply
+                  }</span></div>
                 
                 </div>
               </td>
@@ -1152,15 +1219,23 @@ const CreateSalesEstimate = () => {
                 <div style="text-align:left;" class="transport-details">
                   <div class="section-header">Transport Details</div>
                    <div class="details">Receipt Doc No.: <span>${
-                    updatedFormData.receiptDocNo
+                     updatedFormData.receiptDocNo
+                   }</span></div>
+                  <div class="details">Dispatch Through: <span>${
+                    updatedFormData.dispatchedThrough
                   }</span></div>
-                  <div class="details">Dispatch Through: <span>${updatedFormData.dispatchedThrough}</span></div>
-                  <div class="details">Destination: <span>${updatedFormData.destination}</span></div>
-                  <div class="details">Carrier Name/Agent: <span>${updatedFormData.carrierNameAgent}</span></div>
-                  <div class="details">Bill of Lading/LR-RR No.: <span>${updatedFormData.billOfLading}</span></div>
+                  <div class="details">Destination: <span>${
+                    updatedFormData.destination
+                  }</span></div>
+                  <div class="details">Carrier Name/Agent: <span>${
+                    updatedFormData.carrierNameAgent
+                  }</span></div>
+                  <div class="details">Bill of Lading/LR-RR No.: <span>${
+                    updatedFormData.billOfLading
+                  }</span></div>
                    <div class="details">Motor Vehicle No.: <span>${
-                    updatedFormData.motorVehicleNo
-                  }</span></div>
+                     updatedFormData.motorVehicleNo
+                   }</span></div>
                 </div>
               </td>
             </tr>
@@ -1191,32 +1266,38 @@ const CreateSalesEstimate = () => {
               <td style="width: 33.33%; text-align: left;">
                 <div class="banking-details">
                   <div class="section-header">Banking Details</div>
-                  <div class="details">Bank Name: XYZ Bank</div>
-                  <div class="details">IFSC Code: XYZ1234</div>
-                  <div class="details">Account No: 1234567890</div>
-                  <div class="details">Account Holder Name: John Doe</div>
-                  <div class="details">UPI ID: john@upi</div>
+                <div class="details">Bank Name: ${
+                  company?.bank_name || "-"
+                }</div>
+                    <div class="details">IFSC Code: ${
+                      company?.ifce_code || "-"
+                    }</div>
+                    <div class="details">Account No:${
+                      company?.accountNumber || "-"
+                    }</div>
+                    <div class="details">Account Holder Name: ${
+                      company?.account_holder_name || "-"
+                    }</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                </div>
                 </div>
               </td>
-              <td style="width: 33.33%; text-align: left;">
-                <div class="receipt-details">
-                  <div class="section-header">Receipt Mode</div>
-                  <div class="details">Bank Name: XYZ Bank</div>
-                  <div class="details">Transaction date: XYZ1234</div>
-                  <div class="details">Transaction /cheque No: 1234567890</div>
-                  <div class="details">Total Amount: John Doe</div>
-                  <div class="details">Advance Received: 1000</div>
-                  <div class="details">Amount Received: 1000</div>
-                  <div class="details">Balance Amount: 1000</div>
-                </div>
-              </td>
+             
               <td style="width: 33.33%; text-align: left;">
                 <div class="amount-details">
                   <div class="section-header">Amount Details</div>
-                  <div class="details">Gross Total: ₹${updatedFormData.grossAmount}</div>
-                  <div class="details">Additional Charges: ₹${updatedFormData.otherCharges}</div>
-                  <div class="details">Net Total: ₹${updatedFormData.netAmount}</div>
-                  <div class="details">Amount in Words: ${numberToWords(updatedFormData.netAmount)}</div>
+                  <div class="details">Gross Total: ₹${
+                    updatedFormData.grossAmount
+                  }</div>
+                  <div class="details">Additional Charges: ₹${
+                    updatedFormData.otherCharges
+                  }</div>
+                  <div class="details">Net Total: ₹${
+                    updatedFormData.netAmount
+                  }</div>
+                  <div class="details">Amount in Words: ${numberToWords(
+                    updatedFormData.netAmount
+                  )}</div>
                 </div>
               </td>
             </tr>
@@ -1234,27 +1315,25 @@ const CreateSalesEstimate = () => {
         </body>
       </html>
     `);
-  
+
     printWindow.document.close();
     printWindow.focus();
-  
+
     // Set the onafterprint event before calling print()
     printWindow.onafterprint = () => {
       printWindow.close(); // Close the print window after printing
-    
+
       // Create a fake event object (optional)
       const dummyEvent = {
-        preventDefault: () => {
-        }
+        preventDefault: () => {},
       };
-      
+
       handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
     };
-  
+
     // Trigger the print dialog
     printWindow.print();
   };
-
 
   return (
     <>
@@ -1262,6 +1341,7 @@ const CreateSalesEstimate = () => {
         style={{ backgroundColor: "##FFFFFF" }}
         className="p-4 responsive-container"
       >
+        
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
           Sales Estimate
@@ -1622,7 +1702,6 @@ const CreateSalesEstimate = () => {
                   </td>
 
                   <td className="border ">
-                    
                     <Select
                       id="product-select"
                       value={
@@ -1657,13 +1736,9 @@ const CreateSalesEstimate = () => {
                       menuPosition="fixed"
                     />
                     <div style={{ marginTop: "10px", fontSize: "12px" }}>
+                      <div>Date: {row.expiryDate ? row.expiryDate : "N/A"}</div>
                       <div>
-                        Date:{" "}
-                        {row.expiryDate ? row.expiryDate : "N/A"}
-                      </div>
-                      <div>
-                        Batch Number:{" "}
-                        {row.batchNo ? row.batchNo : "N/A"}
+                        Batch Number: {row.batchNo ? row.batchNo : "N/A"}
                       </div>
                     </div>
                   </td>
@@ -2109,7 +2184,9 @@ const CreateSalesEstimate = () => {
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                {otherChargesDescriptions ? otherChargesDescriptions:"Other Charges"}
+                {otherChargesDescriptions
+                  ? otherChargesDescriptions
+                  : "Other Charges"}
               </label>
               <input
                 value={otherCharges.toFixed(2)}
