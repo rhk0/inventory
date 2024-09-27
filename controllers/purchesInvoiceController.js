@@ -62,9 +62,8 @@ export const createPurchaseInvoiceController = async (req, res) => {
         reverseCharge,
         gstType,
         // rows, // Array of row objects
-        cash,
-        bank,
-        otherChargesDescription,
+        // bank,
+        otherChargesDescriptions,
         otherCharges,
         narration,
         grossAmount,
@@ -78,6 +77,21 @@ export const createPurchaseInvoiceController = async (req, res) => {
       } else {
         rows = req.body.rows;
       }
+
+      let bank;
+      if (typeof req.body.bank === "string") {
+        bank = JSON.parse(req.body.bank);
+      } else {
+        bank = req.body.bank;
+      }
+
+      let cash;
+      if (typeof req.body.cash === "string") {
+        cash = JSON.parse(req.body.cash);
+      } else {
+        cash = req.body.cash;
+      }
+
       const { _id } = req.user;
 
       const newInvoice = new purchesInvoiceModel({
@@ -102,7 +116,7 @@ export const createPurchaseInvoiceController = async (req, res) => {
         rows, // Save rows as an array
         cash,
         bank,
-        otherChargesDescription,
+        otherChargesDescriptions,
         otherCharges,
         narration,
         grossAmount,
@@ -232,4 +246,33 @@ export const updatePurchaseInvoiceByIdController = async (req, res) => {
       });
     }
   });
+};
+
+
+
+
+export const getAllPurchaseByNameInvoiceController = async (req, res) => {
+  try {
+    const { supplierName } = req.params;
+
+    // If name is provided, filter by name; otherwise, return all documents
+    const filter = supplierName ? { supplierName: new RegExp(supplierName, "i") } : {};
+
+    const response = await purchesInvoiceModel.find(filter);
+
+    if (!response || response.length === 0) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Data not found" });
+    }
+
+    return res
+      .status(200)
+      .send({ success: true, message: "Data found", response });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal Server Issue" });
+  }
 };

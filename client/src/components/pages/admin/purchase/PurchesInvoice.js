@@ -56,17 +56,25 @@ const PurchesInvoice = () => {
 
     rows: [
       {
-        itemCode: "",
-        productName: "",
-        hsnCode: "",
-        qty: null,
-        uom: null,
-        mrp: null,
-        discount: null,
-        cgst: null,
-        sgst: null,
-        igst: null,
-        totalValue: null,
+        itemCode: "", // Item Code
+        productName: "", // Product Name
+        hsnCode: "", // HSN Code
+        qty: null, // Quantity
+        uom: null, // Unit of Measure
+        freeQty: null,
+        mrp: null, // Maximum Retail Price
+        unitCost: null, // Unit Cost
+        schemeMargin: "", // Scheme Margin
+        discountpercent: null, // Discount Percentage
+        discountRs: null, // Discount in Rs
+        taxable: null, // Taxable Amount
+        cgstpercent: null, // CGST Percentage
+        cgstRS: null, // CGST Amount
+        sgstpercent: null, // SGST Percentage
+        sgstRS: null, // SGST Amount
+        igstpercent: null, // IGST Percentage
+        igstRS: null, // IGST Amount
+        totalValue: null, // Total Value
       },
     ],
 
@@ -317,10 +325,11 @@ const PurchesInvoice = () => {
         itemCode: "",
         productName: "",
         hsnCode: "",
-        qty: 0,
+        quantity: 0,
         units: "",
-        mrp: 0,
-        discount: 0,
+        maxmimunRetailPrice: 0,
+        wholesalerDiscount: 0,
+        wholeselerDiscountRS: 0,
         taxableValue: 0,
         cgst: 0,
         sgst: 0,
@@ -402,14 +411,11 @@ const PurchesInvoice = () => {
       const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       // Calculate taxable value based on salesTaxInclude
-      console.log(salesTaxInclude, "ksdjf");
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
           (100 + Number(selectedProduct.gstRate))
         : retailPrice * selectedProduct.quantity;
-      {
-        console.log(taxableValue, "tax");
-      }
+
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -537,168 +543,13 @@ const PurchesInvoice = () => {
     });
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const updatedFormData = {
-  //       ...formData,
-  //       rows: rows.map((row) => ({
-  //         itemCode: row.itemCode,
-  //         productName: row.productName,
-  //         hsnCode: row.hsnCode,
-  //         qty: row.quantity,
-  //         units: row.units,
-  //         mrp: row.maxmimunRetailPrice,
-
-  //         discountpercent:
-  //           customerType === "Wholesaler"
-  //             ? row.wholesalerDiscount
-  //             : row.retailDiscount,
-  //         discountRS:
-  //           customerType === "Wholesaler"
-  //             ? row.wholeselerDiscountRS
-  //             : row.retailDiscountRS,
-
-  //         taxable: row.taxableValue.toFixed(2),
-  //         cgstpercent: row.cgstp,
-  //         cgstRS: row.cgstrs,
-  //         sgstpercent: row.sgstp,
-  //         sgstRS: row.sgstrs,
-  //         igstpercent: row.igstp,
-  //         igstRS: row.igstrs,
-  //         totalValue: row.totalvalue,
-  //       })),
-  //       grossAmount: grossAmount.toFixed(2),
-  //       GstAmount: GstAmount.toFixed(2),
-  //       otherCharges: otherCharges.toFixed(2),
-  //       otherChargesDescriptions: otherChargesDescriptions,
-  //       salesType,
-  //       customerType,
-  //       reverseCharge,
-  //       gstType,
-  //       netAmount: netAmount.toFixed(2),
-  //       cash: paymentMethod === "Cash" ? cashDetails : {},
-  //       bank: paymentMethod === "Bank" ? bankDetails : {}, // Ensure bank details are sent correctly
-  //     };
-
-  //     for (const key in updatedFormData) {
-  //       formData.append(key, updatedFormData[key]);
-  //     }
-
-  //     // If a document file has been selected, append it to the FormData
-  //     if (documentPath) {
-  //       formData.append("document", documentPath);
-  //     }
-
-  //     const response = await axios.post(
-  //       "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
-  //       updatedFormData
-  //     );
-  //     console.log(response);
-
-  //     if (response) {
-  //       toast.success("purchase invoice created successfully...");
-  //     }
-  //     setFormData({
-  //       date: "",
-  //       invoiceNo: "",
-  //       salesType: "",
-  //       customerType: "",
-  //       supplierName: "",
-  //       placeOfSupply: "",
-  //       paymentTerm: "",
-  //       dueDate: "",
-  //       receiptDocNo: "",
-  //       dispatchedThrough: "",
-  //       destination: "",
-  //       carrierNameAgent: "",
-  //       billOfLading: "",
-  //       motorVehicleNo: "",
-  //       billingAddress: "",
-  //       reverseCharge: "",
-  //       gstType: "",
-  //       rows: [
-  //         {
-  //           itemCode: "",
-  //           productName: "",
-  //           hsnCode: "",
-  //           qty: null,
-  //           uom: null,
-  //           mrp: null,
-  //           discount: null,
-  //           cgst: null,
-  //           sgst: null,
-  //           igst: null,
-  //           totalValue: null,
-  //         },
-  //       ],
-
-  //       narration: "",
-  //       otherChargesDescriptions: "",
-  //       grossAmount: "",
-  //       GstAmount: "",
-  //       otherCharges: "",
-  //       netAmount: "",
-
-  //       cash: {},
-  //       bank: {},
-  //     });
-
-  //     setCashDetails({ amount: "", advance: "", received: "", balance: "" });
-  //     setBankDetails({
-  //       selectBankType: "",
-  //       transactionDate: "",
-  //       chequeNo: "",
-  //       transactionNo: "",
-  //       amount: "",
-  //       advance: "",
-  //       received: "",
-  //       balance: "",
-  //     });
-
-  //     // Clear other independent states
-  //     setDate("");
-  //     setinvoiceNo("");
-  //     setSalesType("GST Invoice");
-  //     setCustomerType("Retailer");
-  //     setPlaceOfSupply("");
-  //     setDueDate("");
-  //     setTransportDetails({
-  //       receiptDocNo: "",
-  //       dispatchedThrough: "",
-  //       destination: "",
-  //       carrierNameAgent: "",
-  //       billOfLading: "",
-  //       motorVehicleNo: "",
-  //     });
-  //     setBillingAddress("");
-  //     setReverseCharge("No");
-  //     setGstType("CGST/SGST");
-  //     setRows([]);
-  //     setPaymentTerm(0);
-  //     setOtherCharges(0);
-  //     setOtherChargesDescriptions("");
-  //     setSelectedCustomer("");
-  //   } catch (error) {
-  //     console.error("Error submitting form:", error);
-  //     toast.error("Failed to create sales estimate. Please try again.");
-  //   }
-  // };
-
-
-
-
-
-
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       // Create a FormData instance
-      const formData = new FormData();
-  
+      const submissionData = new FormData();
+
       // Append non-file form data to formData
       const fields = {
         date,
@@ -719,59 +570,64 @@ const PurchesInvoice = () => {
         reverseCharge,
         gstType,
         otherChargesDescriptions,
+        narration: formData.narration,
         grossAmount: grossAmount.toFixed(2),
         GstAmount: GstAmount.toFixed(2),
         otherCharges: otherCharges.toFixed(2),
         netAmount: netAmount.toFixed(2),
-        cash: paymentMethod === "Cash" ? JSON.stringify(cashDetails) : "{}",
-        bank: paymentMethod === "Bank" ? JSON.stringify(bankDetails) : "{}"
       };
-  
+
       // Append all fields to formData
-      Object.keys(fields).forEach(key => {
+      Object.keys(fields).forEach((key) => {
         if (fields[key]) {
-          formData.append(key, fields[key]);
+          submissionData.append(key, fields[key]);
         }
       });
-  
+
       // Append each row individually
       rows.forEach((row, index) => {
         Object.keys(row).forEach((key) => {
-          formData.append(`rows[${index}][${key}]`, row[key]);
+          submissionData.append(`rows[${index}][${key}]`, row[key]);
         });
       });
-  
+
+      if (paymentMethod === "Cash") {
+        console.log("Appending cash details:", cashDetails); // Log for debugging
+        submissionData.append("cash", JSON.stringify(cashDetails));
+      } else if (paymentMethod === "Bank") {
+        console.log("Appending bank details:", bankDetails); // Log for debugging
+        submissionData.append("bank", JSON.stringify(bankDetails));
+      }
+
       // If a document file has been selected, append it to the FormData
       if (documentPath) {
-        formData.append("documentPath", documentPath);
+        submissionData.append("documentPath", documentPath);
       }
-  
+
+      for (var pair of submissionData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+
       // Send the formData using axios
       const response = await axios.post(
         "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        submissionData
       );
-  
+
       console.log(response);
-  
+
       if (response) {
         toast.success("Purchase invoice created successfully...");
       }
-  
+
       // Reset your form data and state
       resetForm();
-      
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to create sales estimate. Please try again.");
     }
   };
-  
+
   const resetForm = () => {
     setFormData({
       date: "",
@@ -792,20 +648,22 @@ const PurchesInvoice = () => {
       billingAddress: "",
       reverseCharge: "No",
       gstType: "CGST/SGST",
-      rows: [{
-        itemCode: "",
-        productName: "",
-        hsnCode: "",
-        qty: null,
-        units: "",
-        mrp: null,
-        discount: null,
-        taxableValue: 0,
-        cgst: 0,
-        sgst: 0,
-        igst: 0,
-        totalValue: 0,
-      }],
+      rows: [
+        {
+          itemCode: "",
+          productName: "",
+          hsnCode: "",
+          qty: null,
+          units: "",
+          mrp: null,
+          discount: null,
+          taxableValue: 0,
+          cgst: 0,
+          sgst: 0,
+          igst: 0,
+          totalValue: 0,
+        },
+      ],
       narration: "",
       otherChargesDescriptions: "",
       grossAmount: "",
@@ -815,7 +673,7 @@ const PurchesInvoice = () => {
       cash: {},
       bank: {},
     });
-  
+
     setCashDetails({ amount: "", advance: "", received: "", balance: "" });
     setBankDetails({
       selectBankType: "",
@@ -827,14 +685,12 @@ const PurchesInvoice = () => {
       received: "",
       balance: "",
     });
-  
+
     // Reset additional states as needed...
     setDate("");
     setSelectedCustomer("");
     // Add any other state resets...
   };
-  
-  
 
   const openViewModal = (suppliers) => {
     setViewModal(true);
@@ -975,7 +831,7 @@ const PurchesInvoice = () => {
             </label>
           </div>
 
-          <div className="mb-4">
+          <div className="mt-6">
             <button
               onClick={() => setIsModalOpen(true)}
               className="bg-blue-500 text-black p-2"
@@ -1112,7 +968,11 @@ const PurchesInvoice = () => {
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
                 <th className="border p-1">Units</th>
+                <th className="border p-1">Free Qty</th>
                 <th className="border p-1">MRP</th>
+                <th className="border p-1">Unit Cost</th>
+                <th className="border p-1">Scheme Margin</th>
+
                 <th className="border p-1">
                   Discount
                   <div className="flex justify-between">
@@ -1191,7 +1051,6 @@ const PurchesInvoice = () => {
                       menuPosition="fixed"
                     />
                   </td>
-
                   <td className="border ">
                     {console.log(rows, "dheeru")}
                     <Select
@@ -1234,7 +1093,6 @@ const PurchesInvoice = () => {
                       </div>
                     </div>
                   </td>
-
                   <td className="border p-1">
                     <input
                       type="text"
@@ -1265,6 +1123,16 @@ const PurchesInvoice = () => {
                       className="w-full"
                     />
                   </td>
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.freeQty}
+                      onChange={(e) =>
+                        handleRowChange(index, "freeQty", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>
                   <td className="border p-2">
                     <input
                       type="text"
@@ -1278,13 +1146,32 @@ const PurchesInvoice = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px", // Set a small minimum width to ensure visibility
-                        flexBasis: "70px", // Allow it to shrink, but still have a base width
-                        flexShrink: 1, // Allow it to shrink on mobile
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
                       }}
                     />
                   </td>
-
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.unitCost}
+                      onChange={(e) =>
+                        handleRowChange(index, "unitCost", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>{" "}
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.schemeMargin}
+                      onChange={(e) =>
+                        handleRowChange(index, "schemeMargin", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>
                   <td className="border">
                     {customerType === "Wholesaler" && (
                       <div className="p-1 flex gap-1">
