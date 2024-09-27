@@ -631,7 +631,7 @@ const Pos = () => {
                 <td className="p-1 gap-2 flex">
                   <button
                     onClick={() => removeRow(index)}
-                    className="bg-red-500 text-black p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+                    className="bg-red-500 text-black p-1 mt-2 hide-on-print rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -656,7 +656,7 @@ const Pos = () => {
       </div>
       <button
         onClick={addRow}
-        className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+        className="bg-green-500 text-black hide-on-print p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
       >
         <svg
           xmlns="http//www.w3.org/2000/svg"

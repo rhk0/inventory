@@ -3,7 +3,7 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
-
+import { useAuth} from "../../../context/Auth.js"
 const CreateDeliveryChallan = () => {
   const [date, setDate] = useState("");
   const [challanNo, setchallanNo] = useState("");
@@ -11,6 +11,8 @@ const CreateDeliveryChallan = () => {
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [auth] =useAuth();
+  const [userid ,setUserId] =useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -27,7 +29,10 @@ const CreateDeliveryChallan = () => {
   const [otherCharges, setOtherCharges] = useState(0);
 
   const [customer, setCustomer] = useState([]);
+  const [company, setCompanyData] = useState([]);
+
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [chooseUser, setChooseUser] = useState([]);
 
   const [formData, setFormData] = useState({
     date: "",
@@ -78,6 +83,7 @@ const CreateDeliveryChallan = () => {
     const fetchCustomer = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageCustomer");
+
         setCustomer(response.data.data);
       } catch (error) {
         console.error("Error fetching Customers:", error);
@@ -86,6 +92,32 @@ const CreateDeliveryChallan = () => {
 
     fetchCustomer();
   }, []);
+ 
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+  }, [auth]);
+
+   useEffect(() => {
+  const companyData = async () => {
+    try {
+      const response = await axios.get(`/api/v1/company/get/${userid}`);
+      setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
+    } catch (error) {
+      console.error("Error fetching company data:", error);
+    }
+  };
+  
+ 
+    companyData(); // Fetch company data on component mount
+  }, [userid]); // Empty dependency array ensures this only runs once, on mount
+  
+
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
@@ -93,6 +125,7 @@ const CreateDeliveryChallan = () => {
 
     const selectedCustomerData = customer.find((cust) => cust._id === value);
 
+    setChooseUser(selectedCustomerData);
     setFormData((prev) => ({
       ...prev,
       customerName: selectedCustomerData ? selectedCustomerData.name : "",
@@ -278,7 +311,23 @@ const CreateDeliveryChallan = () => {
       GstAmount += rows.cgstrs + rows.sgstrs;
     });
 
-    const netAmount = grossAmount + GstAmount + otherCharges + 0;
+    let netAmount;
+
+    // Check if otherChargesDescriptions includes "discount"
+
+    if (salesType === "Bill of Supply") {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount - otherCharges; // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges; // Do not add GstAmount
+      }
+    } else {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount + GstAmount - otherCharges;
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges;
+      }
+    }
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -290,9 +339,10 @@ const CreateDeliveryChallan = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
-        console.log(response, "dkfjk");
+
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
+       
         } else {
           console.error("Unexpected response structure:", response.data);
         }
@@ -304,6 +354,8 @@ const CreateDeliveryChallan = () => {
 
     fetchProducts();
   }, []);
+
+
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
@@ -323,14 +375,11 @@ const CreateDeliveryChallan = () => {
       const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       // Calculate taxable value based on salesTaxInclude
-      console.log(salesTaxInclude, "ksdjf");
+
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
           (100 + Number(selectedProduct.gstRate))
         : retailPrice * selectedProduct.quantity;
-      {
-        console.log(taxableValue, "tax");
-      }
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -501,7 +550,6 @@ const CreateDeliveryChallan = () => {
         "/api/v1/deliveryChallanRoute/createchallan",
         updatedFormData
       );
-
       if (response) {
         toast.success("delivery challan created successfully...");
       }
@@ -576,14 +624,680 @@ const CreateDeliveryChallan = () => {
     }
   };
 
+   
+  const handlePrintOnly = () => {
+    const printWindow = window.open("", "_blank");
+
+    const updatedFormData = {
+      ...formData,
+      rows: rows.map((row) => ({
+        itemCode: row.itemCode,
+        productName: row.productName,
+        hsnCode: row.hsnCode,
+        qty: row.quantity,
+        units: row.units,
+        mrp: row.maxmimunRetailPrice,
+        discountpercent:
+          customerType === "Wholesaler"
+            ? row.wholesalerDiscount
+            : row.retailDiscount,
+        discountRS:
+          customerType === "Wholesaler"
+            ? row.wholeselerDiscountRS
+            : row.retailDiscountRS,
+        taxable: row.taxableValue.toFixed(2),
+        cgstpercent: row.cgstp,
+        cgstRS: row.cgstrs,
+        sgstpercent: row.sgstp,
+        sgstRS: row.sgstrs,
+        igstpercent: row.igstp,
+        igstRS: row.igstrs,
+        totalValue: row.totalvalue,
+      })),
+      grossAmount: grossAmount.toFixed(2),
+      GstAmount: GstAmount.toFixed(2),
+      otherCharges: otherCharges.toFixed(2),
+      otherChargesDescriptions: otherChargesDescriptions,
+      salesType,
+      customerType,
+      reverseCharge,
+      gstType,
+      netAmount: netAmount.toFixed(2),
+    };
+    function numberToWords(num) {
+      const ones = [
+        "",
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+        "Ten",
+        "Eleven",
+        "Twelve",
+        "Thirteen",
+        "Fourteen",
+        "Fifteen",
+        "Sixteen",
+        "Seventeen",
+        "Eighteen",
+        "Nineteen",
+      ];
+      const tens = [
+        "",
+        "",
+        "Twenty",
+        "Thirty",
+        "Forty",
+        "Fifty",
+        "Sixty",
+        "Seventy",
+        "Eighty",
+        "Ninety",
+      ];
+
+      function convertToWords(n) {
+        if (n < 20) return ones[n];
+        if (n < 100)
+          return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+        if (n < 1000)
+          return (
+            ones[Math.floor(n / 100)] +
+            " Hundred" +
+            (n % 100 ? " " + convertToWords(n % 100) : "")
+          );
+        if (n < 100000)
+          return (
+            convertToWords(Math.floor(n / 1000)) +
+            " Thousand" +
+            (n % 1000 ? " " + convertToWords(n % 1000) : "")
+          );
+        return "";
+      }
+
+      // Split the number into integer and decimal parts
+      const parts = num.toString().split(".");
+
+      const integerPart = parseInt(parts[0], 10);
+      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0;
+
+      let words = convertToWords(integerPart) + " Rupees";
+
+      // Handle the decimal part (paise)
+      if (decimalPart > 0) {
+        words += " and " + convertToWords(decimalPart) + " Paise";
+      }
+
+      return words;
+    }
+    const gstHeaders =
+      updatedFormData.gstType === "CGST/SGST"
+        ? `<th>CGST</th><th>SGST</th>`
+        : `<th>IGST</th>`;
+
+    const gstRows =
+      updatedFormData.gstType === "CGST/SGST"
+        ? updatedFormData.rows
+            .map(
+              (row, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${row.itemCode}</td>
+            <td>${row.productName}</td>
+            <td>${row.hsnCode}</td>
+            <td>${row.qty}</td>
+            <td>${row.units}</td>
+            <td>${row.mrp}</td>
+            <td>${row.discountpercent}% ${row.discountRS}</td>
+            <td>${row.taxable}</td>
+            <td>${row.cgstpercent}% ${row.cgstRS}</td>
+            <td >${row.sgstpercent}% ${row.sgstRS}</td>
+            <td>${row.totalValue}</td>
+          </tr>`
+            )
+            .join("")
+        : updatedFormData.rows
+            .map(
+              (row, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${row.itemCode}</td>
+            <td>${row.productName}</td>
+            <td>${row.hsnCode}</td>
+            <td>${row.qty}</td>
+            <td>${row.units}</td>
+            <td>${row.mrp}</td>
+            <td>${row.discountpercent}% ${row.discountRS}</td>
+            <td>${row.taxable}</td>
+            <td>${row.igstpercent}% ${row.igstRS}</td>
+            <td>${row.totalValue}</td>
+          </tr>`
+            )
+            .join("");
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 10px;
+            }
+            .header, .section-header, .table th {
+              color: red;
+              font-weight: bold;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              font-size: 24px;
+            }
+            .table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+            .table th, .table td {
+              border: 1px solid black;
+              padding: 5px;
+              text-align: center;
+              font-size: 12px;
+            }
+            .table th {
+              background-color: #ff0000; /* Red header */
+              color: black;
+            }
+            .signature {
+              text-align: right;
+              margin-top: 50px;
+              font-size: 12px;
+            }
+          </style>
+        </head>
+        <body>
+        <div class="header">
+          
+            <div class="business-name"> ${company?.businessName || "----------"} </div>
+              <div> ${company?.address || "---------"} </div>
+              <div>GSTIN: ${company?.gstIn || "---------"}</div>
+            </div>
+                <table class="table">
+             <tr>
+                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
+                  Delivery Challan
+                  </th>
+              </tr>
+
+
+         
+            <tr>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="customer-details">
+                  <div class="section-header">Customer Details</div>
+                  <div class="details">Name: <span>${
+                    chooseUser.name
+                  }</span></div>
+                  <div class="details">Address: <span>${
+                    chooseUser.address
+                  }</span></div>
+                  <div class="details">Contact: <span>${
+                    chooseUser.contact
+                  }</span></div>
+                  <div class="details">GSTIN: <span>${
+                    chooseUser.gstin
+                  }</span></div>
+                </div>
+              </td>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="sales-estimate">
+                  <div class="section-header"> Challan Details</div>
+                  <div class="details">Challan No: <span>${
+                    updatedFormData.challanNo
+                  }</span></div>
+                  <div class="details">Challan Date: <span>${
+                    updatedFormData.date
+                  }</span></div>
+                  <div class="details">Place of Supply: <span>${
+                    updatedFormData.placeOfSupply
+                  }</span></div>
+                   <div class="details">Due Date: <span>${
+                     updatedFormData.dueDate
+                   }</span></div>
+                </div>
+              </td>
+              <td style="width: 40%;">
+                <div style="text-align:left;" class="transport-details">
+                  <div class="section-header">Transport Details</div>
+                 
+                  <div class="details">Dispatch Through: <span>${
+                    updatedFormData.dispatchedThrough
+                  }</span></div>
+                   <div class="details">Destination: <span>${
+                     updatedFormData.destination
+                   }</span></div>
+                   <div class="details">Carrier Name/Agent : <span>${
+                     updatedFormData.carrierNameAgent
+                   }</span></div>
+                  <div class="details">Bill of Lading/LR-RR No.: <span>${
+                    updatedFormData.billOfLading
+                  }</span></div>
+                </div>
+              </td>
+            </tr>
+          </table>
+  
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Item Code</th>
+                <th>Product Name</th>
+                <th>HSN Code</th>
+                <th>QTY</th>
+                <th>UOM</th>
+                <th>MRP</th>
+                <th>Disccount</th>
+                <th>Taxable Value</th>
+                ${gstHeaders}
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${gstRows}
+            </tbody>
+          </table>
+           <table class="table">
+              <tr>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="banking-details">
+                    <div class="section-header">Banking Details</div>
+                    <div class="details">Bank Name: ${company?.bank_name || "-"}</div>
+                    <div class="details">IFSC Code: ${company?.ifce_code || "-"}</div>
+                    <div class="details">Account No:${company?.accountNumber || "-"}</div>
+                    <div class="details">Account Holder Name: ${company?.account_holder_name || "-"}</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                  </div>
+                </td>
+             
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="amount-details">
+                    <div class="section-header">Amount Details</div>
+                    <div class="details">Gross Total: ₹${
+                      updatedFormData.grossAmount
+                    }</div>
+                    <div class="details">GST Amount: ₹${
+                      updatedFormData.GstAmount
+                    }</div>
+                    <div class="details">Additional Charges: ₹${
+                      updatedFormData.otherCharges
+                    }</div>
+                    <div class="details">Net Total: ₹${
+                      updatedFormData.netAmount
+                    }</div>
+                    <div class="details">Amount in Words:${numberToWords(
+                      updatedFormData.netAmount
+                    )}</div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+  
+            <div style="margin-top:100px" class="mt-10">
+                  <div class="section-header">Terms & Condition</div>
+                  <div class="details">Your terms and conditions go here...</div>
+                </div>
+  
+          <div  class="signature">
+         
+          
+            <div>For (Business Name)</div>
+            <div style="margin-top: 20px;">Signature</div>
+          </div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+
+    // Set the onafterprint event before calling print()
+    printWindow.onafterprint = () => {
+      printWindow.close(); // Close the print window after printing
+
+      // Create a fake event object (optional)
+      const dummyEvent = {
+        preventDefault: () => {},
+      };
+
+      handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
+    };
+
+    // Trigger the print dialog
+    printWindow.print();
+  };
+
+  const handlePrintOnlyWithoutGST = () => {
+    const printWindow = window.open("", "_blank");
+
+    const updatedFormData = {
+      ...formData,
+      rows: rows.map((row) => ({
+        itemCode: row.itemCode,
+        productName: row.productName,
+        hsnCode: row.hsnCode,
+        qty: row.quantity,
+        units: row.units,
+        mrp: row.maxmimunRetailPrice,
+        discountpercent:
+          customerType === "Wholesaler"
+            ? row.wholesalerDiscount
+            : row.retailDiscount,
+        discountRS:
+          customerType === "Wholesaler"
+            ? row.wholeselerDiscountRS
+            : row.retailDiscountRS,
+        taxable: row.taxableValue.toFixed(2),
+        totalValue: row.totalvalue, // GST details removed
+      })),
+      grossAmount: grossAmount.toFixed(2),
+      otherCharges: otherCharges.toFixed(2),
+      otherChargesDescriptions: otherChargesDescriptions,
+      salesType,
+      customerType,
+      reverseCharge,
+      netAmount: netAmount.toFixed(2),
+    };
+
+    function numberToWords(num) {
+      const ones = [
+        "",
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+        "Ten",
+        "Eleven",
+        "Twelve",
+        "Thirteen",
+        "Fourteen",
+        "Fifteen",
+        "Sixteen",
+        "Seventeen",
+        "Eighteen",
+        "Nineteen",
+      ];
+      const tens = [
+        "",
+        "",
+        "Twenty",
+        "Thirty",
+        "Forty",
+        "Fifty",
+        "Sixty",
+        "Seventy",
+        "Eighty",
+        "Ninety",
+      ];
+
+      function convertToWords(n) {
+        if (n < 20) return ones[n];
+        if (n < 100)
+          return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+        if (n < 1000)
+          return (
+            ones[Math.floor(n / 100)] +
+            " Hundred" +
+            (n % 100 ? " " + convertToWords(n % 100) : "")
+          );
+        if (n < 100000)
+          return (
+            convertToWords(Math.floor(n / 1000)) +
+            " Thousand" +
+            (n % 1000 ? " " + convertToWords(n % 1000) : "")
+          );
+        return "";
+      }
+
+      // Split the number into integer and decimal parts
+      const parts = num.toString().split(".");
+
+      const integerPart = parseInt(parts[0], 10);
+      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0;
+
+      let words = convertToWords(integerPart) + " Rupees";
+
+      // Handle the decimal part (paise)
+      if (decimalPart > 0) {
+        words += " and " + convertToWords(decimalPart) + " Paise";
+      }
+
+      return words;
+    }
+    const gstRows = updatedFormData.rows
+      .map(
+        (row, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${row.itemCode}</td>
+          <td>${row.productName}</td>
+          <td>${row.hsnCode}</td>
+          <td>${row.qty}</td>
+          <td>${row.units}</td>
+          <td>${row.mrp}</td>
+          <td>${row.discountpercent}% ${row.discountRS}</td>
+          <td>${row.taxable}</td>
+          <td>${row.totalValue}</td> <!-- Removed GST related fields -->
+        </tr>`
+      )
+      .join("");
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 10px;
+            }
+            .header, .section-header, .table th {
+              color: red;
+              font-weight: bold;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              font-size: 24px;
+            }
+            .table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+            .table th, .table td {
+              border: 1px solid black;
+              padding: 5px;
+              text-align: center;
+              font-size: 12px;
+            }
+            .table th {
+              background-color: #ff0000; /* Red header */
+              color: black;
+            }
+            .signature {
+              text-align: right;
+              margin-top: 50px;
+              font-size: 12px;
+            }
+          </style>
+        </head>
+        <body>
+        <div class="header">
+          
+            <div class="business-name"> ${company?.businessName || "---------"} </div>
+              <div> ${company?.address || "---------"} </div>
+              <div>GSTIN: ${company?.gstIn || "---------"}</div>
+            </div>
+          <table class="table">
+            <tr>
+              <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;">
+                Delivery Challan
+              </th>
+            </tr>
+            <tr>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="customer-details">
+                  <div class="section-header">Customer Details</div>
+                  <div class="details">Name: <span>${
+                    chooseUser.name
+                  }</span></div>
+                  <div class="details">Address: <span>${
+                    chooseUser.address
+                  }</span></div>
+                  <div class="details">Contact: <span>${
+                    chooseUser.contact
+                  }</span></div>
+                  <div class="details">GSTIN: <span>${
+                    chooseUser.gstin
+                  }</span></div>
+                </div>
+              </td>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="sales-estimate">
+                  <div class="section-header">Challan Details</div>
+                  <div class="details">Challan No: <span>${
+                    updatedFormData.challanNo
+                  }</span></div>
+                  <div class="details">Challan Date: <span>${
+                    updatedFormData.date
+                  }</span></div>
+                  <div class="details">Place of Supply: <span>${
+                    updatedFormData.placeOfSupply
+                  }</span></div>
+                  <div class="details">Due Date: <span>${
+                    updatedFormData.dueDate
+                  }</span></div>
+                </div>
+              </td>
+              <td style="width: 40%;">
+                <div style="text-align:left;" class="transport-details">
+                  <div class="section-header">Transport Details</div>
+                  <div class="details">Dispatch Through: <span>${
+                    updatedFormData.dispatchedThrough
+                  }</span></div>
+                  <div class="details">Destination: <span>${
+                    updatedFormData.destination
+                  }</span></div>
+                  <div class="details">Carrier Name/Agent: <span>${
+                    updatedFormData.carrierNameAgent
+                  }</span></div>
+                  <div class="details">Bill of Lading/LR-RR No.: <span>${
+                    updatedFormData.billOfLading
+                  }</span></div>
+                </div>
+              </td>
+            </tr>
+          </table>
+  
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Item Code</th>
+                <th>Product Name</th>
+                <th>HSN Code</th>
+                <th>QTY</th>
+                <th>UOM</th>
+                <th>MRP</th>
+                <th>Discount</th>
+                <th>Taxable Value</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${gstRows}
+            </tbody>
+          </table>
+  
+          <table class="table">
+            <tr>
+              <td style="width: 33.33%; text-align: left;">
+                <div class="banking-details">
+                  <div class="section-header">Banking Details</div>
+                 <div class="details">Bank Name: ${company?.bank_name || "-"}</div>
+                    <div class="details">IFSC Code: ${company?.ifce_code || "-"}</div>
+                    <div class="details">Account No:${company?.accountNumber || "-"}</div>
+                    <div class="details">Account Holder Name: ${company?.account_holder_name || "-"}</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                </div>
+              </td>
+              <td style="width: 33.33%; text-align: left;">
+                <div class="amount-details">
+                  <div class="section-header">Amount Details</div>
+                  <div class="details">Gross Total: ₹${
+                    updatedFormData.grossAmount
+                  }</div>
+                  <div class="details">Additional Charges: ₹${
+                    updatedFormData.otherCharges
+                  }</div>
+                  <div class="details">Net Total: ₹${
+                    updatedFormData.netAmount
+                  }</div>
+                  <div class="details">Amount in Words: ${numberToWords(
+                    updatedFormData.netAmount
+                  )}</div>
+                </div>
+              </td>
+            </tr>
+          </table>
+  
+          <div style="margin-top:100px" class="mt-10">
+            <div class="section-header">Terms & Condition</div>
+            <div class="details">Your terms and conditions go here...</div>
+          </div>
+  
+          <div class="signature">
+            <div>For (Business Name)</div>
+            <div style="margin-top: 20px;">Signature</div>
+          </div>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    // Set the onafterprint event before calling print()
+    printWindow.onafterprint = () => {
+      printWindow.close(); // Close the print window after printing
+
+      // Create a fake event object (optional)
+      const dummyEvent = {
+        preventDefault: () => {},
+      };
+
+      handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
+    };
+
+    // Trigger the print dialog
+    printWindow.print();
+  };
+
   return (
     <>
       <div
-        style={{ backgroundColor: "#82ac73" }}
+        style={{ backgroundColor: "#FFFFFF" }}
         className="p-4 responsive-container"
       >
         {/* Top Section */}
-        <h1 className="text-center font-bold text-3xl bg-gray-500 text-white">
+        <h1 className="text-center font-bold text-3xl  text-black mb-5">
           Create Delivery Challan
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
@@ -698,7 +1412,7 @@ const CreateDeliveryChallan = () => {
           <div className="mb-4">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-blue-500 text-white p-2"
+              className="bg-blue-500 text-black p-2"
             >
               Transport Details
             </button>
@@ -767,13 +1481,13 @@ const CreateDeliveryChallan = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-blue-500 text-white p-2"
+                  className="bg-blue-500 text-black p-2"
                 >
                   Save
                 </button>
@@ -1234,7 +1948,7 @@ const CreateDeliveryChallan = () => {
                   <td className="p-1 gap-2 flex">
                     <button
                       onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+                      className="bg-red-500 text-black p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -1260,7 +1974,7 @@ const CreateDeliveryChallan = () => {
 
         <button
           onClick={addRow}
-          className="bg-green-500 text-white p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+          className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
         >
           <svg
             xmlns="http//www.w3.org/2000/svg"
@@ -1333,13 +2047,13 @@ const CreateDeliveryChallan = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleOtherChargesSave}
-                  className="bg-gray-500 text-white p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Save
                 </button>
@@ -1361,7 +2075,8 @@ const CreateDeliveryChallan = () => {
                   narration: e.target.value,
                 }));
               }}
-              className="bg-black text-white border p-1 w-full  rounded"
+              placeholder="Enter Narration"
+              className="bg-white text-black border p-1 w-full  rounded"
             />
           </div>
           <div className="w-full lg:w-1/3">
@@ -1372,7 +2087,7 @@ const CreateDeliveryChallan = () => {
               <input
                 value={grossAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
             {salesType === "GST Invoice" && (
@@ -1383,7 +2098,7 @@ const CreateDeliveryChallan = () => {
                 <input
                   value={GstAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
-                  className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                  className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
             )}
@@ -1395,7 +2110,7 @@ const CreateDeliveryChallan = () => {
               <input
                 value={otherCharges.toFixed(2)}
                 onChange={handleOtherChargesChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
 
@@ -1406,7 +2121,7 @@ const CreateDeliveryChallan = () => {
               <input
                 value={netAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-black text-white border p-1 w-full  rounded lg:w-2/3"
+                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
           </div>
@@ -1415,24 +2130,23 @@ const CreateDeliveryChallan = () => {
         {/* Buttons for saving and printing */}
         <div className="mt-8 flex justify-center">
           <button
-            // onClick={}
-            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-white p-2 mr-2"
+            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2"
             onClick={handleSubmit}
           >
             Save
           </button>
           {salesType === "GST Invoice" && (
             <button
-              // onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
+              onClick={handlePrintOnly}
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
             </button>
           )}
           {salesType !== "GST Invoice" && (
             <button
-              // onClick={handlePrintOnlyWithoutGST}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-white p-2"
+              onClick={handlePrintOnlyWithoutGST}
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
             </button>
