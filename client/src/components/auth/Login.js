@@ -28,7 +28,7 @@ const Login = () => {
     }
     if (dauth?.user?.role === 0) {
       if (dauth.AccessToken) {
-        navigate("/admin");
+        navigate("/staff");
       }
     }
   }, [dauth, navigate]);
