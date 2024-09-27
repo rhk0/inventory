@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import Loader from "../loader/LoaderHand.css";
+import  Loader from "../loader/LoaderHand";
 import {
   FaUserAlt,
   FaLock,
@@ -63,7 +63,7 @@ const Registration = () => {
 
     try {
       const response = await axios.post("/api/v1/auth/register", formData);
-
+   console.log(response)
       if (response.data.success) {
         toast.success(response.data.message);
         clearData();

@@ -25,7 +25,8 @@ const upload = multer({
 
 // Check file type for upload
 function checkFileType(file, cb) {
-    const filetypes = /pdf|doc|docx|xls|xlsx|ppt|pptx|txt|rtf|jpg|jpeg|png|gif|bmp|tiff|svg/i;
+  const filetypes =
+    /pdf|doc|docx|xls|xlsx|ppt|pptx|txt|rtf|jpg|jpeg|png|gif|bmp|tiff|svg/i;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
@@ -60,7 +61,9 @@ export const createPurchaseInvoiceController = async (req, res) => {
         billingAddress,
         reverseCharge,
         gstType,
-       // rows, // Array of row objects
+        // rows, // Array of row objects
+        cash,
+        bank,
         otherChargesDescription,
         otherCharges,
         narration,
@@ -70,12 +73,12 @@ export const createPurchaseInvoiceController = async (req, res) => {
       } = req.body;
 
       let rows;
-      if (typeof req.body.rows === 'string') {
+      if (typeof req.body.rows === "string") {
         rows = JSON.parse(req.body.rows);
       } else {
         rows = req.body.rows;
       }
-      const { _id } = req.user; 
+      const { _id } = req.user;
 
       const newInvoice = new purchesInvoiceModel({
         admin: _id,
@@ -97,6 +100,8 @@ export const createPurchaseInvoiceController = async (req, res) => {
         reverseCharge,
         gstType,
         rows, // Save rows as an array
+        cash,
+        bank,
         otherChargesDescription,
         otherCharges,
         narration,
@@ -184,48 +189,47 @@ export const deletePurchaseInvoiceByIdController = async (req, res) => {
   }
 };
 export const updatePurchaseInvoiceByIdController = async (req, res) => {
-    upload(req, res, async (err) => {
-      if (err) {
-        return res.status(400).json({ message: err });
-      }
-      try {
-        const { _id } = req.params;
-        const updateData = req.body;
-  
-        const invoice = await purchesInvoiceModel.findById(_id);
-        if (!invoice) {
-          return res.status(404).json({
-            success: false,
-            message: "Purchase invoice not found",
-          });
-        }
-  
-        // Parse the rows array if it's sent as a string
-        if (typeof updateData.rows === 'string') {
-          updateData.rows = JSON.parse(updateData.rows);
-        }
-  
-        // Update fields in the invoice
-        Object.assign(invoice, updateData);
-  
-        if (req.file) {
-          invoice.documentPath = req.file.path; // Update document path if a new file is uploaded
-        }
-  
-        const updatedInvoice = await invoice.save();
-  
-        res.status(200).json({
-          success: true,
-          message: "Purchase invoice updated successfully",
-          updatedInvoice,
-        });
-      } catch (error) {
-        console.error("Error updating purchase invoice:", error);
-        res.status(500).json({
-          error: "Server error",
-          message: error.message,
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: err });
+    }
+    try {
+      const { _id } = req.params;
+      const updateData = req.body;
+
+      const invoice = await purchesInvoiceModel.findById(_id);
+      if (!invoice) {
+        return res.status(404).json({
+          success: false,
+          message: "Purchase invoice not found",
         });
       }
-    });
-  };
-  
+
+      // Parse the rows array if it's sent as a string
+      if (typeof updateData.rows === "string") {
+        updateData.rows = JSON.parse(updateData.rows);
+      }
+
+      // Update fields in the invoice
+      Object.assign(invoice, updateData);
+
+      if (req.file) {
+        invoice.documentPath = req.file.path; // Update document path if a new file is uploaded
+      }
+
+      const updatedInvoice = await invoice.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Purchase invoice updated successfully",
+        updatedInvoice,
+      });
+    } catch (error) {
+      console.error("Error updating purchase invoice:", error);
+      res.status(500).json({
+        error: "Server error",
+        message: error.message,
+      });
+    }
+  });
+};
