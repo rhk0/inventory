@@ -53,7 +53,7 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await axios.post("/api/v1/auth/login", formData);
-
+ console.log("res",response)
       if (response.data.success) {
         toast.success(response.data.message);
 
@@ -81,9 +81,20 @@ const Login = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setLoading(false); // Set loading to false after the request
+      console.log("er",error)
+     
+    if (error.response) {
+     
+      toast.error(`Server error: ${error.response.status} - ${error.response.data.message}`);
+    } else if (error.request) {
+     
+      toast.error("Network error: No response from the server. Please check your connection.");
+    } else {
+     
+      toast.error(`Error: ${error.message}`);
+    }
+  } finally {
+      setLoading(false); 
     }
   };
 

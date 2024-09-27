@@ -245,10 +245,10 @@ export const loginController = async (req, res) => {
       return res.send({ success: false, message: "User Not Registered..!" });
     }
   } catch (error) {
-    console.log(error);
+   
     res
       .status(500)
-      .send({ success: false, message: "internal server issue", error });
+      .send({ success: false, message: error.message, error });
   }
 };
 export const userUpdateController = async (req, res) => {
