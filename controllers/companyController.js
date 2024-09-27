@@ -17,7 +17,7 @@ if (!fs.existsSync(uploadDir)) {
 // Configure Multer storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadDir); 
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     cb(
@@ -61,7 +61,6 @@ export const registerController = async (req, res) => {
           .status(400)
           .send({ error: "File upload error", message: err.message });
       }
-
       const {
         businessName,
         address,
@@ -87,50 +86,17 @@ export const registerController = async (req, res) => {
         ifce_code,
         account_holder_name,
         accountNumber,
+        upiId
       } = req.body;
-
-      // Extract relative path after 'uploads/' folder
+        
+      const { _id } = req.user;
+      
       const photo = req.file ? req.file.path.replace(`${uploadDir}`, "") : null;
 
-      // Check for missing required fields
-      const requiredFields = [
-        "businessName",
-        "address",
-        "country",
-        "state",
-        "pinCode",
-        "email",
-        "website",
-        "contact",
-        "financialYear",
-        "bookFrom",
-        "enable_gst",
-        "s_state",
-        "registration_Type",
-        "tax_Rate",
-        "gstIn",
-        "drug_licence_no",
-        "othertax",
-        "tax_name",
-        "number",
-        "bank_name",
-        "bank_addess",
-        "ifce_code",
-        "account_holder_name",
-        "accountNumber",
-      ];
 
-      const missingFields = requiredFields.filter((field) => !req.body[field]);
-
-      if (missingFields.length > 0) {
-        return res.status(400).send({
-          message: "Required fields are missing",
-          missingFields: missingFields,
-        });
-      }
 
       // Check if the business already exists
-      const old = await companyModel.findOne({ businessName });
+      const old = await companyModel.findOne({ businessName,email });
       if (old) {
         return res.status(400).send({
           success: false,
@@ -140,6 +106,7 @@ export const registerController = async (req, res) => {
 
       // Create a new company with the uploaded image
       const data = await companyModel.create({
+        admin: _id,
         photo, // Only relative path is saved here
         businessName,
         address,
@@ -165,6 +132,7 @@ export const registerController = async (req, res) => {
         ifce_code,
         account_holder_name,
         accountNumber,
+        upiId
       });
 
       return res.status(201).send({
@@ -180,3 +148,28 @@ export const registerController = async (req, res) => {
       .json({ error: "Internal Server Error", details: error.message });
   }
 };
+export const getController = async (req, res) => {
+  try {
+    const{admin}=req.params;
+    const data = await companyModel.findOne({admin});
+    if (!data || data.length === 0) {
+      return res.status(404).send({
+        success: false,
+        message: 'No company data found',
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      message: 'Company data retrieved successfully',
+      data,
+    });
+  } catch (error) {
+    console.log('Error fetching company data:', error);
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      details: error.message,
+    });
+  }
+};
+
