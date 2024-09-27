@@ -7,32 +7,14 @@ export const createPayOutController = async (req, res) => {
       paymentNo,
       supplierName,
       paymentMode,
-      selectedBank,
+      selectBank,
       method,
-      transactionCheque,
+      transactionCheckNo,
       rows,
-      total,
+      grandtotal,
       Narration,
     } = req.body;
     const { _id } = req.user;
-
-    const requiredFields = [
-      "date",
-      "paymentNo",
-      "supplierName",
-      "paymentMode",
-      "rows",
-      "total",
-      "Narration",
-    ];
-
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields,
-      });
-    }
 
     try {
       const newPayOut = new payOutModel({
@@ -41,11 +23,11 @@ export const createPayOutController = async (req, res) => {
         paymentNo,
         supplierName,
         paymentMode,
-        selectedBank,
+        selectBank,
         method,
-        transactionCheque,
+        transactionCheckNo,
         rows,
-        total,
+        grandtotal,
         Narration,
       });
       const savedPayOut = await newPayOut.save();
@@ -156,12 +138,12 @@ export const updatePayOutByIdController = async (req, res) => {
     payOut.paymentNo = updateData.paymentNo || payOut.paymentNo;
     payOut.supplierName = updateData.supplierName || payOut.supplierName;
     payOut.paymentMode = updateData.paymentMode || payOut.paymentMode;
-    payOut.selectedBank = updateData.selectedBank || payOut.selectedBank;
+    payOut.selectBank = updateData.selectBank || payOut.selectBank;
     payOut.method = updateData.method || payOut.method;
-    payOut.transactionCheque =
-      updateData.transactionCheque || payOut.transactionCheque;
+    payOut.transactionCheckNo =
+      updateData.transactionCheckNo || payOut.transactionCheckNo;
     payOut.rows = updateData.rows || payOut.rows;
-    payOut.total = updateData.total || payOut.total;
+    payOut.grandtotal = updateData.grandtotal || payOut.grandtotal;
     payOut.Narration = updateData.Narration || payOut.Narration;
 
     try {

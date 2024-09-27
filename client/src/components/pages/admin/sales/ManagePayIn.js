@@ -5,8 +5,7 @@ import axios from "axios";
 import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AiOutlinePlus, AiOutlineClose } from 'react-icons/ai';
-
+import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 
 const ManagePayIn = () => {
   const [payIns, setPayIns] = useState([]);
@@ -20,13 +19,14 @@ const ManagePayIn = () => {
   const [method, setMethod] = useState("");
   const [transactionCheckNo, setTransactionCheckNo] = useState("Cash");
 
-
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [date, setDate] = useState("");
 
-  const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState([]);
-  
+  const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState(
+    []
+  );
+
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -66,11 +66,13 @@ const ManagePayIn = () => {
 
   const handleCustomerChange = (e) => {
     setSelectedCustomer(e.target.value);
-    salesinvoicesCustomerByName(e.target.value);
+    salesinvoicesCustomerByName(e.target.value); // This should be called when customer changes
   };
 
   const handleRowChange = (index, key, value) => {
     const newRows = [...rows];
+    newRows[index][key] = value;
+
     if (key === "billNo") {
       const selectedInvoice = selctedCustomerInvoiceData.find(
         (item) => item.InvoiceNo === value
@@ -86,40 +88,35 @@ const ManagePayIn = () => {
           paidAmount: paymentData ? paymentData.Received : 0,
         };
       }
-    } else {
-      newRows[index][key] = value;
     }
-    setRows(newRows);
+
+    setRows(newRows); // Update rows state
   };
 
-
-
-
-let grandtotal=0;
+  let grandtotal = 0;
   const calculateBalance = (billAmount, paidAmount, receivedAmount) => {
     const bill = parseFloat(billAmount) || 0;
     const credit = parseFloat(paidAmount) || 0;
     const received = parseFloat(receivedAmount) || 0;
-    grandtotal+=(bill - credit - received)
+    grandtotal += bill - credit - received;
     return (bill - credit - received).toFixed(2);
   };
 
-  let alltotal=0;
+  let alltotal = 0;
   const GrandTotal = (billAmount, paidAmount, receivedAmount) => {
     const bill = parseFloat(billAmount) || 0;
     const credit = parseFloat(paidAmount) || 0;
     const received = parseFloat(receivedAmount) || 0;
-    alltotal+=(bill - credit - received)
+    alltotal += bill - credit - received;
     return alltotal;
   };
   const calculateTotalReceived = () => {
-    return rows.reduce((total, row) => {
-      return total + parseFloat(row.recievedAmount || 0);
-    }, 0).toFixed(2);
+    return rows
+      .reduce((total, row) => {
+        return total + parseFloat(row.recievedAmount || 0);
+      }, 0)
+      .toFixed(2);
   };
-  
-
-
 
   // Fetch all payIn records
   useEffect(() => {
@@ -145,8 +142,16 @@ let grandtotal=0;
   // Open edit modal
   const openEditModal = (payIn) => {
     setSelectedPayIn(payIn);
-    setNarration(payIn.Narration || ""); // Set Narration from selectedPayIn
-    // setTotalReceivedAmount(payIn.total || 0); // Set total from selectedPayIn
+    setNarration(payIn.Narration || "");
+    setRows(payIn.rows ? [...payIn.rows] : []); // Ensure deep copy
+    setDate(payIn.date.split("T")[0] || "");
+    setReceiptNo(payIn.receiptNo || "");
+    setReceiptMode(payIn.receiptMode || "Cash");
+    setSelectBank(payIn.selectBank || "");
+    setMethod(payIn.method || "");
+    setTransactionCheckNo(payIn.transactionCheckNo || "");
+    setSelectedCustomer(payIn.selectCustomer || ""); // Add this line to set the customer correctly
+
     setEditModalIsOpen(true);
   };
 
@@ -158,6 +163,14 @@ let grandtotal=0;
     setEditModalIsOpen(false);
     setSelectedPayIn(null);
   };
+
+  useEffect(() => {
+    // Fetch invoice data only if a customer is already selected
+    if (selectedCustomer) {
+      salesinvoicesCustomerByName(selectedCustomer);
+    }
+  }, [selectedCustomer]); // This will run when `selectedCustomer` changes
+
   const calculateTotalReceivedAmount = () => {
     if (selectedPayIn) {
       return selectedPayIn.rows.reduce((total, row) => {
@@ -172,22 +185,33 @@ let grandtotal=0;
   // Save changes and close the modal without submitting the form
   // Save changes after edit
   const handleSaveEdit = async () => {
-  
     try {
       // Include Narration and total in the selectedPayIn object before saving
+
+      const updatedRows = rows.map((row) => {
+        // Remove _id if it's a new entry or invalid
+        if (!row._id || typeof row._id === "number") {
+          const { _id, ...rest } = row;
+          return rest;
+        }
+        return row;
+      });
+
       const updatedPayIn = {
         ...selectedPayIn,
         Narration: Narration,
         grandtotal: calculateTotalReceivedAmount(),
+        rows: updatedRows,
+        selectCustomer: selectedCustomer, // Ensure the selected customer is included in the update
       };
 
-      const res =await axios.put(
+      const res = await axios.put(
         `/api/v1/payInRoute/updatepayin/${updatedPayIn._id}`,
         updatedPayIn
       );
 
       toast.success("Record updated successfully");
-      console.log(res,"sdkjfk")
+      console.log(res, "sdkjfk");
 
       // Close the modal
       closeModals();
@@ -201,53 +225,22 @@ let grandtotal=0;
     }
   };
 
-  // Handle input change for PayIn
-  const handleInputChange = (field, value) => {
-    setSelectedPayIn((prevPayIn) => ({
-      ...prevPayIn,
-      [field]: value,
-    }));
-  };
-
-  // Handle changes in individual rows for Bill Details
-  const handleBillRowChange = (index, field, value) => {
-    const updatedRows = [...selectedPayIn.rows];
-    updatedRows[index] = {
-      ...updatedRows[index],
-      [field]: value,
-    };
-    setSelectedPayIn((prevPayIn) => ({
-      ...prevPayIn,
-      rows: updatedRows,
-    }));
-  };
-
   // Add a new row
   const addRow = () => {
-    setSelectedPayIn((prevPayIn) => ({
-      ...prevPayIn,
-      rows: [
-        ...prevPayIn.rows,
-        {
-          _id: Math.random(),
-          billNo: "",
-          billAmount: "",
-          receivedAmount: "",
-          balanceAmount: "",
-        },
-      ],
-    }));
+    setRows([
+      ...rows,
+      {
+        _id: Math.random(),
+        billNo: "",
+        billAmount: "",
+        receivedAmount: "",
+        balanceAmount: "",
+      },
+    ]);
   };
 
-  // Remove a row
   const removeRow = (index) => {
-    const updatedRows = selectedPayIn.rows.filter(
-      (_, rowIndex) => rowIndex !== index
-    );
-    setSelectedPayIn((prevPayIn) => ({
-      ...prevPayIn,
-      rows: updatedRows,
-    }));
+    setRows(rows.filter((_, rowIndex) => rowIndex !== index));
   };
 
   // Delete a PayIn
@@ -326,8 +319,7 @@ let grandtotal=0;
         </table>
       </div>
 
-     {/* View Modal */}
-     {selectedPayIn && (
+      {selectedPayIn && (
         <Modal
           isOpen={viewModalIsOpen}
           onRequestClose={closeModals}
@@ -349,7 +341,7 @@ let grandtotal=0;
             },
           }}
         >
-          <h2 className="text-2xl text-center font-bold">Pay In Details</h2>
+          <h2 className="text-2xl text-center font-bold">Pay Out Details</h2>
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div className="flex flex-col">
               <label className="text-md font-bold text-black">Date</label>
@@ -493,7 +485,6 @@ let grandtotal=0;
           </button>
         </Modal>
       )}
-
       {/* Edit Modal */}
       {selectedPayIn && (
         <Modal
@@ -701,7 +692,7 @@ let grandtotal=0;
                           <AiOutlinePlus className="h-5 w-4 text-white" />
                         </button>
                         <button
-                          onClick={() => removeRow(row.id)}
+                          onClick={() => removeRow(index)}
                           className="p-2 bg-red-500 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           aria-label="Remove row"
                         >

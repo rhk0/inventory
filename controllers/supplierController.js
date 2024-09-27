@@ -3,6 +3,7 @@ import fs from "fs";
 
 export const createSupplierController = async (req, res) => {
   try {
+  
     const {
       name,
       address,
@@ -20,6 +21,7 @@ export const createSupplierController = async (req, res) => {
       registrationType,
       gstin,
       openingBalance,
+      userId,
     } = req.body;
     const requiredFields = [
       "name",
@@ -34,6 +36,7 @@ export const createSupplierController = async (req, res) => {
       "accountNumber",
       "registrationType",
       "openingBalance",
+      "userId",
     ];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length > 0) {
@@ -66,6 +69,7 @@ export const createSupplierController = async (req, res) => {
       registrationType,
       gstin,
       openingBalance,
+      Admin:userId,
     });
     return res.status(201).send({
       success: true,
@@ -80,8 +84,10 @@ export const createSupplierController = async (req, res) => {
   }
 };
 export const manageSupplierController = async (req, res) => {
-  try {
-    const data = await supplierModel.find();
+  try {console.log("hit")
+         console.log(req.params)
+    const data = await supplierModel.find({Admin:req.params});
+    console.log(data)
     if (data && data.length > 0) {
       return res
         .status(200)

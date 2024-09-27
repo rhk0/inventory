@@ -4,7 +4,7 @@ import { createSupplierController, deleteSupplierController, manageSingleSupplie
 const router = express.Router();
 
 router.post("/createSupplier",createSupplierController);
-router.get("/manageSupplier",manageSupplierController)
+router.get("/manageSupplier/:_id",manageSupplierController)
 router.get("/manageSingleSupplier/:_id",manageSingleSupplierController)
 router.delete("/deletesupplier/:_id", deleteSupplierController);
 router.put("/updateSupplier/:_id", updateSupplierController);

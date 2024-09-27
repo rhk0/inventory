@@ -33,11 +33,11 @@ const CreateSupplier = () => {
   useEffect(() => {
     if(auth.user.role===1){
       setUserId(auth.user._id)
-       console.log("admin",auth.user._id)
+    
     }
     if(auth.user.role===0){
       setUserId(auth.user.admin)
-      console.log("for staff",auth.user.admin)
+     
     }
   
     const allCountries = Country.getAllCountries();
@@ -75,11 +75,15 @@ const CreateSupplier = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/v1/auth/CreateSupplier", formData,userId);
-      handleClear();
+      const updatedFormData = { ...formData, userId };
+
+     const response =  await axios.post("/api/v1/auth/CreateSupplier", updatedFormData);
+
+    
       toast.success("Supplier added successfully!");
+      handleClear();
     } catch (error) {
-      console.error("Error adding supplier:", error);
+      console.error("Error adding supplier:", error.response);
       toast.error(error.response.data.message);
       toast.error(error.response.data.details);
     }
