@@ -68,11 +68,11 @@ const PurchesInvoice = () => {
         discountpercent: null, // Discount Percentage
         discountRs: null, // Discount in Rs
         taxable: null, // Taxable Amount
-        cgstpercent: null, // CGST Percentage
+        cgstpercentercent: null, // CGST Percentage
         cgstRS: null, // CGST Amount
-        sgstpercent: null, // SGST Percentage
+        sgstpercentercent: null, // SGST Percentage
         sgstRS: null, // SGST Amount
-        igstpercent: null, // IGST Percentage
+        igstpercentercent: null, // IGST Percentage
         igstRS: null, // IGST Amount
         totalValue: null, // Total Value
       },
@@ -351,7 +351,7 @@ const PurchesInvoice = () => {
 
     rows.forEach((rows) => {
       grossAmount += rows.taxableValue;
-      GstAmount += rows.cgstrs + rows.sgstrs;
+      GstAmount += rows.cgstRS + rows.sgstRS;
     });
 
     let netAmount;
@@ -443,17 +443,17 @@ const PurchesInvoice = () => {
         // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
 
-        cgstp: selectedProduct.gstRate / 2,
-        sgstp: selectedProduct.gstRate / 2,
-        igstp: selectedProduct.gstRate,
+        cgstpercent: selectedProduct.gstRate / 2,
+        sgstpercent: selectedProduct.gstRate / 2,
+        igstpercent: selectedProduct.gstRate,
 
-        cgstrs: parseFloat(
+        cgstRS: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
-        sgstrs: parseFloat(
+        sgstRS: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
-        igstrs: parseFloat(
+        igstRS: parseFloat(
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
@@ -511,17 +511,17 @@ const PurchesInvoice = () => {
           100
         ).toFixed(2),
         taxableValue: taxableValue,
-        cgstp: selectedProduct.gstRate / 2,
-        sgstp: selectedProduct.gstRate / 2,
-        igstp: selectedProduct.gstRate,
+        cgstpercent: selectedProduct.gstRate / 2,
+        sgstpercent: selectedProduct.gstRate / 2,
+        igstpercent: selectedProduct.gstRate,
 
-        cgstrs: parseFloat(
+        cgstRS: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
-        sgstrs: parseFloat(
+        sgstRS: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
-        igstrs: parseFloat(
+        igstRS: parseFloat(
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
@@ -1259,11 +1259,11 @@ const PurchesInvoice = () => {
                             <div className="p-1 flex gap-1">
                               <input
                                 type="text"
-                                value={row.cgstp}
+                                value={row.cgstpercent}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "cgstpercent",
+                                    "cgstpercentercent",
                                     e.target.value
                                   )
                                 }
@@ -1276,7 +1276,7 @@ const PurchesInvoice = () => {
                               />
                               <input
                                 type="text"
-                                value={row.cgstrs}
+                                value={row.cgstRS}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -1297,11 +1297,11 @@ const PurchesInvoice = () => {
                             <div className="p-1 flex gap-1">
                               <input
                                 type="text"
-                                value={row.sgstp}
+                                value={row.sgstpercent}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "sgstpercent",
+                                    "sgstpercentercent",
                                     e.target.value
                                   )
                                 }
@@ -1314,7 +1314,7 @@ const PurchesInvoice = () => {
                               />
                               <input
                                 type="text"
-                                value={row.sgstrs}
+                                value={row.sgstRS}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -1353,11 +1353,11 @@ const PurchesInvoice = () => {
                             <div className="flex gap-1">
                               <input
                                 type="text"
-                                value={row.igstp}
+                                value={row.igstpercent}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "igstpercent",
+                                    "igstpercentercent",
                                     e.target.value
                                   )
                                 }
@@ -1370,7 +1370,7 @@ const PurchesInvoice = () => {
                               />
                               <input
                                 type="text"
-                                value={row.igstrs}
+                                value={row.igstRS}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
