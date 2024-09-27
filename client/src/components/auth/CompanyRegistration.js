@@ -30,6 +30,7 @@ const initialFormData = {
   ifce_code: "",
   account_holder_name: "",
   accountNumber: "",
+  upiId:"",
 };
 
 const CompanyRegistration = () => {
@@ -466,6 +467,19 @@ const CompanyRegistration = () => {
             className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
           />
         </label>
+        <label className="block mb-2 font-bold">
+          UPI ID
+          <input
+            type="text"
+            name="upiId"
+            value={formData.upiId}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
+          />
+        </label>
+
+
+        
       </div>
       <div onClick={handleSubmit} className="flex justify-center item-center ">
         <button className="bg-green-500 p-2 pl-5 pr-5 rounded">Create </button>

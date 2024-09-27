@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Country, State } from "country-state-city";
 import { toast, ToastContainer } from "react-toastify";
-
+import { useAuth } from "../../../context/Auth.js";
 const CreateSupplier = () => {
   const [countries, setCountries] = useState([]);
+  const [userId,setUserId]=useState("")
   const [states, setStates] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("");
+  const [auth]=useAuth();
   const [formData, setFormData] = useState({
+   
     name: "",
     address: "",
     state: "",
@@ -28,6 +31,15 @@ const CreateSupplier = () => {
   });
 
   useEffect(() => {
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+       console.log("admin",auth.user._id)
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+      console.log("for staff",auth.user.admin)
+    }
+  
     const allCountries = Country.getAllCountries();
     setCountries(allCountries);
   }, []);
@@ -63,7 +75,7 @@ const CreateSupplier = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/v1/auth/CreateSupplier", formData);
+      await axios.post("/api/v1/auth/CreateSupplier", formData,userId);
       handleClear();
       toast.success("Supplier added successfully!");
     } catch (error) {

@@ -32,6 +32,7 @@ export const createSalesInvoiceController = async (req, res) => {
     } = req.body;
 
     const { _id } = req.user;
+
     try {
       const newInvoice = new salesInvoiceModel({
         admin: _id,
@@ -74,6 +75,7 @@ export const createSalesInvoiceController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
+
 export const getAllSalesInvoiceCOntroller = async (req, res) => {
   try {
     const response = await salesInvoiceModel.find();
