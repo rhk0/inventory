@@ -14,6 +14,7 @@ const AddBrand = () => {
   // Fetch the manufacturer data from the backend
   const fetchManufacturer = async () => {
     try {
+      
       const response = await axios.get("/api/v1/auth/ManageManufacturer");
       setManufacturer(response.data.data); // Save the manufacturer data to state
       console.log(response, "response");

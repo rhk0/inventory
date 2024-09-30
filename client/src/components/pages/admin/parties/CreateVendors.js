@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Country, State } from "country-state-city";
 import { toast, ToastContainer } from "react-toastify";
-
+import { useAuth } from "../../../context/Auth.js";
 const CreateVendors = () => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("");
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
+   
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -25,6 +28,15 @@ const CreateVendors = () => {
   });
 
   useEffect(() => {
+    
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
     const allCountries = Country.getAllCountries();
     setCountries(allCountries);
   }, []);
@@ -60,7 +72,8 @@ const CreateVendors = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/v1/auth/CreateVendor", formData);
+      const updatedFormData = { ...formData, userId };
+      await axios.post("/api/v1/auth/CreateVendor", updatedFormData);
       handleClear();
       toast.success("Vendors added successfully!");
     } catch (error) {

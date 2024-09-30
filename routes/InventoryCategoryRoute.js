@@ -3,8 +3,8 @@ import { createInventoryCategoryController, deleteInventoryCategoryController, m
 import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
-router.post("/createcategory",requireSignIn, isAdmin,createInventoryCategoryController)
-router.get("/getcategory",manageInventoryCategoryController)
-router.delete("/deletecategory/:_id",deleteInventoryCategoryController)
-router.put("/updtaecategory/:_id",updateInventoryCategoryController)
+router.post("/createcategory",requireSignIn,createInventoryCategoryController)
+router.get("/getcategory/:_id",requireSignIn,manageInventoryCategoryController)
+router.delete("/deletecategory/:_id",requireSignIn,deleteInventoryCategoryController)
+router.put("/updtaecategory/:_id",requireSignIn,updateInventoryCategoryController)
 export default router;

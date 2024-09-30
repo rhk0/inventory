@@ -2,9 +2,9 @@ import InventoryCategoryModel from "../models/InventoryCategoryModel.js";
 
 export const createInventoryCategoryController = async (req, res) => {
   try {
-    const { CategoryName } = req.body;
+    const { CategoryName,userId } = req.body;
 
-    const requiredFields = ["CategoryName"];
+    const requiredFields = ["CategoryName","userId"];
 
     const missingFields = requiredFields.filter((field) => !req.body[field]);
 
@@ -17,6 +17,7 @@ export const createInventoryCategoryController = async (req, res) => {
 
     const response = await InventoryCategoryModel.create({
       CategoryName,
+      admin:userId,
     });
 
     if (response) {
@@ -35,7 +36,9 @@ export const createInventoryCategoryController = async (req, res) => {
 };
 export const manageInventoryCategoryController = async (req, res) => {
   try {
-    const data = await InventoryCategoryModel.find();
+       const _id= req.params._id;
+    const data = await InventoryCategoryModel.find({admin:_id});
+   
     if (data && data.length > 0) {
       return res
         .status(200)

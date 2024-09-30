@@ -4,36 +4,47 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../../../context/Auth";
 import CustomerViewModal from "../../admin/modals/CustomerViewModal";
 import CustomerEditModal from "../../admin/modals/CustomerEditModal";
-
-const ManageCustomer = () => {
+   
+  const ManageCustomer = () => {
   const [customer, setCustomer] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
 
   const navigate = useNavigate();
 
   const fetchCustomer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
-      setCustomer(response.data.data);
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      console.log("res",response)
+      setCustomer(response?.data?.data);
     } catch (error) {
       console.error("Error fetching Customer data", error);
     }
   };
 
   useEffect(() => {
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
     fetchCustomer();
-  }, []);
+  }, [auth,userId]);
 
   const deleteCustomer = async (_id) => {
     try {
       const response = await axios.delete(`/api/v1/auth/deleteCustomer/${_id}`);
-      setCustomer(customer.filter((supplier) => supplier._id !== _id));
+      setCustomer(customer?.filter((supplier) => supplier._id !== _id));
 
       if (response) {
         toast.success(" delete all data Successfully...");
@@ -62,7 +73,7 @@ const ManageCustomer = () => {
   };
 
   // Filter Customer based on search query
-  const filteredCustomer = customer.filter((supplier) =>
+  const filteredCustomer = customer?.filter((supplier) =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
@@ -122,8 +133,8 @@ const ManageCustomer = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredCustomer.length > 0 ? (
-              filteredCustomer.map((supplier, index) => (
+            {filteredCustomer?.length > 0 ? (
+              filteredCustomer?.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">
