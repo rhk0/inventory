@@ -3,20 +3,28 @@ import axios from "axios";
 import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../context/Auth";
 const ManageStockUnit = () => {
   const [stockUnits, setStockUnits] = useState([]);
   const [selectedStockUnit, setSelectedStockUnit] = useState(null);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
+     if (auth.user.role === 1) {
+       setUserId(auth.user._id);
+     }
+     if (auth.user.role === 0) {
+       setUserId(auth.user.admin);
+     }
     fetchStockUnits();
-  }, []);
+  }, [auth,userId]);
 
   const fetchStockUnits = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/getStockUnit");
+      const response = await axios.get(`/api/v1/auth/getStockUnit/${userId}`);
       setStockUnits(response.data.data);
     } catch (error) {
       console.log(error);
@@ -91,8 +99,8 @@ const ManageStockUnit = () => {
             </tr>
           </thead>
           <tbody>
-            {stockUnits.length > 0 ? (
-              stockUnits.map((stockUnit, index) => (
+            {stockUnits?.length > 0 ? (
+              stockUnits?.map((stockUnit, index) => (
                 <tr key={stockUnit._id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm text-nowrap">

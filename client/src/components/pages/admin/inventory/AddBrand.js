@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../context/Auth";
 const AddBrand = () => {
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const [formData, setFormData] = useState({
     BrandName: "",
     manufacturerName: "",
@@ -14,8 +16,9 @@ const AddBrand = () => {
   // Fetch the manufacturer data from the backend
   const fetchManufacturer = async () => {
     try {
-      
-      const response = await axios.get("/api/v1/auth/ManageManufacturer");
+      const response = await axios.get(
+        `/api/v1/auth/ManageManufacturer/${userId}`
+      );
       setManufacturer(response.data.data); // Save the manufacturer data to state
       console.log(response, "response");
     } catch (error) {
@@ -24,8 +27,14 @@ const AddBrand = () => {
   };
 
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchManufacturer();
-  }, []);
+  }, [auth, userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +57,8 @@ const AddBrand = () => {
     }
 
     try {
-      const response = await axios.post("/api/v1/auth/createBrand", formData);
+       const updatedFormData = { ...formData, userId };
+      const response = await axios.post("/api/v1/auth/createBrand", updatedFormData);
 
       if (response) {
         toast.success("Brand Added Successfully...");
@@ -76,8 +86,10 @@ const AddBrand = () => {
         </h4>
 
         <div className="px-2  ">
-          <label className="block ">Manufacturer Name: <br/></label>
-          <br/>
+          <label className="block ">
+            Manufacturer Name: <br />
+          </label>
+          <br />
           <select
             name="manufacturerName"
             value={formData.manufacturerName}
@@ -85,7 +97,7 @@ const AddBrand = () => {
             className="w-1/2 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
           >
             <option value="">Select Manufacturer</option>
-            {manufacturer.map((item) => (
+            {manufacturer?.map((item) => (
               <option key={item._id} value={item.name}>
                 {item.name}
               </option>
@@ -95,7 +107,7 @@ const AddBrand = () => {
 
         <div className="px-2   ">
           <label className="block mt-2">Brand Name:</label>
-          <br/>
+          <br />
           <input
             type="text"
             name="BrandName"

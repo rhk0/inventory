@@ -1,6 +1,6 @@
 import express from "express"
 import { createInventoryCategoryController, deleteInventoryCategoryController, manageInventoryCategoryController, updateInventoryCategoryController } from "../controllers/InventoryCategogryController.js";
-import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
+import {  requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 router.post("/createcategory",requireSignIn,createInventoryCategoryController)

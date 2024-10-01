@@ -84,10 +84,9 @@ export const createSupplierController = async (req, res) => {
   }
 };
 export const manageSupplierController = async (req, res) => {
-  try {console.log("hit")
-         console.log(req.params)
+  try {
     const data = await supplierModel.find({Admin:req.params});
-    console.log(data)
+   
     if (data && data.length > 0) {
       return res
         .status(200)

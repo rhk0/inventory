@@ -2,18 +2,31 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../context/Auth";
 const AddSubCategory = () => {
+    const [auth] = useAuth();
+    const [userId, setUserId] = useState("");
+     
   const [formData, setFormData] = useState({
     CategoryName: "",
     subCategoryName: "",
   });
   const [categories, setCategories] = useState([]);
 
+
+  
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+  }, []);
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/getcategory");
+        const response = await axios.get(`/api/v1/auth/getcategory/${userId}`);
         setCategories(response.data.data); 
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -22,7 +35,7 @@ const AddSubCategory = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [auth,userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,9 +57,10 @@ const AddSubCategory = () => {
     }
 
     try {
+        const updatedFormData = { ...formData, userId };
       const response = await axios.post(
         "/api/v1/auth/createSubCategory",
-        formData
+        updatedFormData
       );
 
       if (response) {
@@ -87,7 +101,7 @@ const AddSubCategory = () => {
               className="w-1/2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select Category</option>
-              {categories.map((category) => (
+              {categories?.map((category) => (
                 <option key={category.CategoryName} value={category.CategoryName}>
                   {category.CategoryName}
                 </option>

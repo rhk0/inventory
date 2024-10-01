@@ -2,7 +2,7 @@ import inventroySubBrandModel from "../models/inventroySubBrandModel.js";
 
 export const createInventorySubBrandController = async (req, res) => {
   try {
-    const { BrandName, SubBrandName ,manufacturerName } = req.body;
+    const { BrandName, SubBrandName ,manufacturerName,userId } = req.body;
 
     const requiredFields = ["BrandName", "SubBrandName" ,"manufacturerName"];
 
@@ -18,7 +18,8 @@ export const createInventorySubBrandController = async (req, res) => {
     const response = await inventroySubBrandModel.create({
       BrandName,
       SubBrandName,
-      manufacturerName
+      manufacturerName,
+      admin:userId
     });
 
     if (response) {
@@ -37,7 +38,9 @@ export const createInventorySubBrandController = async (req, res) => {
 };
 export const manageInventorySubBrandController = async (req, res) => {
   try {
-    const data = await inventroySubBrandModel.find();
+    const _id = req.params._id;
+
+    const data = await inventroySubBrandModel.find({admin:_id});
     if (data && data.length > 0) {
       return res
         .status(200)

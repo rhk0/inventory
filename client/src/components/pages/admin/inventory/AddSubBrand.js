@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../context/Auth";
 const AddSubCategory = () => {
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const [formData, setFormData] = useState({
     BrandName: "",
     SubBrandName: "",
@@ -15,7 +17,7 @@ const AddSubCategory = () => {
   // Fetch the manufacturer data from the backend
   const fetchManufacturer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/ManageManufacturer");
+      const response = await axios.get(`/api/v1/auth/ManageManufacturer/${userId}`);
       console.log(response.data.data, "Fetched Manufacturer Data"); // Debug log to check data
       setManufacturer(response.data.data); // Save the manufacturer data to state
     } catch (error) {
@@ -25,12 +27,18 @@ const AddSubCategory = () => {
   };
 
   useEffect(() => {
+     if (auth.user.role === 1) {
+       setUserId(auth.user._id);
+     }
+     if (auth.user.role === 0) {
+       setUserId(auth.user.admin);
+     }
     // Fetch Manufacturer data on component mount
     fetchManufacturer();
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/getBrand");
+        const response = await axios.get(`/api/v1/auth/getBrand/${userId}`);
         console.log(response.data.data, "Fetched Brand Data"); // Debug log to check data
         setCategories(response.data.data); 
       } catch (error) {
@@ -40,7 +48,7 @@ const AddSubCategory = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [auth,userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,10 +69,10 @@ const AddSubCategory = () => {
       }
     }
 
-    try {
-      const response = await axios.post("/api/v1/auth/createSubBrand", formData);
+    try {   const updatedFormData = { ...formData, userId };
+      const response = await axios.post("/api/v1/auth/createSubBrand", updatedFormData);
     
-       console.log(response,"uyfehf")
+       
       if (response) {
         toast.success("Sub Brand Category Added Successfully...");
       }
@@ -106,8 +114,8 @@ const AddSubCategory = () => {
               className="w-1/2 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select Manufacturer</option>
-              {manufacturer.length > 0 ? (
-                manufacturer.map((item) => (
+              {manufacturer?.length > 0 ? (
+                manufacturer?.map((item) => (
                   <option key={item._id} value={item.name}>
                     {item.name}
                   </option>
@@ -128,7 +136,7 @@ const AddSubCategory = () => {
               className="w-1/2 border py-2 border-gray-300 rounded-md focus:ring-2 focus:ring-violet-600"
             >
               <option value="">Select Brand</option>
-              {categories.map((category) => (
+              {categories?.map((category) => (
                 <option key={category.BrandName} value={category.BrandName}>
                   {category.BrandName}
                 </option>

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const StockUnitSchema = new mongoose.Schema(
   {
-    unitofquantity:{
+    unitofquantity: {
       type: String,
     },
     symbol: {
@@ -11,7 +11,11 @@ const StockUnitSchema = new mongoose.Schema(
     formalName: {
       type: String,
     },
-
+    admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
   },
   {
     timestamps: true,

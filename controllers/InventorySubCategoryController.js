@@ -2,9 +2,9 @@ import InventorySubCategoryModel from "../models/InventorySubCategoryModel.js";
 
 export const createInventorySubCategoryController = async (req, res) => {
   try {
-    const {CategoryName,subCategoryName } = req.body;
+    const { CategoryName, subCategoryName, userId } = req.body;
 
-    const requiredFields = ["CategoryName","subCategoryName"];
+    const requiredFields = ["CategoryName", "subCategoryName", "userId"];
 
     const missingFields = requiredFields.filter((field) => !req.body[field]);
 
@@ -17,7 +17,8 @@ export const createInventorySubCategoryController = async (req, res) => {
 
     const response = await InventorySubCategoryModel.create({
       CategoryName,
-      subCategoryName
+      subCategoryName,
+      admin: userId,
     });
 
     if (response) {
@@ -36,7 +37,10 @@ export const createInventorySubCategoryController = async (req, res) => {
 };
 export const manageInventorySubCategoryController = async (req, res) => {
   try {
-    const data = await InventorySubCategoryModel.find();
+    const _id = req.params._id;
+
+    const data = await InventorySubCategoryModel.find({ admin: _id });
+
     if (data && data.length > 0) {
       return res
         .status(200)
@@ -81,49 +85,48 @@ export const deleteInventorySubCategoryController = async (req, res) => {
   }
 };
 export const updateInventorySubCategoryController = async (req, res) => {
-    try {
-      const { _id } = req.params;
-      const { CategoryName, subCategoryName } = req.body;
-  
-      const requiredFields = ["CategoryName", "subCategoryName"];
-      const missingFields = requiredFields.filter(
-        (field) => !(field in req.body)
-      );
-  
-      if (missingFields.length > 0) {
-        return res.status(400).send({
-          message: "Required fields are missing",
-          missingFields: missingFields,
-        });
-      }
-  
-      const SubCategory = await InventorySubCategoryModel.findByIdAndUpdate(
-        _id,
-        { CategoryName, subCategoryName },
-        {
-          new: true,
-        }
-      );
-  
-      if (!SubCategory) {
-        return res.status(404).send({
-          success: false,
-          message: "SubCategory not found",
-        });
-      }
-  
-      return res.status(200).send({
-        success: true,
-        message: "SubCategory updated successfully",
-        data: SubCategory,
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send({
-        success: false,
-        message: "Internal Server Error",
-        details: error.message,
+  try {
+    const { _id } = req.params;
+    const { CategoryName, subCategoryName } = req.body;
+
+    const requiredFields = ["CategoryName", "subCategoryName"];
+    const missingFields = requiredFields.filter(
+      (field) => !(field in req.body)
+    );
+
+    if (missingFields.length > 0) {
+      return res.status(400).send({
+        message: "Required fields are missing",
+        missingFields: missingFields,
       });
     }
-  };
-  
+
+    const SubCategory = await InventorySubCategoryModel.findByIdAndUpdate(
+      _id,
+      { CategoryName, subCategoryName },
+      {
+        new: true,
+      }
+    );
+
+    if (!SubCategory) {
+      return res.status(404).send({
+        success: false,
+        message: "SubCategory not found",
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      message: "SubCategory updated successfully",
+      data: SubCategory,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "Internal Server Error",
+      details: error.message,
+    });
+  }
+};
