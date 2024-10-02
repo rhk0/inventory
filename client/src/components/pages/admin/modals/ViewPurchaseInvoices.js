@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import Modal from "react-modal";
 
-const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
+const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
+  console.log(estimate, "dkasjfk");
   const [date, setDate] = useState("");
-  const [InvoiceNo, setInvoiceNo] = useState("");
-  const [salesType, setSalesType] = useState("");
+  const [invoiceNo, setInvoiceNo] = useState("");
+  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
+
   const [customerType, setCustomerType] = useState("");
-  const [customerName, setCustomerName] = useState("");
+  const [supplierName, setsupplierName] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [paymentTerm, setPaymentTerm] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -39,10 +41,11 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
-      setInvoiceNo(estimate.InvoiceNo || "");
-      setSalesType(estimate.salesType || "");
+      setInvoiceNo(estimate.invoiceNo || "");
+      setsupplierInvoiceNo(estimate.supplierInvoiceNo || "");
+
       setCustomerType(estimate.customerType || "");
-      setCustomerName(getCustomerName(estimate.customerId) || "");
+      setsupplierName(getSupplierName(estimate.customerId) || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
@@ -108,7 +111,7 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
     }
-  }, [estimate, getCustomerName]);
+  }, [estimate, getSupplierName]);
 
   const openViewModal = () => {
     setViewModal(true);
@@ -161,28 +164,27 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           <label className="font-bold">Invoice No.</label>
           <input
             type="text"
-            value={InvoiceNo}
+            value={invoiceNo}
             disabled
             className="border p-2 w-full rounded"
           />
         </div>
+
         <div>
-          <label className="font-bold">Sales Type</label>
-          <select
-            value={salesType}
+          <label className="font-bold">Supplier Invoice No.</label>
+          <input
+            type="text"
+            value={supplierInvoiceNo}
             disabled
             className="border p-2 w-full rounded"
-          >
-            <option value="GST Invoice">GST Invoice</option>
-            <option value="Bill of Supply">Bill of Supply</option>
-          </select>
+          />
         </div>
 
         <div>
-          <label className="font-bold">Customer Name</label>
+          <label className="font-bold">Supplier Name</label>
           <input
             type="text"
-            value={customerName}
+            value={supplierName}
             disabled
             className="border p-2 w-full rounded"
           />
@@ -305,19 +307,17 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
 
-        {salesType === "GST Invoice" && (
-          <div className="mb-4 w-full">
-            <label className="font-bold">GST Type:</label>
-            <select
-              value={gstType}
-              disabled
-              className="border p-2 w-full rounded"
-            >
-              <option value="CGST/SGST">CGST/SGST</option>
-              <option value="IGST">IGST</option>
-            </select>
-          </div>
-        )}
+        <div className="mb-4 w-full">
+          <label className="font-bold">GST Type:</label>
+          <select
+            value={gstType}
+            disabled
+            className="border p-2 w-full rounded"
+          >
+            <option value="CGST/SGST">CGST/SGST</option>
+            <option value="IGST">IGST</option>
+          </select>
+        </div>
       </div>
 
       {/* Items Section */}
@@ -329,44 +329,49 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
               <th className="border p-2">Item Code</th>
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
-              <th className="border p-2">Qty</th>
+              <th className="border p-2">qty</th>
               <th className="border p-2">Units</th>
-              <th className="border p-2">MRP</th>
+              <th className="border p-2">Free quantity</th>
+
+
+              <th className="border p-2">mrp</th>
+              <th className="border p-2">Unit Cost</th>
+              <th className="border p-2">Scheme Margin</th>
+
+
               <th className="border p-2">
                 Discount
                 <div className="flex justify-between">
                   <span className="mr-16">%</span> <span>₹</span>
                 </div>
               </th>
-              {salesType === "GST Invoice" && (
-                <>
-                  <th className="border p-2">Taxable Value</th>
-                  {gstType === "CGST/SGST" && (
-                    <>
-                      <th className="border p-2">
-                        CGST
-                        <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>₹</span>
-                        </div>
-                      </th>
-                      <th className="border p-2">
-                        SGST
-                        <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>₹</span>
-                        </div>
-                      </th>
-                    </>
-                  )}
-                  {gstType === "IGST" && (
+              <>
+                <th className="border p-2">Taxable Value</th>
+                {gstType === "CGST/SGST" && (
+                  <>
                     <th className="border p-2">
-                      IGST
+                      CGST
                       <div className="flex justify-between">
                         <span className="mr-16">%</span> <span>₹</span>
                       </div>
                     </th>
-                  )}
-                </>
-              )}
+                    <th className="border p-2">
+                      SGST
+                      <div className="flex justify-between">
+                        <span className="mr-16">%</span> <span>₹</span>
+                      </div>
+                    </th>
+                  </>
+                )}
+                {gstType === "IGST" && (
+                  <th className="border p-2">
+                    IGST
+                    <div className="flex justify-between">
+                      <span className="mr-16">%</span> <span>₹</span>
+                    </div>
+                  </th>
+                )}
+              </>
               <th className="border p-2">Total Value</th>
             </tr>
           </thead>
@@ -401,7 +406,7 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.qty}
+                    value={row.quantity}
                     disabled
                     className="w-full"
                   />
@@ -417,11 +422,38 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.mrp}
+                    value={row.freequantity}
                     disabled
                     className="w-full"
                   />
                 </td>
+
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    value={row.maxmimunRetailPrice}
+                    disabled
+                    className="w-full"
+                  />
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    value={row.unitCost}
+                    disabled
+                    className="w-full"
+                  />
+                </td>
+
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    value={row.schemeMargin}
+                    disabled
+                    className="w-full"
+                  />
+                </td>
+
                 <td className="border p-2">
                   <div className="flex gap-1">
                     <input
@@ -432,78 +464,76 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     />
                     <input
                       type="number"
-                      value={row.discountRS}
+                      value={row.discountRs}
                       disabled
                       className="w-full"
                     />
                   </div>
                 </td>
-                {salesType === "GST Invoice" && (
-                  <>
-                    <td className="border p-2">
-                      <input
-                        type="number"
-                        value={row.taxable}
-                        disabled
-                        className="w-full"
-                      />
-                    </td>
-                    {gstType === "CGST/SGST" && (
-                      <>
-                        <td className="border p-2">
-                          <div className="flex gap-1">
-                            <input
-                              type="number"
-                              value={row.cgstpercent}
-                              disabled
-                              className="w-full"
-                            />
-                            <input
-                              type="number"
-                              value={row.cgstRS}
-                              disabled
-                              className="w-full"
-                            />
-                          </div>
-                        </td>
-                        <td className="border p-2">
-                          <div className="flex gap-1">
-                            <input
-                              type="number"
-                              value={row.sgstpercent}
-                              disabled
-                              className="w-full"
-                            />
-                            <input
-                              type="number"
-                              value={row.sgstRS}
-                              disabled
-                              className="w-full"
-                            />
-                          </div>
-                        </td>
-                      </>
-                    )}
-                    {gstType === "IGST" && (
+                <>
+                  <td className="border p-2">
+                    <input
+                      type="number"
+                      value={row.taxable}
+                      disabled
+                      className="w-full"
+                    />
+                  </td>
+                  {gstType === "CGST/SGST" && (
+                    <>
                       <td className="border p-2">
                         <div className="flex gap-1">
                           <input
                             type="number"
-                            value={row.igstpercent}
+                            value={row.cgstpercent}
                             disabled
                             className="w-full"
                           />
                           <input
                             type="number"
-                            value={row.igstRS}
+                            value={row.cgstRS}
                             disabled
                             className="w-full"
                           />
                         </div>
                       </td>
-                    )}
-                  </>
-                )}
+                      <td className="border p-2">
+                        <div className="flex gap-1">
+                          <input
+                            type="number"
+                            value={row.sgstpercent}
+                            disabled
+                            className="w-full"
+                          />
+                          <input
+                            type="number"
+                            value={row.sgstRS}
+                            disabled
+                            className="w-full"
+                          />
+                        </div>
+                      </td>
+                    </>
+                  )}
+                  {gstType === "IGST" && (
+                    <td className="border p-2">
+                      <div className="flex gap-1">
+                        <input
+                          type="number"
+                          value={row.igstpercent}
+                          disabled
+                          className="w-full"
+                        />
+                        <input
+                          type="number"
+                          value={row.igstRS}
+                          disabled
+                          className="w-full"
+                        />
+                      </div>
+                    </td>
+                  )}
+                </>
                 <td className="border p-2">
                   <input
                     type="number"
@@ -601,19 +631,15 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {salesType === "GST Invoice" && (
-            <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-bold lg:w-1/2 text-nowrap">
-                GST Amount
-              </label>
-              <input
-                type="text"
-                value={GstAmount}
-                disabled
-                className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
-              />
-            </div>
-          )}
+          <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+            <label className="font-bold lg:w-1/2 text-nowrap">GST Amount</label>
+            <input
+              type="text"
+              value={GstAmount}
+              disabled
+              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+            />
+          </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
             <label className="font-bold lg:w-1/2 text-nowrap">
               Other Charges
@@ -834,4 +860,4 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   );
 };
 
-export default ViewSalesInvoiceModal;
+export default ViewPurchaseInvoice;

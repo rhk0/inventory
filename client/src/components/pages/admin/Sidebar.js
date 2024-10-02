@@ -4,7 +4,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { GoRepoTemplate } from "react-icons/go";
-import { MdSubscriptions } from 'react-icons/md'; // Material Icons
+import { MdSubscriptions } from "react-icons/md"; // Material Icons
 import {
   MdDashboard,
   MdInventory,
@@ -144,7 +144,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     closeAll();
     setSettings(!showSettings);
   };
-    const toggleSubscription = () => {
+  const toggleSubscription = () => {
     closeAll();
     setSubscription(!showSubscription);
   };
@@ -676,7 +676,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/ManagePurchaseInvoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Invoice List

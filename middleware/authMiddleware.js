@@ -25,7 +25,7 @@ export const isAdmin=async(req,res,next)=>{
       
         if(user.role!==1 ||  user.status!=="Active")
         {
-             console.log(user)
+          
             return res.status(401).send({success:false,message:"UnAuthorized Access U r not the AdminDharma...!"})
         }
         else{
@@ -61,7 +61,7 @@ export const isSuperAdmin=async(req,res,next)=>{
         res.status(401).send({success:false,message:"You are not an Super Admin , UnAuthorized Access...!",error})
         
     }
-
+  
 }
 //staff access
 
@@ -72,7 +72,7 @@ export const isStaff =async(req,res,next)=>{
           
         if(user.role!==0  ||  user.admin.status!=="Active")  
         {
-            return res.status(401).send({success:false,message:"UnAuthorized Access U e not the AdminDharma...!"})
+            return res.status(401).send({success:false,message:"UnAuthorized Access U r not the Admin...!"})
         }
         else{
             next();

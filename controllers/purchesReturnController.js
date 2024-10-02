@@ -25,7 +25,8 @@ const upload = multer({
 
 // Check file type for upload
 function checkFileType(file, cb) {
-  const filetypes = /pdf|doc|docx|xls|xlsx|ppt|pptx|txt|rtf|jpg|jpeg|png|gif|bmp|tiff|svg/i;
+  const filetypes =
+    /pdf|doc|docx|xls|xlsx|ppt|pptx|txt|rtf|jpg|jpeg|png|gif|bmp|tiff|svg/i;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
@@ -39,7 +40,6 @@ function checkFileType(file, cb) {
 // Create Purchase Return Controller with File Upload
 export const createPurchaseReturnController = async (req, res) => {
   // Log incoming files and fields for debugging
-
 
   upload(req, res, async (err) => {
     if (err) {
@@ -55,9 +55,9 @@ export const createPurchaseReturnController = async (req, res) => {
         billingAddress,
         selectPurchase,
         reasonForReturn,
-        taxType,
-        rows, // Array of row objects
-        otherChargesDescription,
+        gstType,
+        rows,
+        otherChargesDescriptions,
         otherCharges,
         narration,
         grossAmount,
@@ -66,7 +66,7 @@ export const createPurchaseReturnController = async (req, res) => {
       } = req.body;
 
       let parsedRows;
-      if (typeof rows === 'string') {
+      if (typeof rows === "string") {
         parsedRows = JSON.parse(rows);
       } else {
         parsedRows = rows;
@@ -82,9 +82,9 @@ export const createPurchaseReturnController = async (req, res) => {
         billingAddress,
         selectPurchase,
         reasonForReturn,
-        taxType,
+        gstType,
         rows: parsedRows,
-        otherChargesDescription,
+        otherChargesDescriptions,
         otherCharges,
         narration,
         grossAmount,
@@ -108,7 +108,6 @@ export const createPurchaseReturnController = async (req, res) => {
     }
   });
 };
-
 
 export const getAllPurchaseReturnController = async (req, res) => {
   try {
@@ -193,7 +192,7 @@ export const updatePurchaseReturnByIdController = async (req, res) => {
       }
 
       // Parse the rows array if it's sent as a string
-      if (typeof updateData.rows === 'string') {
+      if (typeof updateData.rows === "string") {
         updateData.rows = JSON.parse(updateData.rows);
       }
 

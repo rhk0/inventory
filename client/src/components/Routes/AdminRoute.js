@@ -53,6 +53,8 @@ import TotalSalesList from "../pages/admin/sales/TotalSalesList.js";
 import PurchesReturn from "../pages/admin/purchase/PurchesReturn.js";
 import CompanyRegistration from "../auth/CompanyRegistration.js";
 import PurchesInvoice from "../pages/admin/purchase/PurchesInvoice.js";
+import ManagePurchaseInvoice from "../pages/admin/purchase/ManagePurchaseInvoice";
+
 
 import CreatePurchaseOrder from "../pages/admin/purchase/CreatePurchaseOrder.js";
 import PayOut from "../pages/admin/purchase/PayOut.js";
@@ -144,6 +146,8 @@ const AdminRoute = () => {
         <Route path="manage-staff" element={<ViewStaff />} />
         <Route path="addbank" element={<AddBank />} />
         <Route path="purchesInvoice" element={<PurchesInvoice />} />
+        <Route path="ManagePurchaseInvoice" element={<ManagePurchaseInvoice />} />
+
 
         <Route path="stockdetails" element={<StockDetails />} />
         <Route path="managestockunit" element={<ManageStockUnit />} />

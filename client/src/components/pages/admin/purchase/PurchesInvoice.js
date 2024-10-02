@@ -3,6 +3,8 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
+import { useAuth } from "../../../context/Auth.js";
+
 import Modal from "react-modal";
 
 const PurchesInvoice = () => {
@@ -34,6 +36,10 @@ const PurchesInvoice = () => {
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedAddress, setAddress] = useState("");
   const [viewModal, setViewModal] = useState(false);
+  const [auth] = useAuth();
+  const [userid, setUserId] = useState("");
+
+
 
   const [formData, setFormData] = useState({
     date: "",
@@ -138,18 +144,26 @@ const PurchesInvoice = () => {
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageSupplier");
-        setCustomer(response.data.data);
-      } catch (error) {
-        console.error("Error fetching Customers:", error);
-      }
-    };
+  const fetchsupplier = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
+      setCustomer(response.data.data);
+      console.log(response, "dskfkj");
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+    }
+  };
 
-    fetchCustomer();
-  }, []);
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+    fetchsupplier();
+  }, [auth, userid]);
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
@@ -314,6 +328,8 @@ const PurchesInvoice = () => {
       sgst,
       igst,
       totalValue,
+      
+      
     };
     setRows(newRows);
   };
@@ -328,12 +344,13 @@ const PurchesInvoice = () => {
         quantity: 0,
         units: "",
         maxmimunRetailPrice: 0,
-        wholesalerDiscount: 0,
-        wholeselerDiscountRS: 0,
+        discountpercent: 0,
+        discountRs: 0,
         taxableValue: 0,
         cgst: 0,
         sgst: 0,
         igst: 0,
+        unitCost:0,
         totalValue: 0,
       },
     ]);
@@ -427,18 +444,16 @@ const PurchesInvoice = () => {
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
         quantity: selectedProduct.quantity,
-        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        // discountpercent: selectedProduct.discountpercent,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
-        wholeselerDiscountRS:
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.wholesalerDiscount) /
-          100,
-        retailDiscount: selectedProduct.retailDiscount,
-        retailDiscountRS:
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-          100,
+        unitCost:selectedProduct.purchasePriceExGst,
+
+        // discountRs:
+        //   (selectedProduct.maxmimunRetailPrice *
+        //     selectedProduct.discountpercent) /
+        //   100,
+  
 
         // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
@@ -457,7 +472,7 @@ const PurchesInvoice = () => {
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
-        totalvalue: (
+        totalValue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
@@ -498,18 +513,19 @@ const PurchesInvoice = () => {
         quantity: selectedProduct.quantity,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
-        wholesalerDiscount: selectedProduct.wholesalerDiscount,
-        wholeselerDiscountRS: (
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.wholesalerDiscount) /
-          100
-        ).toFixed(2),
-        retailDiscount: selectedProduct.retailDiscount,
-        retailDiscountRS: (
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-          100
-        ).toFixed(2),
+        unitCost:selectedProduct.purchasePriceExGst,
+        // discountpercent: selectedProduct.discountpercent,
+        // discountRs: (
+        //   (selectedProduct.maxmimunRetailPrice *
+        //     selectedProduct.discountpercent) /
+        //   100
+        // ).toFixed(2),
+        // retailDiscount: selectedProduct.retailDiscount,
+        // retailDiscountRS: (
+        //   (selectedProduct.maxmimunRetailPrice *
+        //     selectedProduct.retailDiscount) /
+        //   100
+        // ).toFixed(2),
         taxableValue: taxableValue,
         cgstpercent: selectedProduct.gstRate / 2,
         sgstpercent: selectedProduct.gstRate / 2,
@@ -525,7 +541,7 @@ const PurchesInvoice = () => {
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
-        totalvalue: (
+        totalValue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
@@ -787,7 +803,7 @@ const PurchesInvoice = () => {
               <option value="add-new-customer" className="text-blue-500">
                 + Add New Supplier
               </option>
-              {customer.map((customer) => (
+              {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
@@ -1173,64 +1189,33 @@ const PurchesInvoice = () => {
                     />
                   </td>
                   <td className="border">
-                    {customerType === "Wholesaler" && (
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.wholesalerDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px", // Set a small minimum width to ensure visibility
-                            flexBasis: "20px", // Allow it to shrink, but still have a base width
-                            flexShrink: 1, // Allow it to shrink on mobile
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.wholeselerDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    )}
-                    {customerType === "Retailer" && (
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.retailDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px", // Set a small minimum width to ensure visibility
-                            flexBasis: "20px", // Allow it to shrink, but still have a base width
-                            flexShrink: 1, // Allow it to shrink on mobile
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.retailDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    )}
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={row.discountpercent}
+                        onChange={(e) =>
+                          handleRowChange(
+                            index,
+                            "discountpercent",
+                            e.target.value
+                          )
+                        }
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: "20px", // Set a small minimum width to ensure visibility
+                          flexBasis: "20px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}
+                      />
+                      <input
+                        type="text"
+                        value={row.discountRs}
+                        onChange={(e) =>
+                          handleRowChange(index, "discountRs", e.target.value) // Fix here
+                        }
+                        className="w-full"
+                      />
+                    </div>
                   </td>
                   {salesType === "GST Invoice" && (
                     <>
@@ -1394,7 +1379,7 @@ const PurchesInvoice = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.totalvalue}
+                      value={row.totalValue}
                       onChange={(e) =>
                         handleRowChange(index, "totalValue", e.target.value)
                       }

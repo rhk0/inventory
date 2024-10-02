@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../../../context/Auth";
 import SupplierViewModal from "../modals/SupplierViewModal";
 import SupplierEditModal from "../modals/SupplierEditModal";
 
@@ -14,21 +14,35 @@ const ManageSupplier = () => {
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   const fetchSuppliers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageSupplier");
+      
+      console.log(userId,"userrrrrrrrrrrrrrrrrrrrrr")
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
+      console.log(response,"res")
       setSuppliers(response.data.data);
     } catch (error) {
+
       console.error("Error fetching supplier data", error);
     }
   };
 
   useEffect(() => {
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
     fetchSuppliers();
-  }, []);
+  }, [auth,userId]);
 
   const deleteSupplier = async (_id) => {
     try {
@@ -38,7 +52,7 @@ const ManageSupplier = () => {
       if (response) {
         toast.success(" delete all data Successfully...");
       } else {
-        toast.error("error while deleting...");
+        toast.error("Error while deleting...");
       }
     } catch (error) {
       console.log("Error deleting supplier data", error);
@@ -54,11 +68,22 @@ const ManageSupplier = () => {
     setEditModal(true);
     setModalData(suppliers);
   };
-
+    
   const closeModal = () => {
     fetchSuppliers();
     setViewModal(false);
     setEditModal(false);
+  };
+  const handleAddSupplier = () => {
+    if (auth?.user?.role === 1) {
+    
+      navigate("/admin/CreateSupplier");
+    } else if (auth?.user?.role === 0) {
+     
+      navigate("/staff/CreateSupplier");
+    } else {
+      toast.error("Unauthorized");
+    }
   };
 
   // Filter suppliers based on search query
@@ -81,7 +106,10 @@ const ManageSupplier = () => {
         />
         <button
           className="bg-purple-600 text-white px-4 py-2 rounded"
-          onClick={() => navigate("/admin/CreateSupplier")} 
+        //  onClick={() => navigate("/admin/CreateSupplier")} 
+        onClick={handleAddSupplier}
+         
+          
         >
           Add Supplier
         </button>
