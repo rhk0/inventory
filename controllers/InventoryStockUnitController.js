@@ -2,11 +2,12 @@ import InventoryStockUnitModel from "../models/InventoryStockUnitModel.js";
 
 export const createInventoryStockUnitController = async (req, res) => {
   try {
-    const { unitofquantity, symbol, formalName } = req.body;
+    const { unitofquantity, symbol, formalName,userId } = req.body;
     const response = await InventoryStockUnitModel.create({
       unitofquantity,
       symbol,
       formalName,
+      admin:userId,
     });
 
     if (response) {
@@ -25,7 +26,8 @@ export const createInventoryStockUnitController = async (req, res) => {
 };
 export const manageInventoryStockUnitController = async (req, res) => {
   try {
-    const data = await InventoryStockUnitModel.find();
+    const _id= req.params._id;
+    const data = await InventoryStockUnitModel.find({admin:_id});
     if (data && data.length > 0) {
       return res
         .status(200)

@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../../../context/Auth";
 import ManufacturerViewModel from "../../admin/modals/ManufacturerViewModels";
 import ManufacturerEditModel from "../../admin/modals/ManufacturerEditModel";
 
@@ -14,6 +14,8 @@ const ManageManufacturer = () => {
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
 
   const navigate = useNavigate();
 
@@ -21,23 +23,31 @@ const ManageManufacturer = () => {
   
   const fetchManufacturer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/ManageManufacturer");
-      setManufacturer(response.data.data);
+      const response = await axios.get(`/api/v1/auth/ManageManufacturer/${userId}`);
+      setManufacturer(response?.data.data);
     } catch (error) {
       console.error("Error fetching Manufacturer data", error);
     }
   };
 
   useEffect(() => {
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
     fetchManufacturer();
-  }, []);
+  }, [auth,userId]);
 
   const deleteManufacturer = async (_id) => {
     try {
       const response = await axios.delete(
         `/api/v1/auth/deleteManufacturer/${_id}`
       );
-      setManufacturer(manufacturer.filter((supplier) => supplier._id !== _id));
+      setManufacturer(manufacturer?.filter((supplier) => supplier._id !== _id));
 
       if (response) {
         toast.success(" delete all data Successfully...");
@@ -66,7 +76,7 @@ const ManageManufacturer = () => {
   };
 
   // Filter Manufacturer based on search query
-  const filteredManufacturer = manufacturer.filter((supplier) =>
+  const filteredManufacturer = manufacturer?.filter((supplier) =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
@@ -126,8 +136,8 @@ const ManageManufacturer = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredManufacturer.length > 0 ? (
-              filteredManufacturer.map((supplier, index) => (
+            {filteredManufacturer?.length > 0 ? (
+              filteredManufacturer?.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">

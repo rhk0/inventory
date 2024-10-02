@@ -3,20 +3,29 @@ import axios from "axios";
 import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../context/Auth";
 const ManageBrand = () => {
   const [brand, setBrand] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
+const [auth] = useAuth();
+const [userId, setUserId] = useState("");
 
   useEffect(() => {
+
+     if (auth.user.role === 1) {
+       setUserId(auth.user._id);
+     }
+     if (auth.user.role === 0) {
+       setUserId(auth.user.admin);
+     }
     fetchBrand();
-  }, []);
+  }, [auth,userId]);
 
   const fetchBrand = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/getBrand");
+      const response = await axios.get(`/api/v1/auth/getBrand/${userId}`);
       setBrand(response.data.data);
     } catch (error) {
       console.log(error);
@@ -81,7 +90,7 @@ const ManageBrand = () => {
             </tr>
           </thead>
           <tbody>
-            {brand.length > 0 ? (
+            {brand?.length > 0 ? (
               brand.map((brand, index) => (
                 <tr key={brand._id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>

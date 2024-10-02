@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../../context/Auth";
 const AddCategory = () => {
-
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
+     
   const [formData, setFormData] = useState({
     CategoryName: "",
 
@@ -17,6 +20,17 @@ const AddCategory = () => {
     });
   };
 
+
+  useEffect(()=>{
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
+  },[])
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -33,9 +47,11 @@ const AddCategory = () => {
     }
 
     try {
+      const updatedFormData = { ...formData, userId };
+      
       const response = await axios.post(
         "/api/v1/auth/createcategory",
-        formData
+        updatedFormData
       );
 
       if (response) {

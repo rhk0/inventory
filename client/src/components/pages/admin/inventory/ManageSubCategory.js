@@ -3,20 +3,28 @@ import axios from "axios";
 import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../context/Auth";
 const ManageSubCategory = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchCategories();
-  }, []);
+  }, [auth, userId]);
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/getSubCategory");
+      const response = await axios.get(`/api/v1/auth/getSubCategory/${userId}`);
       setCategories(response.data.data);
     } catch (error) {
       console.log(error);
@@ -90,8 +98,8 @@ const ManageSubCategory = () => {
             </tr>
           </thead>
           <tbody>
-            {categories.length > 0 ? (
-              categories.map((category, index) => (
+            {categories?.length > 0 ? (
+              categories?.map((category, index) => (
                 <tr key={category._id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm text-nowrap">

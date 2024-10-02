@@ -2,7 +2,7 @@ import InventoryBrandModel from "../models/InventroyBrandModel.js";
 
 export const createInventoryBrandController = async (req, res) => {
   try {
-    const { BrandName,manufacturerName } = req.body;
+    const { BrandName,manufacturerName ,userId} = req.body;
 
     const requiredFields = ["BrandName"];
 
@@ -16,7 +16,7 @@ export const createInventoryBrandController = async (req, res) => {
     }
 
     const response = await InventoryBrandModel.create({
-      BrandName,manufacturerName
+      BrandName,manufacturerName,admin:userId
     });
 
     if (response) {
@@ -35,7 +35,8 @@ export const createInventoryBrandController = async (req, res) => {
 };
 export const manageInventoryBrandController = async (req, res) => {
   try {
-    const data = await InventoryBrandModel.find();
+    const _id=req.params._id;
+    const data = await InventoryBrandModel.find({admin:_id});
     if (data && data.length > 0) {
       return res
         .status(200)

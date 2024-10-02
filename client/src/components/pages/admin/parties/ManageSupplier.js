@@ -22,9 +22,9 @@ const ManageSupplier = () => {
   const fetchSuppliers = async () => {
     try {
       
-      console.log(userId,"userrrrrrrrrrrrrrrrrrrrrr")
+     
       const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
-      console.log(response,"res")
+      
       setSuppliers(response.data.data);
     } catch (error) {
 
@@ -44,14 +44,17 @@ const ManageSupplier = () => {
     fetchSuppliers();
   }, [auth,userId]);
 
+
+  
+
   const deleteSupplier = async (_id) => {
     try {
       const response = await axios.delete(`/api/v1/auth/deletesupplier/${_id}`);
       setSuppliers(suppliers?.filter((supplier) => supplier._id !== _id));
 
       if (response) {
-        toast.success(" delete all data Successfully...");
-      } else {
+        toast.success("delete all data Successfully...");
+      } else { 
         toast.error("Error while deleting...");
       }
     } catch (error) {
