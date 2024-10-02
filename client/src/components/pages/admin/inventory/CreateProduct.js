@@ -378,13 +378,13 @@ const CreateProduct = () => {
   };
 
   const updateTable = (newOptions) => {
-    const existingVariants = Items.map((item) => item.variant);
+    const existingVariants = Items?.map((item) => item.variant);
     const newVariants = newOptions
       .filter((option) => option.values.length > 0)
       .flatMap((option) => option.values);
     const tableVariants = newVariants
       .filter((variant) => !existingVariants.includes(variant))
-      .map((variant) => ({
+      ?.map((variant) => ({
         variant: variant,
         productCode: "",
         productName: "",
@@ -471,7 +471,7 @@ const CreateProduct = () => {
       <div className="flex flex-col w-full ">
         <label className="font-bold ml-3">items Value </label>
         <div className="flex flex-wrap items-center border border-gray-300 rounded ml-3">
-          {tags.map((tag, index) => (
+          {tags?.map((tag, index) => (
             <div
               key={index}
               className="flex items-center bg-red-500 text-white px-3 py-1 m-1 rounded"
@@ -538,7 +538,7 @@ const CreateProduct = () => {
             >
               <option value="">Select categories </option>
 
-              {categories.map((category, index) => (
+              {categories?.map((category, index) => (
                 <option key={index} value={category.CategoryName}>
                   {category.CategoryName}
                 </option>
@@ -555,7 +555,7 @@ const CreateProduct = () => {
             >
               <option value="">Select Sub Categories </option>
 
-              {subCategory.map((subCategory, index) => (
+              {subCategory?.map((subCategory, index) => (
                 <option key={index} value={subCategory.subCategoryName}>
                   {subCategory.subCategoryName}
                 </option>
@@ -573,7 +573,7 @@ const CreateProduct = () => {
             >
               <option value="">Select manufacturer </option>
 
-              {manufacturers.map((manufacturer, index) => (
+              {manufacturers?.map((manufacturer, index) => (
                 <option key={index} value={manufacturer.name}>
                   {manufacturer.name}
                 </option>
@@ -591,7 +591,7 @@ const CreateProduct = () => {
             >
               <option value="">Select Brand </option>
 
-              {brand.map((brand, index) => (
+              {brand?.map((brand, index) => (
                 <option key={index} value={brand.BrandName}>
                   {brand.BrandName}
                 </option>
@@ -607,7 +607,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             >
               <option value="">Select Sub Brand </option>
-              {subbrand.map((subbrand, index) => (
+              {subbrand?.map((subbrand, index) => (
                 <option key={index} value={subbrand.SubBrandName}>
                   {subbrand.SubBrandName}
                 </option>
@@ -623,7 +623,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             >
               <option value="">select Units </option>
-              {units.map((unit, index) => (
+              {units?.map((unit, index) => (
                 <option key={index} value={unit.unitofquantity}>
                   {unit.unitofquantity}
                 </option>
@@ -969,7 +969,7 @@ const CreateProduct = () => {
       {addvarints && (
         <>
           <div className="bg-gray-200 p-4 rounded mb-4">
-            {options.map((option, index) => (
+            {options?.map((option, index) => (
               <div key={index} className="flex justify-between mb-2">
                 <div className="mb-2">
                   <label className="block font-bold">items Name</label>
@@ -1031,7 +1031,7 @@ const CreateProduct = () => {
                 </tr>
               </thead>
               <tbody>
-                {Items.map((item, index) => (
+                {Items?.map((item, index) => (
                   <tr key={index} className="mt-1">
                     <td className="border border-gray-300 text-center pt-2 pl-1 pr-1">
                       <input
