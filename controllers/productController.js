@@ -85,7 +85,9 @@ export const createProductController = async (req, res) => {
         units,
         amount,
         items,
+        userId,
       } = req.body;
+      
       // Validate and parse the items field
       let parsedItems = [];
       if (items) {
@@ -155,6 +157,7 @@ export const createProductController = async (req, res) => {
           items,
           img,
           rows,
+          admin:userId,
         });
         const savedProduct = await newProduct.save();
         res.status(201).send({
@@ -172,7 +175,8 @@ export const createProductController = async (req, res) => {
 
 export const manageProductController = async (req, res) => {
   try {
-    const data = await ProductModel.find();
+    const _id = req.params._id;
+    const data = await ProductModel.find({admin:_id});
     if (data && data.length > 0) {
       return res
         .status(200)

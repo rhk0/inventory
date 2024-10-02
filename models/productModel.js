@@ -41,6 +41,11 @@ const productSchema = new mongoose.Schema({
   rate: { type: String },
   units: { type: String },
   amount: { type: String },
+  admin:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"user",
+    required:true,
+  },
 
   rows: [
     {

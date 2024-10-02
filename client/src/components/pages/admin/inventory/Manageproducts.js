@@ -9,19 +9,21 @@ import { FiEdit } from 'react-icons/fi';
 import { MdDelete } from 'react-icons/md';
 import ProductViewModel from "../modals/ProductViewModel";
 import ProductEditModal from "../modals/ProductEditModal";
-
+import { useAuth } from "../../../context/Auth";
 const Manageproducts = () => {
   const [manufacturer, setManufacturer] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+  
   const navigate = useNavigate();
 
   const fetchManufacturer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageproduct");
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
       setManufacturer(response.data.data);
     } catch (error) {
       console.error("Error fetching Manufacturer data", error);
@@ -29,13 +31,19 @@ const Manageproducts = () => {
   };
 
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchManufacturer();
-  }, []);
+  }, [auth,userId]);
 
   const deleteManufacturer = async (_id) => {
     try {
       const response = await axios.delete(`/api/v1/auth/deleteproduct/${_id}`);
-      setManufacturer(manufacturer.filter((supplier) => supplier._id !== _id));
+      setManufacturer(manufacturer?.filter((supplier) => supplier._id !== _id));
 
       if (response) {
         toast.success(" delete all data Successfully...");
@@ -64,7 +72,7 @@ const Manageproducts = () => {
   };
 
   // Filter Manufacturer based on search query
-  const filteredManufacturer = manufacturer.filter((supplier) =>
+  const filteredManufacturer = manufacturer?.filter((supplier) =>
     supplier.productName.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
@@ -127,8 +135,8 @@ const Manageproducts = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredManufacturer.length > 0 ? (
-              filteredManufacturer.map((supplier, index) => (
+            {filteredManufacturer?.length > 0 ? (
+              filteredManufacturer?.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className=" px-1 py-1 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">

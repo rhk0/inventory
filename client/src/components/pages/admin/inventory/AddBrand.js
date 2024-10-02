@@ -20,7 +20,7 @@ const AddBrand = () => {
         `/api/v1/auth/ManageManufacturer/${userId}`
       );
       setManufacturer(response.data.data); // Save the manufacturer data to state
-      console.log(response, "response");
+    
     } catch (error) {
       console.error("Error fetching Manufacturer data", error);
     }
