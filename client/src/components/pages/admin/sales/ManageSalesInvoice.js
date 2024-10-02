@@ -172,7 +172,7 @@ const ManageSalesInvoice = () => {
                       {estimate.salesType}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {getCustomerName(estimate.customerId)}
+                      {estimate.customerName}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -266,7 +266,7 @@ const ManageSalesInvoice = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-          getCustomerName={getCustomerName}
+         
         />
       </Modal>
 

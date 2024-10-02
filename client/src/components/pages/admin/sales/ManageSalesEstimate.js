@@ -164,8 +164,9 @@ const ManageSalesEstimate = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.salesType}
                     </td>
+                  {  console.log(estimate,"estimate")}
                     <td className="border border-gray-300 p-2 text-center">
-                      {getCustomerName(estimate.customerId)}
+                      {estimate.customerName}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -262,7 +263,7 @@ const ManageSalesEstimate = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-          getCustomerName={getCustomerName}
+         
         />
       </Modal>
 

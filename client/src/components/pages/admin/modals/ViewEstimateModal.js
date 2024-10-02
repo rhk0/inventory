@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 
-const ViewEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
+const ViewEstimateModal = ({ closeModal, estimate }) => {
   const [date, setDate] = useState("");
   const [estimateNo, setEstimateNo] = useState("");
   const [salesType, setSalesType] = useState("");
@@ -40,7 +40,7 @@ const ViewEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       setEstimateNo(estimate.estimateNo || "");
       setSalesType(estimate.salesType || "");
       setCustomerType(estimate.customerType || "");
-      setCustomerName(getCustomerName(estimate.customerId) || "");
+      setCustomerName(estimate.customerName || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
@@ -63,7 +63,7 @@ const ViewEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
     }
-  }, [estimate, getCustomerName]);
+  }, [estimate]);
 
   return (
     <div
