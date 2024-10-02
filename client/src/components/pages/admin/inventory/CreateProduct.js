@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../../context/Auth";
 const CreateProduct = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [gstRate, setGstRate] = useState("0%");
   const [landingCost, setLandingCost] = useState(0);
   const [options, setOptions] = useState([{ name: "", values: [] }]);
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const initialItemsState = [
     {
       items: "",
@@ -129,89 +131,90 @@ const CreateProduct = () => {
   //   formData.salesTaxInclude,
   // ]);
 
+
+
   useEffect(() => {
-    const fetchManufecturer = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageManufacturer");
-        setManufacturer(response.data.data);
-      } catch (error) {
-        console.error("Error fetching manufacturer:", error);
-        // toast.error("Failed to fetch manufacturer");
-      }
-    };
+    
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
 
     fetchManufecturer();
-  }, []);
-
-  useEffect(() => {
-    const fetchUnit = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/getStockUnit");
-        setUnits(response.data.data);
-      } catch (error) {
-        console.error("Error fetching manufacturer:", error);
-        // toast.error("Failed to fetch manufacturer");
-      }
-    };
-
     fetchUnit();
-  }, []);
-  // category
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/getcategory");
-        setCategories(response.data.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        // toast.error("Failed to fetch categories");
-      }
-    };
-
     fetchCategories();
-  }, []);
-  // Sub category
-  useEffect(() => {
-    const fetchSubCategories = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/getSubCategory");
-        setSubCategories(response.data.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        // toast.error("Failed to fetch categories");
-      }
-    };
     fetchSubCategories();
-  }, []);
+    fetchBrand();
+    fetchSubBrand()
+  }, [auth,userId]);
+
+  
+  const fetchManufecturer = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageManufacturer/${userId}`);
+      setManufacturer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching manufacturer:", error);
+      // toast.error("Failed to fetch manufacturer");
+    }
+  };
+
+
+  const fetchUnit = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/getStockUnit/${userId}`);
+      setUnits(response.data.data);
+    } catch (error) {
+      console.error("Error fetching manufacturer:", error);
+      // toast.error("Failed to fetch manufacturer");
+    }
+  };
+  // category
+  
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/getcategory/${userId}`);
+      setCategories(response.data.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      // toast.error("Failed to fetch categories");
+    }
+  };
+  // Sub category
+ 
+  const fetchSubCategories = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/getSubCategory/${userId}`);
+      setSubCategories(response.data.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      // toast.error("Failed to fetch categories");
+    }
+  };
 
   //  Brand
-  useEffect(() => {
-    const fetchBrand = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/getBrand");
-        setBrand(response.data.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        // toast.error("Failed to fetch categories");
-      }
-    };
-
-    fetchBrand();
-  }, []);
-  //
-  useEffect(() => {
-    const fetchSubBrand = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/getSubBrand");
-        setSubBrand(response.data.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        // toast.error("Failed to fetch categories");
-      }
-    };
-
-    fetchSubBrand();
-  }, []);
+  const fetchBrand = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/getBrand/${userId}`);
+      setBrand(response.data.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      // toast.error("Failed to fetch categories");
+    }
+  };
+ 
+  const fetchSubBrand = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/getSubBrand/${userId}`);
+      setSubBrand(response.data.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      // toast.error("Failed to fetch categories");
+    }
+  };
+ 
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -294,14 +297,16 @@ const CreateProduct = () => {
 
     for (const key in formData) {
       form.append(key, formData[key]);
+     
     }
     for (let i = 0; i < imgs.length; i++) {
       form.append("img", imgs[i]);
     }
 
     form.append("items", JSON.stringify(Items));
-
+    form.append("userId",userId)
     try {
+     
       const response = await axios.post("/api/v1/auth/createProduct", form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -378,13 +383,13 @@ const CreateProduct = () => {
   };
 
   const updateTable = (newOptions) => {
-    const existingVariants = Items.map((item) => item.variant);
+    const existingVariants = Items?.map((item) => item.variant);
     const newVariants = newOptions
-      .filter((option) => option.values.length > 0)
-      .flatMap((option) => option.values);
+      ?.filter((option) => option.values.length > 0)
+      ?.flatMap((option) => option.values);
     const tableVariants = newVariants
-      .filter((variant) => !existingVariants.includes(variant))
-      .map((variant) => ({
+      ?.filter((variant) => !existingVariants.includes(variant))
+      ?.map((variant) => ({
         variant: variant,
         productCode: "",
         productName: "",
@@ -401,7 +406,7 @@ const CreateProduct = () => {
         maximumStock: "",
         openingQty: "",
       }));
-    const updatedItems = Items.filter((item) =>
+    const updatedItems = Items?.filter((item) =>
       newVariants.includes(item.variant)
     );
     setItems([...updatedItems, ...tableVariants]);
@@ -471,7 +476,7 @@ const CreateProduct = () => {
       <div className="flex flex-col w-full ">
         <label className="font-bold ml-3">items Value </label>
         <div className="flex flex-wrap items-center border border-gray-300 rounded ml-3">
-          {tags.map((tag, index) => (
+          {tags?.map((tag, index) => (
             <div
               key={index}
               className="flex items-center bg-red-500 text-white px-3 py-1 m-1 rounded"
@@ -538,7 +543,7 @@ const CreateProduct = () => {
             >
               <option value="">Select categories </option>
 
-              {categories.map((category, index) => (
+              {categories?.map((category, index) => (
                 <option key={index} value={category.CategoryName}>
                   {category.CategoryName}
                 </option>
@@ -555,7 +560,7 @@ const CreateProduct = () => {
             >
               <option value="">Select Sub Categories </option>
 
-              {subCategory.map((subCategory, index) => (
+              {subCategory?.map((subCategory, index) => (
                 <option key={index} value={subCategory.subCategoryName}>
                   {subCategory.subCategoryName}
                 </option>
@@ -573,7 +578,7 @@ const CreateProduct = () => {
             >
               <option value="">Select manufacturer </option>
 
-              {manufacturers.map((manufacturer, index) => (
+              {manufacturers?.map((manufacturer, index) => (
                 <option key={index} value={manufacturer.name}>
                   {manufacturer.name}
                 </option>
@@ -591,7 +596,7 @@ const CreateProduct = () => {
             >
               <option value="">Select Brand </option>
 
-              {brand.map((brand, index) => (
+              {brand?.map((brand, index) => (
                 <option key={index} value={brand.BrandName}>
                   {brand.BrandName}
                 </option>
@@ -607,7 +612,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             >
               <option value="">Select Sub Brand </option>
-              {subbrand.map((subbrand, index) => (
+              {subbrand?.map((subbrand, index) => (
                 <option key={index} value={subbrand.SubBrandName}>
                   {subbrand.SubBrandName}
                 </option>
@@ -623,7 +628,7 @@ const CreateProduct = () => {
               onChange={handleChange}
             >
               <option value="">select Units </option>
-              {units.map((unit, index) => (
+              {units?.map((unit, index) => (
                 <option key={index} value={unit.unitofquantity}>
                   {unit.unitofquantity}
                 </option>
@@ -969,7 +974,7 @@ const CreateProduct = () => {
       {addvarints && (
         <>
           <div className="bg-gray-200 p-4 rounded mb-4">
-            {options.map((option, index) => (
+            {options?.map((option, index) => (
               <div key={index} className="flex justify-between mb-2">
                 <div className="mb-2">
                   <label className="block font-bold">items Name</label>
@@ -1031,7 +1036,7 @@ const CreateProduct = () => {
                 </tr>
               </thead>
               <tbody>
-                {Items.map((item, index) => (
+                {Items?.map((item, index) => (
                   <tr key={index} className="mt-1">
                     <td className="border border-gray-300 text-center pt-2 pl-1 pr-1">
                       <input

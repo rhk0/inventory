@@ -6,13 +6,13 @@ import {
   manageProductController,
   updateProductController,
 } from "../controllers/productController.js";
-import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
+import {  requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createproduct",requireSignIn,isAdmin,  createProductController);
-router.get("/manageproduct",requireSignIn,isAdmin, manageProductController);
-router.delete("/deleteproduct/:_id",requireSignIn,isAdmin, deleteProductController);
-router.put("/updateproduct/:id",requireSignIn,isAdmin, updateProductController);
+router.post("/createproduct",requireSignIn,createProductController);
+router.get("/manageproduct/:_id",requireSignIn, manageProductController);
+router.delete("/deleteproduct/:_id",requireSignIn, deleteProductController);
+router.put("/updateproduct/:id",requireSignIn, updateProductController);
 
 export default router;
