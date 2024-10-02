@@ -1,48 +1,299 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import Select from "react-select";
+import { useAuth } from "../../../context/Auth.js";
+
+import Modal from "react-modal";
 
 const PurchesReturn = () => {
-  const [suppliers, setSuppliers] = useState([]); // State to store supplier data
-  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [documentPath, setdocumentPath] = useState(null);
+
+  const [date, setDate] = useState("");
+  const [debitNoteNo, setdebitNoteNo] = useState("");
+  const [salesType, setSalesType] = useState("GST Invoice");
+  const [placeOfSupply, setPlaceOfSupply] = useState("");
+  const [dueDate, setDueDate] = useState("");
+
+  const [billingAddress, setBillingAddress] = useState("");
+  const [selectPurchase, setselectPurchase] = useState("No");
+  const [reasonForReturn, setreasonForReturn] = useState("");
+
+  const [gstType, setGstType] = useState("CGST/SGST");
+  const [rows, setRows] = useState([]);
+  const [paymentTerm, setPaymentTerm] = useState(0);
+  const [otherCharges, setOtherCharges] = useState(0);
+  const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState("");
+
+  const [customer, setCustomer] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [selectedAddress, setAddress] = useState("");
+  const [viewModal, setViewModal] = useState(false);
+  const [chooseUser, setChooseUser] = useState([]);
+  const [company, setCompanyData] = useState([]);
+  const [auth] = useAuth();
+  const [userid, setUserId] = useState("");
+
+  const [formData, setFormData] = useState({
+    date: "",
+    debitNoteNo: "",
+    supplierName: "",
+    paymentTerm: "",
+    dueDate: "",
+
+    billingAddress: "",
+    selectPurchase: "",
+    reasonForReturn: "",
+    gstType: "",
+
+    rows: [
+      {
+        itemCode: "", // Item Code
+        productName: "", // Product Name
+        hsnCode: "", // HSN Code
+        quantity: null, // Quantity
+        units: null, // Unit of Measure
+        freeQty: null,
+        maxmimunRetailPrice: null, // Maximum Retail Price
+        unitCost: null, // Unit Cost
+        schemeMargin: "", // Scheme Margin
+        discountpercent: null, // Discount Percentage
+        discountRs: null, // Discount in Rs
+        taxableValue: null, // Taxable Amount
+        cgstpercentercent: null, // CGST Percentage
+        cgstRS: null, // CGST Amount
+        sgstpercentercent: null, // SGST Percentage
+        sgstRS: null, // SGST Amount
+        igstpercentercent: null, // IGST Percentage
+        igstRS: null, // IGST Amount
+        totalValue: null, // Total Value
+      },
+    ],
+
+    narration: "",
+    otherChargesDescriptions: "",
+    grossAmount: "",
+    GstAmount: "",
+    otherCharges: "",
+    netAmount: "",
+  });
+
+  const [cashDetails, setCashDetails] = useState({
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+  const [bankDetails, setBankDetails] = useState({
+    bank: "",
+    selectBankType: "",
+    transactionDate: "",
+    chequeNo: "",
+    transactionNo: "",
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+
+  const handleCashDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setCashDetails((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleBankDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setBankDetails((prev) => ({
+      ...prev,
+      [name]: value, // Update the corresponding field in bankDetails
+    }));
+  };
+
+  const [paymentMethod, setPaymentMethod] = useState("");
+
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+  const [paymentType, setPaymentType] = useState("");
+  const [subPaymentType, setSubPaymentType] = useState("");
+
+  const handlePaymentTypeChange = (e) => {
+    setPaymentType(e.target.value);
+    setSubPaymentType(""); // Reset subPaymentType when paymentType changes
+  };
+
+  const handleSubPaymentTypeChange = (e) => {
+    const { value } = e.target;
+    setSubPaymentType(value); // Set the subPaymentType state
+    setBankDetails((prev) => ({ ...prev, selectBankType: value })); // Update bankDetails
+  };
+
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+
+  const fetchsupplier = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
+      setCustomer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchSuppliers = async () => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+    fetchsupplier();
+  }, [auth, userid]);
+  
+  useEffect(() => {
+    const companyData = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/manageSupplier");
-        setSuppliers(response.data.data);
+        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
-        console.error("Error fetching suppliers:", error);
+        console.error("Error fetching company data:", error);
       }
     };
 
-    fetchSuppliers();
-  }, []);
+    companyData(); // Fetch company data on component mount
+  }, [userid]); // Empty dependency array ensures this only runs once, on mount
 
-  const handleSupplierChange = (e) => {
-    setSelectedSupplier(e.target.value);
+  const handleCustomerChange = (e) => {
+    const value = e.target.value;
+    setSelectedCustomer(value);
+
+    const selectedCustomerData = customer.find((cust) => cust._id === value);
+    setChooseUser(selectedCustomerData);
+    setFormData((prev) => ({
+      ...prev,
+      supplierName: selectedCustomerData ? selectedCustomerData.name : "",
+      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
+      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
+    }));
+
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
   };
 
-  const [rows, setRows] = useState([
-    {
-      id: 1,
-      code: "",
-      name: "",
-      qty: "",
-      mrp: "",
-      retailPrice: "",
-      taxableValue: "",
-      cgstPercent: "",
-      cgstRs: "",
-      sgstPercent: "",
-      sgstRs: "",
-      igstPercent: "",
-      igstRs: "",
-    },
-  ]);
+  const handleOtherChargesChange = (event) => {
+    const newCharges = parseFloat(event.target.value) || 0;
+    setOtherCharges(newCharges);
 
-  const handleChange = (index, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      otherCharges: newCharges,
+    }));
+  };
+  const handleOtherChargesSave = () => {
+    setFormData((prev) => ({
+      ...prev,
+      otherCharges: otherCharges.toFixed(2),
+      otherChargesDescriptions: otherChargesDescriptions,
+    }));
+    setIsModalOtherChargesOpen(false);
+  };
+
+  useEffect(() => {
+    if (date && paymentTerm) {
+      const selectedDate = new Date(date);
+      selectedDate.setDate(selectedDate.getDate() + parseInt(paymentTerm));
+
+      const day = String(selectedDate.getDate()).padStart(2, "0");
+      const month = selectedDate.toLocaleString("en-US", { month: "short" });
+      const year = selectedDate.getFullYear();
+      const formattedDueDate = `${day}-${month}-${year}`;
+
+      setDueDate(formattedDueDate);
+      setFormData((prev) => ({
+        ...prev,
+        dueDate: formattedDueDate, // Update formData with dueDate
+      }));
+    }
+  }, [date, paymentTerm]);
+
+  const handlePaymentTermChange = (e) => {
+    const value = e.target.value;
+    setPaymentTerm(value);
+    setFormData((prev) => ({
+      ...prev,
+      paymentTerm: value,
+    }));
+  };
+
+  const handleGstTypeChange = (e) => {
+    const value = e.target.value;
+    setGstType(value);
+    setFormData((prev) => ({
+      ...prev,
+      gstType: value,
+    }));
+  };
+
+  // State for modal visibility
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
+
+  const handledebitNoteNoChange = (e) => {
+    const value = e.target.value;
+    setdebitNoteNo(value);
+    setFormData((prev) => ({
+      ...prev,
+      debitNoteNo: value,
+    }));
+  };
+
+  const handleBillingAddressChange = (e) => {
+    const value = e.target.value;
+    setBillingAddress(selectedAddress);
+    setFormData((prev) => ({
+      ...prev,
+      billingAddress: value,
+    }));
+  };
+  const handleselectPurchaseChange = (e) => {
+    const value = e.target.value;
+    setselectPurchase(value);
+    setFormData((prev) => ({
+      ...prev,
+      selectPurchase: value,
+    }));
+  };
+
+  const handleReasonOfreturn = (e) => {
+    const value = e.target.value;
+    setreasonForReturn(value);
+    setFormData((prev) => ({
+      ...prev,
+      reasonForReturn: value,
+    }));
+  };
+
+  const handleRowChange = (index, field, value) => {
     const newRows = [...rows];
-    newRows[index][field] = value;
+    const newValue = parseFloat(value) || 0;
+    newRows[index] = { ...newRows[index], [field]: newValue };
+
+    // Calculate taxable value, GST, and total value
+    const { qty, mrp, discount } = newRows[index];
+    const taxableValue = qty * mrp - discount;
+    const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
+    const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
+    const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
+    const totalValue = taxableValue + cgst + sgst + igst;
+
+    newRows[index] = {
+      ...newRows[index],
+      taxableValue,
+      cgst,
+      sgst,
+      igst,
+      totalValue,
+    };
     setRows(newRows);
   };
 
@@ -53,14 +304,16 @@ const PurchesReturn = () => {
         itemCode: "",
         productName: "",
         hsnCode: "",
-        qty: 0,
-        uom: "",
-        mrp: 0,
-        discount: 0,
+        quantity: 0,
+        units: "",
+        maxmimunRetailPrice: 0,
+        discountpercent: 0,
+        discountRs: 0,
         taxableValue: 0,
         cgst: 0,
         sgst: 0,
         igst: 0,
+        unitCost: 0,
         totalValue: 0,
       },
     ]);
@@ -72,8 +325,489 @@ const PurchesReturn = () => {
     }
   };
 
-  const print = () => {
+  const calculateTotals = () => {
+    let grossAmount = 0;
+    let GstAmount = 0;
+
+    rows.forEach((rows) => {
+      grossAmount += rows.taxableValue;
+      GstAmount += rows.cgstRS + rows.sgstRS;
+    });
+
+    let netAmount;
+
+    // Check if otherChargesDescriptions includes "discount"
+    if (otherChargesDescriptions.includes("discount")) {
+      netAmount = grossAmount + GstAmount - otherCharges;
+    } else {
+      netAmount = grossAmount + GstAmount + otherCharges;
+    }
+    return { grossAmount, GstAmount, netAmount };
+  };
+
+  const { grossAmount, GstAmount, netAmount } = calculateTotals();
+
+  // Function to handle Save and Print
+
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("/api/v1/auth/manageproduct");
+        if (response.data && Array.isArray(response.data.data)) {
+          setProducts(response.data.data);
+        } else {
+          console.error("Unexpected response structure:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        // toast.error("Failed to fetch products. Please try again.");
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const handleProductSelect = (rowIndex, selectedProductName) => {
+    const selectedProduct = products.find(
+      (product) => product.productName === selectedProductName
+    );
+
+    if (selectedProduct) {
+      const updatedRows = [...rows];
+
+      // Calculate retail price
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      // Determine if sales tax is included from the fetched product data
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+
+      // Calculate taxable value based on salesTaxInclude
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * selectedProduct.quantity;
+
+      // Update the row with the new values
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        productName: selectedProduct.productName,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        quantity: selectedProduct.quantity,
+        // discountpercent: selectedProduct.discountpercent,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
+        unitCost: selectedProduct.purchasePriceExGst,
+
+        // discountRs:
+        //   (selectedProduct.maxmimunRetailPrice *
+        //     selectedProduct.discountpercent) /
+        //   100,
+
+        // taxable value based on salesTaxInclude
+        taxableValue: taxableValue,
+
+        cgstpercent: selectedProduct.gstRate / 2,
+        sgstpercent: selectedProduct.gstRate / 2,
+        igstpercent: selectedProduct.gstRate,
+
+        cgstRS: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstRS: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstRS: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalValue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
+    }
+  };
+
+  const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
+    const selectedProduct = products.find(
+      (product) => product.itemCode === selectedItemCode
+    );
+
+    if (selectedProduct) {
+      const updatedRows = [...rows];
+
+      // Calculate retail price and taxable value based on the product details
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      const taxableValue = selectedProduct.salesTaxInclude
+        ? (retailPrice * selectedProduct.quantity * 100) /
+          (100 + selectedProduct.gstRate)
+        : retailPrice * selectedProduct.quantity;
+
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        productName: selectedProduct.productName,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        quantity: selectedProduct.quantity,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
+        unitCost: selectedProduct.purchasePriceExGst,
+        // discountpercent: selectedProduct.discountpercent,
+        // discountRs: (
+        //   (selectedProduct.maxmimunRetailPrice *
+        //     selectedProduct.discountpercent) /
+        //   100
+        // ).toFixed(2),
+        // retailDiscount: selectedProduct.retailDiscount,
+        // retailDiscountRS: (
+        //   (selectedProduct.maxmimunRetailPrice *
+        //     selectedProduct.retailDiscount) /
+        //   100
+        // ).toFixed(2),
+        taxableValue: taxableValue,
+        cgstpercent: selectedProduct.gstRate / 2,
+        sgstpercent: selectedProduct.gstRate / 2,
+        igstpercent: selectedProduct.gstRate,
+
+        cgstRS: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstRS: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstRS: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalValue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Create a FormData instance
+      const submissionData = new FormData();
+
+      // Append non-file form data to formData
+      const fields = {
+        date,
+        debitNoteNo,
+        supplierdebitNoteNo,
+        supplierName: formData.supplierName,
+        placeOfSupply,
+        paymentTerm,
+        dueDate,
+        reasonForReturn,
+        billingAddress,
+        selectPurchase,
+        gstType,
+        otherChargesDescriptions,
+        narration: formData.narration,
+        grossAmount: grossAmount.toFixed(2),
+        GstAmount: GstAmount.toFixed(2),
+        otherCharges: otherCharges.toFixed(2),
+        netAmount: netAmount.toFixed(2),
+      };
+
+      // Append all fields to formData
+      Object.keys(fields).forEach((key) => {
+        if (fields[key]) {
+          submissionData.append(key, fields[key]);
+        }
+      });
+
+      // Append each row individually
+      rows.forEach((row, index) => {
+        Object.keys(row).forEach((key) => {
+          submissionData.append(`rows[${index}][${key}]`, row[key]);
+        });
+      });
+
+      // If a document file has been selected, append it to the FormData
+      if (documentPath) {
+        submissionData.append("documentPath", documentPath);
+      }
+      const response = await axios.post(
+        "/api/v1/purchesReturnRoute/createpurchasereturn",
+        submissionData
+      );
+      if (response) {
+        toast.success("Purchase invoice created successfully...");
+      }
+
+      // Reset your form data and state
+      resetForm();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to create sales estimate. Please try again.");
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      date: "",
+      debitNoteNo: "",
+      supplierdebitNoteNo: "",
+      salesType: "GST Invoice",
+      supplierName: "",
+      placeOfSupply: "",
+      paymentTerm: "",
+      dueDate: "",
+      receiptDocNo: "",
+      dispatchedThrough: "",
+      destination: "",
+      carrierNameAgent: "",
+      billOfLading: "",
+      motorVehicleNo: "",
+      billingAddress: "",
+      selectPurchase: "No",
+      gstType: "CGST/SGST",
+      rows: [
+        {
+          itemCode: "",
+          productName: "",
+          hsnCode: "",
+          qty: null,
+          units: "",
+          mrp: null,
+          discount: null,
+          taxableValue: 0,
+          cgst: 0,
+          sgst: 0,
+          igst: 0,
+          totalValue: 0,
+        },
+      ],
+      narration: "",
+      otherChargesDescriptions: "",
+      grossAmount: "",
+      GstAmount: "",
+      otherCharges: "",
+      netAmount: "",
+      cash: {},
+      bank: {},
+    });
+
+    setCashDetails({ amount: "", advance: "", received: "", balance: "" });
+    setBankDetails({
+      selectBankType: "",
+      transactionDate: "",
+      chequeNo: "",
+      transactionNo: "",
+      amount: "",
+      advance: "",
+      received: "",
+      balance: "",
+    });
+
+    // Reset additional states as needed...
+    setDate("");
+    setSelectedCustomer("");
+    // Add any other state resets...
+  };
+
+  const openViewModal = (suppliers) => {
+    setViewModal(true);
+  };
+  const closeModal = () => {
+    setViewModal(false);
+  };
+  const handlePrintOnly = () => {
     const printWindow = window.open("", "_blank");
+
+    const updatedFormData = {
+      ...formData,
+      rows: rows.map((row) => ({
+        itemCode: row.itemCode,
+        productName: row.productName,
+        hsnCode: row.hsnCode,
+        qty: row.quantity,
+        freeQuantity: row.freeQty,
+        units: row.units,
+        mrp: row.maxmimunRetailPrice,
+        discountpercent: row.discountRs,
+
+        discountRs: row.discountRs,
+
+        UnitsCost: row.unitCost,
+        schemeMargin: row.schemeMargin,
+
+        taxable: row.taxableValue.toFixed(2),
+        cgstpercent: row.cgstpercent,
+        cgstRS: row.cgstRS,
+        sgstpercent: row.sgstpercent,
+        sgstRS: row.sgstRS,
+        igstpercent: row.igstpercent,
+        igstRS: row.igstRS,
+        totalValue: row.totalValue,
+      })),
+      grossAmount: grossAmount.toFixed(2),
+      GstAmount: GstAmount.toFixed(2),
+      otherCharges: otherCharges.toFixed(2),
+      otherChargesDescriptions: otherChargesDescriptions,
+      salesType,
+
+      gstType,
+      netAmount: netAmount.toFixed(2),
+    };
+
+    // Determine the table headers and the corresponding data based on gstType
+    function numberToWords(num) {
+      const ones = [
+        "",
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+        "Ten",
+        "Eleven",
+        "Twelve",
+        "Thirteen",
+        "Fourteen",
+        "Fifteen",
+        "Sixteen",
+        "Seventeen",
+        "Eighteen",
+        "Nineteen",
+      ];
+      const tens = [
+        "",
+        "",
+        "Twenty",
+        "Thirty",
+        "Forty",
+        "Fifty",
+        "Sixty",
+        "Seventy",
+        "Eighty",
+        "Ninety",
+      ];
+
+      function convertToWords(n) {
+        if (n < 20) return ones[n];
+        if (n < 100)
+          return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+        if (n < 1000)
+          return (
+            ones[Math.floor(n / 100)] +
+            " Hundred" +
+            (n % 100 ? " " + convertToWords(n % 100) : "")
+          );
+        if (n < 100000)
+          return (
+            convertToWords(Math.floor(n / 1000)) +
+            " Thousand" +
+            (n % 1000 ? " " + convertToWords(n % 1000) : "")
+          );
+        return "";
+      }
+
+      // Split the number into integer and decimal parts
+      const parts = num.toString().split(".");
+
+      const integerPart = parseInt(parts[0], 10);
+      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0;
+
+      let words = convertToWords(integerPart) + " Rupees";
+
+      // Handle the decimal part (paise)
+      if (decimalPart > 0) {
+        words += " and " + convertToWords(decimalPart) + " Paise";
+      }
+
+      return words;
+    }
+    const gstHeaders =
+      updatedFormData.gstType === "CGST/SGST"
+        ? `<th>CGST</th><th>SGST</th>`
+        : `<th>IGST</th>`;
+
+    const gstRows =
+      updatedFormData.gstType === "CGST/SGST"
+        ? updatedFormData.rows
+            .map(
+              (row, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${row.itemCode}</td>
+            <td>${row.productName}</td>
+            <td>${row.hsnCode}</td>
+              <td>${row.units}</td>
+            <td>${row.qty}</td>
+             <td>${row.freeQuantity}</td>
+            <td>${row.mrp}</td>
+            <td>${row.UnitsCost}</td>
+            <td>${row.schemeMargin}</td>    
+            <td>${row.discountpercent}% ${row.discountRs}</td>
+            <td>${row.taxable}</td>
+            <td>${row.cgstpercent}% ${row.cgstRS}</td>
+            <td >${row.sgstpercent}% ${row.sgstRS}</td>
+            <td>${row.totalValue}</td>
+          </tr>`
+            )
+            .join("")
+        : updatedFormData.rows
+            .map(
+              (row, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${row.itemCode}</td>
+            <td>${row.productName}</td>
+            <td>${row.hsnCode}</td>
+            <td>${row.units}</td>
+            <td>${row.qty}</td>
+             <td>${row.freeQuantity}</td>
+            <td>${row.mrp}</td>
+            <td>${row.UnitsCost}</td>
+            <td>${row.schemeMargin}</td>
+            <td>${row.discountpercent}% ${row.discountRs}</td>
+            <td>${row.taxable}</td>
+            <td>${row.igstpercent}% ${row.igstRS}</td>
+            <td>${row.totalValue}</td>
+          </tr>`
+            )
+            .join("");
 
     printWindow.document.write(`
       <html>
@@ -92,25 +826,6 @@ const PurchesReturn = () => {
               margin-bottom: 20px;
               font-size: 24px;
             }
-            .receipt-details .section-header {
-              color: green;
-              font-size: 16px;
-            }
-            .customer-details .section-header {
-              color: green;
-              font-size: 16px;
-            }
-            .sales-estimate .section-header {
-              color: blue;
-              font-size: 16px;
-            }
-            .transport-details .section-header, .amount-details .section-header {
-              color: blue;
-              font-size: 16px;
-            }
-            .terms .section-header {
-              color: red;
-            }
             .table {
               width: 100%;
               border-collapse: collapse;
@@ -126,33 +841,21 @@ const PurchesReturn = () => {
               background-color: #ff0000; /* Red header */
               color: black;
             }
-            .details {
-              font-size: 12px;
-              margin-bottom: 5px;
-            }
             .signature {
               text-align: right;
               margin-top: 50px;
               font-size: 12px;
             }
-            .heades {
-              text-align: center;
-              color: blue;
-              font-size: 24px;
-            }
           </style>
-
         </head>
         <body>
-         <div style="color: blue; font-size: 24px; font-weight: bold;" class="">Logo</div>
-          <div class="header">
+        <div class="header">
           
-            <div class="business-name">Business Name</div>
-            <div>Address: Your Address Here</div>
-            <div>GSTIN: Your GSTIN Here</div>
-          </div>
-  
-          <table class="table">
+            <div class="business-name"> ${company?.businessName} </div>
+              <div> ${company?.address} </div>
+              <div>GSTIN: ${company?.gstIn}</div>
+            </div>
+                <table class="table">
              <tr>
                   <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
                   Purchase Return
@@ -164,34 +867,41 @@ const PurchesReturn = () => {
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>John Doe</span></div>
-                  <div class="details">Address: <span>123 Main St, City</span></div>
-                  <div class="details">Contact: <span>9876543210</span></div>
-                  <div class="details">GSTIN: <span>22AAAAA0000A1Z5</span></div>
+                  <div class="section-header">Supplier  Details</div>
+                  <div class="details">Name: <span>${
+                    chooseUser.name
+                  }</span></div>
+                  <div class="details">Address: <span>${
+                    chooseUser.address
+                  }</span></div>
+                  <div class="details">Contact: <span>${
+                    chooseUser.contact
+                  }</span></div>
+                  <div class="details">GSTIN: <span>${
+                    chooseUser.gstin
+                  }</span></div>
                 </div>
               </td>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="sales-estimate">
                   <div class="section-header"> Return Details</div>
-                  <div class="details">Note No.: <span>12345</span></div>
-                  <div class="details"> Date: <span>01-Jan-2024</span></div>
-                  <div class="details">Purchase Invoice: <span>City Name</span></div>
-                   <div class="details">Place of Supply: <span>City Name</span></div>
-                   <div class="details">Place of Supply: <span>City Name</span></div>
-                   <div class="details">Reason for Return: <span>City Name</span></div>
+                  <div class="details"> Note No: <span>${
+                    updatedFormData.debitNoteNo
+                  }</span></div>
+                  <div class="details"> Date: <span>${
+                    updatedFormData.date
+                  }</span></div>
+                  
+                  <div class="details">Place of Supply: <span>${
+                    updatedFormData.placeOfSupply
+                  }</span></div>
+                   <div class="details">Reason For Return: <span>${
+                     updatedFormData.reasonForReturn
+                   }</span></div>
+                 
                 </div>
               </td>
-              <td style="width: 40%;">
-                <div style="text-align:left;" class="transport-details">
-                  <div class="section-header">Transport Details</div>
-                  <div class="details">Receipt Doc No.: <span>6789</span></div>
-                  <div class="details">Dispatch Through: <span>Courier Service</span></div>
-                   <div class="details">Agent Name: <span>John Smith</span></div>
-                   <div class="details">Bill of lading : <span>John Smith</span></div>
-                  <div class="details">Vehicle Number: <span>MH12AB1234</span></div>
-                </div>
-              </td>
+           
             </tr>
           </table>
   
@@ -199,64 +909,54 @@ const PurchesReturn = () => {
             <thead>
               <tr>
                 <th>No.</th>
+                <th>Item Code</th>
                 <th>Product Name</th>
                 <th>HSN Code</th>
                 <th>UOM</th>
-                <th>QTY</th>
-                
+                 <th>QTY</th>
+                <th>Free QTY</th>
                 <th>MRP</th>
                 <th>Unit Cost</th>
                 <th>Scheme Margin %</th>
-                <th>Discount</th>
-               
+                <th>Disccount</th>
                 <th>Taxable Value</th>
-                <th>CGST</th>
-                <th>SGST</th>
+                ${gstHeaders}
                 <th>Total</th>
               </tr>
             </thead>
             <tbody>
-              <!-- Add your product rows here -->
-              <tr>
-                <td>1</td>
-                <td>Product Name</td>
-                <td>1234</td>
-                <td>10</td>
-                <td>10</td>
-                <td>KG</td>
-                <td>500</td>
-                 <td>10%</td>
-                <td>10%</td>
-             
-                <td>4500</td>
-                <td>9%</td>
-                <td>9%</td>
-                <td>5310</td>
-              </tr>
+              ${gstRows}
             </tbody>
           </table>
-          
-  
-            <table  style="margin-top:60px ; margin-left:50px">
-              <tr>
-                <td style="width: 50%;">
-                <div class="section-header">Narration :     narration</div>
-              </td>
-                <td style="width: 33.33%; text-align: left;">
-                  <div class="amount-details">
+          <table class="" style="width: 100%;">
+              <tr style="height: 100%;">
+                <td style="width: 33.33%; vertical-align: bottom; height: 100%; align-item: right;">
+                  <div class="amount-details" style="margin-top: 50px; float: right; text-align: left;">
                     <div class="section-header">Amount Details</div>
-                    <div class="details">Gross Total: ₹10000</div>
-                    <div class="details">GST Amount: ₹1800</div>
-                    <div class="details">Additional Charges: ₹200</div>
-                    <div class="details">Net Total: ₹12000</div>  
-                    <div class="details">Amount in Words: Twelve Thousand Only</div>
+                    <div class="details">Gross Total: ₹${
+                      updatedFormData.grossAmount
+                    }</div>
+                    <div class="details">GST Amount: ₹${
+                      updatedFormData.GstAmount
+                    }</div>
+                    <div class="details">Additional Charges: ₹${
+                      updatedFormData.otherCharges
+                    }</div>
+                    <div class="details">Net Total: ₹${
+                      updatedFormData.netAmount
+                    }</div>
+                    <div class="details">Amount in Words: ${numberToWords(
+                      updatedFormData.netAmount
+                    )}</div>
                   </div>
                 </td>
               </tr>
             </table>
+            <div style="margin-top:100px" class="mt-10">
+                <div class="section-header">Terms & Condition</div>
+                <div class="details">Your terms and conditions go here...</div>
+             </div>
           <div  class="signature">
-         
-          
             <div>For (Business Name)</div>
             <div style="margin-top: 20px;">Signature</div>
           </div>
@@ -267,611 +967,800 @@ const PurchesReturn = () => {
     printWindow.document.close();
     printWindow.focus();
 
+    printWindow.onafterprint = () => {
+      printWindow.close(); // Close the print window after printing
+
+      // Create a fake event object (optional)
+      const dummyEvent = {
+        preventDefault: () => {},
+      };
+
+      handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
+    };
+
+    // Trigger the print dialog
     printWindow.print();
-    printWindow.close();
-  };
-
-  const [date, setDate] = useState("");
-  const [paymentTerms, setPaymentTerms] = useState("");
-  const [dueDate, setDueDate] = useState("");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [otherCharges, setOtherCharges] = useState("");
-  const [amount, setAmount] = useState("");
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const handleSave = () => {
-    // You can add logic to save or process the charges and amount here
-    console.log("Other Charges:", otherCharges);
-    console.log("Amount:", amount);
-    setIsModalOpen(false); // Close the modal after saving
-  };
-
-  // Function to update the due date based on payment terms
-  const updateDueDate = (selectedDate, terms) => {
-    if (!selectedDate || !terms) return;
-
-    const newDate = new Date(selectedDate);
-    newDate.setDate(newDate.getDate() + parseInt(terms));
-
-    const formattedDueDate = newDate.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-
-    setDueDate(formattedDueDate);
-  };
-
-  const handleDateChange = (e) => {
-    const selectedDate = e.target.value;
-    setDate(selectedDate);
-    updateDueDate(selectedDate, paymentTerms);
-  };
-
-  const handlePaymentTermsChange = (e) => {
-    const terms = e.target.value;
-    setPaymentTerms(terms);
-    updateDueDate(date, terms);
   };
 
   return (
-    <div
-      style={{ backgroundColor: "pink" }}
-      className="responsive-container bg-pink-200 p-4 rounded-md w-full mx-auto"
-    >
-      <style>
-        {`
-             @media print {
-              @page {
-                size: A4;
-                margin: 0;
-                width: 100%;
-              }
-                   
-              body * {
-                visibility: hidden;
-              }
-              .responsive-container, .responsive-container * {
-                visibility: visible;
-              }
-              .responsive-container {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-              }
-              .hide-on-print {
-                display: none !important;
-              }
-              .cucolor {
-                color: red;
-              }
-              .hide-on-print button {
-                display: none !important;
-              }
-              .print-container {
-                display: block;
-                page-break-before: always;
-              }
-              html, body {
-                width: 270mm;
-              }
-        `}
-      </style>
-      <h1 className="text-center text-3xl bg-gray-500 text-white cucolor">
-        Purchase Return
-      </h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">Supplier Name</label>
-          <select
-            className="w-full p-2 border border-gray-300 rounded"
-            value={selectedSupplier}
-            onChange={handleSupplierChange}
-          >
-            <option value="">Select Supplier</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier._id} value={supplier._id}>
-                {supplier.name}
+    <>
+      <div
+        style={{ backgroundColor: "##FFFFFF" }}
+        className="p-4 responsive-container"
+      >
+        {/* Top Section */}
+        <h1 className="text-center font-bold text-3xl  text-black mb-5">
+          Purchase Return
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
+          <div>
+            <label className="font-bold">Supplier Name</label>
+            <select
+              className="w-full p-2 border border-gray-300 rounded"
+              value={selectedCustomer}
+              onChange={(e) => {
+                if (e.target.value === "add-new-customer") {
+                  window.location.href = "/admin/CreateSupplier";
+                } else {
+                  handleCustomerChange(e);
+                }
+              }}
+            >
+              <option value="">Select Supplier</option>
+              <option value="add-new-customer" className="text-blue-500">
+                + Add New Supplier
               </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">Date</label>
-          <input
-            type="date"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
-            value={date}
-            onChange={handleDateChange}
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">Debit Note No.</label>
-          <input
-            type="text"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
-            placeholder="Contact or name"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">Payment Terms</label>
-          <input
-            type="number"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
-            placeholder="Enter terms in days"
-            value={paymentTerms}
-            onChange={handlePaymentTermsChange}
-          />
-        </div>
+              {customer?.map((customer) => (
+                <option key={customer._id} value={customer._id}>
+                  {customer.name}
+                </option>
+              ))}
+              {/* Add Customer option at the end of the list */}
+            </select>
+          </div>
 
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">Due Date</label>
-          <input
-            type="text"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
-            value={dueDate}
-            readOnly
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">
-            Billing Address
-          </label>
-          <input
-            type="text"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
-            placeholder="Contact or name"
-          />
-        </div>
+          <div>
+            <label className="font-bold">
+              Date
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  handleChange(e);
+                }}
+                className="border p-2 w-full   rounded"
+              />
+            </label>
+          </div>
+          <div>
+            <label className="font-bold">Debit Note No.</label>
+            <input
+              name="debitNoteNo"
+              type="text"
+              value={debitNoteNo} // Bind to local state
+              onChange={handledebitNoteNoChange} // Update both local and formData states
+              className="border p-2 w-full  rounded"
+            />
+          </div>
 
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">
-            Select Purchase
-          </label>
-          <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
-            <option value="Cash"></option>
-            <option value="Online"></option>
-          </select>
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">
-            Reason for Return
-          </label>
-          <input
-            type="text"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">Tax Type</label>
-          <select className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200">
-            <option value="Cash"></option>
-            <option value="Online"></option>
-          </select>
-        </div>
-      </div>
-
-      <div className="overflow-x-auto mt-5 print">
-        <table className="w-full border-collapse overflow-x-auto">
-          <thead>
-            <tr>
-              <th className="border border-gray-500 p-1">#</th>
-              <th className="border border-gray-500 p-1">Item Code</th>
-              <th className="border border-gray-500 p-1 text-nowrap pl-16 pr-16">
-                Product Name
-              </th>
-              <th className="border border-gray-500 p-1">HSN</th>
-              <th className="border border-gray-500 p-1">UOM</th>
-              <th className="border border-gray-500 p-1">Qty</th>
-              <th className="border border-gray-500 p-1">Free Qty</th>
-              <th className="border border-gray-500 p-1">MRP</th>
-              <th className="border border-gray-500 p-1 text-nowrap">
-                Unit Cost
-              </th>
-              <th className="border border-gray-500 p-1 text-nowrap">
-                Scheme Margin
-              </th>
-              <th className="border border-gray-500 p-1 text-xs">
-                Discount
-                <span className="mt-1 gap-10 flex text-center justify-center">
-                  <span>%</span>
-                  <span>RS</span>
-                </span>
-              </th>
-              <th className="border border-gray-500 p-1 text-nowrap">
-                Taxable Value
-              </th>
-              <th className="border border-gray-500 p-1 text-xs">
-                CGST
-                <span className="mt-1 gap-10 flex text-center justify-center">
-                  <span>%</span>
-                  <span>RS</span>
-                </span>
-              </th>
-
-              <th className="border border-gray-500 p-1 text-xs">
-                SGST
-                <span className="mt-1 gap-10 flex text-center justify-center">
-                  <span>%</span>
-                  <span>RS</span>
-                </span>
-              </th>
-              <th className="border border-gray-500 p-1 text-xs">
-                IGST
-                <span className="mt-1 gap-10 flex text-center justify-center">
-                  <span>%</span>
-                  <span>RS</span>
-                </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, index) => (
-              <tr key={row.id}>
-                <td className="border border-gray-500 p-1 text-center">
-                  {index + 1} {/* Serial Number */}
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.code}
-                    onChange={(e) =>
-                      handleChange(index, "code", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.name}
-                    onChange={(e) =>
-                      handleChange(index, "name", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.retailPrice}
-                    onChange={(e) =>
-                      handleChange(index, "retailPrice", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.retailPrice}
-                    onChange={(e) =>
-                      handleChange(index, "retailPrice", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.retailPrice}
-                    onChange={(e) =>
-                      handleChange(index, "retailPrice", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.retailPrice}
-                    onChange={(e) =>
-                      handleChange(index, "retailPrice", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.qty}
-                    onChange={(e) => handleChange(index, "qty", e.target.value)}
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.mrp}
-                    onChange={(e) => handleChange(index, "mrp", e.target.value)}
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.retailPrice}
-                    onChange={(e) =>
-                      handleChange(index, "retailPrice", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.cgstPercent}
-                    onChange={(e) =>
-                      handleChange(index, "cgstPercent", e.target.value)
-                    }
-                    className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="text"
-                    value={row.cgstRs}
-                    onChange={(e) =>
-                      handleChange(index, "cgstRs", e.target.value)
-                    }
-                    className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <input
-                    type="text"
-                    value={row.retailPrice}
-                    onChange={(e) =>
-                      handleChange(index, "retailPrice", e.target.value)
-                    }
-                    className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <div className="flex space-x-1">
-                    <input
-                      type="text"
-                      value={row.cgstPercent}
-                      onChange={(e) =>
-                        handleChange(index, "cgstPercent", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      value={row.cgstRs}
-                      onChange={(e) =>
-                        handleChange(index, "cgstRs", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </td>
-
-                <td className="border border-gray-500 p-1">
-                  <div className="flex space-x-1">
-                    <input
-                      type="text"
-                      value={row.sgstPercent}
-                      onChange={(e) =>
-                        handleChange(index, "sgstPercent", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      value={row.sgstRs}
-                      onChange={(e) =>
-                        handleChange(index, "sgstRs", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </td>
-                <td className="border border-gray-500 p-1">
-                  <div className="flex space-x-1">
-                    <input
-                      type="text"
-                      value={row.igstPercent}
-                      onChange={(e) =>
-                        handleChange(index, "igstPercent", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      value={row.igstRs}
-                      onChange={(e) =>
-                        handleChange(index, "igstRs", e.target.value)
-                      }
-                      className="w-1/2 p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </td>
-                <td className="p-1 text-center hide-on-print flex gap-2 items-center justify-center">
-                  <button
-                    onClick={addRow}
-                    className="bg-green-500 text-white rounded p-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    aria-label="Add row"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="h-5 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 5v14m7-7H5"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => removeRow(index)}
-                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    aria-label="Remove row"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="h-5 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="mt-4  flex justify-center item-center gap-5">
-        <div className=" ">
-          <button
-            onClick={toggleModal}
-            className="bg-black hide-on-print text-white py-2 rounded px-10 text-xl font-bold hover:bg-gray-700"
-          >
-            Add Other Charges
-          </button>
-        </div>
-        <div className="">
-          <input
-            type="file"
-            className="mt-1 p-1 ml-3 border border-gray-500 rounded-md bg-gray-200 "
-            placeholder="Upload Document"
-          />
-        </div>
-      </div>
-      <div className="mt-4  flex justify-left item-left gap-5">
-        <div className="">
-          <label className="text-md font-bold text-black mb-5">Narration</label>
-          <textarea
-            type="text"
-            className="mt-1 p-1  w-full border border-gray-500 rounded-md bg-gray-200 "
-          />
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center w-full justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-md w-96">
-            <h2 className="text-xl font-bold mb-4">Add Other Charges</h2>
-
-            {/* Other Charges Input */}
-            <div className="mb-4">
-              <label className="block text-md font-bold text-black mb-2">
-                Other Charges
-              </label>
+          <div>
+            <label className="font-bold">
+              Payment Term (days)
               <input
                 type="text"
-                value={otherCharges}
-                onChange={(e) => setOtherCharges(e.target.value)}
-                className="w-full p-2 border border-gray-500 rounded-md bg-gray-200"
-                placeholder="Enter other charges"
+                name="paymentTerm"
+                value={paymentTerm}
+                onChange={handlePaymentTermChange}
+                className="border p-2 w-full  rounded"
               />
-            </div>
+            </label>
+          </div>
 
-            {/* Amount Input */}
-            <div className="mb-4">
-              <label className="block text-md font-bold text-black mb-2">
-                Amount
+          <div>
+            <label className="font-bold">
+              Due Date
+              <input
+                name="dueDate"
+                type="text"
+                value={dueDate}
+                className="border p-2 w-full text-black rounded"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+          <div className="mb-4">
+            <label className="font-bold">Billing Address</label>
+            <textarea
+              name="billingAddress"
+              value={billingAddress}
+              onChange={handleBillingAddressChange}
+              className="border p-2 w-full  rounded"
+            />
+          </div>
+          {/* Reverse Charge Section */}
+          <div className="mb-4 w-full">
+            <label className="font-bold">Select Purchase</label>
+            <select
+              value={selectPurchase}
+              onChange={handleselectPurchaseChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="font-bold">Reason of Return</label>
+            <textarea
+              name="reasonForReturn"
+              value={reasonForReturn}
+              onChange={handleReasonOfreturn}
+              className="border p-2 w-full  rounded"
+            />
+          </div>
+
+          {/* GST Type Section */}
+          {salesType === "GST Invoice" && (
+            <div className="mb-4 w-full">
+              <label className="font-bold">Tax Type:</label>
+              <select
+                value={gstType}
+                onChange={handleGstTypeChange}
+                className="border p-2 w-full  rounded"
+              >
+                <option value="CGST/SGST">CGST/SGST</option>
+                <option value="IGST">IGST</option>
+              </select>
+            </div>
+          )}
+        </div>
+
+        {/* Items Section */}
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse overflow-x-auto">
+            <thead>
+              <tr>
+                <th className="border p-1">#</th>
+                <th className="border text-bold text-sm ">Item Code</th>
+                <th className="border ">Product Name</th>
+                <th className="border p-1 text-nowrap">HSN Code</th>
+                <th className="border p-1">Qty</th>
+                <th className="border p-1">Units</th>
+                <th className="border p-1">Free Qty</th>
+                <th className="border p-1">MRP</th>
+                <th className="border p-1">Unit Cost</th>
+                <th className="border p-1">Scheme Margin</th>
+
+                <th className="border p-1">
+                  Discount
+                  <div className="flex justify-between">
+                    <span className="">%</span> <span>RS</span>
+                  </div>
+                </th>
+
+                {salesType === "GST Invoice" && (
+                  <>
+                    <th className="border p-2">Taxable Value</th>
+                    {gstType === "CGST/SGST" && (
+                      <>
+                        <th className="border p-2">
+                          CGST{" "}
+                          <div className="flex justify-between">
+                            <span className="">%</span> <span>RS</span>
+                          </div>
+                        </th>
+                        <th className="border p-2">
+                          SGST{" "}
+                          <div className="flex justify-between">
+                            <span className="">%</span> <span>RS</span>
+                          </div>
+                        </th>
+                      </>
+                    )}
+                    {gstType === "IGST" && (
+                      <th className="border p-2">
+                        IGST{" "}
+                        <div className="flex justify-between">
+                          <span className="">%</span> <span>RS</span>
+                        </div>
+                      </th>
+                    )}
+                  </>
+                )}
+                <th className="border p-2">Total Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, index) => (
+                <tr key={index}>
+                  <td className="border p-1">{index + 1}</td>
+                  <td className="border">
+                    <Select
+                      id="itemcode-select"
+                      value={
+                        rows[index].itemCode
+                          ? {
+                              label: rows[index].itemCode,
+                              value: rows[index].itemCode,
+                            }
+                          : null
+                      }
+                      onChange={(selectedOption) =>
+                        handleItemCodeSelect(index, selectedOption.value)
+                      }
+                      options={products.map((product) => ({
+                        label: product.itemCode,
+                        value: product.itemCode,
+                      }))}
+                      isSearchable={true}
+                      placeholder="Select"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "120px",
+                          maxWidth: "300px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                    />
+                  </td>
+                  <td className="border ">
+                    <Select
+                      id="product-select"
+                      value={
+                        rows[index].productName
+                          ? {
+                              label: rows[index].productName,
+                              value: rows[index].productName,
+                            }
+                          : null
+                      }
+                      onChange={(selectedOption) =>
+                        handleProductSelect(index, selectedOption.value)
+                      }
+                      options={products.map((product) => ({
+                        label: product.productName,
+                        value: product.productName,
+                      }))}
+                      isSearchable={true}
+                      placeholder="Select a Product"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "200px",
+                          maxWidth: "500px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                    />
+                    <div style={{ marginTop: "10px", fontSize: "12px" }}>
+                      <div>Date: {row.expiryDate ? row.expiryDate : "N/A"}</div>
+                      <div>
+                        Batch Number: {row.batchNo ? row.batchNo : "N/A"}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.hsnCode}
+                      onChange={(e) =>
+                        handleRowChange(index, "hsnCode", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.quantity}
+                      onChange={(e) =>
+                        handleRowChange(index, "quantity", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.units}
+                      onChange={(e) =>
+                        handleRowChange(index, "units", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.freeQty}
+                      onChange={(e) =>
+                        handleRowChange(index, "freeQty", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>
+                  <td className="border p-2">
+                    <input
+                      type="text"
+                      value={row.maxmimunRetailPrice}
+                      onChange={(e) =>
+                        handleRowChange(
+                          index,
+                          "maxmimunRetailPrice",
+                          e.target.value
+                        )
+                      }
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
+                    />
+                  </td>
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.unitCost}
+                      onChange={(e) =>
+                        handleRowChange(index, "unitCost", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>{" "}
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.schemeMargin}
+                      onChange={(e) =>
+                        handleRowChange(index, "schemeMargin", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>
+                  <td className="border">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={row.discountpercent}
+                        onChange={(e) =>
+                          handleRowChange(
+                            index,
+                            "discountpercent",
+                            e.target.value
+                          )
+                        }
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: "20px", // Set a small minimum width to ensure visibility
+                          flexBasis: "20px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}
+                      />
+                      <input
+                        type="text"
+                        value={row.discountRs}
+                        onChange={
+                          (e) =>
+                            handleRowChange(index, "discountRs", e.target.value) // Fix here
+                        }
+                        className="w-full"
+                      />
+                    </div>
+                  </td>
+                  {salesType === "GST Invoice" && (
+                    <>
+                      {gstType === "CGST/SGST" && (
+                        <>
+                          <td className="border p-1">
+                            <input
+                              type="text"
+                              value={row.taxableValue.toFixed(2)}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  index,
+                                  "taxableValue",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "70px",
+                                flexBasis: "70px",
+                                flexShrink: 1,
+                              }}
+                            />
+                          </td>
+                          <td className="border">
+                            <div className="p-1 flex gap-1">
+                              <input
+                                type="text"
+                                value={row.cgstpercent}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "cgstpercentercent",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                              <input
+                                type="text"
+                                value={row.cgstRS}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "cgstRS",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                            </div>
+                          </td>
+                          <td className="border">
+                            <div className="p-1 flex gap-1">
+                              <input
+                                type="text"
+                                value={row.sgstpercent}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "sgstpercentercent",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                              <input
+                                type="text"
+                                value={row.sgstRS}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "sgstRS",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </>
+                      )}
+                      {gstType === "IGST" && (
+                        <>
+                          <td className="border p-1">
+                            <input
+                              type="text"
+                              value={row.taxableValue.toFixed(2)}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  index,
+                                  "taxableValue",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full"
+                            />
+                          </td>
+                          <td className="border p-1">
+                            <div className="flex gap-1">
+                              <input
+                                type="text"
+                                value={row.igstpercent}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "igstpercentercent",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "20px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                              <input
+                                type="text"
+                                value={row.igstRS}
+                                onChange={(e) =>
+                                  handleRowChange(
+                                    index,
+                                    "igstRS",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full flex-grow"
+                                style={{
+                                  minWidth: "60px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  flexShrink: 1, // Allow it to shrink on mobile
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </>
+                      )}
+                    </>
+                  )}
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.totalValue}
+                      onChange={(e) =>
+                        handleRowChange(index, "totalValue", e.target.value)
+                      }
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
+                    />
+                  </td>
+                  <td className="p-1 gap-2 flex">
+                    <button
+                      onClick={() => removeRow(index)}
+                      className="bg-red-500 text-black p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <button
+          onClick={addRow}
+          className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+        >
+          <svg
+            xmlns="http//www.w3.org/2000/svg"
+            className="h-4 w-4 "
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Add New Row
+        </button>
+
+        <button
+          onClick={() => setIsModalOtherChargesOpen(true)}
+          className=" text-blue-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+        >
+          <svg
+            xmlns="http//www.w3.org/2000/svg"
+            className="h-4 w-4 "
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Add Other Charges
+        </button>
+
+        <div className="gap-2">
+          <label className=" w-1/3 mb-2 text-white mt-8 text-md p-2 mt-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>{" "}
+            Upload Document
+            <input
+              type="file"
+              className="hidden"
+              onChange={(e) => setdocumentPath(e.target.files[0])} // Assuming you have setdocumentPath in your state
+            />
+          </label>
+        </div>
+
+        {isModalOtherChargesOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+            <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
+              <h4 className="font-bold mb-4">Other Charges Details</h4>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label htmlFor="other-charges">Description</label>
+                  <input
+                    type="text"
+                    id="other-charges"
+                    value={otherChargesDescriptions} // Ensure this is controlled
+                    onChange={(e) =>
+                      setOtherChargesDescriptions(e.target.value)
+                    } // Ensure change handler updates state
+                    className="border p-2 w-full rounded"
+                  />
+                </div>
+                <div>
+                  <label>Amount</label>
+                  <input
+                    type="text"
+                    value={otherCharges}
+                    onChange={(e) => handleOtherChargesChange(e)}
+                    placeholder="Enter other charges"
+                    className="border p-2 w-full rounded"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setIsModalOtherChargesOpen(false)}
+                  className="bg-gray-500 text-black p-2 mr-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleOtherChargesSave}
+                  className="bg-gray-500 text-black p-2 mr-2"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+          <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
+            <label className="font-bold">Narration</label>
+            <br />
+            <textarea
+              name="narration"
+              value={formData.narration}
+              onChange={(e) => {
+                setFormData((prevData) => ({
+                  ...prevData,
+                  narration: e.target.value,
+                }));
+              }}
+              className=" text-black border p-1 w-full  rounded"
+            />
+          </div>
+          <div className="w-full lg:w-1/3">
+            <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+              <label className="font-bold lg:w-1/2 text-nowrap">
+                Gross Amount
               </label>
               <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full p-2 border border-gray-500 rounded-md bg-gray-200"
-                placeholder="Enter amount"
+                value={grossAmount.toFixed(2)}
+                // onChange={handleBillingAddressChange}
+                className=" text-black border p-1 w-full  rounded lg:w-2/3"
+              />
+            </div>
+            {salesType === "GST Invoice" && (
+              <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+                <label className="font-bold lg:w-1/2 text-nowrap">
+                  GST Amount
+                </label>
+                <input
+                  value={GstAmount.toFixed(2)}
+                  // onChange={handleBillingAddressChange}
+                  className=" text-black border p-1 w-full  rounded lg:w-2/3"
+                />
+              </div>
+            )}
+
+            <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+              <label className="font-bold lg:w-1/2 text-nowrap">
+                {otherChargesDescriptions}
+              </label>
+              <input
+                value={otherCharges.toFixed(2)}
+                onChange={handleOtherChargesChange}
+                className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
 
-            {/* Modal Buttons */}
-            <div className="flex justify-end">
-              <button
-                className="bg-gray-500 text-white py-2 px-4 rounded mr-2"
-                onClick={toggleModal}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-black text-white py-2 px-4 rounded"
-                onClick={handleSave}
-              >
-                Save
-              </button>
+            <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+              <label className="font-bold  lg:w-1/2 text-nowrap">
+                Net Amount
+              </label>
+              <input
+                value={Math.round(netAmount).toFixed(2)}
+                // onChange={handleBillingAddressChange}
+                className=" text-black border p-1 text-2xl w-full font-bold  rounded lg:w-2/3"
+              />
             </div>
           </div>
         </div>
-      )}
-
-      <div className="mt-4  flex flex-col items-end">
-        <div className=" ">
-          <label className="text-md font-bold text-black mr-3">
-            Gross Amount
-          </label>
-          <input
-            type="text"
-            className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200 "
-            placeholder="Gross Amount"
-          />
-        </div>
-        <div className=" ">
-          <label className="text-md font-bold text-black">GST Amount</label>
-          <input
-            type="text"
-            className="mt-1 ml-3 p-1 border border-gray-500 rounded-md bg-gray-200 "
-            placeholder="GST Amount"
-          />
-        </div>
-        <div className=" ">
-          <label className="text-md font-bold text-black">Other Charges</label>
-          <input
-            type="text"
-            className="mt-1 ml-3 p-1 border border-gray-500 rounded-md bg-gray-200 "
-            placeholder="GST Amount"
-          />
-        </div>
-        <div className="">
-          <label className="text-md font-bold text-black">Net Amount</label>
-          <input
-            type="text"
-            className="mt-1 p-1 ml-3 border border-gray-500 rounded-md bg-gray-200 "
-            placeholder="Net Amount"
-          />
+        {/* Buttons for saving and printing */}
+        <div className="mt-8 flex justify-center">
+          <button
+            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2"
+            onClick={handleSubmit}
+          >
+            Save
+          </button>
+          {salesType === "GST Invoice" && (
+            <button
+              onClick={handlePrintOnly}
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
+            >
+              Save and Print
+            </button>
+          )}
         </div>
       </div>
-
-      <div className="text-center mt-8">
-        <button
-          onClick={print}
-          className="bg-black mr-3 hide-on-print text-white py-2 rounded px-10 text-xl font-bold hover:bg-gray-700"
-        >
-          Save
-        </button>
-        <button
-          onClick={print}
-          className="bg-black hide-on-print text-white py-2 rounded px-10 text-xl font-bold hover:bg-gray-700"
-        >
-          Save & Print
-        </button>
-      </div>
-    </div>
+      <ToastContainer />
+    </>
   );
 };
 
