@@ -27,7 +27,7 @@ const ManageSalesInvoice = () => {
         "/api/v1/salesInvoiceRoute/getAllsalesinvoice"
       );
       setSalesEstimates(response.data.response);
-      console.log(response, "ksdfj");
+
     } catch (error) {
       setError("Error fetching sales estimates.");
     } finally {
@@ -64,7 +64,7 @@ const ManageSalesInvoice = () => {
   const fetchCustomers = async () => {
     try {
       const response = await axios.get("/api/v1/auth/manageCustomer");
-      console.log(response, "ldsf");
+     
       setCustomers(response.data.data);
     } catch (error) {
       console.error("Error fetching customers", error);
@@ -120,20 +120,19 @@ const ManageSalesInvoice = () => {
                 {[
                   "No.",
                   "Date",
-                  "Estimate No.",
+                  "Invoice No.",
                   "Sales Type",
                   "Customer Name",
                   "Place of Supply",
-                  "Payment Term",
-                  "Due Date",
+                
                   "GST Type",
-                  "Product Code",
+                  "Product Name",
 
                   "UOM",
                   "MRP",
                   "QTY",
                   // "Rate",
-                  "Total Value",
+                  "Net Amount",
                   "Action",
                 ].map((header) => (
                   <th
@@ -170,18 +169,13 @@ const ManageSalesInvoice = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.paymentTerm}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-center whitespace-nowrap">
-                      {estimate.dueDate}
-                    </td>
+                 
 
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.itemCode || "-"}
+                      {estimate.rows?.[0]?.productName || "-"}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
@@ -198,7 +192,7 @@ const ManageSalesInvoice = () => {
             {estimate.rows?.[0]?.rate || "-"}
           </td> */}
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.totalValue || "-"}
+                      {estimate.netAmount || "-"}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
