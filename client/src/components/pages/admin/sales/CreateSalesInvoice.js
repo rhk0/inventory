@@ -14,7 +14,7 @@ const CreateSalesInvoice = () => {
   const [dueDate, setDueDate] = useState("");
   const [chooseUser, setChooseUser] = useState([]);
   const [company, setCompanyData] = useState([]);
-  const [userid, setUserId] = useState("");
+  const [userId, setUserId] = useState("");
   const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
@@ -130,19 +130,17 @@ const CreateSalesInvoice = () => {
   };
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+  const fetchCustomer = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      
+      setCustomer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Customers:", error);
+    }
+  };
 
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageCustomer");
-        setCustomer(response.data.data);
-      } catch (error) {
-        console.error("Error fetching Customers:", error);
-      }
-    };
-
-    fetchCustomer();
-  }, []);
+  
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -151,12 +149,13 @@ const CreateSalesInvoice = () => {
         setUserId(auth.user.admin);
       }
     }
-  }, [auth]);
+    fetchCustomer();
+  }, [auth,userId]);
 
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -165,7 +164,7 @@ const CreateSalesInvoice = () => {
     };
 
     companyData(); // Fetch company data on component mount
-  }, [userid]); // Empty dependency array ensures this only runs once, on mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
  
   const handleCustomerChange = (e) => {
     const value = e.target.value;
@@ -389,7 +388,7 @@ const CreateSalesInvoice = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
+        const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
      
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
@@ -406,7 +405,7 @@ const CreateSalesInvoice = () => {
   }, []);
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
-    const selectedProduct = products.find(
+    const selectedProduct = products?.find(
       (product) => product.productName === selectedProductName
     );
 
@@ -481,7 +480,7 @@ const CreateSalesInvoice = () => {
   };
 
   const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
-    const selectedProduct = products.find(
+    const selectedProduct = products?.find(
       (product) => product.itemCode === selectedItemCode
     );
 
@@ -562,7 +561,7 @@ const CreateSalesInvoice = () => {
     try {
       const updatedFormData = {
         ...formData,
-        rows: rows.map((row) => ({
+        rows: rows?.map((row) => ({
           itemCode: row.itemCode,
           productName: row.productName,
           hsnCode: row.hsnCode,
@@ -707,7 +706,7 @@ const CreateSalesInvoice = () => {
    
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -849,7 +848,7 @@ const CreateSalesInvoice = () => {
     const gstRows =
       updatedFormData.gstType === "CGST/SGST"
         ? updatedFormData.rows
-            .map(
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
@@ -868,7 +867,7 @@ const CreateSalesInvoice = () => {
             )
             .join("")
         : updatedFormData.rows
-            .map(
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
@@ -1111,7 +1110,7 @@ const CreateSalesInvoice = () => {
    
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -1211,7 +1210,7 @@ const CreateSalesInvoice = () => {
       return words;
     }
     const gstRows = updatedFormData.rows
-      .map(
+      ?.map(
         (row, index) => `
         <tr>
           <td>${index + 1}</td>
@@ -1537,7 +1536,7 @@ const CreateSalesInvoice = () => {
               <option value="add-new-customer" className="text-blue-500">
                 + Add New Customer
               </option>
-              {customer.map((customer) => (
+              {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
@@ -1759,7 +1758,7 @@ const CreateSalesInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
+              {rows?.map((row, index) => (
                 <tr key={index}>
                   <td className="border p-1">{index + 1}</td>
                   <td className="border">
@@ -1776,7 +1775,7 @@ const CreateSalesInvoice = () => {
                       onChange={(selectedOption) =>
                         handleItemCodeSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.itemCode,
                         value: product.itemCode,
                       }))}
@@ -1813,7 +1812,7 @@ const CreateSalesInvoice = () => {
                       onChange={(selectedOption) =>
                         handleProductSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.productName,
                         value: product.productName,
                       }))}

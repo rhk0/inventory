@@ -156,7 +156,7 @@ const ManageSalesReturn = () => {
                       {estimate.salesType}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {getCustomerName(estimate.customerId)}
+                      {estimate.customerName}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -253,7 +253,7 @@ const ManageSalesReturn = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-          getCustomerName={getCustomerName}
+         
         />
       </Modal>
 

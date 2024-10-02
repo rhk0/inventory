@@ -3,7 +3,7 @@ import ViewEstimateModal from "../modals/ViewEstimateModal";
 import EditEstimateModal from "../modals/EditEstimateModal";
 import Modal from "react-modal";
 import axios from "axios";
-
+import { useAuth } from "../../../context/Auth";
 const ManageSalesEstimate = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -13,18 +13,26 @@ const ManageSalesEstimate = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [customers, setCustomers] = useState([]);
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+  
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchEstimate();
     fetchCustomers();
-  }, []);
+  }, [auth,userId]);
 
   const fetchEstimate = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        "/api/v1/salesEstimateRoute/getAllSalesEstimatet"
+        `/api/v1/salesEstimateRoute/getAllSalesEstimatet/${userId}`
       );
       setSalesEstimates(response.data.salesEstimates);
     } catch (error) {
@@ -62,8 +70,8 @@ const ManageSalesEstimate = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
-      console.log(response, "ldsf");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      
       setCustomers(response.data.data);
     } catch (error) {
       console.error("Error fetching customers", error);
@@ -71,7 +79,7 @@ const ManageSalesEstimate = () => {
   };
 
   const getCustomerName = (customerId) => {
-    const customer = customers.find((c) => c.id === customerId);
+    const customer = customers?.find((c) => c.id === customerId);
     return customer ? customer.name : "Unknown Customer";
   };
 
@@ -81,7 +89,7 @@ const ManageSalesEstimate = () => {
   };
 
   // Filter sales estimates based on search term
-  const filteredEstimates = salesEstimates.filter(
+  const filteredEstimates = salesEstimates?.filter(
     (estimate) =>
       estimate.estimateNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       estimate.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -156,8 +164,9 @@ const ManageSalesEstimate = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.salesType}
                     </td>
+                  {  console.log(estimate,"estimate")}
                     <td className="border border-gray-300 p-2 text-center">
-                      {getCustomerName(estimate.customerId)}
+                      {estimate.customerName}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -254,7 +263,7 @@ const ManageSalesEstimate = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-          getCustomerName={getCustomerName}
+         
         />
       </Modal>
 

@@ -3,7 +3,7 @@ import ViewSalesInvoiceModal from "../modals/ViewSalesInvoiceModal";
 import EditSalesInvoiceModal from "../modals/EditSalesInvoiceModal";
 import Modal from "react-modal";
 import axios from "axios";
-
+import { useAuth } from "../../../context/Auth";
 const ManageSalesInvoice = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -13,11 +13,19 @@ const ManageSalesInvoice = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [customers, setCustomers] = useState([]);
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+  
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchEstimate();
     fetchCustomers();
-  }, []);
+  }, [auth,userId]);
 
   const fetchEstimate = async () => {
     setLoading(true);
@@ -63,7 +71,7 @@ const ManageSalesInvoice = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
      
       setCustomers(response.data.data);
     } catch (error) {
@@ -72,7 +80,7 @@ const ManageSalesInvoice = () => {
   };
 
   const getCustomerName = (customerId) => {
-    const customer = customers.find((c) => c.id === customerId);
+    const customer = customers?.find((c) => c.id === customerId);
     return customer ? customer.name : "Unknown Customer";
   };
 
@@ -82,7 +90,7 @@ const ManageSalesInvoice = () => {
   };
 
   // Filter sales estimates based on search term
-  const filteredEstimates = salesEstimates.filter((estimate) => {
+  const filteredEstimates = salesEstimates?.filter((estimate) => {
     const invoiceNo = estimate.InvoiceNo
       ? estimate.InvoiceNo.toLowerCase()
       : "";
@@ -145,7 +153,7 @@ const ManageSalesInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEstimates.length > 0 ? (
+              {filteredEstimates?.length > 0 ? (
                 filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}
@@ -164,7 +172,7 @@ const ManageSalesInvoice = () => {
                       {estimate.salesType}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {getCustomerName(estimate.customerId)}
+                      {estimate.customerName}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -258,7 +266,7 @@ const ManageSalesInvoice = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-          getCustomerName={getCustomerName}
+         
         />
       </Modal>
 

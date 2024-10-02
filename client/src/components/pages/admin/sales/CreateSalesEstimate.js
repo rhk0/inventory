@@ -11,7 +11,7 @@ const CreateSalesEstimate = () => {
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [userid, setUserId] = useState("");
+  const [userId, setUserId] = useState("");
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
 
@@ -80,19 +80,7 @@ const CreateSalesEstimate = () => {
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageCustomer");
-        setCustomer(response.data.data);
-      } catch (error) {
-        console.error("Error fetching Customers:", error);
-      }
-    };
-
-    fetchCustomer();
-  }, []);
-
+ 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -101,12 +89,22 @@ const CreateSalesEstimate = () => {
         setUserId(auth.user.admin);
       }
     }
-  }, [auth]);
+
+    fetchCustomer();
+  }, [auth,userId]);
+  const fetchCustomer = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      setCustomer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Customers:", error);
+    }
+  };
 
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -114,8 +112,8 @@ const CreateSalesEstimate = () => {
     };
 
     companyData(); // Fetch company data on component mount
-  }, [userid]); // Empty dependency array ensures this only runs once, on mount
-
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
+ 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
     setSelectedCustomer(value);
@@ -547,6 +545,7 @@ const CreateSalesEstimate = () => {
         gstType,
 
         netAmount: netAmount.toFixed(2),
+        userId:userId,
       };
 
       const response = await axios.post(
