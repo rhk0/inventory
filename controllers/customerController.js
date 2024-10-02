@@ -21,6 +21,7 @@ export const createCustomerController = async (req, res) => {
       gstin,
       openingBalance,
       asOnDate,
+      userId,
     } = req.body;
     const requiredFields = [
       "name",
@@ -35,6 +36,7 @@ export const createCustomerController = async (req, res) => {
       "accountNumber",
       "registrationType",
       "openingBalance",
+      "userId"
     ];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length > 0) {
@@ -68,6 +70,7 @@ export const createCustomerController = async (req, res) => {
       gstin,
       openingBalance,
       asOnDate,
+      admin:userId,
     });
     return res.status(201).send({
       success: true,
@@ -83,7 +86,9 @@ export const createCustomerController = async (req, res) => {
 };
 export const manageCustomerController = async (req, res) => {
   try {
-    const data = await customerModel.find();
+    const _id= req.params._id;
+    const data = await customerModel.find({admin:_id});
+   
     if (data && data.length > 0) {
       return res
         .status(200)

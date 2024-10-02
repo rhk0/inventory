@@ -16,6 +16,7 @@ export const createvendorController = async (req, res) => {
       gstin,
       openingBalance,
       asOnDate,
+      userId,
     } = req.body;
     const requiredFields = [
       "name",
@@ -26,6 +27,7 @@ export const createvendorController = async (req, res) => {
       "contact",
       "registrationType",
       "openingBalance",
+      "userId",
     ];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length > 0) {
@@ -54,6 +56,7 @@ export const createvendorController = async (req, res) => {
       gstin,
       openingBalance,
       asOnDate,
+      admin:userId,
     });
     return res.status(201).send({
       success: true,
@@ -69,7 +72,9 @@ export const createvendorController = async (req, res) => {
 };
 export const managevendorController = async (req, res) => {
   try {
-    const data = await vendorModel.find();
+    const _id=req.params._id;
+
+    const data = await vendorModel.find({admin:_id});
     if (data && data.length > 0) {
       return res
         .status(200)

@@ -6,13 +6,14 @@ import {
   manageSinglemanufacturerController,
   updatemanufacturerController,
 } from "../controllers/manufacturerController.js";
+import { requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createManufacturer", createManufacturerController);
-router.get("/manageManufacturer", managemanufacturerController);
+router.post("/createManufacturer",requireSignIn, createManufacturerController);
+router.get("/manageManufacturer/:_id",requireSignIn,managemanufacturerController);
 router.get(
-  "/manageSingleManufacturer/:_id",
+  "/manageSingleManufacturer/:_id",requireSignIn,
   manageSinglemanufacturerController
 );
 router.delete("/deleteManufacturer/:_id", deletemanufacturerController);

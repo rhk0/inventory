@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../../../context/Auth";
 import VendorViewModel from "../modals/VendorViewModel";
 import VendorEditModel from "../modals/VenderEditModel";
 
@@ -14,12 +14,14 @@ const ManageVendor = () => {
   const [editModal, setEditModal] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
 
   const navigate = useNavigate();
 
   const fetchVendor = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/ManageVendor");
+      const response = await axios.get(`/api/v1/auth/ManageVendor/${userId}`);
       setVendor(response.data.data);
     } catch (error) {
       console.error("Error fetching Vendor data", error);
@@ -27,8 +29,16 @@ const ManageVendor = () => {
   };
 
   useEffect(() => {
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
     fetchVendor();
-  }, []);
+  }, [auth,userId]);
 
   const deleteVendor = async (_id) => {
     try {
@@ -62,7 +72,7 @@ const ManageVendor = () => {
   };
 
   // Filter Vendor based on search query
-  const filteredVendor = vendor.filter((supplier) =>
+  const filteredVendor = vendor?.filter((supplier) =>
     supplier.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   return (
@@ -122,8 +132,8 @@ const ManageVendor = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredVendor.length > 0 ? (
-              filteredVendor.map((supplier, index) => (
+            {filteredVendor?.length > 0 ? (
+              filteredVendor?.map((supplier, index) => (
                 <tr key={supplier.id} className="border-b">
                   <td className="px-6 py-2 border-r text-sm">{index + 1}</td>
                   <td className="px-6 py-2 border-r text-sm">

@@ -8,6 +8,11 @@ const SubCategorySchema = new mongoose.Schema(
     subCategoryName: {
       type: String,
     },
+    admin:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"user",
+      required:true,
+    }
   },
   {
     timestamps: true,

@@ -48,6 +48,11 @@ const vendorSchema = new mongoose.Schema({
   asOnDate: {
     type: String,
   },
+  admin:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"user",
+    required:true,
+  }
 }, {
   timestamps: true,
 });

@@ -333,11 +333,9 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
               <th className="border p-2">Units</th>
               <th className="border p-2">Free quantity</th>
 
-
               <th className="border p-2">mrp</th>
               <th className="border p-2">Unit Cost</th>
               <th className="border p-2">Scheme Margin</th>
-
 
               <th className="border p-2">
                 Discount
@@ -422,7 +420,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.freequantity}
+                    value={row.freeQty}
                     disabled
                     className="w-full"
                   />
@@ -474,7 +472,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
                   <td className="border p-2">
                     <input
                       type="number"
-                      value={row.taxable}
+                      value={row.taxableValue}
                       disabled
                       className="w-full"
                     />

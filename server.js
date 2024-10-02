@@ -76,46 +76,45 @@ app.use("/api/v1/deliveryChallanRoute", deliveryChallanRoute);
 app.use("/api/v1/salesEstimateRoute", salesEstimateRoute);
 app.use("/api/v1/expensesRoute", expensesRoute);
 app.use("/api/v1/incomeRoute", incomeRoute);
-app.use("/api/v1/contact",demoContactRoute)
+app.use("/api/v1/contact", demoContactRoute);
 
 //subscription routes
 app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/subscription", subscriptionRoute);
 app.use("/uploads", express.static("uploads"));
 
+app.use("/api/v1/auth", customerRoute);
+app.use("/api/v1/auth", transportRoute);
+app.use("/api/v1/auth", vendorRoute);
+app.use("/api/v1/auth", bankRoute);
+app.use("/api/v1/auth", cashRoute);
+app.use("/api/v1/auth", bankTransctionRoute);
+app.use("/api/v1/auth", InventoryCategoryRoute);
+app.use("/api/v1/auth", InventorySubCategoryRoute);
+app.use("/api/v1/auth", InventoryBrandRoute);
+app.use("/api/v1/auth", InventroySubBrandRoute);
+app.use("/api/v1/auth", InventoryStockUnitRoute);
+app.use("/api/v1/auth", InventoryCreateBranchesRoute);
+app.use("/api/v1/auth", productRoute);
+app.use("/api/v1/auth", manufacturerRoute);
+app.use("/api/v1/salesQuationRoute", salesQuationRoute);
+app.use("/api/v1/salesInvoiceRoute", salesInvoiceRoute);
+app.use("/api/v1/deliveryChallanRoute", deliveryChallanRoute);
+app.use("/api/v1/salesEstimateRoute", salesEstimateRoute);
+app.use("/api/v1/expensesRoute", expensesRoute);
+app.use("/api/v1/incomeRoute", incomeRoute);
+app.use("/api/v1/salesReturnRoute", salesReturnRoute);
+app.use("/api/v1/pointOfSaleRoute", pointOfSaleRoute);
+app.use("/api/v1/payInRoute", payInRoute);
+app.use("/api/v1/purchesOrderRoute", purchesOrderRoute);
+app.use("/api/v1/purchaseInvoiceRoute", purchaseInvoiceRoute);
+app.use("/api/v1/purchesReturnRoute", purchesReturnRoute);
+app.use("/api/v1/PayOutRoute", PayOutRoute);
+//change
 
-app.use("/api/v1/auth",customerRoute)
-app.use("/api/v1/auth",transportRoute)
-app.use("/api/v1/auth",vendorRoute)
-app.use("/api/v1/auth",bankRoute)
-app.use("/api/v1/auth",cashRoute);
-app.use("/api/v1/auth",bankTransctionRoute)
-app.use("/api/v1/auth",InventoryCategoryRoute)
-app.use("/api/v1/auth",InventorySubCategoryRoute)
-app.use("/api/v1/auth",InventoryBrandRoute)
-app.use("/api/v1/auth",InventroySubBrandRoute)
-app.use("/api/v1/auth",InventoryStockUnitRoute)
-app.use("/api/v1/auth",InventoryCreateBranchesRoute)
-app.use("/api/v1/auth",productRoute)
-app.use("/api/v1/auth",manufacturerRoute)
-app.use("/api/v1/salesQuationRoute",salesQuationRoute)
-app.use("/api/v1/salesInvoiceRoute",salesInvoiceRoute)
-app.use("/api/v1/deliveryChallanRoute",deliveryChallanRoute)
-app.use("/api/v1/salesEstimateRoute",salesEstimateRoute)
-app.use("/api/v1/expensesRoute",expensesRoute)
-app.use("/api/v1/incomeRoute",incomeRoute)
-app.use("/api/v1/salesReturnRoute",salesReturnRoute)
-app.use("/api/v1/pointOfSaleRoute",pointOfSaleRoute)
-app.use("/api/v1/payInRoute",payInRoute)
-app.use("/api/v1/purchesOrderRoute",purchesOrderRoute)
-app.use("/api/v1/purchaseInvoiceRoute",purchaseInvoiceRoute)
-app.use("/api/v1/purchesReturnRoute",purchesReturnRoute)
-app.use("/api/v1/PayOutRoute",PayOutRoute)
-//change 
+//subscription routes
 
-//subscription routes 
-
-app.use("/api/v1/subscription",subscriptionRoute)
+app.use("/api/v1/subscription", subscriptionRoute);
 
 app.use("/uploads", express.static("uploads"));
 //super admin routes

@@ -315,9 +315,21 @@ const CreatePurchaseOrder = () => {
       grossAmount += rows.taxableValue;
       GstAmount += rows.cgstrs + rows.sgstrs;
     });
+    let netAmount=0;
 
-    const netAmount = grossAmount + GstAmount + otherCharges + 0;
-    return { grossAmount, GstAmount, netAmount };
+    if (purchaseType === "Bill of Supply") {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount - otherCharges; // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges; // Do not add GstAmount
+      }
+    } else {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount + GstAmount - otherCharges;
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges;
+      }
+    }    return { grossAmount, GstAmount, netAmount };
   };
 
   const { grossAmount, GstAmount, netAmount } = calculateTotals();
@@ -820,7 +832,7 @@ const CreatePurchaseOrder = () => {
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
+                  <div class="section-header">Supplier Details</div>
                   <div class="details">Name: <span>${
                     chooseUser.name
                   }</span></div>

@@ -1434,7 +1434,7 @@ const PurchesReturn = () => {
             </button>
           )}
         </div>
-      </div>
+      </div>  
       <ToastContainer />
     </>
   );

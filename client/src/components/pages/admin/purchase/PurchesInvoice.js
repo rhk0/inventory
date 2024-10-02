@@ -39,8 +39,6 @@ const PurchesInvoice = () => {
   const [auth] = useAuth();
   const [userid, setUserId] = useState("");
 
-
-
   const [formData, setFormData] = useState({
     date: "",
     invoiceNo: "",
@@ -73,7 +71,7 @@ const PurchesInvoice = () => {
         schemeMargin: "", // Scheme Margin
         discountpercent: null, // Discount Percentage
         discountRs: null, // Discount in Rs
-        taxable: null, // Taxable Amount
+        taxableValue: null, // Taxable Amount
         cgstpercentercent: null, // CGST Percentage
         cgstRS: null, // CGST Amount
         sgstpercentercent: null, // SGST Percentage
@@ -328,8 +326,6 @@ const PurchesInvoice = () => {
       sgst,
       igst,
       totalValue,
-      
-      
     };
     setRows(newRows);
   };
@@ -350,7 +346,7 @@ const PurchesInvoice = () => {
         cgst: 0,
         sgst: 0,
         igst: 0,
-        unitCost:0,
+        unitCost: 0,
         totalValue: 0,
       },
     ]);
@@ -447,13 +443,12 @@ const PurchesInvoice = () => {
         // discountpercent: selectedProduct.discountpercent,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
-        unitCost:selectedProduct.purchasePriceExGst,
+        unitCost: selectedProduct.purchasePriceExGst,
 
         // discountRs:
         //   (selectedProduct.maxmimunRetailPrice *
         //     selectedProduct.discountpercent) /
         //   100,
-  
 
         // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
@@ -513,7 +508,7 @@ const PurchesInvoice = () => {
         quantity: selectedProduct.quantity,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
-        unitCost:selectedProduct.purchasePriceExGst,
+        unitCost: selectedProduct.purchasePriceExGst,
         // discountpercent: selectedProduct.discountpercent,
         // discountRs: (
         //   (selectedProduct.maxmimunRetailPrice *
@@ -1210,8 +1205,9 @@ const PurchesInvoice = () => {
                       <input
                         type="text"
                         value={row.discountRs}
-                        onChange={(e) =>
-                          handleRowChange(index, "discountRs", e.target.value) // Fix here
+                        onChange={
+                          (e) =>
+                            handleRowChange(index, "discountRs", e.target.value) // Fix here
                         }
                         className="w-full"
                       />

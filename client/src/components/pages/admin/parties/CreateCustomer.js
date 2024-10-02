@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Country, State } from "country-state-city";
 import { toast, ToastContainer } from "react-toastify";
-
+import { useAuth } from "../../../context/Auth.js";
 const CreateCustomer = () => {
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedState, setSelectedState] = useState("");
+const [countries, setCountries] = useState([]);
+const [states, setStates] = useState([]);
+const [selectedCountry, setSelectedCountry] = useState("");
+const [selectedState, setSelectedState] = useState("");
+const [auth]=useAuth();
+const [userId,setUserId]=useState("")
+   
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -28,7 +31,19 @@ const CreateCustomer = () => {
     asOnDate: "",
   });
 
+
+  
   useEffect(() => {
+
+
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
     const allCountries = Country.getAllCountries();
     setCountries(allCountries);
   }, []);
@@ -64,7 +79,8 @@ const CreateCustomer = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/v1/auth/CreateCustomer", formData);
+      const updatedFormData = { ...formData, userId };
+      await axios.post("/api/v1/auth/CreateCustomer", updatedFormData);
       handleClear();
       toast.success("Customer added successfully!");
     } catch (error) {

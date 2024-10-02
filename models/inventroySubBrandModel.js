@@ -11,6 +11,11 @@ const SubBrandNameSchema = new mongoose.Schema(
     manufacturerName: {
       type: String,
     },
+    admin:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"user",
+      requried:true,
+    }
   },
 
   {
