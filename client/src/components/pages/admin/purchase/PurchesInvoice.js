@@ -736,24 +736,14 @@ const PurchesInvoice = () => {
               />
             </label>
           </div>
-          {/* <div>
-            <label className="font-bold">Sales Type</label>
-            <select
-              value={salesType}
-              onChange={handleSalesTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="GST Invoice">GST Invoice</option>
-              <option value="Bill of Supply">Bill of Supply</option>
-            </select>
-          </div> */}
+
           <div>
             <label className="font-bold">Invoice No.</label>
             <input
               name="invoiceNo"
               type="text"
-              value={invoiceNo} // Bind to local state
-              onChange={handleinvoiceNoChange} // Update both local and formData states
+              value={invoiceNo}
+              onChange={handleinvoiceNoChange}
               className="border p-2 w-full  rounded"
             />
           </div>

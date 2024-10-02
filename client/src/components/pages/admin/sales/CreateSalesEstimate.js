@@ -15,7 +15,6 @@ const CreateSalesEstimate = () => {
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
 
- 
   const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
@@ -111,13 +110,12 @@ const CreateSalesEstimate = () => {
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
-        
       }
     };
 
     companyData(); // Fetch company data on component mount
   }, [userid]); // Empty dependency array ensures this only runs once, on mount
- 
+
   const handleCustomerChange = (e) => {
     const value = e.target.value;
     setSelectedCustomer(value);
@@ -513,7 +511,7 @@ const CreateSalesEstimate = () => {
     try {
       const updatedFormData = {
         ...formData,
-        rows: rows.map((row) => ({
+        rows: rows?.map((row) => ({
           itemCode: row.itemCode,
           productName: row.productName,
           hsnCode: row.hsnCode,
@@ -631,12 +629,11 @@ const CreateSalesEstimate = () => {
   };
 
   const handlePrintOnly = () => {
-  
     const printWindow = window.open("", "_blank");
-   
+
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -746,11 +743,11 @@ const CreateSalesEstimate = () => {
       updatedFormData.gstType === "CGST/SGST"
         ? `<th>CGST</th><th>SGST</th>`
         : `<th>IGST</th>`;
-        const logoBase64 = 'https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png';
+    const logoBase64 = "https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png";
     const gstRows =
       updatedFormData.gstType === "CGST/SGST"
         ? updatedFormData.rows
-            .map(
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
@@ -769,7 +766,7 @@ const CreateSalesEstimate = () => {
             )
             .join("")
         : updatedFormData.rows
-            .map(
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
@@ -829,7 +826,9 @@ const CreateSalesEstimate = () => {
         <body>
            <div class="header">
           
-            <div class="business-name"> ${company?.businessName || "---------"} </div>
+            <div class="business-name"> ${
+              company?.businessName || "---------"
+            } </div>
               <div> ${company?.address || "---------"} </div>
               <div>GSTIN: ${company?.gstIn || "---------"}</div>
             </div>
@@ -1003,14 +1002,13 @@ const CreateSalesEstimate = () => {
     // Trigger the print dialog
     printWindow.print();
   };
-  
+
   const handlePrintOnlyWithoutGST = () => {
-   
     const printWindow = window.open("", "_blank");
-   
+
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -1107,9 +1105,9 @@ const CreateSalesEstimate = () => {
 
       return words;
     }
-   
+
     const gstRows = updatedFormData.rows
-      .map(
+      ?.map(
         (row, index) => `
         <tr>
           <td>${index + 1}</td>
@@ -1170,7 +1168,9 @@ const CreateSalesEstimate = () => {
 
            <div class="header">
           
-            <div class="business-name"> ${company?.businessName || "---------"} </div>
+            <div class="business-name"> ${
+              company?.businessName || "---------"
+            } </div>
             <div> ${company?.address || "---------"} </div>
             <div>GSTIN: ${company?.gstIn || "---------"}</div>
           </div>
@@ -1340,7 +1340,6 @@ const CreateSalesEstimate = () => {
         style={{ backgroundColor: "##FFFFFF" }}
         className="p-4 responsive-container"
       >
-        
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
           Sales Estimate
@@ -1410,7 +1409,7 @@ const CreateSalesEstimate = () => {
               <option value="add-new-customer" className="text-blue-500">
                 + Add New Customer
               </option>
-              {customer.map((customer) => (
+              {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
@@ -1661,7 +1660,7 @@ const CreateSalesEstimate = () => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
+              {rows?.map((row, index) => (
                 <tr key={index}>
                   <td className="border p-1">{index + 1}</td>
                   <td className="border">
@@ -1678,7 +1677,7 @@ const CreateSalesEstimate = () => {
                       onChange={(selectedOption) =>
                         handleItemCodeSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.itemCode,
                         value: product.itemCode,
                       }))}
@@ -1714,7 +1713,7 @@ const CreateSalesEstimate = () => {
                       onChange={(selectedOption) =>
                         handleProductSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.productName,
                         value: product.productName,
                       }))}

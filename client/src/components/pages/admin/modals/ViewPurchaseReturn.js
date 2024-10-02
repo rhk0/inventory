@@ -2,27 +2,20 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import Modal from "react-modal";
 
-const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
+const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
   console.log(estimate, "dkasjfk");
   const [date, setDate] = useState("");
-  const [invoiceNo, setInvoiceNo] = useState("");
-  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
+  const [debitNoteNo, setdebitNoteNo] = useState("");
+  const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState("");
 
   const [customerType, setCustomerType] = useState("");
   const [supplierName, setsupplierName] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [paymentTerm, setPaymentTerm] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [transportDetails, setTransportDetails] = useState({
-    receiptDocNo: "",
-    dispatchedThrough: "",
-    destination: "",
-    carrierNameAgent: "",
-    billOfLading: "",
-    motorVehicleNo: "",
-  });
+
   const [billingAddress, setBillingAddress] = useState("");
-  const [reverseCharge, setReverseCharge] = useState("");
+  const [selectPurchase, setselectPurchase] = useState("");
   const [gstType, setGstType] = useState("");
   const [rows, setRows] = useState([]);
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
@@ -31,24 +24,25 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
   const [grossAmount, setGrossAmount] = useState("");
   const [GstAmount, setGstAmount] = useState("");
   const [netAmount, setNetAmount] = useState("");
+  const [reasonForReturn, setReasonForReturn] = useState("");
   const [viewModal, setViewModal] = useState(false);
   const [bank, setBank] = useState([]);
   const [cash, setCash] = useState([]);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
-      setInvoiceNo(estimate.invoiceNo || "");
-      setsupplierInvoiceNo(estimate.supplierInvoiceNo || "");
+      setdebitNoteNo(estimate.debitNoteNo || "");
+      setsupplierdebitNoteNo(estimate.supplierdebitNoteNo || "");
 
       setCustomerType(estimate.customerType || "");
       setsupplierName(getSupplierName(estimate.customerId) || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
+      setReasonForReturn(estimate.reasonForReturn || "");
 
       if (estimate.bank) {
         setBank({
@@ -92,16 +86,8 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
         });
       }
 
-      setTransportDetails({
-        receiptDocNo: estimate.receiptDocNo || "",
-        dispatchedThrough: estimate.dispatchedThrough || "",
-        destination: estimate.destination || "",
-        carrierNameAgent: estimate.carrierNameAgent || "",
-        billOfLading: estimate.billOfLading || "",
-        motorVehicleNo: estimate.motorVehicleNo || "",
-      });
       setBillingAddress(estimate.billingAddress || "");
-      setReverseCharge(estimate.reverseCharge || "");
+      setselectPurchase(estimate.selectPurchase || "");
       setGstType(estimate.gstType || "");
       setRows(estimate.rows || []);
       setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
@@ -138,7 +124,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
     >
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          View Purchase Invoice
+          View Purchase Return
         </h1>
         <button
           type="button"
@@ -149,6 +135,15 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
         </button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
+        <div>
+          <label className="font-bold">Supplier Name</label>
+          <input
+            type="text"
+            value={supplierName}
+            disabled
+            className="border p-2 w-full rounded"
+          />
+        </div>
         <div>
           <label className="font-bold">
             Date:
@@ -161,43 +156,15 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
           </label>
         </div>
         <div>
-          <label className="font-bold">Invoice No.</label>
+          <label className="font-bold">Debit Note No.</label>
           <input
             type="text"
-            value={invoiceNo}
+            value={debitNoteNo}
             disabled
             className="border p-2 w-full rounded"
           />
         </div>
 
-        <div>
-          <label className="font-bold">Supplier Invoice No.</label>
-          <input
-            type="text"
-            value={supplierInvoiceNo}
-            disabled
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
-        <div>
-          <label className="font-bold">Supplier Name</label>
-          <input
-            type="text"
-            value={supplierName}
-            disabled
-            className="border p-2 w-full rounded"
-          />
-        </div>
-        <div>
-          <label className="font-bold">Place of Supply</label>
-          <input
-            type="text"
-            value={placeOfSupply}
-            disabled
-            className="border p-2 w-full rounded"
-          />
-        </div>
         <div>
           <label className="font-bold">
             Payment Term (days):
@@ -223,71 +190,6 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
         </div>
 
         <div className="mb-4">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-white p-2"
-          >
-            Transport Details
-          </button>
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
-            <h4 className="font-bold mb-4">Transport Details</h4>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label>Dispatched Through</label>
-                <input
-                  type="text"
-                  value={transportDetails.dispatchedThrough}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Destination</label>
-                <input
-                  type="text"
-                  value={transportDetails.destination}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Carrier Name/Agent</label>
-                <input
-                  type="text"
-                  value={transportDetails.carrierNameAgent}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Bill of Lading/LR-RR No.</label>
-                <input
-                  type="text"
-                  value={transportDetails.billOfLading}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="bg-gray-500 text-white p-2 mr-2"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-        <div className="mb-4">
           <label className="font-bold">Billing Address</label>
           <textarea
             value={billingAddress}
@@ -296,9 +198,9 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
           />
         </div>
         <div className="mb-4 w-full">
-          <label className="font-bold">Reverse Charge</label>
+          <label className="font-bold">Select Purchase</label>
           <select
-            value={reverseCharge}
+            value={selectPurchase}
             disabled
             className="border p-2 w-full rounded"
           >
@@ -307,8 +209,17 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
           </select>
         </div>
 
+        <div className="mb-4">
+          <label className="font-bold">Reason Of Return</label>
+          <textarea
+            value={reasonForReturn}
+            disabled
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
         <div className="mb-4 w-full">
-          <label className="font-bold">GST Type:</label>
+          <label className="font-bold">Tax Type:</label>
           <select
             value={gstType}
             disabled
@@ -660,202 +571,8 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
           </div>
         </div>
       </div>
-      <div className="mt-8 flex justify-center">
-        <button
-          type="button"
-          onClick={openViewModal}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          View Receipt
-        </button>
-
-        <Modal
-          isOpen={viewModal}
-          onRequestClose={closeModal}
-          contentLabel="View Item Modal"
-          style={{
-            content: {
-              width: "80%",
-              height: "90%",
-              maxWidth: "800px",
-              margin: "auto",
-              padding: "5px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              borderRadius: "5px",
-            },
-          }}
-        >
-          <div className="bg-white p-4 rounded shadow-lg w-full relative">
-            <button
-              onClick={closeModal}
-              className="absolute text-3xl top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              &times;
-            </button>
-            <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
-
-            {/* Radio buttons to select payment method */}
-            <div className="gap-5 mb-4">
-              <label className="font-bold">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="Cash"
-                  onChange={handlePaymentMethodChange}
-                  checked={paymentMethod === "Cash"}
-                />
-                Cash
-              </label>
-              <label className="ml-5 font-bold">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="Bank"
-                  onChange={handlePaymentMethodChange}
-                  checked={paymentMethod === "Bank"}
-                />
-                Bank
-              </label>
-            </div>
-
-            {/* Conditional form rendering based on payment method */}
-            <form>
-              {paymentMethod === "Cash" && (
-                <>
-                  <label className="font-bold">Amount</label>
-                  <input
-                    type="text"
-                    name="Amount"
-                    value={cash.Amount}
-                    className="border p-2 mb-2 w-full"
-                    readOnly
-                  />
-                  <label className="font-bold">Advance</label>
-                  <input
-                    type="text"
-                    name="Advance"
-                    value={cash.Advance}
-                    className="border p-2 mb-2 w-full"
-                    readOnly
-                  />
-                  <label className="font-bold">Received</label>
-                  <input
-                    type="text"
-                    name="Received"
-                    value={cash.Received}
-                    className="border p-2 mb-2 w-full"
-                    readOnly
-                  />
-                  <label className="font-bold">Balance</label>
-                  <input
-                    type="text"
-                    name="Balance"
-                    value={cash.Balance}
-                    className="border p-2 mb-2 w-full"
-                    readOnly
-                  />
-                </>
-              )}
-
-              {paymentMethod === "Bank" && (
-                <>
-                  <label className="font-bold">Select Bank</label>
-                  <input
-                    name="bank"
-                    className="border p-2 mb-2 w-full"
-                    value={bank.bank}
-                    readOnly
-                  ></input>
-                  <label className="font-bold">Payment Type</label>
-                  <input
-                    name="selectBankType"
-                    className="border p-2 mb-2 w-full"
-                    onChange={handleSubPaymentTypeChange}
-                    value={bank.selectBankType}
-                    readOnly
-                  ></input>
-
-                  {bank.selectBankType === "Online" && (
-                    <>
-                      <label className="font-bold">Transaction Date</label>
-                      <input
-                        type="text"
-                        name="transactionDate"
-                        value={bank.transactionDate}
-                        className="border p-2 mb-2 w-full"
-                        readOnly
-                      />
-                      <label className="font-bold">Transaction No</label>
-                      <input
-                        type="text"
-                        name="transactionNo"
-                        value={bank.transactionNo}
-                        className="border p-2 mb-2 w-full"
-                        readOnly
-                      />
-                    </>
-                  )}
-                  {bank.selectBankType === "Cheque" && (
-                    <>
-                      <label className="font-bold">Transaction Date</label>
-                      <input
-                        type="text"
-                        name="transactionDate"
-                        value={bank.transactionDate}
-                        className="border p-2 mb-2 w-full"
-                        readOnly
-                      />
-                      <label className="font-bold">Cheque No</label>
-                      <input
-                        type="text"
-                        name="chequeNo"
-                        value={bank.chequeNo}
-                        className="border p-2 mb-2 w-full"
-                        readOnly
-                      />
-                    </>
-                  )}
-
-                  <label className="font-bold">Amount</label>
-                  <input
-                    type="text"
-                    name="Amount"
-                    value={bank.Amount}
-                    className="border p-2 mb-2 w-full"
-                    readOnly
-                  />
-                  <label className="font-bold">Advance</label>
-                  <input
-                    type="text"
-                    name="Advance"
-                    value={bank.Advance}
-                    className="border p-2 mb-2 w-full"
-                    readOnly
-                  />
-                  <label className="font-bold">Received</label>
-                  <input
-                    type="text"
-                    name="Received"
-                    value={bank.Received}
-                    className="border p-2 mb-2 w-full"
-                    readOnly
-                  />
-                  <label className="font-bold">Balance</label>
-                  <input
-                    type="text"
-                    name="Balance"
-                    value={bank.Balance}
-                    className="border p-2 mb-2 w-full"
-                    readOnly
-                  />
-                </>
-              )}
-            </form>
-          </div>
-        </Modal>
-      </div>
     </div>
   );
 };
 
-export default ViewPurchaseInvoice;
+export default ViewPurchaseReturn;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import EditPurchaseOrder from "../modals/EditPurchaseOrder";
 import Modal from "react-modal";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
 import ViewPurchaseInvoices from "../modals/ViewPurchaseInvoices";
+import EditPurchaseInvoice from "../modals/EditPurchaseInvoice";
 
 const ManagePurchaseInvoice = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -49,15 +49,15 @@ const ManagePurchaseInvoice = () => {
   };
 
   const handleDelete = async (estimateId) => {
-    if (window.confirm("Are you sure you want to delete this order?")) {
+    if (window.confirm("Are you sure you want to delete this Invoice?")) {
       setLoading(true);
       try {
         await axios.delete(
-          `/api/v1/purchesOrderRoute/deletepurchesorder/${estimateId}`
+          `/api/v1/purchaseInvoiceRoute/deletepurchaseinvoice/${estimateId}`
         );
         fetchEstimate();
       } catch (error) {
-        setError("Error deleting the order.");
+        setError("Error deleting the Invoice.");
       } finally {
         setLoading(false);
       }
@@ -291,7 +291,7 @@ const ManagePurchaseInvoice = () => {
           },
         }}
       >
-        <EditPurchaseOrder
+        <EditPurchaseInvoice
           isOpen={editModalOpen}
           estimate={selectedEstimate}
           closeModal={closeModal}

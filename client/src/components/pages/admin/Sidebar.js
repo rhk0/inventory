@@ -692,7 +692,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/admin/dashboard/manageperformance"
+                  to="/admin/managepurchasereturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Return List
