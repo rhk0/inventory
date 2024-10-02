@@ -81,19 +81,16 @@ const CreatePurchaseOrder = () => {
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
-  useEffect(() => {
-    const fetchsupplier = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageSupplier");
-        setsupplier(response.data.data);
-        console.log(response, "dskfkj");
-      } catch (error) {
-        console.error("Error fetching suppliers:", error);
-      }
-    };
+  const fetchsupplier = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
+      setsupplier(response.data.data);
+      console.log(response, "dskfkj");
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+    }
+  };
 
-    fetchsupplier();
-  }, []);
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -102,7 +99,8 @@ const CreatePurchaseOrder = () => {
         setUserId(auth.user.admin);
       }
     }
-  }, [auth]);
+    fetchsupplier();
+  }, [auth, userid]);
 
   useEffect(() => {
     const companyData = async () => {
@@ -111,13 +109,12 @@ const CreatePurchaseOrder = () => {
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
-        
       }
     };
 
     companyData(); // Fetch company data on component mount
   }, [userid]); // Empty dependency array ensures this only runs once, on mount
- 
+
   const handlePurchaseTypeChange = (e) => {
     const value = e.target.value;
     setpurchaseType(value);
@@ -142,7 +139,7 @@ const CreatePurchaseOrder = () => {
     setPlaceOfSupply(selectedsupplierData ? selectedsupplierData.state : "");
     setBillingAddress(selectedsupplierData ? selectedsupplierData.address : "");
   };
- console.log(chooseUser,"chooseUser");
+  console.log(chooseUser, "chooseUser");
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
@@ -318,9 +315,21 @@ const CreatePurchaseOrder = () => {
       grossAmount += rows.taxableValue;
       GstAmount += rows.cgstrs + rows.sgstrs;
     });
+    let netAmount=0;
 
-    const netAmount = grossAmount + GstAmount + otherCharges + 0;
-    return { grossAmount, GstAmount, netAmount };
+    if (purchaseType === "Bill of Supply") {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount - otherCharges; // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges; // Do not add GstAmount
+      }
+    } else {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount + GstAmount - otherCharges;
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges;
+      }
+    }    return { grossAmount, GstAmount, netAmount };
   };
 
   const { grossAmount, GstAmount, netAmount } = calculateTotals();
@@ -605,9 +614,8 @@ const CreatePurchaseOrder = () => {
     }
   };
   const handlePrintOnly = () => {
-  
     const printWindow = window.open("", "_blank");
-   
+
     const updatedFormData = {
       ...formData,
       rows: rows.map((row) => ({
@@ -644,7 +652,7 @@ const CreatePurchaseOrder = () => {
       gstType,
       netAmount: netAmount.toFixed(2),
     };
-    console.log(updatedFormData,"dheeru")
+    console.log(updatedFormData, "dheeru");
 
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {
@@ -721,7 +729,7 @@ const CreatePurchaseOrder = () => {
       updatedFormData.gstType === "CGST/SGST"
         ? `<th>CGST</th><th>SGST</th>`
         : `<th>IGST</th>`;
-        const logoBase64 = 'https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png';
+    const logoBase64 = "https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png";
     const gstRows =
       updatedFormData.gstType === "CGST/SGST"
         ? updatedFormData.rows
@@ -804,7 +812,9 @@ const CreatePurchaseOrder = () => {
         <body>
            <div class="header">
           
-            <div class="business-name"> ${company?.businessName || "---------"} </div>
+            <div class="business-name"> ${
+              company?.businessName || "---------"
+            } </div>
               <div> ${company?.address || "---------"} </div>
               <div>GSTIN: ${company?.gstIn || "---------"}</div>
             </div>
@@ -822,7 +832,7 @@ const CreatePurchaseOrder = () => {
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
+                  <div class="section-header">Supplier Details</div>
                   <div class="details">Name: <span>${
                     chooseUser.name
                   }</span></div>
@@ -978,11 +988,10 @@ const CreatePurchaseOrder = () => {
     // Trigger the print dialog
     printWindow.print();
   };
-  
+
   const handlePrintOnlyWithoutGST = () => {
-   
     const printWindow = window.open("", "_blank");
-   
+
     const updatedFormData = {
       ...formData,
       rows: rows.map((row) => ({
@@ -1011,7 +1020,7 @@ const CreatePurchaseOrder = () => {
       reverseCharge,
       netAmount: netAmount.toFixed(2),
     };
-    console.log(updatedFormData,"dheeru")
+    console.log(updatedFormData, "dheeru");
 
     function numberToWords(num) {
       const ones = [
@@ -1083,7 +1092,7 @@ const CreatePurchaseOrder = () => {
 
       return words;
     }
-   
+
     const gstRows = updatedFormData.rows
       .map(
         (row, index) => `
@@ -1146,7 +1155,9 @@ const CreatePurchaseOrder = () => {
 
            <div class="header">
           
-            <div class="business-name"> ${company?.businessName || "---------"} </div>
+            <div class="business-name"> ${
+              company?.businessName || "---------"
+            } </div>
             <div> ${company?.address || "---------"} </div>
             <div>GSTIN: ${company?.gstIn || "---------"}</div>
           </div>
@@ -1310,7 +1321,6 @@ const CreatePurchaseOrder = () => {
     printWindow.print();
   };
 
-
   return (
     <>
       <div
@@ -1388,7 +1398,7 @@ const CreatePurchaseOrder = () => {
               <option value="add-new-supplier" className="text-blue-500">
                 + Add New Supplier
               </option>
-              {supplier.map((supplier) => (
+              {supplier?.map((supplier) => (
                 <option key={supplier._id} value={supplier._id}>
                   {supplier.name}
                 </option>

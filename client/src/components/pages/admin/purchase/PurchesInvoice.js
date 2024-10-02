@@ -3,6 +3,8 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
+import { useAuth } from "../../../context/Auth.js";
+
 import Modal from "react-modal";
 
 const PurchesInvoice = () => {
@@ -14,6 +16,13 @@ const PurchesInvoice = () => {
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [userid, setUserId] = useState("");
+  const [company, setCompanyData] = useState([]);
+  const [chooseUser, setChooseUser] = useState([]);
+  const [freeQty, setFreeQty] = useState(0);
+  const [margin, setMargin] = useState(0);
+  const [auth] = useAuth();
+
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -34,7 +43,6 @@ const PurchesInvoice = () => {
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedAddress, setAddress] = useState("");
   const [viewModal, setViewModal] = useState(false);
-
   const [formData, setFormData] = useState({
     date: "",
     invoiceNo: "",
@@ -67,7 +75,7 @@ const PurchesInvoice = () => {
         schemeMargin: "", // Scheme Margin
         discountpercent: null, // Discount Percentage
         discountRs: null, // Discount in Rs
-        taxable: null, // Taxable Amount
+        taxableValue: null, // Taxable Amount
         cgstpercentercent: null, // CGST Percentage
         cgstRS: null, // CGST Amount
         sgstpercentercent: null, // SGST Percentage
@@ -138,25 +146,45 @@ const PurchesInvoice = () => {
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
+  const fetchsupplier = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
+      setCustomer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchCustomer = async () => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+    fetchsupplier();
+  }, [auth, userid]);
+
+  useEffect(() => {
+    const companyData = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/manageSupplier");
-        setCustomer(response.data.data);
+        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
-        console.error("Error fetching Customers:", error);
+        console.error("Error fetching company data:", error);
       }
     };
 
-    fetchCustomer();
-  }, []);
+    companyData(); // Fetch company data on component mount
+  }, [userid]); // Empty dependency array ensures this only runs once, on mount
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
     setSelectedCustomer(value);
 
     const selectedCustomerData = customer.find((cust) => cust._id === value);
-
+    setChooseUser(selectedCustomerData);
     setFormData((prev) => ({
       ...prev,
       supplierName: selectedCustomerData ? selectedCustomerData.name : "",
@@ -287,6 +315,7 @@ const PurchesInvoice = () => {
   };
 
   // Function to handle transport detail change
+
   const handleTransportDetailChange = (field, value) => {
     setTransportDetails((prev) => ({ ...prev, [field]: value }));
     setFormData((prev) => ({
@@ -294,29 +323,57 @@ const PurchesInvoice = () => {
       [field]: value,
     }));
   };
-  const handleRowChange = (index, field, value) => {
-    const newRows = [...rows];
-    const newValue = parseFloat(value) || 0;
-    newRows[index] = { ...newRows[index], [field]: newValue };
 
-    // Calculate taxable value, GST, and total value
-    const { qty, mrp, discount } = newRows[index];
-    const taxableValue = qty * mrp - discount;
-    const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-    const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-    const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
-    const totalValue = taxableValue + cgst + sgst + igst;
+const handleRowChange = (rowIndex, field, value) => {
+  const updatedRows = [...rows]; // Clone the existing rows array
+  const currentRow = updatedRows[rowIndex]; // Get the current row
 
-    newRows[index] = {
-      ...newRows[index],
-      taxableValue,
-      cgst,
-      sgst,
-      igst,
-      totalValue,
-    };
-    setRows(newRows);
-  };
+  if (field === "discountpercent") {
+    // Calculate discountRs based on discountpercent and maxmimunRetailPrice
+    const discountPercent = parseFloat(value) || 0; // Ensure a valid number
+    const discountRs = (currentRow.maxmimunRetailPrice * discountPercent) / 100; // Calculate discount in Rs
+
+    // Update discount percent, discountRs, and taxable value
+    currentRow.discountpercent = discountPercent;
+    currentRow.discountRs = discountRs.toFixed(2);
+
+    // Update taxable value based on MRP, discountRs, and quantity
+    console.log(currentRow,"currentRow")
+    
+    const unitCost =Number(currentRow.unitCost);
+    const discountRS =Number(currentRow.discountRs);
+    const quantity = Number(currentRow.quantity)
+
+    console.log(unitCost,"unitCost")
+    console.log(discountRS,"discountRs")
+    console.log(quantity,"qty")
+
+    const taxable = (unitCost- discountRS) * quantity;
+  
+    currentRow.taxableValue = taxable.toFixed(2); // Ensure toFixed(2) for consistent format
+
+  } else if (field === "discountRs") {
+    // Calculate discount percentage based on discountRs and maxmimunRetailPrice
+    const discountRs = parseFloat(value) || 0;
+    const discountPercent = (discountRs / currentRow.maxmimunRetailPrice) * 100;
+
+    // Update discount percent, discountRs, and taxable value
+    currentRow.discountpercent = discountPercent.toFixed(2);
+    currentRow.discountRs = discountRs.toFixed(2);
+
+    // Update taxable value based on MRP, discountRs, and quantity
+    const taxableValue = (currentRow.maxmimunRetailPrice - discountRs) * currentRow.qty;
+    currentRow.taxable = taxableValue.toFixed(2);
+  } 
+  // Update the rows state
+  updatedRows[rowIndex] = currentRow;
+  setRows(updatedRows);
+};
+
+  // const handleFreeQtyChange = (index, value) => {
+  //   console.log("Free Quantity Updated: ", value);
+  //   handleRowChange(index, "freeQty", value);
+  // };
 
   const addRow = () => {
     setRows([
@@ -328,12 +385,13 @@ const PurchesInvoice = () => {
         quantity: 0,
         units: "",
         maxmimunRetailPrice: 0,
-        wholesalerDiscount: 0,
-        wholeselerDiscountRS: 0,
+        discountpercent: 0,
+        discountRs: 0,
         taxableValue: 0,
         cgst: 0,
         sgst: 0,
         igst: 0,
+        unitCost: 0,
         totalValue: 0,
       },
     ]);
@@ -363,8 +421,6 @@ const PurchesInvoice = () => {
       netAmount = grossAmount + GstAmount + otherCharges;
     }
 
-    console.log(netAmount);
-
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -378,7 +434,7 @@ const PurchesInvoice = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
-        console.log(response, "dkfjk");
+
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
@@ -392,6 +448,30 @@ const PurchesInvoice = () => {
 
     fetchProducts();
   }, []);
+  const handleFreeQtyChange = (rowIndex, newFreeQty) => {
+    const updatedRows = [...rows];
+
+    const selectedRow = updatedRows[rowIndex];
+
+    setFreeQty(newFreeQty);
+    // Calculate schemeMargin only if both freeQty and quantity exist
+    
+    const totalQuantity =(Number(selectedRow.quantity) + Number(newFreeQty));
+  
+    const schemeMargin =
+      newFreeQty && selectedRow.quantity
+        ? ((newFreeQty /totalQuantity) * 100).toFixed(2)
+        : 0;
+
+    // Update the row with the new freeQty and schemeMargin
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      freeQty: newFreeQty,
+      schemeMargin: schemeMargin,
+    };
+
+    setRows(updatedRows);
+  };
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
@@ -416,7 +496,7 @@ const PurchesInvoice = () => {
           (100 + Number(selectedProduct.gstRate))
         : retailPrice * selectedProduct.quantity;
 
-      // Update the row with the new values
+      // Update the row with the new values, schemeMargin is excluded here since it's handled separately
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
@@ -427,20 +507,11 @@ const PurchesInvoice = () => {
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
         quantity: selectedProduct.quantity,
-        wholesalerDiscount: selectedProduct.wholesalerDiscount,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
-        wholeselerDiscountRS:
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.wholesalerDiscount) /
-          100,
-        retailDiscount: selectedProduct.retailDiscount,
-        retailDiscountRS:
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-          100,
+        unitCost: selectedProduct.purchasePriceExGst,
+        schemeMargin: updatedRows[rowIndex].schemeMargin || 0, // Existing or initial value
 
-        // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
 
         cgstpercent: selectedProduct.gstRate / 2,
@@ -457,7 +528,7 @@ const PurchesInvoice = () => {
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
-        totalvalue: (
+        totalValue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
@@ -466,6 +537,8 @@ const PurchesInvoice = () => {
       setRows(updatedRows);
     }
   };
+
+
 
   const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
     const selectedProduct = products.find(
@@ -498,18 +571,19 @@ const PurchesInvoice = () => {
         quantity: selectedProduct.quantity,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
-        wholesalerDiscount: selectedProduct.wholesalerDiscount,
-        wholeselerDiscountRS: (
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.wholesalerDiscount) /
-          100
-        ).toFixed(2),
-        retailDiscount: selectedProduct.retailDiscount,
-        retailDiscountRS: (
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-          100
-        ).toFixed(2),
+        unitCost: selectedProduct.purchasePriceExGst,
+        // discountpercent: selectedProduct.discountpercent,
+        // discountRs: (
+        //   (selectedProduct.maxmimunRetailPrice *
+        //     selectedProduct.discountpercent) /
+        //   100
+        // ).toFixed(2),
+        // retailDiscount: selectedProduct.retailDiscount,
+        // retailDiscountRS: (
+        //   (selectedProduct.maxmimunRetailPrice *
+        //     selectedProduct.retailDiscount) /
+        //   100
+        // ).toFixed(2),
         taxableValue: taxableValue,
         cgstpercent: selectedProduct.gstRate / 2,
         sgstpercent: selectedProduct.gstRate / 2,
@@ -525,7 +599,7 @@ const PurchesInvoice = () => {
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
-        totalvalue: (
+        totalValue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
@@ -534,7 +608,8 @@ const PurchesInvoice = () => {
       setRows(updatedRows);
     }
   };
-
+  
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -588,14 +663,13 @@ const PurchesInvoice = () => {
       rows.forEach((row, index) => {
         Object.keys(row).forEach((key) => {
           submissionData.append(`rows[${index}][${key}]`, row[key]);
+         
         });
       });
 
       if (paymentMethod === "Cash") {
-        console.log("Appending cash details:", cashDetails); // Log for debugging
         submissionData.append("cash", JSON.stringify(cashDetails));
       } else if (paymentMethod === "Bank") {
-        console.log("Appending bank details:", bankDetails); // Log for debugging
         submissionData.append("bank", JSON.stringify(bankDetails));
       }
 
@@ -604,17 +678,11 @@ const PurchesInvoice = () => {
         submissionData.append("documentPath", documentPath);
       }
 
-      for (var pair of submissionData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-
       // Send the formData using axios
       const response = await axios.post(
         "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
         submissionData
       );
-
-      console.log(response);
 
       if (response) {
         toast.success("Purchase invoice created successfully...");
@@ -699,6 +767,436 @@ const PurchesInvoice = () => {
     setViewModal(false);
   };
 
+  const handlePrintOnly = () => {
+    const printWindow = window.open("", "_blank");
+
+    const submissionData = {
+      ...formData,
+      rows: rows.map((row) => ({
+        itemCode: row.itemCode,
+        productName: row.productName,
+        hsnCode: row.hsnCode,
+        qty: row.quantity,
+        freeQuantity: row.freeQty,
+        units: row.units,
+        mrp: row.maxmimunRetailPrice,
+        discountRs: row.discountRs,
+        discountpercent: row.discountpercent,
+
+        UnitsCost: row.unitCost,
+        schemeMargin: row.schemeMargin,
+
+        taxableValue: row.taxableValue.toFixed(2),
+        cgstpercent: row.cgstpercent,
+        cgstRS: row.cgstRS,
+        sgstpercent: row.sgstpercent,
+        sgstRS: row.sgstRS,
+        igstpercent: row.igstpercent,
+        igstRS: row.igstRS,
+        totalValue: row.totalValue,
+      })),
+      grossAmount: grossAmount.toFixed(2),
+      GstAmount: GstAmount.toFixed(2),
+      otherCharges: otherCharges.toFixed(2),
+      otherChargesDescriptions: otherChargesDescriptions,
+      salesType,
+      customerType,
+      reverseCharge,
+      gstType,
+      netAmount: netAmount.toFixed(2),
+      cash: paymentMethod === "Cash" ? cashDetails : {},
+      bank: paymentMethod === "Bank" ? bankDetails : {},
+    };
+
+    // Determine the table headers and the corresponding data based on gstType
+    function numberToWords(num) {
+      const ones = [
+        "",
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+        "Ten",
+        "Eleven",
+        "Twelve",
+        "Thirteen",
+        "Fourteen",
+        "Fifteen",
+        "Sixteen",
+        "Seventeen",
+        "Eighteen",
+        "Nineteen",
+      ];
+      const tens = [
+        "",
+        "",
+        "Twenty",
+        "Thirty",
+        "Forty",
+        "Fifty",
+        "Sixty",
+        "Seventy",
+        "Eighty",
+        "Ninety",
+      ];
+
+      function convertToWords(n) {
+        if (n < 20) return ones[n];
+        if (n < 100)
+          return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+        if (n < 1000)
+          return (
+            ones[Math.floor(n / 100)] +
+            " Hundred" +
+            (n % 100 ? " " + convertToWords(n % 100) : "")
+          );
+        if (n < 100000)
+          return (
+            convertToWords(Math.floor(n / 1000)) +
+            " Thousand" +
+            (n % 1000 ? " " + convertToWords(n % 1000) : "")
+          );
+        return "";
+      }
+
+      // Split the number into integer and decimal parts
+      const parts = num.toString().split(".");
+
+      const integerPart = parseInt(parts[0], 10);
+      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0;
+
+      let words = convertToWords(integerPart) + " Rupees";
+
+      // Handle the decimal part (paise)
+      if (decimalPart > 0) {
+        words += " and " + convertToWords(decimalPart) + " Paise";
+      }
+
+      return words;
+    }
+    const gstHeaders =
+      submissionData.gstType === "CGST/SGST"
+        ? `<th>CGST</th><th>SGST</th>`
+        : `<th>IGST</th>`;
+
+    const paymentModeHTML = submissionData.cash.Amount
+      ? `
+            <td style="width: 33.33%; text-align: left;">
+                <div class="receipt-details">
+                    <div class="section-header">Receipt Mode: Cash</div>
+                    <div class="details">Total Amount: ₹${submissionData.cash.Amount}</div>
+                    <div class="details">Advance Received: ₹${submissionData.cash.Advance}</div>
+                    <div class="details">Amount Received: ₹${submissionData.cash.Received}</div>
+                    <div class="details">Balance Amount: ₹${submissionData.cash.Balance}</div>
+                </div>
+            </td>`
+      : `
+            <td style="width: 33.33%; text-align: left;">
+                <div class="receipt-details">
+                    <div class="section-header">Receipt Mode: Bank - ${
+                      submissionData.bank.selectBankType
+                    }</div>
+                    <div class="details">Bank Name: ${
+                      submissionData.bank.bank
+                    }</div>
+                    <div class="details">Transaction Date: ${
+                      submissionData.bank.transactionDate
+                    }</div>
+                    <div class="details">Transaction / Cheque No: ${
+                      submissionData.bank.transactionNo ||
+                      submissionData.bank.chequeNo
+                    }</div>
+                    <div class="details">Total Amount: ₹${
+                      submissionData.bank.Amount
+                    }</div>
+                    <div class="details">Advance Received: ₹${
+                      submissionData.bank.Advance
+                    }</div>
+                    <div class="details">Amount Received: ₹${
+                      submissionData.bank.Received
+                    }</div>
+                    <div class="details">Balance Amount: ₹${
+                      submissionData.bank.Balance
+                    }</div>
+                </div>
+            </td>`;
+
+    const gstRows =
+      submissionData.gstType === "CGST/SGST"
+        ? submissionData.rows
+            .map(
+              (row, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${row.itemCode}</td>
+            <td>${row.productName}</td>
+            <td>${row.hsnCode}</td>
+            <td>${row.units}</td>
+            <td>${row.qty}</td>
+            <td>${row.freeQuantity}</td>
+            <td>${row.mrp}</td>
+            <td>${row.UnitsCost}</td>
+            <td>${row.schemeMargin}</td>
+            <td>${row.discountpercent}% ${row.discountRs}</td>
+            <td>${row.taxableValue}</td>
+            <td>${row.cgstpercent}% ${row.cgstRS}</td>
+            <td >${row.sgstpercent}% ${row.sgstRS}</td>
+            <td>${row.totalValue}</td>
+          </tr>`
+            )
+            .join("")
+        : submissionData.rows
+            .map(
+              (row, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${row.itemCode}</td>
+            <td>${row.productName}</td>
+            <td>${row.hsnCode}</td>
+            <td>${row.units}</td>
+            <td>${row.qty}</td>
+            <td>${row.freeQuantity}</td>
+            <td>${row.mrp}</td>
+            <td>${row.UnitsCost}</td>
+            <td>${row.schemeMargin}</td>
+            <td>${row.discountpercent}% ${row.discountRs}</td>
+            <td>${row.taxableValue}</td>
+            <td>${row.igstpercent}% ${row.igstRS}</td>
+            <td>${row.totalValue}</td>
+          </tr>`
+            )
+            .join("");
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 10px;
+            }
+            .header, .section-header, .table th {
+              color: red;
+              font-weight: bold;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              font-size: 24px;
+            }
+            .table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+            .table th, .table td {
+              border: 1px solid black;
+              padding: 5px;
+              text-align: center;
+              font-size: 12px;
+            }
+            .table th {
+              background-color: #ff0000; /* Red header */
+              color: black;
+            }
+            .signature {
+              text-align: right;
+              margin-top: 50px;
+              font-size: 12px;
+            }
+          </style>
+        </head>
+        <body>
+        <div class="header">
+          
+            <div class="business-name"> ${company?.businessName} </div>
+              <div> ${company?.address} </div>
+              <div>GSTIN: ${company?.gstIn}</div>
+            </div>
+                <table class="table">
+             <tr>
+                  <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
+                  Gst Invoice
+                  </th>
+              </tr>
+
+
+         
+            <tr>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="customer-details">
+                  <div class="section-header">Supplier Details</div>
+                  <div class="details">Name: <span>${
+                    chooseUser.name
+                  }</span></div>
+                  <div class="details">Address: <span>${
+                    chooseUser.address
+                  }</span></div>
+                  <div class="details">Contact: <span>${
+                    chooseUser.contact
+                  }</span></div>
+                  <div class="details">GSTIN: <span>${
+                    chooseUser.gstin
+                  }</span></div>
+                </div>
+              </td>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="sales-estimate">
+                  <div class="section-header"> Invoice Details</div>
+                  <div class="details">Invoice No: <span>${
+                    submissionData.invoiceNo
+                  }</span></div>
+                  <div class="details">Invoice Date: <span>${
+                    submissionData.date
+                  }</span></div>
+                     <div class="details">Supplier Invoice: <span>${
+                       submissionData.supplierInvoiceNo
+                     }</span></div>
+                  <div class="details">Place of Supply: <span>${
+                    submissionData.placeOfSupply
+                  }</span></div>
+                   <div class="details">Due Date: <span>${
+                     submissionData.dueDate
+                   }</span></div>
+                 
+                </div>
+              </td>
+              <td style="width: 40%;">
+                <div style="text-align:left;" class="transport-details">
+                  <div class="section-header">Transport Details</div>
+                 
+                   
+
+                  <div class="details">Dispatch Through: <span>${
+                    submissionData.dispatchedThrough
+                  }</span></div>
+                   <div class="details">Destination: <span>${
+                     submissionData.destination
+                   }</span></div>
+                   <div class="details">Carrier Name/Agent : <span>${
+                     submissionData.carrierNameAgent
+                   }</span></div>
+                  <div class="details">Bill of Lading/LR-RR No.: <span>${
+                    submissionData.billOfLading
+                  }</span></div>
+                  
+                </div>
+              </td>
+            </tr>
+          </table>
+  
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Item Code</th>
+                <th>Product Name</th>
+                <th>HSN Code</th>
+                <th>UOM</th>
+                <th>QTY</th>
+                <th>Free QTY</th>
+                <th>MRP</th>
+                <th>Unit Cost</th>
+                <th>Scheme Margin %</th>
+                <th>Disccount</th>
+                <th>Taxable Value</th>
+                ${gstHeaders}
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${gstRows}
+            </tbody>
+          </table>
+       
+           <table class="table">
+              <tr>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="banking-details">
+                    <div class="section-header">Banking Details</div>
+                      <div class="details">Bank Name: ${
+                        company?.bank_name || "-"
+                      }</div>
+                    <div class="details">IFSC Code: ${
+                      company?.ifce_code || "-"
+                    }</div>
+                    <div class="details">Account No:${
+                      company?.accountNumber || "-"
+                    }</div>
+                    <div class="details">Account Holder Name: ${
+                      company?.account_holder_name || "-"
+                    }</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                </div>
+                  </div>
+                </td>
+                
+                 
+                 ${paymentModeHTML}
+               
+                
+               
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="amount-details">
+                    <div class="section-header">Amount Details</div>
+                    <div class="details">Gross Total: ₹${
+                      submissionData.grossAmount
+                    }</div>
+                    <div class="details">GST Amount: ₹${
+                      submissionData.GstAmount
+                    }</div>
+                    <div class="details">Additional Charges: ₹${
+                      submissionData.otherCharges
+                    }</div>
+                    <div class="details">Net Total: ₹${
+                      submissionData.netAmount
+                    }</div>
+                    <div class="details">Amount in Words:${numberToWords(
+                      submissionData.netAmount
+                    )}</div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+  
+            <div style="margin-top:100px" class="mt-10">
+                  <div class="section-header">Terms & Condition</div>
+                  <div class="details">Your terms and conditions go here...</div>
+                </div>
+  
+          <div  class="signature">
+         
+          
+            <div>For (Business Name)</div>
+            <div style="margin-top: 20px;">Signature</div>
+          </div>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    printWindow.onafterprint = () => {
+      printWindow.close(); // Close the print window after printing
+
+      // Create a fake event object (optional)
+      const dummyEvent = {
+        preventDefault: () => {},
+      };
+
+      handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
+    };
+
+    // Trigger the print dialog
+    printWindow.print();
+  };
+
   return (
     <>
       <div
@@ -758,18 +1256,6 @@ const PurchesInvoice = () => {
             />
           </div>
 
-          {/* <div>
-            <label className="font-bold">Customer Type</label>
-            <select
-              value={customerType}
-              onChange={handleCustomerTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Retailer">Retailer</option>
-              <option value="Wholesaler">Wholesaler</option>
-            </select>
-          </div> */}
-
           <div>
             <label className="font-bold">Supplier Name</label>
             <select
@@ -787,7 +1273,7 @@ const PurchesInvoice = () => {
               <option value="add-new-customer" className="text-blue-500">
                 + Add New Supplier
               </option>
-              {customer.map((customer) => (
+              {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
@@ -1052,7 +1538,6 @@ const PurchesInvoice = () => {
                     />
                   </td>
                   <td className="border ">
-                    {console.log(rows, "dheeru")}
                     <Select
                       id="product-select"
                       value={
@@ -1093,6 +1578,7 @@ const PurchesInvoice = () => {
                       </div>
                     </div>
                   </td>
+               
                   <td className="border p-1">
                     <input
                       type="text"
@@ -1126,11 +1612,16 @@ const PurchesInvoice = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.freeQty}
+                      value={row.freeQty || ""}
                       onChange={(e) =>
-                        handleRowChange(index, "freeQty", e.target.value)
+                        handleFreeQtyChange(index, e.target.value)
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
                     />
                   </td>
                   <td className="border p-2">
@@ -1162,6 +1653,7 @@ const PurchesInvoice = () => {
                       className="w-full"
                     />
                   </td>{" "}
+                  {console.log(row.schemeMargin, "schemeMargin")}
                   <td className="border p-1">
                     <input
                       type="text"
@@ -1173,64 +1665,34 @@ const PurchesInvoice = () => {
                     />
                   </td>
                   <td className="border">
-                    {customerType === "Wholesaler" && (
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.wholesalerDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px", // Set a small minimum width to ensure visibility
-                            flexBasis: "20px", // Allow it to shrink, but still have a base width
-                            flexShrink: 1, // Allow it to shrink on mobile
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.wholeselerDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    )}
-                    {customerType === "Retailer" && (
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.retailDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px", // Set a small minimum width to ensure visibility
-                            flexBasis: "20px", // Allow it to shrink, but still have a base width
-                            flexShrink: 1, // Allow it to shrink on mobile
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.retailDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    )}
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={row.discountpercent}
+                        onChange={(e) =>
+                          handleRowChange(
+                            index,
+                            "discountpercent",
+                            e.target.value
+                          )
+                        }
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: "20px", // Set a small minimum width to ensure visibility
+                          flexBasis: "20px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}
+                      />
+                      <input
+                        type="text"
+                        value={row.discountRs}
+                        onChange={
+                          (e) =>
+                            handleRowChange(index, "discountRs", e.target.value) // Fix here
+                        }
+                        className="w-full"
+                      />
+                    </div>
                   </td>
                   {salesType === "GST Invoice" && (
                     <>
@@ -1394,7 +1856,7 @@ const PurchesInvoice = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.totalvalue}
+                      value={row.totalValue}
                       onChange={(e) =>
                         handleRowChange(index, "totalValue", e.target.value)
                       }
@@ -1828,15 +2290,7 @@ const PurchesInvoice = () => {
           </button>
           {salesType === "GST Invoice" && (
             <button
-              // onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
-            >
-              Save and Print
-            </button>
-          )}
-          {salesType !== "GST Invoice" && (
-            <button
-              // onClick={handlePrintOnlyWithoutGST}
+              onClick={handlePrintOnly}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
