@@ -11,7 +11,7 @@ const CreateSalesEstimate = () => {
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [userid, setUserId] = useState("");
+  const [userId, setUserId] = useState("");
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
 
@@ -81,19 +81,7 @@ const CreateSalesEstimate = () => {
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageCustomer");
-        setCustomer(response.data.data);
-      } catch (error) {
-        console.error("Error fetching Customers:", error);
-      }
-    };
-
-    fetchCustomer();
-  }, []);
-
+ 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -102,12 +90,22 @@ const CreateSalesEstimate = () => {
         setUserId(auth.user.admin);
       }
     }
-  }, [auth]);
+
+    fetchCustomer();
+  }, [auth,userId]);
+  const fetchCustomer = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      setCustomer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Customers:", error);
+    }
+  };
 
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -116,7 +114,7 @@ const CreateSalesEstimate = () => {
     };
 
     companyData(); // Fetch company data on component mount
-  }, [userid]); // Empty dependency array ensures this only runs once, on mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
  
   const handleCustomerChange = (e) => {
     const value = e.target.value;
@@ -513,7 +511,7 @@ const CreateSalesEstimate = () => {
     try {
       const updatedFormData = {
         ...formData,
-        rows: rows.map((row) => ({
+        rows: rows?.map((row) => ({
           itemCode: row.itemCode,
           productName: row.productName,
           hsnCode: row.hsnCode,
@@ -549,6 +547,7 @@ const CreateSalesEstimate = () => {
         gstType,
 
         netAmount: netAmount.toFixed(2),
+        userId:userId,
       };
 
       const response = await axios.post(
@@ -636,7 +635,7 @@ const CreateSalesEstimate = () => {
    
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -750,7 +749,7 @@ const CreateSalesEstimate = () => {
     const gstRows =
       updatedFormData.gstType === "CGST/SGST"
         ? updatedFormData.rows
-            .map(
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
@@ -769,7 +768,7 @@ const CreateSalesEstimate = () => {
             )
             .join("")
         : updatedFormData.rows
-            .map(
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
@@ -1010,7 +1009,7 @@ const CreateSalesEstimate = () => {
    
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -1109,7 +1108,7 @@ const CreateSalesEstimate = () => {
     }
    
     const gstRows = updatedFormData.rows
-      .map(
+      ?.map(
         (row, index) => `
         <tr>
           <td>${index + 1}</td>
@@ -1410,7 +1409,7 @@ const CreateSalesEstimate = () => {
               <option value="add-new-customer" className="text-blue-500">
                 + Add New Customer
               </option>
-              {customer.map((customer) => (
+              {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
@@ -1661,7 +1660,7 @@ const CreateSalesEstimate = () => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
+              {rows?.map((row, index) => (
                 <tr key={index}>
                   <td className="border p-1">{index + 1}</td>
                   <td className="border">
@@ -1678,7 +1677,7 @@ const CreateSalesEstimate = () => {
                       onChange={(selectedOption) =>
                         handleItemCodeSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.itemCode,
                         value: product.itemCode,
                       }))}
@@ -1714,7 +1713,7 @@ const CreateSalesEstimate = () => {
                       onChange={(selectedOption) =>
                         handleProductSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.productName,
                         value: product.productName,
                       }))}

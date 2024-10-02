@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const SalesEstimateSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  admin: { type: mongoose.Schema.Types.ObjectId, ref: "user" ,required:true,},
   date: { type: String },
   estimateNo: { type: String },
   salesType: { type: String },
@@ -47,4 +47,4 @@ const SalesEstimateSchema = new mongoose.Schema({
   netAmount: { type: String },
 });
 
-export default mongoose.model("SalesEstimateSchema", SalesEstimateSchema);
+export default mongoose.model("salesEstimate", SalesEstimateSchema);

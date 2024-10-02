@@ -28,6 +28,7 @@ export const createSalesEstimateController = async (req, res) => {
       grossAmount,
       GstAmount,
       netAmount,
+      userId,
     } = req.body;
 
     // Validate required fields (basic validation example)
@@ -64,6 +65,7 @@ export const createSalesEstimateController = async (req, res) => {
       grossAmount,
       GstAmount,
       netAmount,
+      admin:userId,
     });
 
     // Save the new sales estimate to the database
@@ -76,7 +78,7 @@ export const createSalesEstimateController = async (req, res) => {
       salesEstimate: savedEstimate,
     });
   } catch (error) {
-    // Handle errors and send an error response
+    console.log(error)
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -86,7 +88,8 @@ export const createSalesEstimateController = async (req, res) => {
 };
 export const getSalesEstimatesController = async (req, res) => {
   try {
-    const salesEstimates = await salesEstimateModel.find();
+    const _id= req.params._id;
+    const salesEstimates = await salesEstimateModel.find({admin:_id});
     res.status(200).json({
       success: true,
       salesEstimates,
