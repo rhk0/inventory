@@ -23,6 +23,7 @@ const PurchesInvoice = () => {
   const [qty, setQty] = useState(0);
   const [margin, setMargin] = useState(0);
   const [gstRatev, setgstRatev] = useState(0);
+  const [auth] = useAuth();
   const [userId, setuserId] = useState("");
 
   const [transportDetails, setTransportDetails] = useState({
@@ -45,9 +46,6 @@ const PurchesInvoice = () => {
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedAddress, setAddress] = useState("");
   const [viewModal, setViewModal] = useState(false);
-  const [auth] = useAuth();
-  const [userid, setUserId] = useState("");
-
   const [formData, setFormData] = useState({
     date: "",
     invoiceNo: "",
@@ -157,7 +155,6 @@ const PurchesInvoice = () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
       setCustomer(response.data.data);
-      console.log(response, "dskfkj");
     } catch (error) {
       console.error("Error fetching suppliers:", error);
     }
@@ -192,7 +189,7 @@ const PurchesInvoice = () => {
     setSelectedCustomer(value);
 
     const selectedCustomerData = customer.find((cust) => cust._id === value);
-
+    setChooseUser(selectedCustomerData);
     setFormData((prev) => ({
       ...prev,
       supplierName: selectedCustomerData ? selectedCustomerData.name : "",
@@ -323,6 +320,7 @@ const PurchesInvoice = () => {
   };
 
   // Function to handle transport detail change
+
   const handleTransportDetailChange = (field, value) => {
     setTransportDetails((prev) => ({ ...prev, [field]: value }));
     setFormData((prev) => ({
@@ -473,8 +471,6 @@ const PurchesInvoice = () => {
       netAmount = grossAmount + GstAmount + totalOtherCharges;
     }
 
-    console.log(netAmount);
-
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -497,7 +493,6 @@ const PurchesInvoice = () => {
       // toast.error("Failed to fetch products. Please try again.");
     }
   };
-
   useEffect(() => {
     fetchProducts();
   }, [auth, userId]);
@@ -550,7 +545,7 @@ const PurchesInvoice = () => {
       // Calculate taxable value based on salesTaxInclude
       const taxableValue = 0;
 
-      // Update the row with the new values
+      // Update the row with the new values, schemeMargin is excluded here since it's handled separately
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
@@ -564,13 +559,8 @@ const PurchesInvoice = () => {
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
         unitCost: selectedProduct.purchasePriceExGst,
+        schemeMargin: updatedRows[rowIndex].schemeMargin || 0, // Existing or initial value
 
-        // discountRs:
-        //   (selectedProduct.maxmimunRetailPrice *
-        //     selectedProduct.discountpercent) /
-        //   100,
-
-        // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
 
         cgstpercent: selectedProduct.gstRate / 2,
@@ -709,10 +699,8 @@ const PurchesInvoice = () => {
       });
 
       if (paymentMethod === "Cash") {
-        console.log("Appending cash details:", cashDetails); // Log for debugging
         submissionData.append("cash", JSON.stringify(cashDetails));
       } else if (paymentMethod === "Bank") {
-        console.log("Appending bank details:", bankDetails); // Log for debugging
         submissionData.append("bank", JSON.stringify(bankDetails));
       }
 
@@ -721,17 +709,11 @@ const PurchesInvoice = () => {
         submissionData.append("documentPath", documentPath);
       }
 
-      for (var pair of submissionData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-
       // Send the formData using axios
       const response = await axios.post(
         "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
         submissionData
       );
-
-      console.log(response);
 
       if (response) {
         toast.success("Purchase invoice created successfully...");
@@ -835,7 +817,7 @@ const PurchesInvoice = () => {
         UnitsCost: row.unitCost,
         schemeMargin: row.schemeMargin,
 
-        taxableValue: row.taxableValue,
+        taxableValue: row.taxableValue.toFixed(2),
         cgstpercent: row.cgstpercent,
         cgstRS: row.cgstRS,
         sgstpercent: row.sgstpercent,
@@ -1221,7 +1203,7 @@ const PurchesInvoice = () => {
           <div  class="signature">
          
           
-            <div>For ${company?.businessName}</div>
+            <div>For (Business Name)</div>
             <div style="margin-top: 20px;">Signature</div>
           </div>
         </body>
@@ -1272,14 +1254,24 @@ const PurchesInvoice = () => {
               />
             </label>
           </div>
-
+          {/* <div>
+            <label className="font-bold">Sales Type</label>
+            <select
+              value={salesType}
+              onChange={handleSalesTypeChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="GST Invoice">GST Invoice</option>
+              <option value="Bill of Supply">Bill of Supply</option>
+            </select>
+          </div> */}
           <div>
             <label className="font-bold">Invoice No.</label>
             <input
               name="invoiceNo"
               type="text"
-              value={invoiceNo}
-              onChange={handleinvoiceNoChange}
+              value={invoiceNo} // Bind to local state
+              onChange={handleinvoiceNoChange} // Update both local and formData states
               className="border p-2 w-full  rounded"
             />
           </div>
@@ -1294,18 +1286,6 @@ const PurchesInvoice = () => {
               className="border p-2 w-full  rounded"
             />
           </div>
-
-          {/* <div>
-            <label className="font-bold">Customer Type</label>
-            <select
-              value={customerType}
-              onChange={handleCustomerTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Retailer">Retailer</option>
-              <option value="Wholesaler">Wholesaler</option>
-            </select>
-          </div> */}
 
           <div>
             <label className="font-bold">Supplier Name</label>
@@ -1589,7 +1569,6 @@ const PurchesInvoice = () => {
                     />
                   </td>
                   <td className="border ">
-                    {console.log(rows, "dheeru")}
                     <Select
                       id="product-select"
                       value={
@@ -1665,11 +1644,16 @@ const PurchesInvoice = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.freeQty}
+                      value={row.freeQty || ""}
                       onChange={(e) =>
-                        handleFreeQtyChange(index, "freeQty", e.target.value)
+                        handleFreeQtyChange(index, e.target.value)
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
                     />
                   </td>
                   <td className="border p-2">
@@ -2337,15 +2321,7 @@ const PurchesInvoice = () => {
           </button>
           {salesType === "GST Invoice" && (
             <button
-              // onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
-            >
-              Save and Print
-            </button>
-          )}
-          {salesType !== "GST Invoice" && (
-            <button
-              // onClick={handlePrintOnlyWithoutGST}
+              onClick={handlePrintOnly}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
@@ -2357,4 +2333,5 @@ const PurchesInvoice = () => {
     </>
   );
 };
+
 export default PurchesInvoice;
