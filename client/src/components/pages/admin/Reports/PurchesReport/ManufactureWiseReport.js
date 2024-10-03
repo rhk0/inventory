@@ -54,7 +54,7 @@ function ManufactureWiseReport() {
 
       const initialTotalValue = allInvoices.reduce(
         (sum, inv) => sum + parseFloat(inv.netAmount),
-        0
+        
       );
       setTotalValue(initialTotalValue);
       setTotalCount(allInvoices.length);
