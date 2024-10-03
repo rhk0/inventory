@@ -3,7 +3,7 @@ import axios from "axios";
 import Modal from "react-modal";
 import { useAuth } from "../../../../context/Auth";
 
-import { FaEye, FaPrint } from "react-icons/fa"; // Import icons from FontAwesome
+import { FaEye, FaPrint } from "react-icons/fa";
 import ViewPurchaseInvoice from "../../modals/ViewPurchaseInvoices";
 
 function ManufactureWiseReport() {
@@ -24,7 +24,8 @@ function ManufactureWiseReport() {
 
   const fetchManufacturer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/ManageManufacturer");
+      const response = await axios.get(`/api/v1/auth/ManageManufacturer/${userId}`);
+      console.log(response, "sldafkj");
       setManufacturer(response.data.data);
     } catch (error) {
       console.error("Error fetching Manufacturer data", error);
@@ -47,14 +48,13 @@ function ManufactureWiseReport() {
       const response = await axios.get(
         "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice"
       );
-      console.log(response)
-      const allInvoices = response.data.response;
+      console.log(response);
+      const allInvoices = response.data.invoices;
       setInvoice(allInvoices);
       setFilteredInvoices(allInvoices);
 
       const initialTotalValue = allInvoices.reduce(
-        (sum, inv) => sum + parseFloat(inv.netAmount),
-        
+        (sum, inv) => sum + parseFloat(inv.netAmount)
       );
       setTotalValue(initialTotalValue);
       setTotalCount(allInvoices.length);
@@ -64,8 +64,8 @@ function ManufactureWiseReport() {
   };
 
   const handleView = (inv) => {
-    setInvoice(inv); // Set the specific invoice being clicked
-    setViewModalOpen(true); // Open the modal
+    setInvoice(inv);
+    setViewModalOpen(true);
   };
 
   const filterInvoices = () => {
@@ -129,7 +129,6 @@ function ManufactureWiseReport() {
   const fetchCustomers = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
-      console.log(response, "ldsf");
       setCustomers(response.data.data);
     } catch (error) {
       console.error("Error fetching customers", error);
@@ -271,8 +270,8 @@ function ManufactureWiseReport() {
                 <tr key={inv._id} className="text-center">
                   <td>{index + 1}</td>
                   <td className="border px-4 py-2 text-nowrap">{inv.date}</td>
-                  <td className="border px-4 py-2">{inv.InvoiceNo}</td>
-                  <td className="border px-4 py-2">{inv.customerName}</td>
+                  <td className="border px-4 py-2">{inv.invoiceNo}</td>
+                  <td className="border px-4 py-2">{inv.supplierName}</td>
                   <td className="border px-4 py-2">{inv.placeOfSupply}</td>
                   <td className="border px-4 py-2">{inv.netAmount}</td>
                   <td className="px-4 py-2 flex gap-5 hide-on-print">
@@ -304,7 +303,7 @@ function ManufactureWiseReport() {
                 Total Value:
               </th>
               <td colSpan="2" className="border px-4 py-2 text-bold font-bold">
-                ₹{totalValue.toFixed(2)}
+                ₹{totalValue}
               </td>
             </tr>
           </tbody>
@@ -330,7 +329,7 @@ function ManufactureWiseReport() {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={invoice}
-          getCustomerName={getCustomerName}
+          // getCustomerName={getCustomerName}
         />
       </Modal>
     </div>

@@ -38,7 +38,7 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
       setorderNo(estimate.orderNo || "");
       setpurchaseType(estimate.purchaseType || "");
       setCustomerType(estimate.customerType || "");
-      setsupplierName(getSupplierName(estimate.customerId) || "");
+      setsupplierName(estimate.supplierName || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
@@ -442,7 +442,7 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
     <div style={{ backgroundColor: "#82ac73" }} className="p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          Edit sales Estimate
+          Edit Purchase Order
         </h1>
         <button
           type="button"
