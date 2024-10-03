@@ -84,6 +84,7 @@ export const createSupplierController = async (req, res) => {
   }
 };
 export const manageSupplierController = async (req, res) => {
+
   try {
     const data = await supplierModel.find({Admin:req.params});
    

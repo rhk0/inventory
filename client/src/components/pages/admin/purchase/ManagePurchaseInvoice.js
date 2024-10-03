@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import ViewEstimateModal from "../modals/ViewEstimateModal";
-import EditEstimateModal from "../modals/EditEstimateModal";
 import Modal from "react-modal";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
-const ManageSalesEstimate = () => {
+import ViewPurchaseInvoices from "../modals/ViewPurchaseInvoices";
+import EditPurchaseInvoice from "../modals/EditPurchaseInvoice";
+
+const ManagePurchaseInvoice = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedEstimate, setSelectedEstimate] = useState(null);
@@ -13,30 +14,25 @@ const ManageSalesEstimate = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [customers, setCustomers] = useState([]);
+
   const [auth] = useAuth();
-  const [userId, setUserId] = useState("");
-  
+  const [userid, setUserId] = useState("");
+
   useEffect(() => {
-    if (auth.user.role === 1) {
-      setUserId(auth.user._id);
-    }
-    if (auth.user.role === 0) {
-      setUserId(auth.user.admin);
-    }
     fetchEstimate();
-    fetchCustomers();
-  }, [auth,userId]);
+  }, []);
 
   const fetchEstimate = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        `/api/v1/salesEstimateRoute/getAllSalesEstimatet/${userId}`
+        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice"
       );
-      setSalesEstimates(response.data.salesEstimates);
+      console.log(response.data.invoices, "purchase invoice");
+      setSalesEstimates(response.data.invoices);
     } catch (error) {
-      setError("Error fetching sales estimates.");
+      setError("Error fetching sales order.");
     } finally {
       setLoading(false);
     }
@@ -53,32 +49,43 @@ const ManageSalesEstimate = () => {
   };
 
   const handleDelete = async (estimateId) => {
-    if (window.confirm("Are you sure you want to delete this estimate?")) {
+    if (window.confirm("Are you sure you want to delete this Invoice?")) {
       setLoading(true);
       try {
         await axios.delete(
-          `/api/v1/salesEstimateRoute/deleteSalesEstimatetByID/${estimateId}`
+          `/api/v1/purchaseInvoiceRoute/deletepurchaseinvoice/${estimateId}`
         );
         fetchEstimate();
       } catch (error) {
-        setError("Error deleting the sales estimate.");
+        setError("Error deleting the Invoice.");
       } finally {
         setLoading(false);
       }
     }
   };
 
-  const fetchCustomers = async () => {
+  const fetchsupplier = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
-      
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
       setCustomers(response.data.data);
+      console.log(response, "dskfkj");
     } catch (error) {
-      console.error("Error fetching customers", error);
+      console.error("Error fetching suppliers:", error);
     }
   };
 
-  const getCustomerName = (customerId) => {
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+    fetchsupplier();
+  }, [auth, userid]);
+
+  const getSupplierName = (customerId) => {
     const customer = customers?.find((c) => c.id === customerId);
     return customer ? customer.name : "Unknown Customer";
   };
@@ -88,12 +95,14 @@ const ManageSalesEstimate = () => {
     setViewModalOpen(false);
   };
 
-  // Filter sales estimates based on search term
-  const filteredEstimates = salesEstimates?.filter(
-    (estimate) =>
-      estimate.estimateNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      estimate.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredEstimates = salesEstimates?.filter((estimate) => {
+    const invoiceNo = estimate.invoiceNo || "";
+    const supplierName = estimate.supplierName || "";
+    return (
+      invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      supplierName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
     <div className="responsive-container p-4">
@@ -101,7 +110,7 @@ const ManageSalesEstimate = () => {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by Estimate number, Customer Name"
+          placeholder="Search by order No, supplier Name"
           className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -120,22 +129,21 @@ const ManageSalesEstimate = () => {
                 {[
                   "No.",
                   "Date",
-                  "Estimate No.",
-                  "Sales Type",
-                  "Customer Name",
+                  "Invoice No",
+                  "Supplier Invoice No",
+                  "Supplier Name",
                   "Place of Supply",
                   "Payment Term",
                   "Due Date",
                   "GST Type",
                   "Product Code",
-
                   "UOM",
                   "MRP",
                   "QTY",
                   // "Rate",
                   "Total Value",
                   "Action",
-                ]?.map((header) => (
+                ].map((header) => (
                   <th
                     key={header}
                     className="border border-gray-300 p-2 text-center"
@@ -146,8 +154,8 @@ const ManageSalesEstimate = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEstimates?.length > 0 ? (
-                filteredEstimates?.map((estimate, index) => (
+              {filteredEstimates.length > 0 ? (
+                filteredEstimates.map((estimate, index) => (
                   <tr
                     key={estimate._id}
                     className="hover:bg-gray-200 transition-all"
@@ -159,14 +167,14 @@ const ManageSalesEstimate = () => {
                       {estimate.date}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.estimateNo}
+                      {estimate.invoiceNo}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.salesType}
+                      {estimate.supplierInvoiceNo}
                     </td>
-                  {  console.log(estimate,"estimate")}
+
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.customerName}
+                      {getSupplierName(estimate.customerId)}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -189,13 +197,12 @@ const ManageSalesEstimate = () => {
                       {estimate.rows?.[0]?.units || "-"}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.mrp || "-"}
+                      {estimate.rows?.[0]?.maxmimunRetailPrice || "-"}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.qty || "-"}
+                      {estimate.rows?.[0]?.quantity || "-"}
                     </td>
 
-  
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.totalValue || "-"}
                     </td>
@@ -233,7 +240,7 @@ const ManageSalesEstimate = () => {
                     colSpan="17"
                     className="text-center p-4 border border-gray-300"
                   >
-                    No sales estimates found.
+                    No order found.
                   </td>
                 </tr>
               )}
@@ -259,11 +266,11 @@ const ManageSalesEstimate = () => {
           },
         }}
       >
-        <ViewEstimateModal
+        <ViewPurchaseInvoices
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-         
+          getSupplierName={getSupplierName}
         />
       </Modal>
 
@@ -284,15 +291,15 @@ const ManageSalesEstimate = () => {
           },
         }}
       >
-        <EditEstimateModal
+        <EditPurchaseInvoice
           isOpen={editModalOpen}
           estimate={selectedEstimate}
           closeModal={closeModal}
-          getCustomerName={getCustomerName}
+          getSupplierName={getSupplierName}
         />
       </Modal>
     </div>
   );
 };
 
-export default ManageSalesEstimate;
+export default ManagePurchaseInvoice;

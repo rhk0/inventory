@@ -33,7 +33,7 @@ const purchesInvoiceSchema = new mongoose.Schema(
         schemeMargin: { type: String },
         discountpercent: { type: String },
         discountRs: { type: String },
-        taxable: { type: Number },
+        taxableValue: { type: Number },
         cgstpercent: { type: Number },
         cgstRS: { type: Number },
         sgstpercent: { type: Number },

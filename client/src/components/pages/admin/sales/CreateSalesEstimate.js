@@ -15,7 +15,6 @@ const CreateSalesEstimate = () => {
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
 
- 
   const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
@@ -109,7 +108,6 @@ const CreateSalesEstimate = () => {
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
-        
       }
     };
 
@@ -630,9 +628,8 @@ const CreateSalesEstimate = () => {
   };
 
   const handlePrintOnly = () => {
-  
     const printWindow = window.open("", "_blank");
-   
+
     const updatedFormData = {
       ...formData,
       rows: rows?.map((row) => ({
@@ -745,7 +742,7 @@ const CreateSalesEstimate = () => {
       updatedFormData.gstType === "CGST/SGST"
         ? `<th>CGST</th><th>SGST</th>`
         : `<th>IGST</th>`;
-        const logoBase64 = 'https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png';
+    const logoBase64 = "https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png";
     const gstRows =
       updatedFormData.gstType === "CGST/SGST"
         ? updatedFormData.rows
@@ -828,7 +825,9 @@ const CreateSalesEstimate = () => {
         <body>
            <div class="header">
           
-            <div class="business-name"> ${company?.businessName || "---------"} </div>
+            <div class="business-name"> ${
+              company?.businessName || "---------"
+            } </div>
               <div> ${company?.address || "---------"} </div>
               <div>GSTIN: ${company?.gstIn || "---------"}</div>
             </div>
@@ -1002,11 +1001,10 @@ const CreateSalesEstimate = () => {
     // Trigger the print dialog
     printWindow.print();
   };
-  
+
   const handlePrintOnlyWithoutGST = () => {
-   
     const printWindow = window.open("", "_blank");
-   
+
     const updatedFormData = {
       ...formData,
       rows: rows?.map((row) => ({
@@ -1106,7 +1104,7 @@ const CreateSalesEstimate = () => {
 
       return words;
     }
-   
+
     const gstRows = updatedFormData.rows
       ?.map(
         (row, index) => `
@@ -1169,7 +1167,9 @@ const CreateSalesEstimate = () => {
 
            <div class="header">
           
-            <div class="business-name"> ${company?.businessName || "---------"} </div>
+            <div class="business-name"> ${
+              company?.businessName || "---------"
+            } </div>
             <div> ${company?.address || "---------"} </div>
             <div>GSTIN: ${company?.gstIn || "---------"}</div>
           </div>
@@ -1339,7 +1339,6 @@ const CreateSalesEstimate = () => {
         style={{ backgroundColor: "##FFFFFF" }}
         className="p-4 responsive-container"
       >
-        
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
           Sales Estimate
