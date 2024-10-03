@@ -20,6 +20,7 @@ const PurchesInvoice = () => {
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
   const [freeQty, setFreeQty] = useState(0);
+  const [qty, setQty] = useState(0);
   const [margin, setMargin] = useState(0);
   const [gstRatev, setgstRatev] = useState(0);
   const [auth] = useAuth();
@@ -113,6 +114,8 @@ const PurchesInvoice = () => {
     Received: "",
     Balance: "",
   });
+  
+
 
   const handleCashDetailsChange = (e) => {
     const { name, value } = e.target;
@@ -329,12 +332,11 @@ const PurchesInvoice = () => {
   const handleRowChange = (rowIndex, field, value) => {
     const updatedRows = [...rows]; // Clone the existing rows array
     const currentRow = updatedRows[rowIndex]; // Get the current row
-
     if (field === "discountpercent") {
       // Calculate discountRs based on discountpercent and maxmimunRetailPrice
       const discountPercent = parseFloat(value) || 0; // Ensure a valid number
       const discountRs =
-        (currentRow.maxmimunRetailPrice * discountPercent) / 100; // Calculate discount in Rs
+        (currentRow.unitCost * discountPercent) / 100; // Calculate discount in Rs
 
       // Update discount percent, discountRs, and taxable value
       currentRow.discountpercent = discountPercent;
@@ -344,9 +346,9 @@ const PurchesInvoice = () => {
 
       const unitCost = Number(currentRow.unitCost);
       const discountRS = Number(currentRow.discountRs);
-      const quantity = Number(currentRow.quantity);
 
-      const taxableValue = (unitCost - discountRS) * quantity;
+      const qt= Number(qty);
+      const taxableValue = (unitCost - discountRS) * qt;
       currentRow.taxableValue = taxableValue.toFixed(2); // Ensure toFixed(2) for consistent format
 
       // Calculate GST amounts (assuming the GST rate is split into CGST and SGST for intra-state transactions)
@@ -368,7 +370,7 @@ const PurchesInvoice = () => {
       // Calculate discount percentage based on discountRs and maxmimunRetailPrice
       const discountRs = parseFloat(value) || 0;
       const discountPercent =
-        (discountRs / currentRow.maxmimunRetailPrice) * 100;
+        (discountRs / currentRow.unitCost) * 100;
 
       // Update discount percent, discountRs, and taxable value
       currentRow.discountpercent = discountPercent.toFixed(2);
@@ -377,8 +379,8 @@ const PurchesInvoice = () => {
       // Update taxable value based on MRP, discountRs, and quantity
       const unitCost = Number(currentRow.unitCost);
       const discountRS = Number(currentRow.discountRs);
-      const quantity = Number(currentRow.quantity);
-      const taxableValue = (unitCost - discountRS) * quantity;
+      const qt = Number(qty);
+      const taxableValue = (unitCost - discountRS) * qt;
       // const taxableValue = (currentRow.maxmimunRetailPrice - discountRs) * currentRow.qty;
       currentRow.taxableValue = taxableValue.toFixed(2);
       currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
@@ -403,6 +405,21 @@ const PurchesInvoice = () => {
     setRows(updatedRows);
   };
 
+  const handlQtyChange = (rowIndex, qty) => {
+    const updatedRows = [...rows];
+
+    const selectedRow = updatedRows[rowIndex];
+
+    setQty(qty);
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      qty: qty,
+     
+    };
+
+    setRows(updatedRows);
+  };
+
   const addRow = () => {
     setRows([
       ...rows,
@@ -410,7 +427,7 @@ const PurchesInvoice = () => {
         itemCode: "",
         productName: "",
         hsnCode: "",
-        quantity: 0,
+        qty: 0,
         units: "",
         maxmimunRetailPrice: 0,
         discountpercent: 0,
@@ -447,7 +464,6 @@ const PurchesInvoice = () => {
     });
 
     let netAmount;
-
     // Check if otherChargesDescriptions includes "discount" to decide calculation
     if (otherChargesDescriptions.toLowerCase().includes("discount")) {
       netAmount = grossAmount + GstAmount - totalOtherCharges;
@@ -467,7 +483,6 @@ const PurchesInvoice = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
-      console.log(response, "response manageproduct ");
       if (response.data && Array.isArray(response.data.data)) {
         setProducts(response.data.data);
       } else {
@@ -482,7 +497,7 @@ const PurchesInvoice = () => {
     fetchProducts();
   }, [auth, userId]);
 
-  
+
 
   const handleFreeQtyChange = (rowIndex, newFreeQty) => {
     const updatedRows = [...rows];
@@ -492,10 +507,10 @@ const PurchesInvoice = () => {
     setFreeQty(newFreeQty);
     // Calculate schemeMargin only if both freeQty and quantity exist
 
-    const totalQuantity = Number(selectedRow.quantity) + Number(newFreeQty);
+    const totalQuantity = Number(qty) + Number(newFreeQty);
 
     const schemeMargin =
-      newFreeQty && selectedRow.quantity
+      newFreeQty && qty
         ? ((newFreeQty / totalQuantity) * 100).toFixed(2)
         : 0;
 
@@ -540,7 +555,7 @@ const PurchesInvoice = () => {
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
-        quantity: selectedProduct.quantity,
+        // quantity: selectedProduct.quantity,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
         unitCost: selectedProduct.purchasePriceExGst,
@@ -598,7 +613,7 @@ const PurchesInvoice = () => {
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
-        quantity: selectedProduct.quantity,
+        // quantity: selectedProduct.quantity,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
         unitCost: selectedProduct.purchasePriceExGst,
@@ -792,7 +807,7 @@ const PurchesInvoice = () => {
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
-        qty: row.quantity,
+        qty: row.qty,
         freeQuantity: row.freeQty,
         units: row.units,
         mrp: row.maxmimunRetailPrice,
@@ -802,7 +817,7 @@ const PurchesInvoice = () => {
         UnitsCost: row.unitCost,
         schemeMargin: row.schemeMargin,
 
-        taxableValue: row.taxableValue.toFixed(2),
+        taxableValue: row.taxableValue,
         cgstpercent: row.cgstpercent,
         cgstRS: row.cgstRS,
         sgstpercent: row.sgstpercent,
@@ -1188,7 +1203,7 @@ const PurchesInvoice = () => {
           <div  class="signature">
          
           
-            <div>For (Business Name)</div>
+            <div>For ${company?.businessName}</div>
             <div style="margin-top: 20px;">Signature</div>
           </div>
         </body>
@@ -1465,17 +1480,17 @@ const PurchesInvoice = () => {
             <thead>
               <tr>
                 <th className="border p-1">#</th>
-                <th className="border text-bold text-sm ">Item Code</th>
-                <th className="border ">Product Name</th>
+                <th className="border text-bold text-sm   text-nowrap">Item Code</th>
+                <th className="border  text-nowrap">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
                 <th className="border p-1">Units</th>
-                <th className="border p-1">Free Qty</th>
+                <th className="border p-1  text-nowrap">Free Qty</th>
                 <th className="border p-1">MRP</th>
-                <th className="border p-1">Unit Cost</th>
-                <th className="border p-1">Scheme Margin</th>
+                <th className="border p-1 text-nowrap">Unit Cost</th>
+                <th className="border p-1  text-nowrap">Scheme Margin</th>
 
-                <th className="border p-1">
+                <th className="border p-1  text-nowrap">
                   Discount
                   <div className="flex justify-between">
                     <span className="">%</span> <span>RS</span>
@@ -1484,7 +1499,7 @@ const PurchesInvoice = () => {
 
                 {salesType === "GST Invoice" && (
                   <>
-                    <th className="border p-2">Taxable Value</th>
+                    <th className="border p-2  text-nowrap">Taxable Value</th>
                     {gstType === "CGST/SGST" && (
                       <>
                         <th className="border p-2">
@@ -1588,9 +1603,11 @@ const PurchesInvoice = () => {
                       menuPosition="fixed"
                     />
                     <div style={{ marginTop: "10px", fontSize: "12px" }}>
-                      <div>Date: {row.expiryDate ? row.expiryDate : "N/A"}</div>
+                       
                       <div>
-                        Batch Number: {row.batchNo ? row.batchNo : "N/A"}
+                      {row.expiryDate ? `Exp Dt: ${row.expiryDate}` : ""}
+                      <br/>
+                      {row.batchNo ? `Batch No: ${row.batchNo}` : ""}
                       </div>
                     </div>
                   </td>
@@ -1607,9 +1624,9 @@ const PurchesInvoice = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.quantity}
-                      onChange={(e) =>
-                        handleRowChange(index, "quantity", e.target.value)
+                      value={row.qty}
+                     onChange={(e) =>
+                        handlQtyChange(index, e.target.value)
                       }
                       className="w-full"
                     />
