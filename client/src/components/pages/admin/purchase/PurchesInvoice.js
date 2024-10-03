@@ -493,25 +493,32 @@ const PurchesInvoice = () => {
   }, [auth, userId]);
 
   const handleFreeQtyChange = (rowIndex, newFreeQty) => {
+    console.log(newFreeQty,"hfgdhghdhf  dfsf dad")
     const updatedRows = [...rows];
-
     const selectedRow = updatedRows[rowIndex];
 
-    setFreeQty(newFreeQty);
+    // Update the free quantity in the selected row
+    const freeQty = parseFloat(newFreeQty) || 0; // Ensure it's a valid number
+
+    // Calculate total quantity using the quantity from the selected row
+    const totalQuantity = Number(selectedRow.quantity) + freeQty;
+
     // Calculate schemeMargin only if both freeQty and quantity exist
-
-    const totalQuantity = Number(qty) + Number(newFreeQty);
-
     const schemeMargin =
-      newFreeQty && qty ? ((newFreeQty / totalQuantity) * 100).toFixed(2) : 0;
+      freeQty && selectedRow.quantity
+        ? ((freeQty / totalQuantity) * 100).toFixed(2)
+        : 0;
+
+    console.log(schemeMargin, "schemeMargin");
 
     // Update the row with the new freeQty and schemeMargin
     updatedRows[rowIndex] = {
       ...selectedRow,
-      freeQty: newFreeQty,
+      freeQty: freeQty,
       schemeMargin: schemeMargin,
     };
 
+    // Update the state with the modified rows
     setRows(updatedRows);
   };
 
@@ -808,7 +815,7 @@ const PurchesInvoice = () => {
         UnitsCost: row.unitCost,
         schemeMargin: row.schemeMargin,
 
-        taxableValue: row.taxableValue.toFixed(2),
+        taxableValue: row.taxableValue,
         cgstpercent: row.cgstpercent,
         cgstRS: row.cgstRS,
         sgstpercent: row.sgstpercent,
@@ -1634,10 +1641,10 @@ const PurchesInvoice = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.freeQty || ""}
+                      value={row.freeQty || ""} // Display freeQty or empty string if undefined
                       onChange={(e) =>
                         handleFreeQtyChange(index, e.target.value)
-                      }
+                      } // Call your handler
                       className="w-full flex-grow"
                       style={{
                         minWidth: "70px",
@@ -1936,7 +1943,7 @@ const PurchesInvoice = () => {
           </svg>
           Add New Row
         </button>
-
+        {/* 
         <button
           onClick={() => setIsModalOtherChargesOpen(true)}
           className=" text-blue-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
@@ -1981,6 +1988,57 @@ const PurchesInvoice = () => {
               onChange={(e) => setdocumentPath(e.target.files[0])} // Assuming you have setdocumentPath in your state
             />
           </label>
+        </div> */}
+        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+          {/* First button in a div */}
+          <div>
+            <button
+              onClick={() => setIsModalOtherChargesOpen(true)}
+              className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add Other Charges
+            </button>
+          </div>
+
+          {/* Second button in a div */}
+          <div>
+            <label className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>{" "}
+              Upload Document
+              <input
+                type="file"
+                className="hidden"
+                onChange={(e) => setdocumentPath(e.target.files[0])}
+              />
+            </label>
+          </div>
         </div>
 
         {isModalOtherChargesOpen && (
@@ -2045,7 +2103,7 @@ const PurchesInvoice = () => {
               className=" text-black border p-1 w-full  rounded"
             />
           </div>
-          <div className="w-full lg:w-1/3">
+          <div className="w-full lg:w-1/3 mt-5">
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 Gross Amount

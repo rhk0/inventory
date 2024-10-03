@@ -2,34 +2,31 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
-import Select from "react-select";
 import { useAuth } from "../../../context/Auth.js";
-
-import Modal from "react-modal";
 
 const PurchesReturn = () => {
   const [documentPath, setdocumentPath] = useState(null);
-
+  const [purchaseInvoice, setPurchaseInvoice] = useState([]);
   const [date, setDate] = useState("");
+  const [gstRatev, setgstRatev] = useState(0);
   const [debitNoteNo, setdebitNoteNo] = useState("");
   const [salesType, setSalesType] = useState("GST Invoice");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-
+  const [selectedInvoiceNo, setSelectedInvoiceNo] = useState("");
+  const [freeQty, setFreeQty] = useState(0);
+  const [qty, setQty] = useState(0);
   const [billingAddress, setBillingAddress] = useState("");
   const [selectPurchase, setselectPurchase] = useState("No");
   const [reasonForReturn, setreasonForReturn] = useState("");
-
   const [gstType, setGstType] = useState("CGST/SGST");
   const [rows, setRows] = useState([]);
   const [paymentTerm, setPaymentTerm] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
   const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState("");
-
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedAddress, setAddress] = useState("");
-  const [viewModal, setViewModal] = useState(false);
   const [auth] = useAuth();
   const [userid, setUserId] = useState("");
 
@@ -76,69 +73,15 @@ const PurchesReturn = () => {
     otherCharges: "",
     netAmount: "",
   });
-
-  const [cashDetails, setCashDetails] = useState({
-    Amount: "",
-    Advance: "",
-    Received: "",
-    Balance: "",
-  });
-  const [bankDetails, setBankDetails] = useState({
-    bank: "",
-    selectBankType: "",
-    transactionDate: "",
-    chequeNo: "",
-    transactionNo: "",
-    Amount: "",
-    Advance: "",
-    Received: "",
-    Balance: "",
-  });
-
-  const handleCashDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setCashDetails((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleBankDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setBankDetails((prev) => ({
-      ...prev,
-      [name]: value, // Update the corresponding field in bankDetails
-    }));
-  };
-
-  const [paymentMethod, setPaymentMethod] = useState("");
-
-  const handlePaymentMethodChange = (e) => {
-    setPaymentMethod(e.target.value);
-  };
-  const [paymentType, setPaymentType] = useState("");
-  const [subPaymentType, setSubPaymentType] = useState("");
-
-  const handlePaymentTypeChange = (e) => {
-    setPaymentType(e.target.value);
-    setSubPaymentType(""); // Reset subPaymentType when paymentType changes
-  };
-
-  const handleSubPaymentTypeChange = (e) => {
-    const { value } = e.target;
-    setSubPaymentType(value); // Set the subPaymentType state
-    setBankDetails((prev) => ({ ...prev, selectBankType: value })); // Update bankDetails
-  };
-
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
-
   const fetchsupplier = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
       setCustomer(response.data.data);
-      console.log(response, "dskfkj");
     } catch (error) {
       console.error("Error fetching suppliers:", error);
     }
   };
-
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -149,27 +92,14 @@ const PurchesReturn = () => {
     }
     fetchsupplier();
   }, [auth, userid]);
-
-  const handleCustomerChange = (e) => {
-    const value = e.target.value;
-    setSelectedCustomer(value);
-
-    const selectedCustomerData = customer.find((cust) => cust._id === value);
-
-    setFormData((prev) => ({
-      ...prev,
-      supplierName: selectedCustomerData ? selectedCustomerData.name : "",
-      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
-      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
-    }));
-
-    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
-    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
-  };
-
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
-    setOtherCharges(newCharges);
+    if (newCharges === 0) {
+      const fetchchrges = formData.otherCharges;
+      setOtherCharges(fetchchrges);
+    } else {
+      setOtherCharges(newCharges);
+    }
 
     setFormData((prev) => ({
       ...prev,
@@ -220,10 +150,8 @@ const PurchesReturn = () => {
       gstType: value,
     }));
   };
-
   // State for modal visibility
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
-
   const handledebitNoteNoChange = (e) => {
     const value = e.target.value;
     setdebitNoteNo(value);
@@ -232,7 +160,6 @@ const PurchesReturn = () => {
       debitNoteNo: value,
     }));
   };
-
   const handleBillingAddressChange = (e) => {
     const value = e.target.value;
     setBillingAddress(selectedAddress);
@@ -241,15 +168,6 @@ const PurchesReturn = () => {
       billingAddress: value,
     }));
   };
-  const handleselectPurchaseChange = (e) => {
-    const value = e.target.value;
-    setselectPurchase(value);
-    setFormData((prev) => ({
-      ...prev,
-      selectPurchase: value,
-    }));
-  };
-
   const handleReasonOfreturn = (e) => {
     const value = e.target.value;
     setreasonForReturn(value);
@@ -259,50 +177,114 @@ const PurchesReturn = () => {
     }));
   };
 
-  const handleRowChange = (index, field, value) => {
-    const newRows = [...rows];
-    const newValue = parseFloat(value) || 0;
-    newRows[index] = { ...newRows[index], [field]: newValue };
+  const handleRowChange = (rowIndex, field, value) => {
+    const updatedRows = [...rows]; // Clone the existing rows array
+    const currentRow = updatedRows[rowIndex]; // Get the current row
 
-    // Calculate taxable value, GST, and total value
-    const { qty, mrp, discount } = newRows[index];
-    const taxableValue = qty * mrp - discount;
-    const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-    const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-    const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
-    const totalValue = taxableValue + cgst + sgst + igst;
+    // Update discountpercent based on user input
+    if (field === "discountpercent") {
+      const discountPercent = parseFloat(value) || 0; // Ensure a valid number
+      currentRow.discountpercent = discountPercent;
 
-    newRows[index] = {
-      ...newRows[index],
-      taxableValue,
-      cgst,
-      sgst,
-      igst,
-      totalValue,
-    };
-    setRows(newRows);
+      // Recalculate taxable value and GST based on the current quantity
+      const unitCost = Number(currentRow.unitCost);
+      const discountRs = (unitCost * discountPercent) / 100; // Calculate discount in Rs
+      const taxableValue = (unitCost - discountRs) * Number(currentRow.qty); // Calculate taxable value based on current qty
+
+      // Update the currentRow values
+      currentRow.discountRs = discountRs.toFixed(2);
+      currentRow.taxableValue = taxableValue.toFixed(2);
+
+      const gstRate = Number(gstRatev) || 0;
+      const cgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const sgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const igstRS = (taxableValue * gstRate) / 100;
+
+      currentRow.cgstRS = cgstRS.toFixed(2);
+      currentRow.sgstRS = sgstRS.toFixed(2);
+      currentRow.igstRS = igstRS.toFixed(2);
+
+      // Calculate total value
+      const totalGST =
+        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
+      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
+    }
+
+    // Update the rows state
+    updatedRows[rowIndex] = currentRow;
+    setRows(updatedRows);
   };
-
-  const addRow = () => {
-    setRows([
-      ...rows,
-      {
-        itemCode: "",
-        productName: "",
-        hsnCode: "",
-        quantity: 0,
-        units: "",
-        maxmimunRetailPrice: 0,
-        discountpercent: 0,
-        discountRs: 0,
-        taxableValue: 0,
-        cgst: 0,
-        sgst: 0,
-        igst: 0,
-        unitCost: 0,
-        totalValue: 0,
-      },
-    ]);
+  const handleFreeQtyChange = (rowIndex, newFreeQty) => {
+    const updatedRows = [...rows];
+    const selectedRow = updatedRows[rowIndex];
+  
+    const quantity = Number(selectedRow.quantity) || 0; // Use quantity from the row
+  
+    const totalQuantity = quantity + Number(newFreeQty);
+    const schemeMargin = totalQuantity > 0 ? ((newFreeQty / totalQuantity) * 100).toFixed(2) : 0;
+  
+    // Update the row with the new freeQty and schemeMargin
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      freeQty: newFreeQty,
+      schemeMargin: schemeMargin,
+    };
+  
+    setRows(updatedRows);
+  };
+  const handlQtyChange = (rowIndex, newQty) => {
+    const updatedRows = [...rows]; // Create a copy of the rows array
+    const selectedRow = updatedRows[rowIndex]; // Get the current row
+  
+    const quantity = parseFloat(newQty) || 0; // Ensure it's a valid number
+  
+    // Update quantity in the selected row
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      quantity, // Update the quantity
+    };
+  
+    // Calculate scheme margin as well if free quantity is set
+    if (selectedRow.freeQty !== null) {
+      const totalQuantity = quantity + Number(selectedRow.freeQty);
+      const schemeMargin = totalQuantity > 0 ? ((selectedRow.freeQty / totalQuantity) * 100).toFixed(2) : 0;
+  
+      updatedRows[rowIndex].schemeMargin = schemeMargin;
+    }
+  
+    // Rest of the calculations remain the same...
+    // Ensure unitCost and discountpercent exist before calculations
+    const unitCost = Number(selectedRow.unitCost) || 0;
+    const discountPercent = Number(selectedRow.discountpercent) || 0;
+  
+    // Calculate discountRs
+    const discountRs = (unitCost * discountPercent) / 100;
+  
+    // Calculate taxableValue
+    const taxableValue = (unitCost - discountRs) * quantity;
+  
+    // Calculate GST amounts based on the taxableValue
+    const gstRate = Number(gstRatev) || 0;
+    const cgstRS = (taxableValue * (gstRate / 2)) / 100;
+    const sgstRS = (taxableValue * (gstRate / 2)) / 100;
+    const igstRS = (taxableValue * gstRate) / 100;
+  
+    // Update the currentRow values
+    updatedRows[rowIndex] = {
+      ...updatedRows[rowIndex],
+      discountRs: discountRs.toFixed(2),
+      taxableValue: taxableValue.toFixed(2),
+      cgstRS: cgstRS.toFixed(2),
+      sgstRS: sgstRS.toFixed(2),
+      igstRS: igstRS.toFixed(2),
+    };
+  
+    // Calculate total value including GST
+    const totalGST = gstType === "CGST/SGST" ? parseFloat(cgstRS) + parseFloat(sgstRS) : parseFloat(igstRS);
+    updatedRows[rowIndex].totalValue = (taxableValue + totalGST).toFixed(2);
+  
+    // Update state with new rows
+    setRows(updatedRows);
   };
 
   const removeRow = (index) => {
@@ -314,22 +296,40 @@ const PurchesReturn = () => {
   const calculateTotals = () => {
     let grossAmount = 0;
     let GstAmount = 0;
+    let totalOtherCharges = parseFloat(otherCharges) || 0;
 
-    rows.forEach((rows) => {
-      grossAmount += rows.taxableValue;
-      GstAmount += rows.cgstRS + rows.sgstRS;
+    // Loop through each row to calculate grossAmount and GstAmount
+    rows.forEach((row) => {
+      const taxableValue = parseFloat(row.taxableValue) || 0;
+      const cgstRS = parseFloat(row.cgstRS) || 0;
+      const sgstRS = parseFloat(row.sgstRS) || 0;
+
+      grossAmount += taxableValue;
+      GstAmount += cgstRS + sgstRS; // Total GST amount for each row
     });
 
     let netAmount;
 
     // Check if otherChargesDescriptions includes "discount"
-    if (otherChargesDescriptions.includes("discount")) {
-      netAmount = grossAmount + GstAmount - otherCharges;
+    if (
+      otherChargesDescriptions.toLowerCase().includes("discount") ||
+      formData.otherChargesDescriptions === "discount"
+    ) {
+      if (formData.otherChargesDescriptions === "discount") {
+        netAmount =
+          grossAmount + GstAmount - parseFloat(formData.otherCharges || 0);
+      } else {
+        netAmount = grossAmount + GstAmount - totalOtherCharges;
+      }
     } else {
-      netAmount = grossAmount + GstAmount + otherCharges;
+      // If no discount, check the presence of otherCharges from either state or formData
+      if (totalOtherCharges === 0) {
+        netAmount =
+          grossAmount + GstAmount + parseFloat(formData.otherCharges || 0);
+      } else {
+        netAmount = grossAmount + GstAmount + totalOtherCharges;
+      }
     }
-
-    console.log(netAmount);
 
     return { grossAmount, GstAmount, netAmount };
   };
@@ -340,164 +340,116 @@ const PurchesReturn = () => {
 
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
-        console.log(response, "dkfjk");
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        // toast.error("Failed to fetch products. Please try again.");
-      }
-    };
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("/api/v1/auth/manageproduct");
 
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data);
+      } else {
+        console.error("Unexpected response structure:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // toast.error("Failed to fetch products. Please try again.");
+    }
+  };
+  const fetchPurchaseInvoice = async () => {
+    try {
+      const response = await axios.get(
+        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice"
+      );
+
+      if (response.data.invoices) {
+        setPurchaseInvoice(response.data.invoices);
+      } else {
+        console.error("Unexpected response structure:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // toast.error("Failed to fetch products. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    fetchPurchaseInvoice();
     fetchProducts();
   }, []);
 
-  const handleProductSelect = (rowIndex, selectedProductName) => {
-    const selectedProduct = products.find(
-      (product) => product.productName === selectedProductName
+  const handleInvoiceSelect = (selectedInvoiceNo) => {
+    const selectedInvoice = purchaseInvoice.find(
+      (invoice) => invoice.invoiceNo === selectedInvoiceNo
     );
+    if (selectedInvoice) {
+      // Update the rows state with the selected invoice rows
+      console.log(selectedInvoice, "selectedInvoice");
 
-    if (selectedProduct) {
-      const updatedRows = [...rows];
+      const updatedRows = selectedInvoice.rows.map((invoiceRow) => {
+        const { igstpercent, ...rest } = invoiceRow; // Destructure igstpercent
 
-      // Calculate retail price
-      const retailPrice =
-        selectedProduct.maxmimunRetailPrice -
-        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100;
+        // Store igstpercent in state here
+        setgstRatev(igstpercent); // Setting igstpercent in state
 
-      // Determine if sales tax is included from the fetched product data
-      const salesTaxInclude = selectedProduct.salesTaxInclude;
+        return {
+          // Return the rest of the properties
+          ...rest, // Spread operator to include all other properties
+        };
+      });
+    }
+ console.log(selectedInvoice,"selectedInvoice")
+    if (selectedInvoice) {
+      // Update the rows state with the selected invoice rows
+      console.log(selectedInvoice, "selectedInvoice");
+      const updatedRows = selectedInvoice.rows.map((invoiceRow) => ({
+        itemCode: invoiceRow.itemCode,
+        productName: invoiceRow.productName,
+        hsnCode: invoiceRow.hsnCode,
+        units: invoiceRow.units,
+        quantity: invoiceRow.qty,
+        freeQty: invoiceRow.freeQty,
+        discountRs: invoiceRow.discountRs,
+        discountpercent: invoiceRow.discountpercent,
+        schemeMargin: invoiceRow.schemeMargin,
+        maxmimunRetailPrice: invoiceRow.maxmimunRetailPrice,
+        unitCost: invoiceRow.unitCost,
+        taxableValue: invoiceRow.taxableValue,
+        cgstpercent: invoiceRow.cgstpercent,
+        sgstpercent: invoiceRow.sgstpercent,
+        igstpercent: invoiceRow.igstpercent,
+        cgstRS: invoiceRow.cgstRS,
+        sgstRS: invoiceRow.sgstRS,
+        igstRS: invoiceRow.igstRS,
+        totalValue: invoiceRow.totalValue,
+      }));
 
-      // Calculate taxable value based on salesTaxInclude
-      const taxableValue = salesTaxInclude
-        ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-          (100 + Number(selectedProduct.gstRate))
-        : retailPrice * selectedProduct.quantity;
+      // Update formData with non-row fields from the selected invoice
+      setFormData((prev) => ({
+        ...prev,
+        supplierName: selectedInvoice.supplierName,
+        placeOfSupply: selectedInvoice.placeOfSupply,
+        paymentTerm: selectedInvoice.paymentTerm,
+        dueDate: selectedInvoice.dueDate,
+        billingAddress: selectedInvoice.billingAddress,
+        reverseCharge: selectedInvoice.reverseCharge,
+        gstType: selectedInvoice.gstType,
+        otherCharges: selectedInvoice.otherCharges,
+        otherChargesDescriptions: selectedInvoice.otherChargesDescriptions,
+        grossAmount: selectedInvoice.grossAmount,
+        GstAmount: selectedInvoice.GstAmount,
+        netAmount: selectedInvoice.netAmount,
+        narration: selectedInvoice.narration,
+      }));
 
-      // Update the row with the new values
-      updatedRows[rowIndex] = {
-        ...updatedRows[rowIndex],
-        itemCode: selectedProduct.itemCode,
-        hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
-        productName: selectedProduct.productName,
-        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
-          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-          : "0.00",
-        quantity: selectedProduct.quantity,
-        // discountpercent: selectedProduct.discountpercent,
-        expiryDate: selectedProduct.expiryDate,
-        batchNo: selectedProduct.batchNo,
-        unitCost: selectedProduct.purchasePriceExGst,
-
-        // discountRs:
-        //   (selectedProduct.maxmimunRetailPrice *
-        //     selectedProduct.discountpercent) /
-        //   100,
-
-        // taxable value based on salesTaxInclude
-        taxableValue: taxableValue,
-
-        cgstpercent: selectedProduct.gstRate / 2,
-        sgstpercent: selectedProduct.gstRate / 2,
-        igstpercent: selectedProduct.gstRate,
-
-        cgstRS: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
-        ),
-        sgstRS: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
-        ),
-        igstRS: parseFloat(
-          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
-        ),
-
-        totalValue: (
-          taxableValue +
-          (taxableValue * selectedProduct.gstRate) / 100
-        ).toFixed(2),
-      };
+      // Update the rows state
 
       setRows(updatedRows);
+    } else {
+      console.error("Selected invoice not found.");
     }
   };
-
-  const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
-    const selectedProduct = products.find(
-      (product) => product.itemCode === selectedItemCode
-    );
-
-    if (selectedProduct) {
-      const updatedRows = [...rows];
-
-      // Calculate retail price and taxable value based on the product details
-      const retailPrice =
-        selectedProduct.maxmimunRetailPrice -
-        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100;
-
-      const taxableValue = selectedProduct.salesTaxInclude
-        ? (retailPrice * selectedProduct.quantity * 100) /
-          (100 + selectedProduct.gstRate)
-        : retailPrice * selectedProduct.quantity;
-
-      updatedRows[rowIndex] = {
-        ...updatedRows[rowIndex],
-        itemCode: selectedProduct.itemCode,
-        productName: selectedProduct.productName,
-        hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
-        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
-          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-          : "0.00",
-        quantity: selectedProduct.quantity,
-        expiryDate: selectedProduct.expiryDate,
-        batchNo: selectedProduct.batchNo,
-        unitCost: selectedProduct.purchasePriceExGst,
-        // discountpercent: selectedProduct.discountpercent,
-        // discountRs: (
-        //   (selectedProduct.maxmimunRetailPrice *
-        //     selectedProduct.discountpercent) /
-        //   100
-        // ).toFixed(2),
-        // retailDiscount: selectedProduct.retailDiscount,
-        // retailDiscountRS: (
-        //   (selectedProduct.maxmimunRetailPrice *
-        //     selectedProduct.retailDiscount) /
-        //   100
-        // ).toFixed(2),
-        taxableValue: taxableValue,
-        cgstpercent: selectedProduct.gstRate / 2,
-        sgstpercent: selectedProduct.gstRate / 2,
-        igstpercent: selectedProduct.gstRate,
-
-        cgstRS: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
-        ),
-        sgstRS: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
-        ),
-        igstRS: parseFloat(
-          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
-        ),
-
-        totalValue: (
-          taxableValue +
-          (taxableValue * selectedProduct.gstRate) / 100
-        ).toFixed(2),
-      };
-
-      setRows(updatedRows);
-    }
-  };
+  useEffect(() => {
+    console.log(formData.igstpercent, "formData.igstpercent");
+  }, [formData.igstpercent, 3000]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -506,14 +458,11 @@ const PurchesReturn = () => {
       [name]: value,
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       // Create a FormData instance
       const submissionData = new FormData();
-
       // Append non-file form data to formData
       const fields = {
         date,
@@ -534,42 +483,30 @@ const PurchesReturn = () => {
         otherCharges: otherCharges.toFixed(2),
         netAmount: netAmount.toFixed(2),
       };
-
       // Append all fields to formData
       Object.keys(fields).forEach((key) => {
         if (fields[key]) {
           submissionData.append(key, fields[key]);
         }
       });
-
       // Append each row individually
       rows.forEach((row, index) => {
         Object.keys(row).forEach((key) => {
           submissionData.append(`rows[${index}][${key}]`, row[key]);
         });
       });
-
       // If a document file has been selected, append it to the FormData
       if (documentPath) {
         submissionData.append("documentPath", documentPath);
       }
-
-      for (var pair of submissionData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-
       // Send the formData using axios
       const response = await axios.post(
         "/api/v1/purchesReturnRoute/createpurchasereturn",
         submissionData
       );
-
-      console.log(response);
-
       if (response) {
         toast.success("Purchase invoice created successfully...");
       }
-
       // Reset your form data and state
       resetForm();
     } catch (error) {
@@ -622,32 +559,11 @@ const PurchesReturn = () => {
       cash: {},
       bank: {},
     });
-
-    setCashDetails({ amount: "", advance: "", received: "", balance: "" });
-    setBankDetails({
-      selectBankType: "",
-      transactionDate: "",
-      chequeNo: "",
-      transactionNo: "",
-      amount: "",
-      advance: "",
-      received: "",
-      balance: "",
-    });
-
     // Reset additional states as needed...
     setDate("");
     setSelectedCustomer("");
     // Add any other state resets...
   };
-
-  const openViewModal = (suppliers) => {
-    setViewModal(true);
-  };
-  const closeModal = () => {
-    setViewModal(false);
-  };
-
   return (
     <>
       <div
@@ -658,31 +574,19 @@ const PurchesReturn = () => {
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
           Purchase Return
         </h1>
+        {console.log(formData, "formdata")}
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">Supplier Name</label>
-            <select
-              className="w-full p-2 border border-gray-300 rounded"
-              value={selectedCustomer}
+            <input
+              type="text"
+              name="supplierName"
+              value={formData.supplierName}
               onChange={(e) => {
-                if (e.target.value === "add-new-customer") {
-                  window.location.href = "/admin/CreateSupplier";
-                } else {
-                  handleCustomerChange(e);
-                }
+                handleChange(e);
               }}
-            >
-              <option value="">Select Supplier</option>
-              <option value="add-new-customer" className="text-blue-500">
-                + Add New Supplier
-              </option>
-              {customer?.map((customer) => (
-                <option key={customer._id} value={customer._id}>
-                  {customer.name}
-                </option>
-              ))}
-              {/* Add Customer option at the end of the list */}
-            </select>
+              className="border p-2 w-full   rounded"
+            />
           </div>
 
           <div>
@@ -705,35 +609,10 @@ const PurchesReturn = () => {
             <input
               name="debitNoteNo"
               type="text"
-              value={debitNoteNo} // Bind to local state
+              value={formData.debitNoteNo} // Bind to local state
               onChange={handledebitNoteNoChange} // Update both local and formData states
               className="border p-2 w-full  rounded"
             />
-          </div>
-
-          <div>
-            <label className="font-bold">
-              Payment Term (days)
-              <input
-                type="text"
-                name="paymentTerm"
-                value={paymentTerm}
-                onChange={handlePaymentTermChange}
-                className="border p-2 w-full  rounded"
-              />
-            </label>
-          </div>
-
-          <div>
-            <label className="font-bold">
-              Due Date
-              <input
-                name="dueDate"
-                type="text"
-                value={dueDate}
-                className="border p-2 w-full text-black rounded"
-              />
-            </label>
           </div>
         </div>
 
@@ -742,21 +621,28 @@ const PurchesReturn = () => {
             <label className="font-bold">Billing Address</label>
             <textarea
               name="billingAddress"
-              value={billingAddress}
+              value={formData.billingAddress}
               onChange={handleBillingAddressChange}
               className="border p-2 w-full  rounded"
             />
           </div>
           {/* Reverse Charge Section */}
-          <div className="mb-4 w-full">
+          <div className="mb-4">
             <label className="font-bold">Select Purchase</label>
             <select
-              value={selectPurchase}
-              onChange={handleselectPurchaseChange}
-              className="border p-2 w-full  rounded"
+              value={selectedInvoiceNo}
+              onChange={(e) => {
+                setSelectedInvoiceNo(e.target.value); // Set the selected invoice number in state
+                handleInvoiceSelect(e.target.value); // Trigger the invoice select function
+              }}
+              className="border p-2 w-full rounded"
             >
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
+              <option value="">Select Invoice</option>
+              {purchaseInvoice.map((invoice) => (
+                <option key={invoice._id} value={invoice.invoiceNo}>
+                  {invoice.invoiceNo}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -792,17 +678,19 @@ const PurchesReturn = () => {
             <thead>
               <tr>
                 <th className="border p-1">#</th>
-                <th className="border text-bold text-sm ">Item Code</th>
-                <th className="border ">Product Name</th>
+                <th className="border text-bold text-sm text-nowrap ">
+                  Item Code
+                </th>
+                <th className="border text-nowrap  pl-5 pr-5">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
                 <th className="border p-1">Units</th>
-                <th className="border p-1">Free Qty</th>
-                <th className="border p-1">MRP</th>
-                <th className="border p-1">Unit Cost</th>
-                <th className="border p-1">Scheme Margin</th>
+                <th className="border p-1 text-nowrap">Free Qty</th>
+                <th className="border p-1 text-nowrap">MRP</th>
+                <th className="border p-1 text-nowrap">Unit Cost</th>
+                <th className="border p-1 text-nowrap">Scheme Margin</th>
 
-                <th className="border p-1">
+                <th className="border p-1 text-nowrap">
                   Discount
                   <div className="flex justify-between">
                     <span className="">%</span> <span>RS</span>
@@ -846,81 +734,24 @@ const PurchesReturn = () => {
                 <tr key={index}>
                   <td className="border p-1">{index + 1}</td>
                   <td className="border">
-                    <Select
-                      id="itemcode-select"
-                      value={
-                        rows[index].itemCode
-                          ? {
-                              label: rows[index].itemCode,
-                              value: rows[index].itemCode,
-                            }
-                          : null
+                    <input
+                      type="text"
+                      value={row.itemCode}
+                      onChange={(e) =>
+                        handleRowChange(index, "hsnCode", e.target.value)
                       }
-                      onChange={(selectedOption) =>
-                        handleItemCodeSelect(index, selectedOption.value)
-                      }
-                      options={products.map((product) => ({
-                        label: product.itemCode,
-                        value: product.itemCode,
-                      }))}
-                      isSearchable={true}
-                      placeholder="Select"
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          minWidth: "120px",
-                          maxWidth: "300px",
-                          fontSize: "14px",
-                          minHeight: "34px",
-                          height: "34px",
-                        }),
-                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                      }}
-                      menuPortalTarget={document.body}
-                      menuPosition="fixed"
+                      className="w-full"
                     />
                   </td>
                   <td className="border ">
-                    {console.log(rows, "dheeru")}
-                    <Select
-                      id="product-select"
-                      value={
-                        rows[index].productName
-                          ? {
-                              label: rows[index].productName,
-                              value: rows[index].productName,
-                            }
-                          : null
+                    <input
+                      type="text"
+                      value={row.productName}
+                      onChange={(e) =>
+                        handleRowChange(index, "hsnCode", e.target.value)
                       }
-                      onChange={(selectedOption) =>
-                        handleProductSelect(index, selectedOption.value)
-                      }
-                      options={products.map((product) => ({
-                        label: product.productName,
-                        value: product.productName,
-                      }))}
-                      isSearchable={true}
-                      placeholder="Select a Product"
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          minWidth: "200px",
-                          maxWidth: "500px",
-                          fontSize: "14px",
-                          minHeight: "34px",
-                          height: "34px",
-                        }),
-                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                      }}
-                      menuPortalTarget={document.body}
-                      menuPosition="fixed"
+                      className="w-full"
                     />
-                    <div style={{ marginTop: "10px", fontSize: "12px" }}>
-                      <div>Date: {row.expiryDate ? row.expiryDate : "N/A"}</div>
-                      <div>
-                        Batch Number: {row.batchNo ? row.batchNo : "N/A"}
-                      </div>
-                    </div>
                   </td>
                   <td className="border p-1">
                     <input
@@ -935,10 +766,8 @@ const PurchesReturn = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.quantity}
-                      onChange={(e) =>
-                        handleRowChange(index, "quantity", e.target.value)
-                      }
+                      value={rows[index]?.quantity > 0 ? rows[index].quantity : ''} // Show quantity if > 0, otherwise empty
+                      onChange={(e) => handlQtyChange(index, e.target.value)} // Call your handler
                       className="w-full"
                     />
                   </td>
@@ -955,9 +784,9 @@ const PurchesReturn = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.freeQty}
+                      value={row.freeQty || ""}
                       onChange={(e) =>
-                        handleRowChange(index, "freeQty", e.target.value)
+                        handleFreeQtyChange(index, e.target.value)
                       }
                       className="w-full"
                     />
@@ -1038,7 +867,7 @@ const PurchesReturn = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue.toFixed(2)}
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -1137,7 +966,7 @@ const PurchesReturn = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue.toFixed(2)}
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -1232,7 +1061,7 @@ const PurchesReturn = () => {
           </table>
         </div>
 
-        <button
+        {/* <button
           onClick={addRow}
           className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
         >
@@ -1251,52 +1080,54 @@ const PurchesReturn = () => {
             />
           </svg>
           Add New Row
-        </button>
-
-        <button
-          onClick={() => setIsModalOtherChargesOpen(true)}
-          className=" text-blue-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-        >
-          <svg
-            xmlns="http//www.w3.org/2000/svg"
-            className="h-4 w-4 "
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add Other Charges
-        </button>
-
-        <div className="gap-2">
-          <label className=" w-1/3 mb-2 text-white mt-8 text-md p-2 mt-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        </button> */}
+        <div className=" mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+          <div className="">
+            <button
+              onClick={() => setIsModalOtherChargesOpen(true)}
+              className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add Other Charges
+            </button>
+          </div>
+          <div className="">
+            <label className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Upload Document
+              <input
+                type="file"
+                className="hidden"
+                onChange={(e) => setdocumentPath(e.target.files[0])} // Assuming you have setdocumentPath in your state
               />
-            </svg>{" "}
-            Upload Document
-            <input
-              type="file"
-              className="hidden"
-              onChange={(e) => setdocumentPath(e.target.files[0])} // Assuming you have setdocumentPath in your state
-            />
-          </label>
+            </label>
+          </div>
         </div>
 
         {isModalOtherChargesOpen && (
@@ -1361,7 +1192,7 @@ const PurchesReturn = () => {
               className=" text-black border p-1 w-full  rounded"
             />
           </div>
-          <div className="w-full lg:w-1/3">
+          <div className="w-full lg:w-1/3 mt-5">
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 Gross Amount
@@ -1387,10 +1218,12 @@ const PurchesReturn = () => {
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                {otherChargesDescriptions}
+                {otherChargesDescriptions ||
+                  formData.otherChargesDescriptions ||
+                  "Other Charges"}
               </label>
               <input
-                value={otherCharges.toFixed(2)}
+                value={otherCharges || formData.otherCharges}
                 onChange={handleOtherChargesChange}
                 className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
@@ -1434,7 +1267,7 @@ const PurchesReturn = () => {
             </button>
           )}
         </div>
-      </div>  
+      </div>
       <ToastContainer />
     </>
   );
