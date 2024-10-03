@@ -10,9 +10,9 @@ import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createchallan",requireSignIn,isAdmin, createChallanController);
-router.get("/getAllchallan",requireSignIn,isAdmin, getAllChallanCOntroller);
-router.get("/getchallanById/:_id",requireSignIn,isAdmin, getAllChallanByIdController);
-router.put("/updatechallan/:_id",requireSignIn,isAdmin, updateChallanByIDController);
-router.delete("/deletechallan/:_id",requireSignIn,isAdmin, deletChallanByIDController);
+router.post("/createchallan",requireSignIn, createChallanController);
+router.get("/getAllchallan/:_id",requireSignIn, getAllChallanCOntroller);
+router.get("/getchallanById/:_id",requireSignIn, getAllChallanByIdController);
+router.put("/updatechallan/:_id",requireSignIn, updateChallanByIDController);
+router.delete("/deletechallan/:_id",requireSignIn, deletChallanByIDController);
 export default router;

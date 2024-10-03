@@ -3,6 +3,7 @@ import deliveryChallanModel from "../models/deliveryChallanModel.js";
 export const createChallanController = async (req, res) => {
   try {
     const {
+      userId,
       date,
       salesType,
       challanNo,
@@ -28,9 +29,9 @@ export const createChallanController = async (req, res) => {
     } = req.body;
 
     try {
-      const { _id } = req.user;
+      
       const newChallan = new deliveryChallanModel({
-        admin: _id,
+        admin: userId,
         date,
         salesType,
         challanNo,
@@ -68,14 +69,15 @@ export const createChallanController = async (req, res) => {
 };
 export const getAllChallanCOntroller = async (req, res) => {
   try {
-    const response = await deliveryChallanModel.find();
+    const _id = req.params._id;
+    const response = await deliveryChallanModel.find({admin:_id});
 
     if (!response) {
       return res
         .status(404)
         .send({ success: false, message: "Data not found" });
     }
-
+    
     return res
       .status(200)
       .send({ success: true, message: "Data  found", response });
