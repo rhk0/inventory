@@ -40,7 +40,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
       setcreditNoteNo(estimate.creditNoteNo || "");
       setSalesType(estimate.salesType || "");
       setCustomerType(estimate.customerType || "");
-      setCustomerName(getCustomerName(estimate.customerId) || "");
+      setCustomerName(estimate.customerName || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");

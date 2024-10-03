@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
+import { useAuth } from "../../../context/Auth";
 
 import { FaEye, FaPrint } from "react-icons/fa"; // Import icons from FontAwesome
 import ViewSalesInvoiceModal from "../modals/ViewSalesInvoiceModal";
@@ -18,21 +19,29 @@ function ManuFactureWiseReport() {
   const [manufacturer, setManufacturer] = useState([]);
   const [selectedManufacturer, setSelectedManufacturer] = useState("");
   const [customers, setCustomers] = useState([]);
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
 
   const fetchManufacturer = async () => {
     try {
       const response = await axios.get("/api/v1/auth/ManageManufacturer");
       setManufacturer(response.data.data);
+      console.log(response, "res");
     } catch (error) {
       console.error("Error fetching Manufacturer data", error);
     }
   };
-
   useEffect(() => {
-    fetchEstimate();
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchCustomers();
+    fetchEstimate();
     fetchManufacturer();
-  }, []);
+  }, [auth, userId]);
 
   const fetchEstimate = async () => {
     try {
@@ -119,7 +128,7 @@ function ManuFactureWiseReport() {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
       console.log(response, "ldsf");
       setCustomers(response.data.data);
     } catch (error) {

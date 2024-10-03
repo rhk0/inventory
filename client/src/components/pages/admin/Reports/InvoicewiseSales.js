@@ -3,6 +3,8 @@ import axios from "axios";
 import Modal from "react-modal";
 import { FaEye, FaPrint } from "react-icons/fa";
 import ViewSalesInvoiceModal from "../modals/ViewSalesInvoiceModal";
+import { useAuth } from "../../../context/Auth";
+
 const InvoicewiseSales = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
 
@@ -14,6 +16,8 @@ const InvoicewiseSales = () => {
   const [totalValue, setTotalValue] = useState(0); // State for total value (initial load)
   const [totalCount, setTotalCount] = useState(0); // State for total count (initial load)
   const [customers, setCustomers] = useState([]);
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const fetchEstimate = async () => {
     try {
       const response = await axios.get(
@@ -37,9 +41,15 @@ const InvoicewiseSales = () => {
   };
 
   useEffect(() => {
-    fetchEstimate();
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchCustomers();
-  }, []);
+    fetchEstimate();
+  }, [auth, userId]);
 
   const handleView = (inv) => {
     setInvoice(inv); // Set the specific invoice being clicked
@@ -103,7 +113,7 @@ const InvoicewiseSales = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
       console.log(response, "ldsf");
       setCustomers(response.data.data);
     } catch (error) {

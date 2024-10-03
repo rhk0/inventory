@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
+import Modal from "react-modal";
 
-const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
-  console.log(getSupplierName);
+const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
+  console.log(estimate, "dkasjfk");
   const [date, setDate] = useState("");
-  const [orderNo, setorderNo] = useState("");
-  const [purchaseType, setpurchaseType] = useState("");
+  const [debitNoteNo, setdebitNoteNo] = useState("");
+  const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState("");
+
   const [customerType, setCustomerType] = useState("");
   const [supplierName, setsupplierName] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [paymentTerm, setPaymentTerm] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [transportDetails, setTransportDetails] = useState({
-    receiptDocNo: "",
-    dispatchedThrough: "",
-    destination: "",
-    carrierNameAgent: "",
-    billOfLading: "",
-    motorVehicleNo: "",
-  });
+
   const [billingAddress, setBillingAddress] = useState("");
-  const [reverseCharge, setReverseCharge] = useState("");
+  const [selectPurchase, setselectPurchase] = useState("");
   const [gstType, setGstType] = useState("");
   const [rows, setRows] = useState([]);
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
@@ -29,30 +24,70 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
   const [grossAmount, setGrossAmount] = useState("");
   const [GstAmount, setGstAmount] = useState("");
   const [netAmount, setNetAmount] = useState("");
+  const [reasonForReturn, setReasonForReturn] = useState("");
+  const [viewModal, setViewModal] = useState(false);
+  const [bank, setBank] = useState([]);
+  const [cash, setCash] = useState([]);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
-      setorderNo(estimate.orderNo || "");
-      setpurchaseType(estimate.purchaseType || "");
+      setdebitNoteNo(estimate.debitNoteNo || "");
+      setsupplierdebitNoteNo(estimate.supplierdebitNoteNo || "");
+
       setCustomerType(estimate.customerType || "");
-      setsupplierName((estimate.supplierName) || "");
+      setsupplierName(getSupplierName(estimate.customerId) || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
-      setTransportDetails({
-        receiptDocNo: estimate.receiptDocNo || "",
-        dispatchedThrough: estimate.dispatchedThrough || "",
-        destination: estimate.destination || "",
-        carrierNameAgent: estimate.carrierNameAgent || "",
-        billOfLading: estimate.billOfLading || "",
-        motorVehicleNo: estimate.motorVehicleNo || "",
-      });
+      setReasonForReturn(estimate.reasonForReturn || "");
+
+      if (estimate.bank) {
+        setBank({
+          bank: estimate.bank.bank || "",
+          selectBankType: estimate.bank.selectBankType || "",
+          transactionDate: estimate.bank.transactionDate || "",
+          chequeNo: estimate.bank.chequeNo || "",
+          transactionNo: estimate.bank.transactionNo || "",
+          Amount: estimate.bank.Amount || "",
+          Advance: estimate.bank.Advance || "",
+          Received: estimate.bank.Received || "",
+          Balance: estimate.bank.Balance || "",
+        });
+      } else {
+        setBank({
+          bank: "",
+          selectBankType: "",
+          transactionDate: "",
+          chequeNo: "",
+          transactionNo: "",
+          Amount: "",
+          Advance: "",
+          Received: "",
+          Balance: "",
+        });
+      }
+
+      if (estimate.cash) {
+        setCash({
+          Amount: estimate.cash.Amount || "",
+          Advance: estimate.cash.Advance || "",
+          Received: estimate.cash.Received || "",
+          Balance: estimate.cash.Balance || "",
+        });
+      } else {
+        setCash({
+          Amount: "",
+          Advance: "",
+          Received: "",
+          Balance: "",
+        });
+      }
+
       setBillingAddress(estimate.billingAddress || "");
-      setReverseCharge(estimate.reverseCharge || "");
+      setselectPurchase(estimate.selectPurchase || "");
       setGstType(estimate.gstType || "");
       setRows(estimate.rows || []);
       setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
@@ -61,10 +96,26 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
       setGrossAmount(estimate.grossAmount || "");
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
-      console.log("purchaseType:", estimate.discountpercent);
-      console.log("GST Type:", estimate.discountRS);
     }
   }, [estimate, getSupplierName]);
+
+  const openViewModal = () => {
+    setViewModal(true);
+    setPaymentMethod("");
+    setSubPaymentType("");
+  };
+
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [subPaymentType, setSubPaymentType] = useState("");
+
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+    setSubPaymentType(""); // Resetting subPaymentType when payment method changes
+  };
+
+  const handleSubPaymentTypeChange = (e) => {
+    setSubPaymentType(e.target.value);
+  };
 
   return (
     <div
@@ -73,7 +124,7 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
     >
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          View Purchase Order
+          View Purchase Return
         </h1>
         <button
           type="button"
@@ -85,6 +136,15 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
         <div>
+          <label className="font-bold">Supplier Name</label>
+          <input
+            type="text"
+            value={supplierName}
+            disabled
+            className="border p-2 w-full rounded"
+          />
+        </div>
+        <div>
           <label className="font-bold">
             Date:
             <input
@@ -95,57 +155,16 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
             />
           </label>
         </div>
+        <div>
+          <label className="font-bold">Debit Note No.</label>
+          <input
+            type="text"
+            value={debitNoteNo}
+            disabled
+            className="border p-2 w-full rounded"
+          />
+        </div>
 
-        <div>
-          <label className="font-bold">Purchase Type</label>
-          <select
-            value={purchaseType}
-            disabled
-            className="border p-2 w-full rounded"
-          >
-            <option value="GST Invoice">GST Invoice</option>
-            <option value="Bill of Supply">Bill of Supply</option>
-          </select>
-        </div>
-        <div>
-          <label className="font-bold">Order No.</label>
-          <input
-            type="text"
-            value={orderNo}
-            disabled
-            className="border p-2 w-full rounded"
-          />
-        </div>
-        {/* 
-        <div>
-          <label className="font-bold">Customer Type</label>
-          <select
-            value={customerType}
-            disabled
-            className="border p-2 w-full rounded"
-          >
-            <option value="Retailer">Retailer</option>
-            <option value="Wholesaler">Wholesaler</option>
-          </select>
-        </div> */}
-        <div>
-          <label className="font-bold">Supplier Name</label>
-          <input
-            type="text"
-            value={supplierName}
-            disabled
-            className="border p-2 w-full rounded"
-          />
-        </div>
-        <div>
-          <label className="font-bold">Place of Supply</label>
-          <input
-            type="text"
-            value={placeOfSupply}
-            disabled
-            className="border p-2 w-full rounded"
-          />
-        </div>
         <div>
           <label className="font-bold">
             Payment Term (days):
@@ -171,89 +190,6 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
         </div>
 
         <div className="mb-4">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-white p-2"
-          >
-            Transport Details
-          </button>
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
-            <h4 className="font-bold mb-4">Transport Details</h4>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label>Receipt Doc No.</label>
-                <input
-                  type="text"
-                  value={transportDetails.receiptDocNo}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Dispatched Through</label>
-                <input
-                  type="text"
-                  value={transportDetails.dispatchedThrough}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Destination</label>
-                <input
-                  type="text"
-                  value={transportDetails.destination}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Carrier Name/Agent</label>
-                <input
-                  type="text"
-                  value={transportDetails.carrierNameAgent}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Bill of Lading/LR-RR No.</label>
-                <input
-                  type="text"
-                  value={transportDetails.billOfLading}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Motor Vehicle No.</label>
-                <input
-                  type="text"
-                  value={transportDetails.motorVehicleNo}
-                  disabled
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="bg-gray-500 text-white p-2 mr-2"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-        <div className="mb-4">
           <label className="font-bold">Billing Address</label>
           <textarea
             value={billingAddress}
@@ -262,9 +198,9 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
           />
         </div>
         <div className="mb-4 w-full">
-          <label className="font-bold">Reverse Charge</label>
+          <label className="font-bold">Select Purchase</label>
           <select
-            value={reverseCharge}
+            value={selectPurchase}
             disabled
             className="border p-2 w-full rounded"
           >
@@ -273,19 +209,26 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
           </select>
         </div>
 
-        {purchaseType === "GST Invoice" && (
-          <div className="mb-4 w-full">
-            <label className="font-bold">GST Type:</label>
-            <select
-              value={gstType}
-              disabled
-              className="border p-2 w-full rounded"
-            >
-              <option value="CGST/SGST">CGST/SGST</option>
-              <option value="IGST">IGST</option>
-            </select>
-          </div>
-        )}
+        <div className="mb-4">
+          <label className="font-bold">Reason Of Return</label>
+          <textarea
+            value={reasonForReturn}
+            disabled
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        <div className="mb-4 w-full">
+          <label className="font-bold">Tax Type:</label>
+          <select
+            value={gstType}
+            disabled
+            className="border p-2 w-full rounded"
+          >
+            <option value="CGST/SGST">CGST/SGST</option>
+            <option value="IGST">IGST</option>
+          </select>
+        </div>
       </div>
 
       {/* Items Section */}
@@ -297,44 +240,47 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
               <th className="border p-2">Item Code</th>
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
-              <th className="border p-2">Qty</th>
+              <th className="border p-2">qty</th>
               <th className="border p-2">Units</th>
-              <th className="border p-2">MRP</th>
-              {/* <th className="border p-2">
+              <th className="border p-2">Free quantity</th>
+
+              <th className="border p-2">mrp</th>
+              <th className="border p-2">Unit Cost</th>
+              <th className="border p-2">Scheme Margin</th>
+
+              <th className="border p-2">
                 Discount
                 <div className="flex justify-between">
                   <span className="mr-16">%</span> <span>₹</span>
                 </div>
-              </th> */}
-              {purchaseType === "GST Invoice" && (
-                <>
-                  <th className="border p-2">Taxable Value</th>
-                  {gstType === "CGST/SGST" && (
-                    <>
-                      <th className="border p-2">
-                        CGST
-                        <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>₹</span>
-                        </div>
-                      </th>
-                      <th className="border p-2">
-                        SGST
-                        <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>₹</span>
-                        </div>
-                      </th>
-                    </>
-                  )}
-                  {gstType === "IGST" && (
+              </th>
+              <>
+                <th className="border p-2">Taxable Value</th>
+                {gstType === "CGST/SGST" && (
+                  <>
                     <th className="border p-2">
-                      IGST
+                      CGST
                       <div className="flex justify-between">
                         <span className="mr-16">%</span> <span>₹</span>
                       </div>
                     </th>
-                  )}
-                </>
-              )}
+                    <th className="border p-2">
+                      SGST
+                      <div className="flex justify-between">
+                        <span className="mr-16">%</span> <span>₹</span>
+                      </div>
+                    </th>
+                  </>
+                )}
+                {gstType === "IGST" && (
+                  <th className="border p-2">
+                    IGST
+                    <div className="flex justify-between">
+                      <span className="mr-16">%</span> <span>₹</span>
+                    </div>
+                  </th>
+                )}
+              </>
               <th className="border p-2">Total Value</th>
             </tr>
           </thead>
@@ -369,7 +315,7 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.qty}
+                    value={row.quantity}
                     disabled
                     className="w-full"
                   />
@@ -385,12 +331,39 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.mrp}
+                    value={row.freeQty}
                     disabled
                     className="w-full"
                   />
                 </td>
-                {/* <td className="border p-2">
+
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    value={row.maxmimunRetailPrice}
+                    disabled
+                    className="w-full"
+                  />
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    value={row.unitCost}
+                    disabled
+                    className="w-full"
+                  />
+                </td>
+
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    value={row.schemeMargin}
+                    disabled
+                    className="w-full"
+                  />
+                </td>
+
+                <td className="border p-2">
                   <div className="flex gap-1">
                     <input
                       type="number"
@@ -400,78 +373,76 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                     />
                     <input
                       type="number"
-                      value={row.discountRS}
+                      value={row.discountRs}
                       disabled
                       className="w-full"
                     />
                   </div>
-                </td> */}
-                {purchaseType === "GST Invoice" && (
-                  <>
-                    <td className="border p-2">
-                      <input
-                        type="number"
-                        value={row.taxable}
-                        disabled
-                        className="w-full"
-                      />
-                    </td>
-                    {gstType === "CGST/SGST" && (
-                      <>
-                        <td className="border p-2">
-                          <div className="flex gap-1">
-                            <input
-                              type="number"
-                              value={row.cgstpercent}
-                              disabled
-                              className="w-full"
-                            />
-                            <input
-                              type="number"
-                              value={row.cgstRS}
-                              disabled
-                              className="w-full"
-                            />
-                          </div>
-                        </td>
-                        <td className="border p-2">
-                          <div className="flex gap-1">
-                            <input
-                              type="number"
-                              value={row.sgstpercent}
-                              disabled
-                              className="w-full"
-                            />
-                            <input
-                              type="number"
-                              value={row.sgstRS}
-                              disabled
-                              className="w-full"
-                            />
-                          </div>
-                        </td>
-                      </>
-                    )}
-                    {gstType === "IGST" && (
+                </td>
+                <>
+                  <td className="border p-2">
+                    <input
+                      type="number"
+                      value={row.taxableValue}
+                      disabled
+                      className="w-full"
+                    />
+                  </td>
+                  {gstType === "CGST/SGST" && (
+                    <>
                       <td className="border p-2">
                         <div className="flex gap-1">
                           <input
                             type="number"
-                            value={row.igstpercent}
+                            value={row.cgstpercent}
                             disabled
                             className="w-full"
                           />
                           <input
                             type="number"
-                            value={row.igstRS}
+                            value={row.cgstRS}
                             disabled
                             className="w-full"
                           />
                         </div>
                       </td>
-                    )}
-                  </>
-                )}
+                      <td className="border p-2">
+                        <div className="flex gap-1">
+                          <input
+                            type="number"
+                            value={row.sgstpercent}
+                            disabled
+                            className="w-full"
+                          />
+                          <input
+                            type="number"
+                            value={row.sgstRS}
+                            disabled
+                            className="w-full"
+                          />
+                        </div>
+                      </td>
+                    </>
+                  )}
+                  {gstType === "IGST" && (
+                    <td className="border p-2">
+                      <div className="flex gap-1">
+                        <input
+                          type="number"
+                          value={row.igstpercent}
+                          disabled
+                          className="w-full"
+                        />
+                        <input
+                          type="number"
+                          value={row.igstRS}
+                          disabled
+                          className="w-full"
+                        />
+                      </div>
+                    </td>
+                  )}
+                </>
                 <td className="border p-2">
                   <input
                     type="number"
@@ -569,19 +540,15 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {purchaseType === "GST Invoice" && (
-            <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-bold lg:w-1/2 text-nowrap">
-                GST Amount
-              </label>
-              <input
-                type="text"
-                value={GstAmount}
-                disabled
-                className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
-              />
-            </div>
-          )}
+          <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+            <label className="font-bold lg:w-1/2 text-nowrap">GST Amount</label>
+            <input
+              type="text"
+              value={GstAmount}
+              disabled
+              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+            />
+          </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
             <label className="font-bold lg:w-1/2 text-nowrap">
               Other Charges
@@ -608,4 +575,4 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
   );
 };
 
-export default ViewPurchaseOrder;
+export default ViewPurchaseReturn;

@@ -3,6 +3,8 @@ import ViewPurchaseOrder from "../modals/ViewPurchaseOrder";
 import EditPurchaseOrder from "../modals/EditPurchaseOrder";
 import Modal from "react-modal";
 import axios from "axios";
+import { useAuth } from "../../../context/Auth";
+
 
 const ManagePurchaseOrder = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -13,6 +15,8 @@ const ManagePurchaseOrder = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [customers, setCustomers] = useState([]);
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
     fetchEstimate();
@@ -63,7 +67,7 @@ const ManagePurchaseOrder = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageSupplier");
+      const response = await axios.get(`/api/v1/auth/ManageManufacturer/${userId}`);
       console.log(response, "ldsf");
       setCustomers(response.data.data);
     } catch (error) {
@@ -85,7 +89,7 @@ const ManagePurchaseOrder = () => {
   const filteredEstimates = salesEstimates.filter(
     (estimate) =>
       estimate.orderNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      estimate.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+      estimate.supplierName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -126,7 +130,7 @@ const ManagePurchaseOrder = () => {
                   // "Rate",
                   "Total Value",
                   "Action",
-                ].map((header) => (
+                ]?.map((header) => (
                   <th
                     key={header}
                     className="border border-gray-300 p-2 text-center"
@@ -138,7 +142,7 @@ const ManagePurchaseOrder = () => {
             </thead>
             <tbody>
               {filteredEstimates.length > 0 ? (
-                filteredEstimates.map((estimate, index) => (
+                filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}
                     className="hover:bg-gray-200 transition-all"
@@ -154,7 +158,7 @@ const ManagePurchaseOrder = () => {
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
-                      {getSupplierName(estimate.customerId)}
+                      {estimate.supplierName}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
@@ -250,7 +254,7 @@ const ManagePurchaseOrder = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-          getSupplierName={getSupplierName}
+          // getSupplierName={getSupplierName}
         />
       </Modal>
 
@@ -275,7 +279,7 @@ const ManagePurchaseOrder = () => {
           isOpen={editModalOpen}
           estimate={selectedEstimate}
           closeModal={closeModal}
-          getSupplierName={getSupplierName}
+          // getSupplierName={getSupplierName}
         />
       </Modal>
     </div>

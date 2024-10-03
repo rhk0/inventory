@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import Modal from "react-modal";
 
-const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
+const ViewSalesInvoiceModal = ({ closeModal, estimate,  }) => {
   const [date, setDate] = useState("");
   const [InvoiceNo, setInvoiceNo] = useState("");
   const [salesType, setSalesType] = useState("");
@@ -42,7 +42,7 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
       setInvoiceNo(estimate.InvoiceNo || "");
       setSalesType(estimate.salesType || "");
       setCustomerType(estimate.customerType || "");
-      setCustomerName(getCustomerName(estimate.customerId) || "");
+      setCustomerName(estimate.customerName || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
@@ -108,12 +108,12 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
     }
-  }, [estimate, getCustomerName]);
+  }, [estimate]);
 
   const openViewModal = () => {
     setViewModal(true);
-    setPaymentMethod(""); // Resetting payment method on opening the modal
-    setSubPaymentType(""); // Resetting subPaymentType on opening the modal
+    setPaymentMethod("");
+    setSubPaymentType("");
   };
 
   const [paymentMethod, setPaymentMethod] = useState("");

@@ -161,7 +161,6 @@ const CreateProduct = () => {
     }
   };
 
-
   const fetchUnit = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/getStockUnit/${userId}`);
@@ -214,11 +213,19 @@ const CreateProduct = () => {
       // toast.error("Failed to fetch categories");
     }
   };
- 
+  const formatExpiryDate = (dateString) => {
+    const [year, month] = dateString.split("-"); // Get the year and month
+    return `${month} ${year}`; // Create MM YYYY format
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
+   
+    const formattedValue = formatExpiryDate(value); // Format the date
+    setFormData((prev) => ({
+      ...prev,
+      expiryDate: formattedValue, // Set MM YYYY to the form data
+    }));
     // Update form data first
     const updatedFormData = {
       ...formData,

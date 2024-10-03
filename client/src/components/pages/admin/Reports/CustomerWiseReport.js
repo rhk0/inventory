@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import axios from "axios";
 import { FaEye, FaPrint } from "react-icons/fa";
 import ViewSalesInvoiceModal from "../modals/ViewSalesInvoiceModal";
+import { useAuth } from "../../../context/Auth";
 
 const CustomerWiseReports = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -16,6 +17,8 @@ const CustomerWiseReports = () => {
   const [totalCount, setTotalCount] = useState(0); // State for total count (initial load)
   const [customerNames, setCustomerNames] = useState([]); // State to hold unique customer names
   const [customers, setCustomers] = useState([]);
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
 
   const fetchEstimate = async () => {
     try {
@@ -45,9 +48,15 @@ const CustomerWiseReports = () => {
   };
 
   useEffect(() => {
-    fetchEstimate();
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchCustomers();
-  }, []);
+    fetchEstimate();
+  }, [auth, userId]);
 
   const handleView = (inv) => {
     setInvoice(inv); // Set the specific invoice being clicked
@@ -101,7 +110,7 @@ const CustomerWiseReports = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
       console.log(response, "ldsf");
       setCustomers(response.data.data);
     } catch (error) {
@@ -213,7 +222,6 @@ const CustomerWiseReports = () => {
             ))}
           </select>
         </div>
-       
       </div>
       <div className="mb-4">
         <button

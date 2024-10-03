@@ -53,6 +53,8 @@ import TotalSalesList from "../pages/admin/sales/TotalSalesList.js";
 import PurchesReturn from "../pages/admin/purchase/PurchesReturn.js";
 import CompanyRegistration from "../auth/CompanyRegistration.js";
 import PurchesInvoice from "../pages/admin/purchase/PurchesInvoice.js";
+import ManagePurchaseInvoice from "../pages/admin/purchase/ManagePurchaseInvoice";
+
 
 import CreatePurchaseOrder from "../pages/admin/purchase/CreatePurchaseOrder.js";
 import PayOut from "../pages/admin/purchase/PayOut.js";
@@ -86,6 +88,7 @@ import PurchesRegister from "../pages/admin/Reports/PurchesReport/PurchesRegiste
 import SupplierLedger from "../pages/admin/Reports/PurchesReport/SupplierLedger.js";
 import ManagePurchaseOrder from "../pages/admin/purchase/ManagePurchaseOrder.js";
 import ManageSalesInvoice from "../pages/admin/sales/ManageSalesInvoice.js";
+import ManagePurchaseReturn from "../pages/admin/purchase/ManagePurchaseReturn.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -144,6 +147,8 @@ const AdminRoute = () => {
         <Route path="manage-staff" element={<ViewStaff />} />
         <Route path="addbank" element={<AddBank />} />
         <Route path="purchesInvoice" element={<PurchesInvoice />} />
+        <Route path="ManagePurchaseInvoice" element={<ManagePurchaseInvoice />} />
+
 
         <Route path="stockdetails" element={<StockDetails />} />
         <Route path="managestockunit" element={<ManageStockUnit />} />
@@ -161,6 +166,8 @@ const AdminRoute = () => {
         <Route path="TotalSalesList" element={<TotalSalesList />} />
 
         <Route path="purchasereturn" element={<PurchesReturn />} />
+        <Route path="managepurchasereturn" element={<ManagePurchaseReturn />} />
+
 
         {/* <Route path="deliverychallan" element={<DeliveryChallan />} /> */}
         <Route path="deliverychallan" element={<CreateDeliveryChallan />} />

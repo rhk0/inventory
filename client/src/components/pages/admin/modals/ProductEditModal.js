@@ -399,7 +399,7 @@ const ProductEditModal = ({ ManufacturerData, closeModal, onUpdate }) => {
             <div>
               <label className="block font-bold mb-1">Expiry Date</label>
               <input
-                type="date"
+                type="month"
                 name="expiryDate"
                 className="w-full p-2 border rounded"
                 value={formData.expiryDate}
