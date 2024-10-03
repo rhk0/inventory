@@ -114,8 +114,6 @@ const PurchesInvoice = () => {
     Received: "",
     Balance: "",
   });
-  
-
 
   const handleCashDetailsChange = (e) => {
     const { name, value } = e.target;
@@ -335,8 +333,7 @@ const PurchesInvoice = () => {
     if (field === "discountpercent") {
       // Calculate discountRs based on discountpercent and maxmimunRetailPrice
       const discountPercent = parseFloat(value) || 0; // Ensure a valid number
-      const discountRs =
-        (currentRow.unitCost * discountPercent) / 100; // Calculate discount in Rs
+      const discountRs = (currentRow.unitCost * discountPercent) / 100; // Calculate discount in Rs
 
       // Update discount percent, discountRs, and taxable value
       currentRow.discountpercent = discountPercent;
@@ -347,7 +344,7 @@ const PurchesInvoice = () => {
       const unitCost = Number(currentRow.unitCost);
       const discountRS = Number(currentRow.discountRs);
 
-      const qt= Number(qty);
+      const qt = Number(qty);
       const taxableValue = (unitCost - discountRS) * qt;
       currentRow.taxableValue = taxableValue.toFixed(2); // Ensure toFixed(2) for consistent format
 
@@ -369,8 +366,7 @@ const PurchesInvoice = () => {
     } else if (field === "discountRs") {
       // Calculate discount percentage based on discountRs and maxmimunRetailPrice
       const discountRs = parseFloat(value) || 0;
-      const discountPercent =
-        (discountRs / currentRow.unitCost) * 100;
+      const discountPercent = (discountRs / currentRow.unitCost) * 100;
 
       // Update discount percent, discountRs, and taxable value
       currentRow.discountpercent = discountPercent.toFixed(2);
@@ -414,7 +410,6 @@ const PurchesInvoice = () => {
     updatedRows[rowIndex] = {
       ...selectedRow,
       qty: qty,
-     
     };
 
     setRows(updatedRows);
@@ -497,8 +492,6 @@ const PurchesInvoice = () => {
     fetchProducts();
   }, [auth, userId]);
 
-
-
   const handleFreeQtyChange = (rowIndex, newFreeQty) => {
     const updatedRows = [...rows];
 
@@ -510,9 +503,7 @@ const PurchesInvoice = () => {
     const totalQuantity = Number(qty) + Number(newFreeQty);
 
     const schemeMargin =
-      newFreeQty && qty
-        ? ((newFreeQty / totalQuantity) * 100).toFixed(2)
-        : 0;
+      newFreeQty && qty ? ((newFreeQty / totalQuantity) * 100).toFixed(2) : 0;
 
     // Update the row with the new freeQty and schemeMargin
     updatedRows[rowIndex] = {
@@ -1480,7 +1471,9 @@ const PurchesInvoice = () => {
             <thead>
               <tr>
                 <th className="border p-1">#</th>
-                <th className="border text-bold text-sm   text-nowrap">Item Code</th>
+                <th className="border text-bold text-sm   text-nowrap">
+                  Item Code
+                </th>
                 <th className="border  text-nowrap">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
@@ -1603,11 +1596,10 @@ const PurchesInvoice = () => {
                       menuPosition="fixed"
                     />
                     <div style={{ marginTop: "10px", fontSize: "12px" }}>
-                       
                       <div>
-                      {row.expiryDate ? `Exp Dt: ${row.expiryDate}` : ""}
-                      <br/>
-                      {row.batchNo ? `Batch No: ${row.batchNo}` : ""}
+                        {row.expiryDate ? `Exp Dt: ${row.expiryDate}` : ""}
+                        <br />
+                        {row.batchNo ? `Batch No: ${row.batchNo}` : ""}
                       </div>
                     </div>
                   </td>
@@ -1625,9 +1617,7 @@ const PurchesInvoice = () => {
                     <input
                       type="text"
                       value={row.qty}
-                     onChange={(e) =>
-                        handlQtyChange(index, e.target.value)
-                      }
+                      onChange={(e) => handlQtyChange(index, e.target.value)}
                       className="w-full"
                     />
                   </td>
