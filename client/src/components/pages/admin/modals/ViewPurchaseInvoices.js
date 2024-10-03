@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import Modal from "react-modal";
 
-const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
+const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
   console.log(estimate, "dkasjfk");
   const [date, setDate] = useState("");
   const [invoiceNo, setInvoiceNo] = useState("");
@@ -45,7 +45,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
       setsupplierInvoiceNo(estimate.supplierInvoiceNo || "");
 
       setCustomerType(estimate.customerType || "");
-      setsupplierName(getSupplierName(estimate.customerId) || "");
+      setsupplierName(estimate.supplierName || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
@@ -111,7 +111,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate, getSupplierName }) => {
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
     }
-  }, [estimate, getSupplierName]);
+  }, [estimate]);
 
   const openViewModal = () => {
     setViewModal(true);

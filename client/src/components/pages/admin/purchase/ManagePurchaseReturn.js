@@ -170,7 +170,7 @@ const ManagePurchaseReturn = () => {
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
-                      {getSupplierName(estimate.customerId)}
+                      {estimate.supplierName}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
@@ -289,7 +289,6 @@ const ManagePurchaseReturn = () => {
           isOpen={editModalOpen}
           estimate={selectedEstimate}
           closeModal={closeModal}
-          getSupplierName={getSupplierName}
         />
       </Modal>
     </div>

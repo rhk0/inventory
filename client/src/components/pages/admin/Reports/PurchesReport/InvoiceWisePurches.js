@@ -303,6 +303,7 @@ const InvoiceWisePurches = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={invoice}
+          getSupplierName={getCustomerName}
         />
       </Modal>
     </div>
