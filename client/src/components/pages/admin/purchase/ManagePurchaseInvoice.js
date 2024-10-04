@@ -200,7 +200,7 @@ const ManagePurchaseInvoice = () => {
                       {estimate.rows?.[0]?.maxmimunRetailPrice || "-"}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.quantity || "-"}
+                      {estimate.rows?.[0]?.qty || "-"}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">

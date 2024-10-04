@@ -404,7 +404,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.quantity}
+                    value={row.qty}
                     disabled
                     className="w-full"
                   />
