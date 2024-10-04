@@ -15,36 +15,46 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 10000000 }, // Limit: 10MB
-  fileFilter: function (req, file, cb) {
-    checkFileType(file, cb);
-  },
-}).single("documentPath"); // Change to match the field in your form
-
 // Check file type for upload
 function checkFileType(file, cb) {
   const filetypes =
-    /pdf|doc|docx|xls|xlsx|ppt|pptx|txt|rtf|jpg|jpeg|png|gif|bmp|tiff|svg/i;
+    /pdf|doc|docx|xls|xlsx|ppt|pptx|txt|rtf|jpg|jfif|html|webp|jpeg|png|gif|bmp|tiff|svg/i;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb("Error: Only PDFs, DOCs, JPGs, and PNGs are allowed!");
+    return cb(
+      "Error: Unsupported file type! Only documents and images are allowed."
+    );
   }
 }
 
-// Create Purchase Return Controller with File Upload
-export const createPurchaseReturnController = async (req, res) => {
-  // Log incoming files and fields for debugging
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10000000 }, // Limit: 10MB (customize if needed)
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb); // Check file type
+  },
+}).single("documentPath"); // Change to match the field in your form
 
+export const createPurchaseReturnController = async (req, res) => {
   upload(req, res, async (err) => {
-    if (err) {
+    if (err instanceof multer.MulterError) {
+      // Handle Multer-specific errors (like file size limit)
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({
+          error: "File too large",
+          message: "File size should not exceed 10MB.",
+        });
+      }
+      return res.status(400).json({ message: err.message });
+    } else if (err) {
+      // Handle other errors (like unsupported file types)
       return res.status(400).json({ message: err });
     }
+
     try {
       const {
         date,
