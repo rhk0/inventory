@@ -501,11 +501,11 @@ const PurchesInvoice = () => {
     const freeQty = parseFloat(newFreeQty) || 0; // Ensure it's a valid number
 
     // Calculate total quantity using the quantity from the selected row
-    const totalQuantity = Number(selectedRow.quantity) + freeQty;
+    const totalQuantity = Number(qty) + freeQty;
 
     // Calculate schemeMargin only if both freeQty and quantity exist
     const schemeMargin =
-      freeQty && selectedRow.quantity
+      freeQty && qty
         ? ((freeQty / totalQuantity) * 100).toFixed(2)
         : 0;
 
@@ -2157,7 +2157,7 @@ const PurchesInvoice = () => {
             onClick={() => openViewModal()}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            Add Receipt
+            Add Payment
           </button>
 
           <Modal
