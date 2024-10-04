@@ -493,7 +493,7 @@ const PurchesInvoice = () => {
   }, [auth, userId]);
 
   const handleFreeQtyChange = (rowIndex, newFreeQty) => {
-    console.log(newFreeQty,"hfgdhghdhf  dfsf dad")
+
     const updatedRows = [...rows];
     const selectedRow = updatedRows[rowIndex];
 
@@ -509,7 +509,7 @@ const PurchesInvoice = () => {
         ? ((freeQty / totalQuantity) * 100).toFixed(2)
         : 0;
 
-    console.log(schemeMargin, "schemeMargin");
+
 
     // Update the row with the new freeQty and schemeMargin
     updatedRows[rowIndex] = {

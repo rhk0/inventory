@@ -3,7 +3,6 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { useAuth } from "../../../context/Auth.js";
-
 const PurchesReturn = () => {
   const [documentPath, setdocumentPath] = useState(null);
   const [purchaseInvoice, setPurchaseInvoice] = useState([]);
@@ -14,8 +13,10 @@ const PurchesReturn = () => {
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [selectedInvoiceNo, setSelectedInvoiceNo] = useState("");
-  const [freeQty, setFreeQty] = useState(0);
-  const [qty, setQty] = useState(0);
+  const [printSelectedInvoiceNo, printSetSelectedInvoiceNo] = useState("");
+  const [selectedSupplierName, setSelectedSupplierName] = useState("");
+  // const [freeQty, setFreeQty] = useState(0);
+  // const [qty, setQty] = useState(0);
   const [billingAddress, setBillingAddress] = useState("");
   const [selectPurchase, setselectPurchase] = useState("No");
   const [reasonForReturn, setreasonForReturn] = useState("");
@@ -78,6 +79,7 @@ const PurchesReturn = () => {
   const fetchsupplier = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
+
       setCustomer(response.data.data);
     } catch (error) {
       console.error("Error fetching suppliers:", error);
@@ -116,6 +118,21 @@ const PurchesReturn = () => {
     setIsModalOtherChargesOpen(false);
   };
 
+  const handleCustomerChange = (e) => {
+    const value = e.target.value;
+    setSelectedCustomer(value);
+    const selectedCustomerData = customer.find((cust) => cust.name === value);
+    setChooseUser(selectedCustomerData);
+    setFormData((prev) => ({
+      ...prev,
+      supplierName: selectedCustomerData ? selectedCustomerData.name : "",
+      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
+      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
+    }));
+
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+  };
   useEffect(() => {
     if (date && paymentTerm) {
       const selectedDate = new Date(date);
@@ -134,14 +151,14 @@ const PurchesReturn = () => {
     }
   }, [date, paymentTerm]);
 
-  const handlePaymentTermChange = (e) => {
-    const value = e.target.value;
-    setPaymentTerm(value);
-    setFormData((prev) => ({
-      ...prev,
-      paymentTerm: value,
-    }));
-  };
+  // const handlePaymentTermChange = (e) => {
+  //   const value = e.target.value;
+  //   setPaymentTerm(value);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     paymentTerm: value,
+  //   }));
+  // };
 
   // const handleGstTypeChange = (e) => {
   //   const value = e.target.value;
@@ -219,58 +236,62 @@ const PurchesReturn = () => {
   const handleFreeQtyChange = (rowIndex, newFreeQty) => {
     const updatedRows = [...rows];
     const selectedRow = updatedRows[rowIndex];
-  
+
     const quantity = Number(selectedRow.quantity) || 0; // Use quantity from the row
-  
+
     const totalQuantity = quantity + Number(newFreeQty);
-    const schemeMargin = totalQuantity > 0 ? ((newFreeQty / totalQuantity) * 100).toFixed(2) : 0;
-  
+    const schemeMargin =
+      totalQuantity > 0 ? ((newFreeQty / totalQuantity) * 100).toFixed(2) : 0;
+
     // Update the row with the new freeQty and schemeMargin
     updatedRows[rowIndex] = {
       ...selectedRow,
       freeQty: newFreeQty,
       schemeMargin: schemeMargin,
     };
-  
+
     setRows(updatedRows);
   };
   const handlQtyChange = (rowIndex, newQty) => {
     const updatedRows = [...rows]; // Create a copy of the rows array
     const selectedRow = updatedRows[rowIndex]; // Get the current row
-  
+
     const quantity = parseFloat(newQty) || 0; // Ensure it's a valid number
-  
+
     // Update quantity in the selected row
     updatedRows[rowIndex] = {
       ...selectedRow,
       quantity, // Update the quantity
     };
-  
+
     // Calculate scheme margin as well if free quantity is set
     if (selectedRow.freeQty !== null) {
       const totalQuantity = quantity + Number(selectedRow.freeQty);
-      const schemeMargin = totalQuantity > 0 ? ((selectedRow.freeQty / totalQuantity) * 100).toFixed(2) : 0;
-  
+      const schemeMargin =
+        totalQuantity > 0
+          ? ((selectedRow.freeQty / totalQuantity) * 100).toFixed(2)
+          : 0;
+
       updatedRows[rowIndex].schemeMargin = schemeMargin;
     }
-  
+
     // Rest of the calculations remain the same...
     // Ensure unitCost and discountpercent exist before calculations
     const unitCost = Number(selectedRow.unitCost) || 0;
     const discountPercent = Number(selectedRow.discountpercent) || 0;
-  
+
     // Calculate discountRs
     const discountRs = (unitCost * discountPercent) / 100;
-  
+
     // Calculate taxableValue
     const taxableValue = (unitCost - discountRs) * quantity;
-  
+
     // Calculate GST amounts based on the taxableValue
     const gstRate = Number(gstRatev) || 0;
     const cgstRS = (taxableValue * (gstRate / 2)) / 100;
     const sgstRS = (taxableValue * (gstRate / 2)) / 100;
     const igstRS = (taxableValue * gstRate) / 100;
-  
+
     // Update the currentRow values
     updatedRows[rowIndex] = {
       ...updatedRows[rowIndex],
@@ -280,11 +301,14 @@ const PurchesReturn = () => {
       sgstRS: sgstRS.toFixed(2),
       igstRS: igstRS.toFixed(2),
     };
-  
+
     // Calculate total value including GST
-    const totalGST = gstType === "CGST/SGST" ? parseFloat(cgstRS) + parseFloat(sgstRS) : parseFloat(igstRS);
+    const totalGST =
+      gstType === "CGST/SGST"
+        ? parseFloat(cgstRS) + parseFloat(sgstRS)
+        : parseFloat(igstRS);
     updatedRows[rowIndex].totalValue = (taxableValue + totalGST).toFixed(2);
-  
+
     // Update state with new rows
     setRows(updatedRows);
   };
@@ -299,21 +323,18 @@ const PurchesReturn = () => {
     fetchsupplier();
   }, [auth, userid]);
 
- 
-    const companyData = async () => {
-      try {
-        const response = await axios.get(`/api/v1/company/get/${userid}`);
+  const companyData = async () => {
+    try {
+      const response = await axios.get(`/api/v1/company/get/${userid}`);
 
-        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
-      } catch (error) {
-        console.error("Error fetching company data:", error);
-      }
-    };
-    useEffect(() => {
-
+      setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
+    } catch (error) {
+      console.error("Error fetching company data:", error);
+    }
+  };
+  useEffect(() => {
     companyData(); // Fetch company data on component mount
-  }, [auth,userid]); // Empty dependency array ensures this only runs once, on mount
-
+  }, [auth, userid]); // Empty dependency array ensures this only runs once, on mount
 
   const removeRow = (index) => {
     if (rows.length > 1) {
@@ -408,16 +429,19 @@ const PurchesReturn = () => {
     const selectedInvoice = purchaseInvoice.find(
       (invoice) => invoice.invoiceNo === selectedInvoiceNo
     );
- 
+
     if (selectedInvoice) {
       // Update the rows state with the selected invoice rows
-      if(selectedInvoice.placeOfSupply.trim().toLowerCase() === company.state.trim().toLowerCase()){
-        setGstType("CGST/SGST")
-      }else{
-        setGstType("IGST")
+      printSetSelectedInvoiceNo(selectedInvoice);
+      if (
+        selectedInvoice.placeOfSupply.trim().toLowerCase() ===
+        company.state.trim().toLowerCase()
+      ) {
+        setGstType("CGST/SGST");
+      } else {
+        setGstType("IGST");
       }
-      
-   
+
       const updatedRows = selectedInvoice.rows.map((invoiceRow) => {
         const { igstpercent, ...rest } = invoiceRow; // Destructure igstpercent
 
@@ -480,7 +504,6 @@ const PurchesReturn = () => {
     }
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -541,7 +564,9 @@ const PurchesReturn = () => {
       resetForm();
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Failed to create sales estimate. Please try again.");
+      toast.error(
+        `${error.message} Unsupported file type! Only documents and images are allowed.`
+      );
     }
   };
 
@@ -711,48 +736,6 @@ const PurchesReturn = () => {
         ? `<th>CGST</th><th>SGST</th>`
         : `<th>IGST</th>`;
 
-    const paymentModeHTML = submissionData.cash.Amount
-      ? `
-            <td style="width: 33.33%; text-align: left;">
-                <div class="receipt-details">
-                    <div class="section-header">Receipt Mode: Cash</div>
-                    <div class="details">Total Amount: ₹${submissionData.cash.Amount}</div>
-                    <div class="details">Advance Received: ₹${submissionData.cash.Advance}</div>
-                    <div class="details">Amount Received: ₹${submissionData.cash.Received}</div>
-                    <div class="details">Balance Amount: ₹${submissionData.cash.Balance}</div>
-                </div>
-            </td>`
-      : `
-            <td style="width: 33.33%; text-align: left;">
-                <div class="receipt-details">
-                    <div class="section-header">Receipt Mode: Bank - ${
-                      submissionData.bank.selectBankType
-                    }</div>
-                    <div class="details">Bank Name: ${
-                      submissionData.bank.bank
-                    }</div>
-                    <div class="details">Transaction Date: ${
-                      submissionData.bank.transactionDate
-                    }</div>
-                    <div class="details">Transaction / Cheque No: ${
-                      submissionData.bank.transactionNo ||
-                      submissionData.bank.chequeNo
-                    }</div>
-                    <div class="details">Total Amount: ₹${
-                      submissionData.bank.Amount
-                    }</div>
-                    <div class="details">Advance Received: ₹${
-                      submissionData.bank.Advance
-                    }</div>
-                    <div class="details">Amount Received: ₹${
-                      submissionData.bank.Received
-                    }</div>
-                    <div class="details">Balance Amount: ₹${
-                      submissionData.bank.Balance
-                    }</div>
-                </div>
-            </td>`;
-
     const gstRows =
       submissionData.gstType === "CGST/SGST"
         ? submissionData.rows
@@ -876,19 +859,19 @@ const PurchesReturn = () => {
                 <div style="text-align:left;" class="sales-estimate">
                   <div class="section-header"> Invoice Details</div>
                   <div class="details">Invoice No: <span>${
-                    submissionData.invoiceNo
+                    printSelectedInvoiceNo.invoiceNo
                   }</span></div>
                   <div class="details">Invoice Date: <span>${
-                    submissionData.date
+                    printSelectedInvoiceNo.date
                   }</span></div>
                      <div class="details">Supplier Invoice: <span>${
-                       submissionData.supplierInvoiceNo
+                       printSelectedInvoiceNo.supplierInvoiceNo
                      }</span></div>
                   <div class="details">Place of Supply: <span>${
-                    submissionData.placeOfSupply
+                    printSelectedInvoiceNo.placeOfSupply
                   }</span></div>
                    <div class="details">Due Date: <span>${
-                     submissionData.dueDate
+                     printSelectedInvoiceNo.dueDate
                    }</span></div>
                  
                 </div>
@@ -900,16 +883,16 @@ const PurchesReturn = () => {
                    
 
                   <div class="details">Dispatch Through: <span>${
-                    submissionData.dispatchedThrough
+                    printSelectedInvoiceNo.dispatchedThrough
                   }</span></div>
                    <div class="details">Destination: <span>${
-                     submissionData.destination
+                     printSelectedInvoiceNo.destination
                    }</span></div>
                    <div class="details">Carrier Name/Agent : <span>${
-                     submissionData.carrierNameAgent
+                     printSelectedInvoiceNo.carrierNameAgent
                    }</span></div>
                   <div class="details">Bill of Lading/LR-RR No.: <span>${
-                    submissionData.billOfLading
+                    printSelectedInvoiceNo.billOfLading
                   }</span></div>
                   
                 </div>
@@ -964,7 +947,7 @@ const PurchesReturn = () => {
                 </td>
                 
                  
-                 ${paymentModeHTML}
+         
                
                 
                
@@ -1033,19 +1016,52 @@ const PurchesReturn = () => {
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
           Purchase Return
         </h1>
-   
+
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">Supplier Name</label>
-            <input
-              type="text"
-              name="supplierName"
-              value={formData.supplierName}
+            <select
+              value={selectedSupplierName}
               onChange={(e) => {
-                handleChange(e);
+                setSelectedSupplierName(e.target.value);
+                handleCustomerChange(e); // Set the selected supplier name
+                setSelectedInvoiceNo(""); // Reset the selected invoice when the supplier changes
               }}
-              className="border p-2 w-full   rounded"
-            />
+              className="border p-2 w-full rounded"
+            >
+              <option value="">Select Supplier Name</option>
+              {purchaseInvoice
+                .map((invoice) => invoice.supplierName) // Get supplier names
+                .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
+                .map((supplierName) => (
+                  <option key={supplierName} value={supplierName._id}>
+                    {supplierName}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="font-bold">Select Purchase</label>
+            <select
+              value={selectedInvoiceNo}
+              onChange={(e) => {
+                setSelectedInvoiceNo(e.target.value); // Set the selected invoice number in state
+                handleInvoiceSelect(e.target.value); // Trigger the invoice select function
+              }}
+              className="border p-2 w-full rounded"
+            >
+              <option value="">Select Invoice</option>
+              {purchaseInvoice
+                .filter(
+                  (invoice) => invoice.supplierName === selectedSupplierName
+                ) // Filter by selected supplier
+                .map((invoice) => (
+                  <option key={invoice._id} value={invoice.invoiceNo}>
+                    {invoice.invoiceNo}
+                  </option>
+                ))}
+            </select>
           </div>
 
           <div>
@@ -1074,7 +1090,6 @@ const PurchesReturn = () => {
             />
           </div>
         </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div className="mb-4">
             <label className="font-bold">Billing Address</label>
@@ -1084,25 +1099,6 @@ const PurchesReturn = () => {
               onChange={handleBillingAddressChange}
               className="border p-2 w-full  rounded"
             />
-          </div>
-          {/* Reverse Charge Section */}
-          <div className="mb-4">
-            <label className="font-bold">Select Purchase</label>
-            <select
-              value={selectedInvoiceNo}
-              onChange={(e) => {
-                setSelectedInvoiceNo(e.target.value); // Set the selected invoice number in state
-                handleInvoiceSelect(e.target.value); // Trigger the invoice select function
-              }}
-              className="border p-2 w-full rounded"
-            >
-              <option value="">Select Invoice</option>
-              {purchaseInvoice.map((invoice) => (
-                <option key={invoice._id} value={invoice.invoiceNo}>
-                  {invoice.invoiceNo}
-                </option>
-              ))}
-            </select>
           </div>
 
           <div className="mb-4">
@@ -1114,7 +1110,6 @@ const PurchesReturn = () => {
               className="border p-2 w-full  rounded"
             />
           </div>
-
           {/* GST Type Section */}
           {/* {salesType === "GST Invoice" && (
             <div className="mb-4 w-full">
@@ -1129,9 +1124,7 @@ const PurchesReturn = () => {
               </select>
             </div>
           )} */}
-
         </div>
-
         {/* Items Section */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse overflow-x-auto">
@@ -1226,7 +1219,9 @@ const PurchesReturn = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={rows[index]?.quantity > 0 ? rows[index].quantity : ''} // Show quantity if > 0, otherwise empty
+                      value={
+                        rows[index]?.quantity > 0 ? rows[index].quantity : ""
+                      } // Show quantity if > 0, otherwise empty
                       onChange={(e) => handlQtyChange(index, e.target.value)} // Call your handler
                       className="w-full"
                     />
@@ -1710,15 +1705,13 @@ const PurchesReturn = () => {
           >
             Save
           </button>
-         
-            <button
-              onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
-            >
-              Save and Print
-            </button>
-  
 
+          <button
+            onClick={handlePrintOnly}
+            className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
+          >
+            Save and Print
+          </button>
         </div>
       </div>
       <ToastContainer />
