@@ -197,6 +197,15 @@ const PurchesInvoice = () => {
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
     setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+  
+    if (
+       selectedCustomerData.state.trim().toLowerCase() ===
+      company.state.trim().toLowerCase()
+    ) {
+      setGstType("CGST/SGST");
+    } else {
+      setGstType("IGST");
+    }
   };
 
   const handleOtherChargesChange = (event) => {
@@ -244,14 +253,14 @@ const PurchesInvoice = () => {
     }));
   };
 
-  const handleGstTypeChange = (e) => {
-    const value = e.target.value;
-    setGstType(value);
-    setFormData((prev) => ({
-      ...prev,
-      gstType: value,
-    }));
-  };
+  // const handleGstTypeChange = (e) => {
+  //   const value = e.target.value;
+  //   setGstType(value);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     gstType: value,
+  //   }));
+  // };
 
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -1457,7 +1466,7 @@ const PurchesInvoice = () => {
           </div>
 
           {/* GST Type Section */}
-          {salesType === "GST Invoice" && (
+          {/* {salesType === "GST Invoice" && (
             <div className="mb-4 w-full">
               <label className="font-bold">GST Type:</label>
               <select
@@ -1469,7 +1478,7 @@ const PurchesInvoice = () => {
                 <option value="IGST">IGST</option>
               </select>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Items Section */}
