@@ -375,9 +375,7 @@ const CreatePurchaseOrder = () => {
       const { qty } = newRows[index];
 
       // Calculate taxable value
-      const taxableValue = salesTaxInclude
-        ? (retailPrice * qty * 100) / (100 + gstRate)
-        : retailPrice * qty;
+      const taxableValue = selectedProduct.purchasePriceExGst * qty;
 
       // Calculate GST amounts
       const cgstrs =
@@ -424,10 +422,7 @@ const CreatePurchaseOrder = () => {
 
       // Calculate taxable value based on salesTaxInclude
 
-      const taxableValue = salesTaxInclude
-        ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-          (100 + Number(selectedProduct.gstRate))
-        : retailPrice * selectedProduct.quantity;
+      const taxableValue = selectedProduct.purchasePriceExGst * selectedProduct.quantity;
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -1377,8 +1372,8 @@ const CreatePurchaseOrder = () => {
               onChange={handlepurchaseTypeChange}
               className="border p-2 w-full  rounded"
             >
-              <option value="GST Invoice">GST Invoice</option>
-              <option value="Bill of Supply">Bill of Supply</option>
+              <option value="GST Invoice">GST </option>
+              <option value="Bill of Supply"> Non GST</option>
             </select>
           </div>
           <div>
@@ -2178,7 +2173,7 @@ const CreatePurchaseOrder = () => {
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                Other Charge
+              {otherChargesDescriptions || "Other Charge"}  
               </label>
               <input
                 value={otherCharges.toFixed(2)}

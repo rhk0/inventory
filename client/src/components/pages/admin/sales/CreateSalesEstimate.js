@@ -80,7 +80,6 @@ const CreateSalesEstimate = () => {
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
- 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -91,7 +90,7 @@ const CreateSalesEstimate = () => {
     }
 
     fetchCustomer();
-  }, [auth,userId]);
+  }, [auth, userId]);
   const fetchCustomer = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
@@ -113,7 +112,7 @@ const CreateSalesEstimate = () => {
 
     companyData(); // Fetch company data on component mount
   }, [userId]); // Empty dependency array ensures this only runs once, on mount
- 
+
   const handleCustomerChange = (e) => {
     const value = e.target.value;
     setSelectedCustomer(value);
@@ -129,6 +128,22 @@ const CreateSalesEstimate = () => {
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
     setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+
+    console.log(
+      selectedCustomerData.state,
+      " selectedCustomerData.state",
+      company.state,
+      "company.state"
+    );
+
+    if (
+      selectedCustomerData.state.trim().toLowerCase() ===
+      company.state.trim().toLowerCase()
+    ) {
+      setGstType("CGST/SGST");
+    } else {
+      setGstType("IGST");
+    }
   };
 
   const handleOtherChargesChange = (event) => {
@@ -176,14 +191,14 @@ const CreateSalesEstimate = () => {
     }));
   };
 
-  const handleGstTypeChange = (e) => {
-    const value = e.target.value;
-    setGstType(value);
-    setFormData((prev) => ({
-      ...prev,
-      gstType: value,
-    }));
-  };
+  // const handleGstTypeChange = (e) => {
+  //   const value = e.target.value;
+  //   setGstType(value);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     gstType: value,
+  //   }));
+  // };
 
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -248,29 +263,6 @@ const CreateSalesEstimate = () => {
       [field]: value,
     }));
   };
-  const handleRowChange = (index, field, value) => {
-    const newRows = [...rows];
-    const newValue = parseFloat(value) || 0;
-    newRows[index] = { ...newRows[index], [field]: newValue };
-
-    // Calculate taxable value, GST, and total value
-    const { qty, mrp, discount } = newRows[index];
-    const taxableValue = qty * mrp - discount;
-    const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-    const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-    const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
-    const totalValue = taxableValue + cgst + sgst + igst;
-
-    newRows[index] = {
-      ...newRows[index],
-      taxableValue,
-      cgst,
-      sgst,
-      igst,
-      totalValue,
-    };
-    setRows(newRows);
-  };
 
   const addRow = () => {
     setRows([
@@ -333,25 +325,114 @@ const CreateSalesEstimate = () => {
   // Function to handle Save and Print
 
   const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
-
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        // toast.error("Failed to fetch products. Please try again.");
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data);
+      } else {
+        console.error("Unexpected response structure:", response.data);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // toast.error("Failed to fetch products. Please try again.");
+    }
+  };
+  useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [auth, userId]);
+
+  // const handleRowChange = (index, field, value) => {
+  //   const newRows = [...rows];
+  //   const newValue = parseFloat(value) || 0;
+  //   newRows[index] = { ...newRows[index], [field]: newValue };
+
+  //   // Calculate taxable value, GST, and total value
+  //   const { qty, mrp, discount } = newRows[index];
+  //   const taxableValue = qty * mrp - discount;
+  //   const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
+  //   const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
+  //   const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
+  //   const totalValue = taxableValue + cgst + sgst + igst;
+
+  //   newRows[index] = {
+  //     ...newRows[index],
+  //     taxableValue,
+  //     cgst,
+  //     sgst,
+  //     igst,
+  //     totalValue,
+  //   };
+  //   setRows(newRows);
+  // };
+
+  const handleRowChange = (index, field, value) => {
+    // Create a copy of rows
+    const newRows = [...rows];
+
+    // Update the changed field with the new value
+    newRows[index] = { ...newRows[index], [field]: value };
+
+    // Check if the product is selected
+    const selectedProduct = products.find(
+      (product) => product.productName === newRows[index].productName
+    );
+
+    if (selectedProduct) {
+      // Calculate retail price and apply the discount if applicable
+      const retailPrice = selectedProduct.maxmimunRetailPrice
+        ? selectedProduct.maxmimunRetailPrice -
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+            100
+        : 0;
+
+      // Get sales tax and GST rate
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+      const gstRate = selectedProduct.gstRate;
+
+      // Extract the quantity from the updated row
+      const { qty } = newRows[index];
+
+      // Calculate taxable value
+      const taxableValue = salesTaxInclude
+      ? (selectedProduct.retailPrice * qty * 100) /
+        (100 + Number(selectedProduct.gstRate))
+      : retailPrice * qty;
+
+      // Calculate GST amounts
+      const cgstrs =
+        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
+      const sgstrs =
+        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
+      const igstrs = gstType === "IGST" ? (taxableValue * gstRate) / 100 : 0;
+
+      // Calculate total value
+      const totalValue = taxableValue + (taxableValue * gstRate) / 100;
+
+      // Update the row with the calculated values
+      newRows[index] = {
+        ...newRows[index],
+        taxableValue: taxableValue.toFixed(2),
+        cgstrs: cgstrs.toFixed(2),
+        sgstrs: sgstrs.toFixed(2),
+        igstrs: igstrs.toFixed(2),
+        totalvalue: totalValue.toFixed(2),
+      };
+
+      // Set the updated rows state
+      setRows(newRows);
+      // Trigger total calculation
+      calculateTotals(newRows);
+    }
+  };
+  const handlQtyChange = (rowIndex, qty) => {
+    // Parse the new quantity to ensure it's a number
+    const newQty = parseFloat(qty) || 0;
+
+    // Call handleRowChange to update the row with the new quantity
+    handleRowChange(rowIndex, "qty", newQty);
+  };
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
@@ -545,7 +626,7 @@ const CreateSalesEstimate = () => {
         gstType,
 
         netAmount: netAmount.toFixed(2),
-        userId:userId,
+        userId: userId,
       };
 
       const response = await axios.post(
@@ -1592,7 +1673,7 @@ const CreateSalesEstimate = () => {
           </div>
 
           {/* GST Type Section */}
-          {salesType === "GST Invoice" && (
+          {/* {salesType === "GST Invoice" && (
             <div className="mb-4 w-full">
               <label className="font-bold">GST Type:</label>
               <select
@@ -1604,7 +1685,7 @@ const CreateSalesEstimate = () => {
                 <option value="IGST">IGST</option>
               </select>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Items Section */}
@@ -1750,13 +1831,21 @@ const CreateSalesEstimate = () => {
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-1">
+                  {/* <td className="border p-1">
                     <input
                       type="text"
                       value={row.quantity}
                       onChange={(e) =>
                         handleRowChange(index, "quantity", e.target.value)
                       }
+                      className="w-full"
+                    />
+                  </td> */}
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={rows[index]?.qty || ""}
+                      onChange={(e) => handlQtyChange(index, e.target.value)}
                       className="w-full"
                     />
                   </td>
@@ -1857,7 +1946,7 @@ const CreateSalesEstimate = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue.toFixed(2)}
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -1956,7 +2045,7 @@ const CreateSalesEstimate = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue.toFixed(2)}
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -2051,47 +2140,52 @@ const CreateSalesEstimate = () => {
           </table>
         </div>
 
-        <button
-          onClick={addRow}
-          className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-        >
-          <svg
-            xmlns="http//www.w3.org/2000/svg"
-            className="h-4 w-4 "
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add New Row
-        </button>
-
-        <button
-          onClick={() => setIsModalOtherChargesOpen(true)}
-          className=" text-gary-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-        >
-          <svg
-            xmlns="http//www.w3.org/2000/svg"
-            className="h-4 w-4 "
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add Other Charges
-        </button>
+        <div className="flex mt-5 gap-5 justify-between">
+          <div>
+            <button
+              onClick={addRow}
+              className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+            >
+              <svg
+                xmlns="http//www.w3.org/2000/svg"
+                className="h-4 w-4 "
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add New Row
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => setIsModalOtherChargesOpen(true)}
+              className="bg-blue-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+            >
+              <svg
+                xmlns="http//www.w3.org/2000/svg"
+                className="h-4 w-4 "
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add Other Charges
+            </button>
+          </div>
+        </div>
 
         {isModalOtherChargesOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -2155,13 +2249,13 @@ const CreateSalesEstimate = () => {
               className=" text-black border p-1 w-full  rounded"
             />
           </div>
-          <div className="w-full lg:w-1/3">
+          <div className="w-full lg:w-1/3 mt-5">
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 Gross Amount
               </label>
               <input
-                value={grossAmount.toFixed(2)}
+                value={grossAmount }
                 // onChange={handleBillingAddressChange}
                 className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
@@ -2172,7 +2266,7 @@ const CreateSalesEstimate = () => {
                   GST Amount
                 </label>
                 <input
-                  value={GstAmount.toFixed(2)}
+                  value={GstAmount}
                   // onChange={handleBillingAddressChange}
                   className=" text-black border p-1 w-full  rounded lg:w-2/3"
                 />
