@@ -12,7 +12,7 @@ const CreateDeliveryChallan = () => {
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [auth] =useAuth();
-  const [userid ,setUserId] =useState("");
+  const [userId ,setUserId] =useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -79,20 +79,9 @@ const CreateDeliveryChallan = () => {
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageCustomer");
 
-        setCustomer(response.data.data);
-      } catch (error) {
-        console.error("Error fetching Customers:", error);
-      }
-    };
 
-    fetchCustomer();
-  }, []);
- 
+
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -101,29 +90,40 @@ const CreateDeliveryChallan = () => {
         setUserId(auth.user.admin);
       }
     }
-  }, [auth]);
 
-   useEffect(() => {
+    fetchProducts();
+    fetchCustomer();
+    companyData();
+  }, [auth,userId]);
+
+   
   const companyData = async () => {
     try {
-      const response = await axios.get(`/api/v1/company/get/${userid}`);
-      setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
+      const response = await axios.get(`/api/v1/company/get/${userId}`);
+      console.log("response",response)
+      setCompanyData(response.data.data); 
     } catch (error) {
       console.error("Error fetching company data:", error);
     }
   };
   
- 
-    companyData(); // Fetch company data on component mount
-  }, [userid]); // Empty dependency array ensures this only runs once, on mount
-  
+   
+  const fetchCustomer = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
 
+      setCustomer(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Customers:", error);
+    }
+  };
+ 
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
     setSelectedCustomer(value);
 
-    const selectedCustomerData = customer.find((cust) => cust._id === value);
+    const selectedCustomerData = customer?.find((cust) => cust._id === value);
 
     setChooseUser(selectedCustomerData);
     setFormData((prev) => ({
@@ -164,7 +164,7 @@ const CreateDeliveryChallan = () => {
       const formattedDueDate = `${day}-${month}-${year}`;
 
       setDueDate(formattedDueDate);
-      setFormData((prev) => ({
+      setFormData((prev) => ({  
         ...prev,
         dueDate: formattedDueDate, // Update formData with dueDate
       }));
@@ -335,10 +335,10 @@ const CreateDeliveryChallan = () => {
 
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
+  
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
+        const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
 
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
@@ -351,11 +351,6 @@ const CreateDeliveryChallan = () => {
         // toast.error("Failed to fetch products. Please try again.");
       }
     };
-
-    fetchProducts();
-  }, []);
-
-
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
@@ -509,7 +504,7 @@ const CreateDeliveryChallan = () => {
     try {
       const updatedFormData = {
         ...formData,
-        rows: rows.map((row) => ({
+        rows: rows?.map((row) => ({
           itemCode: row.itemCode,
           productName: row.productName,
           hsnCode: row.hsnCode,
@@ -545,6 +540,7 @@ const CreateDeliveryChallan = () => {
         gstType,
 
         netAmount: netAmount.toFixed(2),
+        userId:userId,
       };
       const response = await axios.post(
         "/api/v1/deliveryChallanRoute/createchallan",
@@ -630,7 +626,7 @@ const CreateDeliveryChallan = () => {
 
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -742,7 +738,7 @@ const CreateDeliveryChallan = () => {
     const gstRows =
       updatedFormData.gstType === "CGST/SGST"
         ? updatedFormData.rows
-            .map(
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
@@ -761,7 +757,7 @@ const CreateDeliveryChallan = () => {
             )
             .join("")
         : updatedFormData.rows
-            .map(
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
@@ -984,7 +980,7 @@ const CreateDeliveryChallan = () => {
 
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -1082,7 +1078,7 @@ const CreateDeliveryChallan = () => {
       return words;
     }
     const gstRows = updatedFormData.rows
-      .map(
+      ?.map(
         (row, index) => `
         <tr>
           <td>${index + 1}</td>
@@ -1365,7 +1361,7 @@ const CreateDeliveryChallan = () => {
               <option value="add-new-customer" className="text-blue-500">
                 + Add New Customer
               </option>
-              {customer.map((customer) => (
+              {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>
@@ -1586,7 +1582,7 @@ const CreateDeliveryChallan = () => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
+              {rows?.map((row, index) => (
                 <tr key={index}>
                   <td className="border p-1">{index + 1}</td>
                   <td className="border">
@@ -1603,7 +1599,7 @@ const CreateDeliveryChallan = () => {
                       onChange={(selectedOption) =>
                         handleItemCodeSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.itemCode,
                         value: product.itemCode,
                       }))}
@@ -1639,7 +1635,7 @@ const CreateDeliveryChallan = () => {
                       onChange={(selectedOption) =>
                         handleProductSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.productName,
                         value: product.productName,
                       }))}

@@ -3,8 +3,8 @@ import ViewChallanModal from "../modals/ViewChallanModal";
 import Modal from "react-modal";
 import axios from "axios";
 import EditChallanModal from "../modals/EditChallanModal";
-
-const ManageDeliveryChallan = () => {
+import { useAuth } from "../../../context/Auth";
+  const ManageDeliveryChallan = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedEstimate, setSelectedEstimate] = useState(null);
@@ -13,18 +13,27 @@ const ManageDeliveryChallan = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [customers, setCustomers] = useState([]);
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+  
   useEffect(() => {
+
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchChallan();
     fetchCustomers();
-  }, []);
+  }, [auth,userId]);
 
   const fetchChallan = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        "/api/v1/deliveryChallanRoute/getAllchallan"
+        `/api/v1/deliveryChallanRoute/getAllchallan/${userId}`
       );
       setSalesEstimates(response.data.response);
     } catch (error) {
@@ -62,8 +71,8 @@ const ManageDeliveryChallan = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
-      console.log(response, "ldsf");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+     
       setCustomers(response.data.data);
     } catch (error) {
       console.error("Error fetching customers", error);
@@ -71,7 +80,7 @@ const ManageDeliveryChallan = () => {
   };
 
   const getCustomerName = (customerId) => {
-    const customer = customers.find((c) => c.id === customerId);
+    const customer = customers?.find((c) => c.id === customerId);
     return customer ? customer.name : "Unknown Customer";
   };
 
@@ -81,7 +90,7 @@ const ManageDeliveryChallan = () => {
   };
 
   // Filter sales estimates based on search term
-  const filteredEstimates = salesEstimates.filter(
+  const filteredEstimates = salesEstimates?.filter(
     (estimate) =>
       estimate.challanNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       estimate.customerName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -127,7 +136,7 @@ const ManageDeliveryChallan = () => {
                   // "Rate",
                   "Total Value",
                   "Action",
-                ].map((header) => (
+                ]?.map((header) => (
                   <th
                     key={header}
                     className="border border-gray-300 p-2 text-center"
@@ -138,8 +147,8 @@ const ManageDeliveryChallan = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEstimates.length > 0 ? (
-                filteredEstimates.map((estimate, index) => (
+              {filteredEstimates?.length > 0 ? (
+                filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}
                     className="hover:bg-gray-200 transition-all"

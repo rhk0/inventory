@@ -11,15 +11,13 @@ export const createPOFController = async (req, res) => {
       grossAmount,
       GstAmount,
       netAmount,
+      userId,
     } = req.body;
-    const { _id } = req.user;
+  
     
-
-   
-
     try {
       const newPointOfSale = new pointOfSaleModel({
-        admin:_id,
+        admin:userId,
         date,
         invoicNo,
         customerDetail,
@@ -43,7 +41,8 @@ export const createPOFController = async (req, res) => {
 };
 export const getAllPOFController = async (req, res) => {
   try {
-    const response = await pointOfSaleModel.find();
+    const _id = req.params._id;
+    const response = await pointOfSaleModel.find({admin:_id});
 
     if (!response || response.length === 0) {
       return res.status(404).send({

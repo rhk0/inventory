@@ -11,10 +11,10 @@ import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createsalespayin",requireSignIn,isAdmin, createPayInController);
-router.get("/getAllpayin",requireSignIn,isAdmin, getAllPayInController);
-router.get("/getAllpayinById/:_id",requireSignIn,isAdmin, getPayInByIdController);
-router.put("/updatepayin/:_id",requireSignIn,isAdmin, updatePayInByIdController);
-router.delete("/deletepayin/:_id",requireSignIn,isAdmin, deletePayInByIdController);
+router.post("/createsalespayin",requireSignIn, createPayInController);
+router.get("/getAllpayin/:_id",requireSignIn, getAllPayInController);
+router.get("/getAllpayinById/:_id",requireSignIn, getPayInByIdController);
+router.put("/updatepayin/:_id",requireSignIn, updatePayInByIdController);
+router.delete("/deletepayin/:_id",requireSignIn, deletePayInByIdController);
 
 export default router;

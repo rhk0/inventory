@@ -11,7 +11,7 @@ const CreateDeliveryChallan = () => {
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [userid, setUserId] = useState("");
+  const [userId, setUserId] = useState("");
   const [chooseUser, setChooseUser] = useState([]);
   const [auth] = useAuth();
   const [company, setCompanyData] = useState([]);
@@ -80,19 +80,30 @@ const CreateDeliveryChallan = () => {
 
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
 
-  useEffect(() => {
+
     const fetchCustomer = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/manageCustomer");
+        const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
         setCustomer(response.data.data);
       } catch (error) {
         console.error("Error fetching Customers:", error);
       }
     };
 
-    fetchCustomer();
-  }, []);
-
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
+        if (response.data && Array.isArray(response.data.data)) {
+          setProducts(response.data.data);
+        } else {
+          console.error("Unexpected response structure:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        // toast.error("Failed to fetch products. Please try again.");
+      }
+    };
+  
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -101,12 +112,15 @@ const CreateDeliveryChallan = () => {
         setUserId(auth.user.admin);
       }
     }
-  }, [auth]);
+   fetchProducts();
+    fetchCustomer();
+    companyData(); 
+  }, [auth,userId]);
 
-  useEffect(() => {
+ 
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -114,8 +128,8 @@ const CreateDeliveryChallan = () => {
       }
     };
 
-    companyData(); // Fetch company data on component mount
-  }, [userid]); // Empty dependency array ensures this only runs once, on mount
+    
+  
 
 
   const handleCustomerChange = (e) => {
@@ -163,7 +177,7 @@ const CreateDeliveryChallan = () => {
       setDueDate(formattedDueDate);
       setFormData((prev) => ({
         ...prev,
-        dueDate: formattedDueDate, // Update formData with dueDate
+        dueDate: formattedDueDate, 
       }));
     }
   }, [date, paymentTerm]);
@@ -176,6 +190,8 @@ const CreateDeliveryChallan = () => {
       paymentTerm: value,
     }));
   };
+
+   
 
   const handleGstTypeChange = (e) => {
     const value = e.target.value;
@@ -343,23 +359,7 @@ const CreateDeliveryChallan = () => {
 
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        // toast.error("Failed to fetch products. Please try again.");
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
@@ -512,6 +512,7 @@ const CreateDeliveryChallan = () => {
     try {
       const updatedFormData = {
         ...formData,
+        userId:userId,
         rows: rows.map((row) => ({
           itemCode: row.itemCode,
           productName: row.productName,
@@ -1335,7 +1336,7 @@ const CreateDeliveryChallan = () => {
               <option value="add-new-customer" className="text-blue-500">
                 + Add New Customer
               </option>
-              {customer.map((customer) => (
+              {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
                 </option>

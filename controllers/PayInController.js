@@ -10,18 +10,17 @@ export const createPayInController = async (req, res) => {
       rows,
       grandtotal,
       Narration,
-      selectBank,          // New field
-      method,              // New field
-      transactionCheckNo    // New field
+      selectBank,         
+      method,              
+      transactionCheckNo,
+      userId,    
     } = req.body;
-    const { _id } = req.user;
-  
-
+   
 
 
     try {
       const newPayIn = new payInModel({
-        admin: _id,
+        admin: userId,
         date,
         receiptNo,
         selectCustomer,
@@ -29,7 +28,7 @@ export const createPayInController = async (req, res) => {
         rows,
         grandtotal,
         Narration,
-        selectBank,          // Add new fields in the document creation
+        selectBank,         
         method,
         transactionCheckNo
       });
@@ -49,7 +48,8 @@ export const createPayInController = async (req, res) => {
 
 export const getAllPayInController = async (req, res) => {
   try {
-    const response = await payInModel.find();
+    const _id = req.params._id;
+    const response = await payInModel.find({admin:_id});
 
     if (!response || response.length === 0) {
       return res.status(404).send({

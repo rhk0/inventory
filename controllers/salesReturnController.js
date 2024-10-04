@@ -26,46 +26,11 @@ export const createReturnController = async (req, res) => {
       grossAmount,
       GstAmount,
       netAmount,
+      userId,
     } = req.body;
-
-    // const requiredFields = [
-    //   // "userId",
-    //   "date",
-    //   "salesType",
-    //   "creditNoteNo",
-    //   "customerName",
-    //   "placeOfSupply",
-    //   "paymentTerm",
-    //   "dueDate",
-    //   "dispatchedThrough",
-    //   "destination",
-    //   "carrierNameAgent",
-    //   "billOfLading",
-    //   "billingAddress",
-    //   "reverseCharge",
-    //   "gstType",
-    //   "reasonForReturn",
-    //   "rows",
-    //   "otherChargesDescriptions",
-    //   "otherCharges",
-    //   "narration",
-    //   "grossAmount",
-    //   "GstAmount",
-    //   "netAmount",
-    // ];
-    // const missingFields = requiredFields.filter((field) => !req.body[field]);
-    // if (missingFields.length > 0) {
-    //   return res.status(400).send({
-    //     message: "Required fields are missing",
-    //     missingFields: missingFields,
-    //   });
-    // }
-
-    try {
-      const { _id } = req.user;
-
+      
       const newSalesReturn = new returnModel({
-        admin: _id,
+        admin: userId,
         date,
         salesType,
         creditNoteNo,
@@ -95,16 +60,15 @@ export const createReturnController = async (req, res) => {
         message: "SalesReturn created successfully",
         salesreturn: savedSalesReturn,
       });
-    } catch (error) {
-      res.status(500).send({ error: "Server error", message: error.message });
-    }
+   
   } catch (error) {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
 export const getAllReturnCOntroller = async (req, res) => {
   try {
-    const response = await returnModel.find();
+    const _id=req.params._id;
+    const response = await returnModel.find({admin:_id});
 
     if (!response) {
       return res

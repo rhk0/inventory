@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const salesReturnSchema = new mongoose.Schema(
   {
-    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users",required:true },
     date: { type: String },
     salesType: { type: String },
     creditNoteNo: { type: String },

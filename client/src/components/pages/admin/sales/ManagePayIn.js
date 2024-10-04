@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
+import { useAuth } from "../../../context/Auth";
 
 const ManagePayIn = () => {
   const [payIns, setPayIns] = useState([]);
@@ -22,7 +23,9 @@ const ManagePayIn = () => {
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [date, setDate] = useState("");
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+  
   const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState(
     []
   );
@@ -41,12 +44,28 @@ const ManagePayIn = () => {
   // Add new states for method and transactionCheckNo
 
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+   fetchPayIns();
     fetchCustomer();
-  }, []);
+  }, [auth,userId]);
 
+  const fetchPayIns = async () => {
+    try {
+      const response = await axios.get(`/api/v1/payInRoute/getAllpayin/${userId}`);
+      setPayIns(response.data.payInList);
+    } catch (error) {
+      console.error("Error fetching PayIns:", error);
+      toast.error("Error fetching records");
+    }
+  };
   const fetchCustomer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
       setCustomer(response.data.data);
     } catch (error) {
       console.error("Error fetching customer:", error);
@@ -119,18 +138,7 @@ const ManagePayIn = () => {
   };
 
   // Fetch all payIn records
-  useEffect(() => {
-    const fetchPayIns = async () => {
-      try {
-        const response = await axios.get("/api/v1/payInRoute/getAllpayin");
-        setPayIns(response.data.payInList);
-      } catch (error) {
-        console.error("Error fetching PayIns:", error);
-        toast.error("Error fetching records");
-      }
-    };
-    fetchPayIns();
-  }, []);
+  
 
   // Open view modal
   const openViewModal = (payIn) => {
@@ -188,7 +196,7 @@ const ManagePayIn = () => {
     try {
       // Include Narration and total in the selectedPayIn object before saving
 
-      const updatedRows = rows.map((row) => {
+      const updatedRows = rows?.map((row) => {
         // Remove _id if it's a new entry or invalid
         if (!row._id || typeof row._id === "number") {
           const { _id, ...rest } = row;
@@ -240,7 +248,7 @@ const ManagePayIn = () => {
   };
 
   const removeRow = (index) => {
-    setRows(rows.filter((_, rowIndex) => rowIndex !== index));
+    setRows(rows?.filter((_, rowIndex) => rowIndex !== index));
   };
 
   // Delete a PayIn
@@ -249,7 +257,7 @@ const ManagePayIn = () => {
       try {
         await axios.delete(`/api/v1/payInRoute/deletePayIn/${id}`);
         toast.success("Record deleted successfully");
-        setPayIns(payIns.filter((payIn) => payIn._id !== id));
+        setPayIns(payIns?.filter((payIn) => payIn._id !== id));
       } catch (error) {
         toast.error("Error deleting record");
         console.error("Error deleting record:", error);
@@ -278,7 +286,7 @@ const ManagePayIn = () => {
             </tr>
           </thead>
           <tbody>
-            {payIns.map((payIn, index) => (
+            {payIns?.map((payIn, index) => (
               <tr key={payIn._id}>
                 <td className="px-4 py-2 border text-black">{index + 1}</td>
                 <td className="px-4 py-2 border text-black">
@@ -443,7 +451,7 @@ const ManagePayIn = () => {
                 </tr>
               </thead>
               <tbody>
-                {selectedPayIn.rows.map((row) => (
+                {selectedPayIn?.rows.map((row) => (
                   <tr className="text-black" key={row._id}>
                     <td className="px-4 py-2 border">{row.billNo}</td>
                     <td className="px-4 py-2 border">{row.billAmount}</td>
@@ -548,7 +556,7 @@ const ManagePayIn = () => {
                   onChange={handleCustomerChange}
                 >
                   <option value="">Select Customer</option>
-                  {customer.map((customer) => (
+                  {customer?.map((customer) => (
                     <option key={customer._id} value={customer.name}>
                       {customer.name}
                     </option>
@@ -635,7 +643,7 @@ const ManagePayIn = () => {
                 </thead>
 
                 <tbody>
-                  {rows.map((row, index) => (
+                  {rows?.map((row, index) => (
                     <tr key={row.id}>
                       <td className="border border-gray-500 p-1 text-center">
                         {index + 1}
@@ -649,7 +657,7 @@ const ManagePayIn = () => {
                           className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option className="text-black">Select</option>
-                          {selctedCustomerInvoiceData.map((item, idx) => (
+                          {selctedCustomerInvoiceData?.map((item, idx) => (
                             <option key={idx} value={item.InvoiceNo}>
                               {item.InvoiceNo ? item.InvoiceNo : "NA"}
                             </option>

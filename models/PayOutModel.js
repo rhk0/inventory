@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const payOutSchema = new mongoose.Schema(
   {
-    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    admin: { type: mongoose.Schema.Types.ObjectId, ref: "user",required:true},
     date: { type: String },
     paymentNo: { type: String },
     supplierName: { type: String },
