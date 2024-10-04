@@ -366,7 +366,7 @@ const PurchesInvoice = () => {
       currentRow.cgstRS = cgstRS.toFixed(2);
       currentRow.sgstRS = sgstRS.toFixed(2);
       currentRow.igstRS = igstRS.toFixed(2);
-
+//dd
       // Update totalValue as taxableValue + GST amount (CGST + SGST or IGST)
       const totalGST =
         currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
