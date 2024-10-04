@@ -39,7 +39,7 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
       setorderNo(estimate.orderNo || "");
       setpurchaseType(estimate.purchaseType || "");
       setCustomerType(estimate.customerType || "");
-      setsupplierName(getSupplierName(estimate.supplierId) || "");
+      setsupplierName((estimate.supplierName) || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");

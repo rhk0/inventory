@@ -53,7 +53,7 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await axios.post("/api/v1/auth/login", formData);
- console.log("res",response)
+
       if (response.data.success) {
         toast.success(response.data.message);
 

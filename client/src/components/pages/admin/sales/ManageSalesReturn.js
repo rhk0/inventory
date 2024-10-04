@@ -3,7 +3,7 @@ import ViewSalesReturnModal from "../modals/ViewSalesReturnModal";
 import Modal from "react-modal";
 import axios from "axios";
 import EditSalesReturnModal from "../modals/EditSalesReturnModal";
-
+import { useAuth } from "../../../context/Auth";
 const ManageSalesReturn = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -13,18 +13,27 @@ const ManageSalesReturn = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [customers, setCustomers] = useState([]);
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+  
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    
     fetchSalesReturn();
     fetchCustomers();
-  }, []);
+  }, [auth,userId]);
 
   const fetchSalesReturn = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("/api/v1/salesReturnRoute/getAllreturn");
-      console.log(response, "jsdhfj");
+      const response = await axios.get(`/api/v1/salesReturnRoute/getAllreturn/${userId}`);
+      
       setSalesEstimates(response.data.response);
     } catch (error) {
       setError("Error fetching sales estimates.");
@@ -61,8 +70,8 @@ const ManageSalesReturn = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
-      console.log(response, "ldsf");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+     
       setCustomers(response.data.data);
     } catch (error) {
       console.error("Error fetching customers", error);
@@ -70,7 +79,7 @@ const ManageSalesReturn = () => {
   };
 
   const getCustomerName = (customerId) => {
-    const customer = customers.find((c) => c.id === customerId);
+    const customer = customers?.find((c) => c.id === customerId);
     return customer ? customer.name : "Unknown Customer";
   };
 
@@ -80,7 +89,7 @@ const ManageSalesReturn = () => {
   };
 
   // Filter sales estimates based on search term
-  const filteredEstimates = salesEstimates.filter(
+  const filteredEstimates = salesEstimates?.filter(
     (estimate) =>
       estimate.creditNoteNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       estimate.customerName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -126,7 +135,7 @@ const ManageSalesReturn = () => {
                   // "Rate",
                   "Total Value",
                   "Action",
-                ].map((header) => (
+                ]?.map((header) => (
                   <th
                     key={header}
                     className="border border-gray-300 p-2 text-center"
@@ -137,8 +146,8 @@ const ManageSalesReturn = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEstimates.length > 0 ? (
-                filteredEstimates.map((estimate, index) => (
+              {filteredEstimates?.length > 0 ? (
+                filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}
                     className="hover:bg-gray-200 transition-all"

@@ -3,7 +3,6 @@ import axios from "axios";
 import Modal from "react-modal";
 import { useAuth } from "../../../context/Auth";
 
-
 import { FaEye, FaPrint } from "react-icons/fa"; // Import icons from FontAwesome
 import ViewSalesInvoiceModal from "../modals/ViewSalesInvoiceModal";
 
@@ -20,30 +19,29 @@ function ManuFactureWiseReport() {
   const [manufacturer, setManufacturer] = useState([]);
   const [selectedManufacturer, setSelectedManufacturer] = useState("");
   const [customers, setCustomers] = useState([]);
-  const [auth]=useAuth();
-  const [userId,setUserId]=useState("")
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
 
   const fetchManufacturer = async () => {
     try {
       const response = await axios.get("/api/v1/auth/ManageManufacturer");
       setManufacturer(response.data.data);
+      console.log(response, "res");
     } catch (error) {
       console.error("Error fetching Manufacturer data", error);
     }
   };
   useEffect(() => {
-    if(auth.user.role===1){
-      setUserId(auth.user._id)
-    
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
     }
-    if(auth.user.role===0){
-      setUserId(auth.user.admin)
-     
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
     }
     fetchCustomers();
     fetchEstimate();
     fetchManufacturer();
-  }, [auth,userId]);
+  }, [auth, userId]);
 
   const fetchEstimate = async () => {
     try {
@@ -273,7 +271,7 @@ function ManuFactureWiseReport() {
                 <tr key={inv._id} className="text-center">
                   <td>{index + 1}</td>
                   <td className="border px-4 py-2 text-nowrap">{inv.date}</td>
-                  <td className="border px-4 py-2" >{inv.InvoiceNo}</td>
+                  <td className="border px-4 py-2">{inv.InvoiceNo}</td>
                   <td className="border px-4 py-2">{inv.customerName}</td>
                   <td className="border px-4 py-2">{inv.placeOfSupply}</td>
                   <td className="border px-4 py-2">{inv.netAmount}</td>

@@ -3,6 +3,7 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
+import { useAuth } from "../../../context/Auth.js";
 const Pos = () => {
   const [rows, setRows] = useState([]);
   const calculateTotals = () => {
@@ -16,6 +17,8 @@ const Pos = () => {
     netAmount = grossAmount + GstAmount;
     return { grossAmount, GstAmount, netAmount };
   };
+  const [auth] =useAuth();
+  const [userId ,setUserId] =useState("");
   const [date, setDate] = useState("");
   const [products, setProducts] = useState([]);
   const { grossAmount, GstAmount, netAmount } = calculateTotals();
@@ -47,25 +50,58 @@ const Pos = () => {
 
     netAmount: "",
   });
-  useEffect(() => {
+
+
+
+
+  useEffect(()=>{
+
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+    fetchCustomer();
+    fetchProducts();
+
+  },[auth,userId])
+  
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
+     
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data);
+      } else {
+        console.error("Unexpected response structure:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+     
+    }
+  };
+
+
     const fetchCustomer = async () => {
       try {
-        const response = await axios.get("/api/v1/auth/manageCustomer");
-        console.log(response.data.data, "ygdgdggdwgedg");
+        const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      
         setCustomer(response.data.data);
       } catch (error) {
         console.error("Error fetching Customers:", error);
       }
     };
 
-    fetchCustomer();
-  }, []);
+
+
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
       (product) => product.productName === selectedProductName
     );
-    console.log(selectedProductName, "fygdfdd");
+   
     if (selectedProduct) {
       const updatedRows = [...rows];
 
@@ -105,7 +141,6 @@ const Pos = () => {
             selectedProduct.retailDiscount) /
           100,
 
-        // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
         retailPrice: retailPrice,
 
@@ -245,30 +280,14 @@ const Pos = () => {
       },
     ]);
   };
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
-        console.log(response, "dkfjk");
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        // toast.error("Failed to fetch products. Please try again.");
-      }
-    };
 
-    fetchProducts();
-  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
   
     try {
       const updatedFormData = {
-        ...formData, // This should include customerDetail
+        ...formData,
+        userId:userId,
         rows: rows.map((row) => ({
           itemCode: row.itemCode,
           productName: row.productName,
@@ -294,7 +313,7 @@ const Pos = () => {
         "/api/v1/pointOfSaleRoute/createsalespof",
         updatedFormData
       );
-      console.log(response,"response")
+    
   
       if (response) {
         toast.success("Point Of SALE created successfully...");

@@ -3,6 +3,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 import { AiOutlinePlus, AiOutlineClose } from 'react-icons/ai';
+import { useAuth } from "../../../context/Auth.js";
 const PayIn = () => {
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
@@ -12,7 +13,8 @@ const PayIn = () => {
   const [receiptMode, setReceiptMode] = useState("Cash");
   const [selectBank, setSelectBank] = useState("");
   const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState([]);
-  
+  const [auth] =useAuth();
+  const [userId ,setUserId] =useState("");
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -29,12 +31,21 @@ const PayIn = () => {
   const [transactionCheckNo, setTransactionCheckNo] = useState(""); // Added state for transaction check number
 
   useEffect(() => {
+
+    
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
     fetchCustomer();
-  }, []);
+  }, [auth,userId]);
 
   const fetchCustomer = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCustomer");
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
       setCustomer(response.data.data);
     } catch (error) {
       console.error("Error fetching customer:", error);
@@ -84,7 +95,7 @@ const PayIn = () => {
     setRows([
       ...rows,
       {
-        id: rows.length ? Math.max(...rows.map((row) => row.id)) + 1 : 1,
+        id: rows.length ? Math.max(...rows?.map((row) => row.id)) + 1 : 1,
         billNo: "",
         billAmount: "",
         paidAmount: "",
@@ -129,6 +140,7 @@ let grandtotal=0;
     grandtotal = grandTotal; // Ensure grandtotal is set correctly
 
   const dataToSubmit = {
+    userId:userId,
     date,
     receiptNo,
     selectCustomer: selectedCustomer,
@@ -136,7 +148,7 @@ let grandtotal=0;
     selectBank,
     method,
     transactionCheckNo,
-    rows: rows.map((row) => ({
+    rows: rows?.map((row) => ({
       billNo: row.billNo,
       billAmount: row.billAmount,
       paidAmount: row.paidAmount, // Ensure this is defined and sent
@@ -146,6 +158,9 @@ let grandtotal=0;
     grandtotal, // Ensure grandtotal is set correctly
     Narration,
   };
+
+     
+
 
 
     try {
@@ -206,7 +221,7 @@ let grandtotal=0;
             onChange={handleCustomerChange}
           >
             <option value="">Select Customer</option>
-            {customer.map((customer) => (
+            {customer?.map((customer) => (
               <option key={customer._id} value={customer.name}>
                 {customer.name}
               </option>
@@ -283,7 +298,7 @@ let grandtotal=0;
           </thead>
 
           <tbody>
-            {rows.map((row, index) => (
+            {rows?.map((row, index) => (
               <tr key={row.id}>
                 <td className="border border-gray-500 p-1 text-center">{index + 1}</td>
                 <td className="border border-gray-500 p-1">
@@ -293,7 +308,7 @@ let grandtotal=0;
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option className="text-black">Select</option>
-                    {selctedCustomerInvoiceData.map((item, idx) => (
+                    {selctedCustomerInvoiceData?.map((item, idx) => (
                       <option key={idx} value={item.InvoiceNo}>
                         {item.InvoiceNo ? item.InvoiceNo : "NA"}
                       </option>

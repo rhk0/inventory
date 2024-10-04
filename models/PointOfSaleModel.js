@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const posSchema = new mongoose.Schema(  {
-    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    admin: { type: mongoose.Schema.Types.ObjectId, ref: "user",required:true, },
     date: { type: String },
     invoicNo: { type: String },
     customerDetail: { type: String },
