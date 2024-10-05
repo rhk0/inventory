@@ -18,7 +18,6 @@ const PurchesReturn = () => {
   // const [freeQty, setFreeQty] = useState(0);
   // const [qty, setQty] = useState(0);
   const [billingAddress, setBillingAddress] = useState("");
-  const [selectPurchase, setselectPurchase] = useState("No");
   const [reasonForReturn, setreasonForReturn] = useState("");
   const [gstType, setGstType] = useState("CGST/SGST");
   const [rows, setRows] = useState([]);
@@ -151,25 +150,6 @@ const PurchesReturn = () => {
     }
   }, [date, paymentTerm]);
 
-  // const handlePaymentTermChange = (e) => {
-  //   const value = e.target.value;
-  //   setPaymentTerm(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     paymentTerm: value,
-  //   }));
-  // };
-
-  // const handleGstTypeChange = (e) => {
-  //   const value = e.target.value;
-  //   setGstType(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gstType: value,
-  //   }));
-  // };
-
-  // State for modal visibility
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
   const handledebitNoteNoChange = (e) => {
     const value = e.target.value;
@@ -264,7 +244,6 @@ const PurchesReturn = () => {
       quantity, // Update the quantity
     };
 
-    // Calculate scheme margin as well if free quantity is set
     if (selectedRow.freeQty !== null) {
       const totalQuantity = quantity + Number(selectedRow.freeQty);
       const schemeMargin =
@@ -275,8 +254,6 @@ const PurchesReturn = () => {
       updatedRows[rowIndex].schemeMargin = schemeMargin;
     }
 
-    // Rest of the calculations remain the same...
-    // Ensure unitCost and discountpercent exist before calculations
     const unitCost = Number(selectedRow.unitCost) || 0;
     const discountPercent = Number(selectedRow.discountpercent) || 0;
 
@@ -494,6 +471,7 @@ const PurchesReturn = () => {
         GstAmount: selectedInvoice.GstAmount,
         netAmount: selectedInvoice.netAmount,
         narration: selectedInvoice.narration,
+        selectPurchase: selectedInvoice.selectPurchase,
       }));
 
       // Update the rows state
@@ -520,14 +498,13 @@ const PurchesReturn = () => {
       const fields = {
         date,
         debitNoteNo,
-        supplierdebitNoteNo,
         supplierName: formData.supplierName,
         placeOfSupply,
         paymentTerm,
         dueDate,
         reasonForReturn,
         billingAddress,
-        selectPurchase,
+        selectPurchase: selectedInvoiceNo,
         gstType,
         otherChargesDescriptions,
         narration: formData.narration,
@@ -557,6 +534,7 @@ const PurchesReturn = () => {
         "/api/v1/purchesReturnRoute/createpurchasereturn",
         submissionData
       );
+      console.log(response, "lsadflkdsjaf");
       if (response) {
         toast.success("Purchase invoice created successfully...");
       }
@@ -587,7 +565,7 @@ const PurchesReturn = () => {
       billOfLading: "",
       motorVehicleNo: "",
       billingAddress: "",
-      selectPurchase: "No",
+      selectPurchase: "",
       gstType: "CGST/SGST",
       rows: [
         {

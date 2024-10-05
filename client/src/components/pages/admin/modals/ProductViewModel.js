@@ -7,7 +7,7 @@ const ProductViewModel = ({ ManufacturerData, closeModal }) => {
     <div className="justify-center p-8 responsive-container">
       <div className="flex justify-between items-center mb-1">
         <h1 className="font-bold text-center text-gray-700 text-2xl underline">
-          View Manufacturer
+          View Product
         </h1>
         <button
           type="button"

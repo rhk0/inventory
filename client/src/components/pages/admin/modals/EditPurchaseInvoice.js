@@ -7,7 +7,6 @@ import { useAuth } from "../../../context/Auth.js";
 
 const EditPurchaseInvoice = ({ closeModal, estimate }) => {
   const [documentPath, setdocumentPath] = useState(null);
-
   const [date, setDate] = useState("");
   const [InvoiceNo, setInvoiceNo] = useState("");
   const [salesType, setSalesType] = useState("");
@@ -115,6 +114,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
       setGrossAmount(estimate.grossAmount || "");
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
+
+      setdocumentPath(estimate.documentPath || "");
 
       const updatedRows = estimate.rows.map((row) => {
         const { igstpercent, ...rest } = row;
@@ -804,8 +805,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
               <th className="border p-2">Qty</th>
-              <th className="border p-2">Units</th>
-              <th className="border p-2">freeQty</th>
+              <th className="border p-2 ">Units</th>
+              <th className="border p-2 ">free Qty</th>
 
               <th className="border p-2">MRP</th>
               <th className="border p-2">Unit Cost</th>
@@ -932,7 +933,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) =>
                       handleRowChange(index, "hsnCode", e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "80px",
+                      flexBasis: "80px",
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
                 <td className="border p-2">
@@ -969,8 +975,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) => handleFreeQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{
-                      minWidth: "20px",
-                      flexBasis: "20px",
+                      minWidth: "40px",
+                      flexBasis: "40px",
                       flexShrink: 1,
                     }}
                   />
@@ -1003,7 +1009,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) =>
                       handleRowChange(index, "unitCost", e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "50px",
+                      flexBasis: "50px",
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
 
@@ -1044,7 +1055,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                         (e) =>
                           handleRowChange(index, "discountRs", e.target.value) // Fix here
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "40px",
+                        flexBasis: "40px",
+                        flexShrink: 1,
+                      }}
                     />
                   </div>
                 </td>
@@ -1056,7 +1072,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       onChange={(e) =>
                         handleRowChange(index, "taxableValue", e.target.value)
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
                     />
                   </td>
                   {gstType === "CGST/SGST" && (
@@ -1073,7 +1094,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                           <input
                             type="number"
@@ -1081,7 +1107,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                             onChange={(e) =>
                               handleRowChange(index, "cgstRS", e.target.value)
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                         </div>
                       </td>
@@ -1097,7 +1128,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                           <input
                             type="number"
@@ -1105,7 +1141,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                             onChange={(e) =>
                               handleRowChange(index, "sgstRS", e.target.value)
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                         </div>
                       </td>
@@ -1145,7 +1186,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) =>
                       handleRowChange(index, "totalValue", e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "70px",
+                      flexBasis: "70px",
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
                 <td className="p-1 gap-2 flex">
@@ -1216,32 +1262,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
           </svg>
           Edit Other Charges
         </button>
-
-        <div>
-          <label className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>{" "}
-            Upload Document
-            <input
-              type="file"
-              className="hidden"
-              onChange={(e) => setdocumentPath(e.target.files[0])}
-            />
-          </label>
-        </div>
       </div>
+
       {isModalOtherChargesOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
@@ -1279,6 +1301,32 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
           </div>
         </div>
       )}
+
+      <div className="mt-4 mb-4">
+        <label className="w-1/4 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>{" "}
+          change Document
+          <input
+            type="file"
+            className="hidden"
+            onChange={(e) => setdocumentPath(e.target.files[0])}
+          />
+        </label>
+      </div>
+
       {/* Narration and Amounts */}
       <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
         <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
