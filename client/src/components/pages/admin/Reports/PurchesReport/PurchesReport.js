@@ -7,7 +7,7 @@ const PurchesReport = () => {
       <h1 className="text-4xl font-bold text-center mb-10">𝙿𝚞𝚛𝚌𝚑𝚎𝚜 𝚁𝚎𝚙𝚘𝚛𝚝</h1>
 
       {/* Buttons to select report */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 justify-center mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 justify-center mb-10">
         <Link to="/admin/Invoicewisepurches">
           <button className="w-full h-64 rounded-lg bg-blue-100 hover:bg-blue-500 hover:text-white text-3xl">
             Invoice wise Purches
@@ -20,17 +20,17 @@ const PurchesReport = () => {
           </button>
         </Link>
 
-        <Link to="/admin/ManufacturerWisereport">
+        {/* <Link to="/admin/ManufacturerWisereport">
           <button className="w-full h-64 rounded-lg bg-green-100 hover:bg-green-500 hover:text-white text-3xl">
             Manufacturer wise report
           </button>
-        </Link>
-
+        </Link> */}
+{/* 
         <Link to="/admin/purchesregister">
           <button className="w-full h-64 rounded-lg bg-red-100 hover:bg-red-500 hover:text-white text-3xl">
             Purches Register
           </button>
-        </Link>
+        </Link> */}
 
         <Link to="/admin/supplierledger">
           <button className="w-full h-64 rounded-lg bg-orange-100 hover:bg-orange-500 hover:text-white text-3xl">
