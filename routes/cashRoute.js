@@ -4,7 +4,7 @@ import { createCashController, deleteCashController, manageCashController, manag
 const router = express.Router();
 
 router.post("/createCash",createCashController);
-router.get("/manageCash",manageCashController)
+router.get("/manageCash/:_id",manageCashController)
 router.get("/manageSingleCash/:_id",manageSingleCashController)
 router.delete("/deleteCash/:_id", deleteCashController);
 router.put("/updateCash/:_id", updateCashController);

@@ -391,10 +391,11 @@ const PurchesInvoice = () => {
       currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
       // Calculate GST amounts (assuming the GST rate is split into CGST and SGST for intra-state transactions)
       const gstRate = Number(gstRatev) || 0;
+
       const cgstRS = (taxableValue * (gstRate / 2)) / 100;
       const sgstRS = (taxableValue * (gstRate / 2)) / 100;
       const igstRS = (taxableValue * gstRate) / 100;
-
+      currentRow.quantity=qt;
       currentRow.cgstRS = cgstRS.toFixed(2);
       currentRow.sgstRS = sgstRS.toFixed(2);
       currentRow.igstRS = igstRS.toFixed(2);

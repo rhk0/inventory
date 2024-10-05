@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
 
 import { useAuth } from "../../../context/Auth.js";
-const CreatePurchaseOrder = () => {
+  const CreatePurchaseOrder = () => {
   const [date, setDate] = useState("");
   const [orderNo, setorderNo] = useState("");
   const [customerType, setCustomerType] = useState("Retailer");
@@ -14,7 +14,7 @@ const CreatePurchaseOrder = () => {
   const [supplierType, setsupplierType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [userid, setUserId] = useState("");
+  const [userId, setUserId] = useState("");
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
   const [auth] = useAuth();
@@ -84,7 +84,7 @@ const CreatePurchaseOrder = () => {
 
   const fetchsupplier = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
       setsupplier(response.data.data);
     } catch (error) {
       console.error("Error fetching suppliers:", error);
@@ -100,12 +100,12 @@ const CreatePurchaseOrder = () => {
       }
     }
     fetchsupplier();
-  }, [auth, userid]);
+  }, [auth, userId]);
 
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -113,7 +113,7 @@ const CreatePurchaseOrder = () => {
     };
 
     companyData(); // Fetch company data on component mount
-  }, [userid]); // Empty dependency array ensures this only runs once, on mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
 
   const handlesupplierChange = (e) => {
     const value = e.target.value;
@@ -325,7 +325,7 @@ const CreatePurchaseOrder = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageproduct/${userid}`);
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
       if (response.data && Array.isArray(response.data.data)) {
         setProducts(response.data.data);
       } else {
@@ -338,7 +338,7 @@ const CreatePurchaseOrder = () => {
   };
   useEffect(() => {
     fetchProducts();
-  }, [auth, userid]);
+  }, [auth, userId]);
   const handlQtyChange = (rowIndex, qty) => {
     // Parse the new quantity to ensure it's a number
     const newQty = parseFloat(qty) || 0;
@@ -391,6 +391,7 @@ const CreatePurchaseOrder = () => {
       newRows[index] = {
         ...newRows[index],
         taxableValue: taxableValue.toFixed(2),
+        quantity:qty,
         cgstrs: cgstrs.toFixed(2),
         sgstrs: sgstrs.toFixed(2),
         igstrs: igstrs.toFixed(2),

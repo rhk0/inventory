@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import ViewPurchaseOrder from "../modals/ViewPurchaseOrder";
 import EditPurchaseOrder from "../modals/EditPurchaseOrder";
+import OrderPurchaseInvoice from "./OrderPurchaseInvoice";
 import Modal from "react-modal";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
-
+import { Link } from "react-router-dom";
 
 const ManagePurchaseOrder = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -67,8 +68,9 @@ const ManagePurchaseOrder = () => {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/ManageManufacturer/${userId}`);
-      console.log(response, "ldsf");
+      const response = await axios.get(
+        `/api/v1/auth/ManageManufacturer/${userId}`
+      );
       setCustomers(response.data.data);
     } catch (error) {
       console.error("Error fetching customers", error);
@@ -91,7 +93,10 @@ const ManagePurchaseOrder = () => {
       estimate.orderNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       estimate.supplierName.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  const handleNavigation = (estimate) => {
+    console.log("Navigating to Invoice with estimate:", estimate);
+    // You can also perform any additional actions here if needed
+  };
   return (
     <div className="responsive-container p-4">
       {/* Search Bar */}
@@ -120,7 +125,7 @@ const ManagePurchaseOrder = () => {
                   "Order  No.",
                   "Supplier Name",
                   "Place of Supply",
-                 
+
                   "GST Type",
                   "Product Code",
                   "UOM",
@@ -162,7 +167,6 @@ const ManagePurchaseOrder = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
                     </td>
-                   
 
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
@@ -205,9 +209,16 @@ const ManagePurchaseOrder = () => {
                         >
                           Delete
                         </button>
-                        <button className="text-green-500 hover:underline focus:outline-none">
-                          Create Invoice
-                        </button>
+                        <Link
+                          to={{
+                            pathname: "/admin/orderPurchaseInvoice",
+                            state: { estimate: estimate },
+                          }}
+                          className="text-blue-500 hover:underline focus:outline-none"
+                          onClick={handleNavigation(estimate)} // Call your handler on click
+                        >
+                          Go to Invoice
+                        </Link>
                       </div>
                     </td>
                   </tr>

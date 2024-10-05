@@ -89,6 +89,7 @@ import SupplierLedger from "../pages/admin/Reports/PurchesReport/SupplierLedger.
 import ManagePurchaseOrder from "../pages/admin/purchase/ManagePurchaseOrder.js";
 import ManageSalesInvoice from "../pages/admin/sales/ManageSalesInvoice.js";
 import ManagePurchaseReturn from "../pages/admin/purchase/ManagePurchaseReturn.js";
+import OrderPurchaseInvoice from "../pages/admin/purchase/OrderPurchaseInvoice.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -112,6 +113,7 @@ const AdminRoute = () => {
         <Route path="/*" element={<Test />} />
         {/* rahul routing */}
         <Route path="/companyregistration" element={<CompanyRegistration />} />
+        <Route path="/orderPurchaseInvoice" element={<OrderPurchaseInvoice />} />
         <Route path="/CreateSupplier" element={<CreateSupplier />} />
         <Route path="/ManageSupplier" element={<ManageSupplier />} />
         <Route path="CreateCustomer" element={<CreateCustomer />} />

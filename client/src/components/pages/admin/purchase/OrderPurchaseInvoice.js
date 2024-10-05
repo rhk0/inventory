@@ -4,18 +4,37 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
 import { useAuth } from "../../../context/Auth.js";
-const CreateDeliveryChallan = () => {
+
+import Modal from "react-modal";
+
+import { useLocation } from "react-router-dom";
+
+const OrderPurchaseInvoice = () => {
+
+    const location = useLocation();
+    const { estimate } = location.state || {}; // Retrieve passed estimate data
+  
+    console.log(estimate, "estimate data in OrderPurchaseInvoice"); // Check if the data is available
+  
+
+
+  const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");
-  const [creditNoteNo, setcreditNoteNo] = useState("");
+  const [invoiceNo, setinvoiceNo] = useState("");
   const [salesType, setSalesType] = useState("GST Invoice");
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [userId, setUserId] = useState("");
-  const [chooseUser, setChooseUser] = useState([]);
-  const [auth] = useAuth();
+
   const [company, setCompanyData] = useState([]);
-  const [reasonForReturn, setReasonForReturn] = useState("");
+  const [chooseUser, setChooseUser] = useState([]);
+  const [freeQty, setFreeQty] = useState(0);
+  const [qty, setQty] = useState(0);
+  const [margin, setMargin] = useState(0);
+  const [gstRatev, setgstRatev] = useState(0);
+  const [auth] = useAuth();
+  const [userId, setuserId] = useState("");
+
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -30,16 +49,18 @@ const CreateDeliveryChallan = () => {
   const [rows, setRows] = useState([]);
   const [paymentTerm, setPaymentTerm] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
+  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
 
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
-
+  const [selectedAddress, setAddress] = useState("");
+  const [viewModal, setViewModal] = useState(false);
   const [formData, setFormData] = useState({
     date: "",
-    creditNoteNo: "",
+    invoiceNo: "",
     salesType: "",
     customerType: "",
-    customerName: "",
+    supplierName: "",
     placeOfSupply: "",
     paymentTerm: "",
     dueDate: "",
@@ -52,21 +73,28 @@ const CreateDeliveryChallan = () => {
     billingAddress: "",
     reverseCharge: "",
     gstType: "",
-    reasonForReturn: "",
 
     rows: [
       {
-        itemCode: "",
-        productName: "",
-        hsnCode: "",
-        qty: null,
-        uom: null,
-        mrp: null,
-        discount: null,
-        cgst: null,
-        sgst: null,
-        igst: null,
-        totalValue: null,
+        itemCode: "", // Item Code
+        productName: "", // Product Name
+        hsnCode: "", // HSN Code
+        qty: null, // Quantity
+        uom: null, // Unit of Measure
+        freeQty: null,
+        mrp: null, // Maximum Retail Price
+        unitCost: null, // Unit Cost
+        schemeMargin: "", // Scheme Margin
+        discountpercent: null, // Discount Percentage
+        discountRs: null, // Discount in Rs
+        taxableValue: null, // Taxable Amount
+        cgstpercentercent: null, // CGST Percentage
+        cgstRS: null, // CGST Amount
+        sgstpercentercent: null, // SGST Percentage
+        sgstRS: null, // SGST Amount
+        igstpercentercent: null, // IGST Percentage
+        igstRS: null, // IGST Amount
+        totalValue: null, // Total Value
       },
     ],
 
@@ -78,52 +106,90 @@ const CreateDeliveryChallan = () => {
     netAmount: "",
   });
 
-  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+  const [cashDetails, setCashDetails] = useState({
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+  const [bankDetails, setBankDetails] = useState({
+    bank: "",
+    selectBankType: "",
+    transactionDate: "",
+    chequeNo: "",
+    transactionNo: "",
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
 
-  const fetchCustomer = async () => {
-    try {
-      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
-      setCustomer(response.data.data);
-    } catch (error) {
-      console.error("Error fetching Customers:", error);
-    }
+  const handleCashDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setCashDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  const fetchProducts = async () => {
+  const handleBankDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setBankDetails((prev) => ({
+      ...prev,
+      [name]: value, // Update the corresponding field in bankDetails
+    }));
+  };
+
+  const [paymentMethod, setPaymentMethod] = useState("");
+
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+  const [paymentType, setPaymentType] = useState("");
+  const [subPaymentType, setSubPaymentType] = useState("");
+
+  const handlePaymentTypeChange = (e) => {
+    setPaymentType(e.target.value);
+    setSubPaymentType(""); // Reset subPaymentType when paymentType changes
+  };
+
+  const handleSubPaymentTypeChange = (e) => {
+    const { value } = e.target;
+    setSubPaymentType(value); // Set the subPaymentType state
+    setBankDetails((prev) => ({ ...prev, selectBankType: value })); // Update bankDetails
+  };
+
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+
+  const fetchsupplier = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
-      if (response.data && Array.isArray(response.data.data)) {
-        setProducts(response.data.data);
-      } else {
-        console.error("Unexpected response structure:", response.data);
-      }
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
+      setCustomer(response.data.data);
     } catch (error) {
-      console.error("Error fetching products:", error);
-      // toast.error("Failed to fetch products. Please try again.");
+      console.error("Error fetching suppliers:", error);
     }
   };
 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
-        setUserId(auth.user._id);
+        setuserId(auth.user._id);
       } else if (auth.user.role === 0) {
-        setUserId(auth.user.admin);
+        setuserId(auth.user.admin);
       }
     }
-    fetchProducts();
-    fetchCustomer();
-    companyData();
+    fetchsupplier();
   }, [auth, userId]);
 
-  const companyData = async () => {
-    try {
-      const response = await axios.get(`/api/v1/company/get/${userId}`);
-      setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
-    } catch (error) {
-      console.error("Error fetching company data:", error);
-    }
-  };
+  useEffect(() => {
+    const companyData = async () => {
+      try {
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
+        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+      }
+    };
+
+    companyData(); // Fetch company data on component mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
 
   const handleCustomerChange = (e) => {
     const value = e.target.value;
@@ -133,11 +199,14 @@ const CreateDeliveryChallan = () => {
     setChooseUser(selectedCustomerData);
     setFormData((prev) => ({
       ...prev,
-      customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      supplierName: selectedCustomerData ? selectedCustomerData.name : "",
+      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
       placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+
     if (
       selectedCustomerData.state.trim().toLowerCase() ===
       company.state.trim().toLowerCase()
@@ -147,6 +216,7 @@ const CreateDeliveryChallan = () => {
       setGstType("IGST");
     }
   };
+
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
@@ -178,7 +248,7 @@ const CreateDeliveryChallan = () => {
       setDueDate(formattedDueDate);
       setFormData((prev) => ({
         ...prev,
-        dueDate: formattedDueDate,
+        dueDate: formattedDueDate, // Update formData with dueDate
       }));
     }
   }, [date, paymentTerm]);
@@ -205,12 +275,21 @@ const CreateDeliveryChallan = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
-  const handlecreditNoteNoChange = (e) => {
+  const handleinvoiceNoChange = (e) => {
     const value = e.target.value;
-    setcreditNoteNo(value);
+    setinvoiceNo(value);
     setFormData((prev) => ({
       ...prev,
-      creditNoteNo: value,
+      invoiceNo: value,
+    }));
+  };
+
+  const handlesupplierInvoiceNoChange = (e) => {
+    const value = e.target.value;
+    setsupplierInvoiceNo(value);
+    setFormData((prev) => ({
+      ...prev,
+      supplierInvoiceNo: value,
     }));
   };
   const handleSalesTypeChange = (e) => {
@@ -241,19 +320,10 @@ const CreateDeliveryChallan = () => {
 
   const handleBillingAddressChange = (e) => {
     const value = e.target.value;
-    setBillingAddress(value);
+    setBillingAddress(selectedAddress);
     setFormData((prev) => ({
       ...prev,
       billingAddress: value,
-    }));
-  };
-
-  const handleReasonOfReturn = (e) => {
-    const value = e.target.value;
-    setReasonForReturn(value);
-    setFormData((prev) => ({
-      ...prev,
-      reasonForReturn: value,
     }));
   };
   const handleReverseChargeChange = (e) => {
@@ -266,6 +336,7 @@ const CreateDeliveryChallan = () => {
   };
 
   // Function to handle transport detail change
+
   const handleTransportDetailChange = (field, value) => {
     setTransportDetails((prev) => ({ ...prev, [field]: value }));
     setFormData((prev) => ({
@@ -273,29 +344,95 @@ const CreateDeliveryChallan = () => {
       [field]: value,
     }));
   };
-  // const handleRowChange = (index, field, value) => {
-  //   const newRows = [...rows];
-  //   const newValue = parseFloat(value) || 0;
-  //   newRows[index] = { ...newRows[index], [field]: newValue };
 
-  //   // Calculate taxable value, GST, and total value
-  //   const { qty, mrp, discount } = newRows[index];
-  //   const taxableValue = qty * mrp - discount;
-  //   const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-  //   const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-  //   const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
-  //   const totalValue = taxableValue + cgst + sgst + igst;
+  const handleRowChange = (rowIndex, field, value) => {
+    const updatedRows = [...rows]; // Clone the existing rows array
+    const currentRow = updatedRows[rowIndex]; // Get the current row
+    if (field === "discountpercent") {
+      // Calculate discountRs based on discountpercent and maxmimunRetailPrice
+      const discountPercent = parseFloat(value) || 0; // Ensure a valid number
+      const discountRs = (currentRow.unitCost * discountPercent) / 100; // Calculate discount in Rs
 
-  //   newRows[index] = {
-  //     ...newRows[index],
-  //     taxableValue,
-  //     cgst,
-  //     sgst,
-  //     igst,
-  //     totalValue,
-  //   };
-  //   setRows(newRows);
-  // };
+      // Update discount percent, discountRs, and taxable value
+      currentRow.discountpercent = discountPercent;
+      currentRow.discountRs = discountRs.toFixed(2);
+
+      // Update taxable value based on MRP, discountRs, and quantity
+
+      const unitCost = Number(currentRow.unitCost);
+      const discountRS = Number(currentRow.discountRs);
+
+      const qt = Number(qty);
+      const taxableValue = (unitCost - discountRS) * qt;
+      currentRow.taxableValue = taxableValue.toFixed(2); // Ensure toFixed(2) for consistent format
+
+      // Calculate GST amounts (assuming the GST rate is split into CGST and SGST for intra-state transactions)
+
+      const gstRate = Number(gstRatev) || 0;
+      const cgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const sgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const igstRS = (taxableValue * gstRate) / 100;
+      currentRow.cgstRS = cgstRS.toFixed(2);
+      currentRow.sgstRS = sgstRS.toFixed(2);
+      currentRow.igstRS = igstRS.toFixed(2);
+      //dd
+      // Update totalValue as taxableValue + GST amount (CGST + SGST or IGST)
+      const totalGST =
+        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
+
+      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
+    } else if (field === "discountRs") {
+      // Calculate discount percentage based on discountRs and maxmimunRetailPrice
+      const discountRs = parseFloat(value) || 0;
+      const discountPercent = (discountRs / currentRow.unitCost) * 100;
+
+      // Update discount percent, discountRs, and taxable value
+      currentRow.discountpercent = discountPercent.toFixed(2);
+      currentRow.discountRs = discountRs.toFixed(2);
+
+      // Update taxable value based on MRP, discountRs, and quantity
+      const unitCost = Number(currentRow.unitCost);
+      const discountRS = Number(currentRow.discountRs);
+      const qt = Number(qty);
+      const taxableValue = (unitCost - discountRS) * qt;
+      // const taxableValue = (currentRow.maxmimunRetailPrice - discountRs) * currentRow.qty;
+      currentRow.taxableValue = taxableValue.toFixed(2);
+      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
+      // Calculate GST amounts (assuming the GST rate is split into CGST and SGST for intra-state transactions)
+      const gstRate = Number(gstRatev) || 0;
+
+      const cgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const sgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const igstRS = (taxableValue * gstRate) / 100;
+      currentRow.quantity = qt;
+      currentRow.cgstRS = cgstRS.toFixed(2);
+      currentRow.sgstRS = sgstRS.toFixed(2);
+      currentRow.igstRS = igstRS.toFixed(2);
+
+      // Update totalValue as taxableValue + GST amount (CGST + SGST or IGST)
+      const totalGST =
+        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
+
+      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
+    }
+    // Update the rows state
+    updatedRows[rowIndex] = currentRow;
+    setRows(updatedRows);
+  };
+
+  const handlQtyChange = (rowIndex, qty) => {
+    const updatedRows = [...rows];
+
+    const selectedRow = updatedRows[rowIndex];
+
+    setQty(qty);
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      qty: qty,
+    };
+
+    setRows(updatedRows);
+  };
 
   const addRow = () => {
     setRows([
@@ -306,12 +443,14 @@ const CreateDeliveryChallan = () => {
         hsnCode: "",
         qty: 0,
         units: "",
-        mrp: 0,
-        discount: 0,
+        maxmimunRetailPrice: 0,
+        discountpercent: 0,
+        discountRs: 0,
         taxableValue: 0,
         cgst: 0,
         sgst: 0,
         igst: 0,
+        unitCost: 0,
         totalValue: 0,
       },
     ]);
@@ -326,32 +465,26 @@ const CreateDeliveryChallan = () => {
   const calculateTotals = () => {
     let grossAmount = 0;
     let GstAmount = 0;
+    let totalOtherCharges = parseFloat(otherCharges) || 0;
 
-    rows.forEach((rows) => {
-      grossAmount += Number(rows.taxableValue);
-      GstAmount +=
-        gstType === "CGST/SGST"
-          ? Number(rows.cgstrs) + Number(rows.sgstrs)
-          : Number(rows.igstrs);
+    rows.forEach((row) => {
+      const taxableValue = parseFloat(row.taxableValue) || 0;
+      const cgstRS = parseFloat(row.cgstRS) || 0;
+      const sgstRS = parseFloat(row.sgstRS) || 0;
+      const igstRS = parseFloat(row.igstRS) || 0;
+
+      grossAmount += taxableValue;
+      GstAmount += cgstRS + sgstRS; // Total GST amount for each row
     });
 
     let netAmount;
-
-    // Check if otherChargesDescriptions includes "discount"
-
-    if (salesType === "Bill of Supply") {
-      if (otherChargesDescriptions.includes("discount")) {
-        netAmount = grossAmount - otherCharges; // Do not add GstAmount
-      } else {
-        netAmount = grossAmount + otherCharges; // Do not add GstAmount
-      }
+    // Check if otherChargesDescriptions includes "discount" to decide calculation
+    if (otherChargesDescriptions.toLowerCase().includes("discount")) {
+      netAmount = grossAmount + GstAmount - totalOtherCharges;
     } else {
-      if (otherChargesDescriptions.includes("discount")) {
-        netAmount = grossAmount + GstAmount - otherCharges;
-      } else {
-        netAmount = grossAmount + GstAmount + otherCharges;
-      }
+      netAmount = grossAmount + GstAmount + totalOtherCharges;
     }
+
     return { grossAmount, GstAmount, netAmount };
   };
 
@@ -361,72 +494,46 @@ const CreateDeliveryChallan = () => {
 
   const [products, setProducts] = useState([]);
 
-  const handleRowChange = (index, field, value) => {
-    // Create a copy of rows
-    const newRows = [...rows];
-
-    // Update the changed field with the new value
-    newRows[index] = { ...newRows[index], [field]: value };
-
-    // Check if the product is selected
-    const selectedProduct = products.find(
-      (product) => product.productName === newRows[index].productName
-    );
-
-    if (selectedProduct) {
-      // Calculate retail price and apply the discount if applicable
-      const retailPrice = selectedProduct.maxmimunRetailPrice
-        ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
-        : 0;
-
-      // Get sales tax and GST rate
-      const salesTaxInclude = selectedProduct.salesTaxInclude;
-      const gstRate = selectedProduct.gstRate;
-
-      // Extract the quantity from the updated row
-      const { qty } = newRows[index];
-
-      // Calculate taxable value
-      const taxableValue = salesTaxInclude
-        ? (selectedProduct.retailPrice * qty * 100) /
-          (100 + Number(selectedProduct.gstRate))
-        : retailPrice * qty;
-
-      // Calculate GST amounts
-      const cgstrs =
-        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
-      const sgstrs =
-        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
-      const igstrs = gstType === "IGST" ? (taxableValue * gstRate) / 100 : 0;
-
-      // Calculate total value
-      const totalValue = taxableValue + (taxableValue * gstRate) / 100;
-
-      // Update the row with the calculated values
-      newRows[index] = {
-        ...newRows[index],
-        taxableValue: taxableValue,
-        quantity: qty,
-        cgstrs: cgstrs.toFixed(2),
-        sgstrs: sgstrs.toFixed(2),
-        igstrs: igstrs.toFixed(2),
-        totalvalue: totalValue.toFixed(2),
-      };
-      // Set the updated rows state
-      setRows(newRows);
-      // Trigger total calculation
-      calculateTotals(newRows);
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data);
+      } else {
+        console.error("Unexpected response structure:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // toast.error("Failed to fetch products. Please try again.");
     }
   };
-  const handlQtyChange = (rowIndex, qty) => {
-    // Parse the new quantity to ensure it's a number
-    const newQty = parseFloat(qty) || 0;
+  useEffect(() => {
+    fetchProducts();
+  }, [auth, userId]);
 
-    // Call handleRowChange to update the row with the new quantity
-    handleRowChange(rowIndex, "qty", newQty);
+  const handleFreeQtyChange = (rowIndex, newFreeQty) => {
+    const updatedRows = [...rows];
+    const selectedRow = updatedRows[rowIndex];
+
+    // Update the free quantity in the selected row
+    const freeQty = parseFloat(newFreeQty) || 0; // Ensure it's a valid number
+
+    // Calculate total quantity using the quantity from the selected row
+    const totalQuantity = Number(qty) + freeQty;
+
+    // Calculate schemeMargin only if both freeQty and quantity exist
+    const schemeMargin =
+      freeQty && qty ? ((freeQty / totalQuantity) * 100).toFixed(2) : 0;
+
+    // Update the row with the new freeQty and schemeMargin
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      freeQty: freeQty,
+      schemeMargin: schemeMargin,
+    };
+
+    // Update the state with the modified rows
+    setRows(updatedRows);
   };
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
@@ -435,6 +542,7 @@ const CreateDeliveryChallan = () => {
     );
 
     if (selectedProduct) {
+      setgstRatev(selectedProduct.gstRate);
       const updatedRows = [...rows];
 
       // Calculate retail price
@@ -447,12 +555,9 @@ const CreateDeliveryChallan = () => {
       const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       // Calculate taxable value based on salesTaxInclude
-      const taxableValue = salesTaxInclude
-        ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-          (100 + Number(selectedProduct.gstRate))
-        : retailPrice * selectedProduct.quantity;
+      const taxableValue = 0;
 
-      // Update the row with the new values
+      // Update the row with the new values, schemeMargin is excluded here since it's handled separately
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
@@ -462,36 +567,29 @@ const CreateDeliveryChallan = () => {
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
-        quantity: selectedProduct.quantity,
-        wholesalerDiscount: selectedProduct.wholesalerDiscount,
-        wholeselerDiscountRS:
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.wholesalerDiscount) /
-          100,
-        retailDiscount: selectedProduct.retailDiscount,
-        retailDiscountRS:
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-          100,
+        // quantity: selectedProduct.quantity,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
+        unitCost: selectedProduct.purchasePriceExGst,
+        schemeMargin: updatedRows[rowIndex].schemeMargin || 0, // Existing or initial value
 
-        // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
 
-        cgstp: selectedProduct.gstRate / 2,
-        sgstp: selectedProduct.gstRate / 2,
-        igstp: selectedProduct.gstRate,
+        cgstpercent: selectedProduct.gstRate / 2,
+        sgstpercent: selectedProduct.gstRate / 2,
+        igstpercent: selectedProduct.gstRate,
 
-        cgstrs: parseFloat(
+        cgstRS: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
-        sgstrs: parseFloat(
+        sgstRS: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
-        igstrs: parseFloat(
+        igstRS: parseFloat(
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
-        totalvalue: (
+        totalValue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
@@ -507,17 +605,16 @@ const CreateDeliveryChallan = () => {
     );
 
     if (selectedProduct) {
+      setgstRatev(selectedProduct.gstRate);
       const updatedRows = [...rows];
 
+      // Calculate retail price and taxable value based on the product details
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
           100;
 
-      const taxableValue = selectedProduct.salesTaxInclude
-        ? (retailPrice * selectedProduct.quantity * 100) /
-          (100 + selectedProduct.gstRate)
-        : retailPrice * selectedProduct.quantity;
+      const taxableValue = 0;
 
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -528,35 +625,26 @@ const CreateDeliveryChallan = () => {
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
-        quantity: selectedProduct.quantity,
-        wholesalerDiscount: selectedProduct.wholesalerDiscount,
-        wholeselerDiscountRS: (
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.wholesalerDiscount) /
-          100
-        ).toFixed(2),
-        retailDiscount: selectedProduct.retailDiscount,
-        retailDiscountRS: (
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-          100
-        ).toFixed(2),
+        // quantity: selectedProduct.quantity,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
+        unitCost: selectedProduct.purchasePriceExGst,
         taxableValue: taxableValue,
-        cgstp: selectedProduct.gstRate / 2,
-        sgstp: selectedProduct.gstRate / 2,
-        igstp: selectedProduct.gstRate,
+        cgstpercent: selectedProduct.gstRate / 2,
+        sgstpercent: selectedProduct.gstRate / 2,
+        igstpercent: selectedProduct.gstRate,
 
-        cgstrs: parseFloat(
+        cgstRS: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
-        sgstrs: parseFloat(
+        sgstRS: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
-        igstrs: parseFloat(
+        igstRS: parseFloat(
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
-        totalvalue: (
+        totalValue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
@@ -578,154 +666,177 @@ const CreateDeliveryChallan = () => {
     e.preventDefault();
 
     try {
-      const updatedFormData = {
-        ...formData,
-        userId: userId,
-        rows: rows.map((row) => ({
-          itemCode: row.itemCode,
-          productName: row.productName,
-          hsnCode: row.hsnCode,
-          qty: row.quantity,
-          units: row.units,
-          mrp: row.maxmimunRetailPrice,
+      // Create a FormData instance
+      const submissionData = new FormData();
 
-          discountpercent:
-            customerType === "Wholesaler"
-              ? row.wholesalerDiscount
-              : row.retailDiscount,
-          discountRS:
-            customerType === "Wholesaler"
-              ? row.wholeselerDiscountRS
-              : row.retailDiscountRS,
-
-          taxable: row.taxableValue.toFixed(2),
-          cgstpercent: row.cgstp,
-          cgstRS: row.cgstrs,
-          sgstpercent: row.sgstp,
-          sgstRS: row.sgstrs,
-          igstpercent: row.igstp,
-          igstRS: row.igstrs,
-          totalValue: row.totalvalue,
-        })),
+      // Append non-file form data to formData
+      const fields = {
+        date,
+        invoiceNo,
+        supplierInvoiceNo,
+        customerType,
+        supplierName: formData.supplierName,
+        placeOfSupply,
+        paymentTerm,
+        dueDate,
+        receiptDocNo: transportDetails.receiptDocNo,
+        dispatchedThrough: transportDetails.dispatchedThrough,
+        destination: transportDetails.destination,
+        carrierNameAgent: transportDetails.carrierNameAgent,
+        billOfLading: transportDetails.billOfLading,
+        motorVehicleNo: transportDetails.motorVehicleNo,
+        billingAddress,
+        reverseCharge,
+        gstType,
+        otherChargesDescriptions,
+        narration: formData.narration,
         grossAmount: grossAmount.toFixed(2),
         GstAmount: GstAmount.toFixed(2),
         otherCharges: otherCharges.toFixed(2),
-        otherChargesDescriptions: otherChargesDescriptions,
-        salesType,
-        customerType,
-        reverseCharge,
-        gstType,
-        reasonForReturn,
-
         netAmount: netAmount.toFixed(2),
       };
+
+      // Append all fields to formData
+      Object.keys(fields).forEach((key) => {
+        if (fields[key]) {
+          submissionData.append(key, fields[key]);
+        }
+      });
+
+      // Append each row individually
+      rows.forEach((row, index) => {
+        Object.keys(row).forEach((key) => {
+          submissionData.append(`rows[${index}][${key}]`, row[key]);
+        });
+      });
+
+      if (paymentMethod === "Cash") {
+        submissionData.append("cash", JSON.stringify(cashDetails));
+      } else if (paymentMethod === "Bank") {
+        submissionData.append("bank", JSON.stringify(bankDetails));
+      }
+
+      // If a document file has been selected, append it to the FormData
+      if (documentPath) {
+        submissionData.append("documentPath", documentPath);
+      }
+
+      // Send the formData using axios
       const response = await axios.post(
-        "/api/v1/salesReturnRoute/createsalesreturn",
-        updatedFormData
+        "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
+        submissionData
       );
 
       if (response) {
-        toast.success(" sales return created successfully...");
+        toast.success("Purchase invoice created successfully...");
       }
-      setFormData({
-        date: "",
-        creditNoteNo: "",
-        salesType: "",
-        customerType: "",
-        customerName: "",
-        placeOfSupply: "",
-        paymentTerm: "",
-        dueDate: "",
-        receiptDocNo: "",
-        dispatchedThrough: "",
-        destination: "",
-        carrierNameAgent: "",
-        billOfLading: "",
-        motorVehicleNo: "",
-        billingAddress: "",
-        reverseCharge: "",
-        gstType: "",
-        reasonForReturn: "",
-        rows: [
-          {
-            itemCode: "",
-            productName: "",
-            hsnCode: "",
-            qty: null,
-            units: null,
-            mrp: null,
-            discount: null,
-            cgst: null,
-            sgst: null,
-            igst: null,
-            totalValue: null,
-          },
-        ],
-        narration: "",
-        otherChargesDescriptions: "",
-        grossAmount: "",
-        GstAmount: "",
-        otherCharges: "",
-        netAmount: "",
-      });
 
-      // Clear other independent states
-      setDate("");
-      setcreditNoteNo("");
-      setSalesType("GST Invoice");
-      setCustomerType("Retailer");
-      setPlaceOfSupply("");
-      setDueDate("");
-      setTransportDetails({
-        receiptDocNo: "",
-        dispatchedThrough: "",
-        destination: "",
-        carrierNameAgent: "",
-        billOfLading: "",
-        motorVehicleNo: "",
-      });
-      setBillingAddress("");
-      setReverseCharge("No");
-      setGstType("CGST/SGST");
-      setRows([]);
-      setPaymentTerm(0);
-      setOtherCharges(0);
-      setOtherChargesDescriptions("");
-      setReasonForReturn("");
-      setSelectedCustomer("");
+      // Reset your form data and state
+      resetForm();
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Failed to create sales return. Please try again.");
+      toast.error("Failed to create sales estimate. Please try again.");
     }
   };
+
+  const resetForm = () => {
+    setFormData({
+      date: "",
+      invoiceNo: "",
+      supplierInvoiceNo: "",
+      salesType: "GST Invoice",
+      customerType: "Retailer",
+      supplierName: "",
+      placeOfSupply: "",
+      paymentTerm: "",
+      dueDate: "",
+      receiptDocNo: "",
+      dispatchedThrough: "",
+      destination: "",
+      carrierNameAgent: "",
+      billOfLading: "",
+      motorVehicleNo: "",
+      billingAddress: "",
+      reverseCharge: "No",
+      gstType: "CGST/SGST",
+      rows: [
+        {
+          itemCode: "",
+          productName: "",
+          hsnCode: "",
+          qty: null,
+          units: "",
+          mrp: null,
+          discount: null,
+          taxableValue: 0,
+          cgst: 0,
+          sgst: 0,
+          igst: 0,
+          totalValue: 0,
+        },
+      ],
+      narration: "",
+      otherChargesDescriptions: "",
+      grossAmount: "",
+      GstAmount: "",
+      otherCharges: "",
+      netAmount: "",
+      cash: {},
+      bank: {},
+    });
+
+    setCashDetails({ amount: "", advance: "", received: "", balance: "" });
+    setBankDetails({
+      selectBankType: "",
+      transactionDate: "",
+      chequeNo: "",
+      transactionNo: "",
+      amount: "",
+      advance: "",
+      received: "",
+      balance: "",
+    });
+
+    // Reset additional states as needed...
+    setDate("");
+    setSelectedCustomer("");
+    // Add any other state resets...
+  };
+
+  const openViewModal = (suppliers) => {
+    setViewModal(true);
+  };
+  const closeModal = () => {
+    setViewModal(false);
+  };
+
   const handlePrintOnly = () => {
     const printWindow = window.open("", "_blank");
 
-    const updatedFormData = {
+    const submissionData = {
       ...formData,
       rows: rows.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
-        qty: row.quantity,
+        qty: row.qty,
+        freeQuantity: row.freeQty,
         units: row.units,
         mrp: row.maxmimunRetailPrice,
-        discountpercent:
-          customerType === "Wholesaler"
-            ? row.wholesalerDiscount
-            : row.retailDiscount,
-        discountRS:
-          customerType === "Wholesaler"
-            ? row.wholeselerDiscountRS
-            : row.retailDiscountRS,
-        taxable: row.taxableValue.toFixed(2),
-        cgstpercent: row.cgstp,
-        cgstRS: row.cgstrs,
-        sgstpercent: row.sgstp,
-        sgstRS: row.sgstrs,
-        igstpercent: row.igstp,
-        igstRS: row.igstrs,
-        totalValue: row.totalvalue,
+        discountRs: row.discountRs,
+        discountpercent: row.discountpercent,
+
+        UnitsCost: row.unitCost,
+        schemeMargin: row.schemeMargin,
+
+        taxableValue: row.taxableValue,
+        cgstpercent: row.cgstpercent,
+        cgstRS: row.cgstRS,
+        sgstpercent: row.sgstpercent,
+        sgstRS: row.sgstRS,
+        igstpercent: row.igstpercent,
+        igstRS: row.igstRS,
+        totalValue: row.totalValue,
       })),
       grossAmount: grossAmount.toFixed(2),
       GstAmount: GstAmount.toFixed(2),
@@ -736,6 +847,8 @@ const CreateDeliveryChallan = () => {
       reverseCharge,
       gstType,
       netAmount: netAmount.toFixed(2),
+      cash: paymentMethod === "Cash" ? cashDetails : {},
+      bank: paymentMethod === "Bank" ? bankDetails : {},
     };
 
     // Determine the table headers and the corresponding data based on gstType
@@ -810,13 +923,55 @@ const CreateDeliveryChallan = () => {
       return words;
     }
     const gstHeaders =
-      updatedFormData.gstType === "CGST/SGST"
+      submissionData.gstType === "CGST/SGST"
         ? `<th>CGST</th><th>SGST</th>`
         : `<th>IGST</th>`;
 
+    const paymentModeHTML = submissionData.cash.Amount
+      ? `
+            <td style="width: 33.33%; text-align: left;">
+                <div class="receipt-details">
+                    <div class="section-header">Receipt Mode: Cash</div>
+                    <div class="details">Total Amount: ₹${submissionData.cash.Amount}</div>
+                    <div class="details">Advance Received: ₹${submissionData.cash.Advance}</div>
+                    <div class="details">Amount Received: ₹${submissionData.cash.Received}</div>
+                    <div class="details">Balance Amount: ₹${submissionData.cash.Balance}</div>
+                </div>
+            </td>`
+      : `
+            <td style="width: 33.33%; text-align: left;">
+                <div class="receipt-details">
+                    <div class="section-header">Receipt Mode: Bank - ${
+                      submissionData.bank.selectBankType
+                    }</div>
+                    <div class="details">Bank Name: ${
+                      submissionData.bank.bank
+                    }</div>
+                    <div class="details">Transaction Date: ${
+                      submissionData.bank.transactionDate
+                    }</div>
+                    <div class="details">Transaction / Cheque No: ${
+                      submissionData.bank.transactionNo ||
+                      submissionData.bank.chequeNo
+                    }</div>
+                    <div class="details">Total Amount: ₹${
+                      submissionData.bank.Amount
+                    }</div>
+                    <div class="details">Advance Received: ₹${
+                      submissionData.bank.Advance
+                    }</div>
+                    <div class="details">Amount Received: ₹${
+                      submissionData.bank.Received
+                    }</div>
+                    <div class="details">Balance Amount: ₹${
+                      submissionData.bank.Balance
+                    }</div>
+                </div>
+            </td>`;
+
     const gstRows =
-      updatedFormData.gstType === "CGST/SGST"
-        ? updatedFormData.rows
+      submissionData.gstType === "CGST/SGST"
+        ? submissionData.rows
             .map(
               (row, index) => `
           <tr>
@@ -824,18 +979,21 @@ const CreateDeliveryChallan = () => {
             <td>${row.itemCode}</td>
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
-            <td>${row.qty}</td>
             <td>${row.units}</td>
+            <td>${row.qty}</td>
+            <td>${row.freeQuantity}</td>
             <td>${row.mrp}</td>
-            <td>${row.discountpercent}% ${row.discountRS}</td>
-            <td>${row.taxable}</td>
+            <td>${row.UnitsCost}</td>
+            <td>${row.schemeMargin}</td>
+            <td>${row.discountpercent}% ${row.discountRs}</td>
+            <td>${row.taxableValue}</td>
             <td>${row.cgstpercent}% ${row.cgstRS}</td>
             <td >${row.sgstpercent}% ${row.sgstRS}</td>
             <td>${row.totalValue}</td>
           </tr>`
             )
             .join("")
-        : updatedFormData.rows
+        : submissionData.rows
             .map(
               (row, index) => `
           <tr>
@@ -843,11 +1001,14 @@ const CreateDeliveryChallan = () => {
             <td>${row.itemCode}</td>
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
-            <td>${row.qty}</td>
             <td>${row.units}</td>
+            <td>${row.qty}</td>
+            <td>${row.freeQuantity}</td>
             <td>${row.mrp}</td>
-            <td>${row.discountpercent}% ${row.discountRS}</td>
-            <td>${row.taxable}</td>
+            <td>${row.UnitsCost}</td>
+            <td>${row.schemeMargin}</td>
+            <td>${row.discountpercent}% ${row.discountRs}</td>
+            <td>${row.taxableValue}</td>
             <td>${row.igstpercent}% ${row.igstRS}</td>
             <td>${row.totalValue}</td>
           </tr>`
@@ -903,7 +1064,7 @@ const CreateDeliveryChallan = () => {
                 <table class="table">
              <tr>
                   <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;" class="heades">
-                  Credit Note
+                  Gst Invoice
                   </th>
               </tr>
 
@@ -912,7 +1073,7 @@ const CreateDeliveryChallan = () => {
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
+                  <div class="section-header">Supplier Details</div>
                   <div class="details">Name: <span>${
                     chooseUser.name
                   }</span></div>
@@ -929,18 +1090,21 @@ const CreateDeliveryChallan = () => {
               </td>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header"> Credit Note Details</div>
-                  <div class="details">Credit Note No: <span>${
-                    updatedFormData.creditNoteNo
+                  <div class="section-header"> Invoice Details</div>
+                  <div class="details">Invoice No: <span>${
+                    submissionData.invoiceNo
                   }</span></div>
-                  <div class="details">Credit Note Date: <span>${
-                    updatedFormData.date
+                  <div class="details">Invoice Date: <span>${
+                    submissionData.date
                   }</span></div>
+                     <div class="details">Supplier Invoice: <span>${
+                       submissionData.supplierInvoiceNo
+                     }</span></div>
                   <div class="details">Place of Supply: <span>${
-                    updatedFormData.placeOfSupply
+                    submissionData.placeOfSupply
                   }</span></div>
                    <div class="details">Due Date: <span>${
-                     updatedFormData.dueDate
+                     submissionData.dueDate
                    }</span></div>
                  
                 </div>
@@ -949,19 +1113,19 @@ const CreateDeliveryChallan = () => {
                 <div style="text-align:left;" class="transport-details">
                   <div class="section-header">Transport Details</div>
                  
-                
+                   
 
                   <div class="details">Dispatch Through: <span>${
-                    updatedFormData.dispatchedThrough
+                    submissionData.dispatchedThrough
                   }</span></div>
                    <div class="details">Destination: <span>${
-                     updatedFormData.destination
+                     submissionData.destination
                    }</span></div>
                    <div class="details">Carrier Name/Agent : <span>${
-                     updatedFormData.carrierNameAgent
+                     submissionData.carrierNameAgent
                    }</span></div>
                   <div class="details">Bill of Lading/LR-RR No.: <span>${
-                    updatedFormData.billOfLading
+                    submissionData.billOfLading
                   }</span></div>
                   
                 </div>
@@ -976,9 +1140,12 @@ const CreateDeliveryChallan = () => {
                 <th>Item Code</th>
                 <th>Product Name</th>
                 <th>HSN Code</th>
-                <th>QTY</th>
                 <th>UOM</th>
+                <th>QTY</th>
+                <th>Free QTY</th>
                 <th>MRP</th>
+                <th>Unit Cost</th>
+                <th>Scheme Margin %</th>
                 <th>Disccount</th>
                 <th>Taxable Value</th>
                 ${gstHeaders}
@@ -990,31 +1157,55 @@ const CreateDeliveryChallan = () => {
             </tbody>
           </table>
        
-          <table class="" style="width: 100%;">
-              <tr style="height: 100%;">
-                <td style="width: 33.33%; vertical-align: bottom; height: 100%; align-item: right;">
-                  <div class="amount-details" style="margin-top: 50px; float: right; text-align: left;">
+           <table class="table">
+              <tr>
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="banking-details">
+                    <div class="section-header">Banking Details</div>
+                      <div class="details">Bank Name: ${
+                        company?.bank_name || "-"
+                      }</div>
+                    <div class="details">IFSC Code: ${
+                      company?.ifce_code || "-"
+                    }</div>
+                    <div class="details">Account No:${
+                      company?.accountNumber || "-"
+                    }</div>
+                    <div class="details">Account Holder Name: ${
+                      company?.account_holder_name || "-"
+                    }</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                </div>
+                  </div>
+                </td>
+                
+                 
+                 ${paymentModeHTML}
+               
+                
+               
+                <td style="width: 33.33%; text-align: left;">
+                  <div class="amount-details">
                     <div class="section-header">Amount Details</div>
                     <div class="details">Gross Total: ₹${
-                      updatedFormData.grossAmount
+                      submissionData.grossAmount
                     }</div>
                     <div class="details">GST Amount: ₹${
-                      updatedFormData.GstAmount
+                      submissionData.GstAmount
                     }</div>
                     <div class="details">Additional Charges: ₹${
-                      updatedFormData.otherCharges
+                      submissionData.otherCharges
                     }</div>
                     <div class="details">Net Total: ₹${
-                      updatedFormData.netAmount
+                      submissionData.netAmount
                     }</div>
-                    <div class="details">Amount in Words: ${numberToWords(
-                      updatedFormData.netAmount
+                    <div class="details">Amount in Words:${numberToWords(
+                      submissionData.netAmount
                     )}</div>
                   </div>
                 </td>
               </tr>
             </table>
-
   
             <div style="margin-top:100px" class="mt-10">
                   <div class="section-header">Terms & Condition</div>
@@ -1024,7 +1215,7 @@ const CreateDeliveryChallan = () => {
           <div  class="signature">
          
           
-            <div>For ${company.businessName}</div>
+            <div>For (Business Name)</div>
             <div style="margin-top: 20px;">Signature</div>
           </div>
         </body>
@@ -1034,314 +1225,6 @@ const CreateDeliveryChallan = () => {
     printWindow.document.close();
     printWindow.focus();
 
-    printWindow.onafterprint = () => {
-      printWindow.close(); // Close the print window after printing
-
-      // Create a fake event object (optional)
-      const dummyEvent = {
-        preventDefault: () => {},
-      };
-
-      handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
-    };
-
-    // Trigger the print dialog
-    printWindow.print();
-  };
-
-  const handlePrintOnlyWithoutGST = () => {
-    const printWindow = window.open("", "_blank");
-
-    const updatedFormData = {
-      ...formData,
-      rows: rows.map((row) => ({
-        itemCode: row.itemCode,
-        productName: row.productName,
-        hsnCode: row.hsnCode,
-        qty: row.quantity,
-        units: row.units,
-        mrp: row.maxmimunRetailPrice,
-        discountpercent:
-          customerType === "Wholesaler"
-            ? row.wholesalerDiscount
-            : row.retailDiscount,
-        discountRS:
-          customerType === "Wholesaler"
-            ? row.wholeselerDiscountRS
-            : row.retailDiscountRS,
-        taxable: row.taxableValue.toFixed(2),
-        totalValue: row.totalvalue, // GST details removed
-      })),
-      grossAmount: grossAmount.toFixed(2),
-      otherCharges: otherCharges.toFixed(2),
-      otherChargesDescriptions: otherChargesDescriptions,
-      salesType,
-      customerType,
-      reverseCharge,
-      netAmount: netAmount.toFixed(2),
-    };
-
-    function numberToWords(num) {
-      const ones = [
-        "",
-        "One",
-        "Two",
-        "Three",
-        "Four",
-        "Five",
-        "Six",
-        "Seven",
-        "Eight",
-        "Nine",
-        "Ten",
-        "Eleven",
-        "Twelve",
-        "Thirteen",
-        "Fourteen",
-        "Fifteen",
-        "Sixteen",
-        "Seventeen",
-        "Eighteen",
-        "Nineteen",
-      ];
-      const tens = [
-        "",
-        "",
-        "Twenty",
-        "Thirty",
-        "Forty",
-        "Fifty",
-        "Sixty",
-        "Seventy",
-        "Eighty",
-        "Ninety",
-      ];
-
-      function convertToWords(n) {
-        if (n < 20) return ones[n];
-        if (n < 100)
-          return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
-        if (n < 1000)
-          return (
-            ones[Math.floor(n / 100)] +
-            " Hundred" +
-            (n % 100 ? " " + convertToWords(n % 100) : "")
-          );
-        if (n < 100000)
-          return (
-            convertToWords(Math.floor(n / 1000)) +
-            " Thousand" +
-            (n % 1000 ? " " + convertToWords(n % 1000) : "")
-          );
-        return "";
-      }
-
-      // Split the number into integer and decimal parts
-      const parts = num.toString().split(".");
-
-      const integerPart = parseInt(parts[0], 10);
-      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0;
-
-      let words = convertToWords(integerPart) + " Rupees";
-
-      // Handle the decimal part (paise)
-      if (decimalPart > 0) {
-        words += " and " + convertToWords(decimalPart) + " Paise";
-      }
-
-      return words;
-    }
-    const gstRows = updatedFormData.rows
-      .map(
-        (row, index) => `
-        <tr>
-          <td>${index + 1}</td>
-          <td>${row.itemCode}</td>
-          <td>${row.productName}</td>
-          <td>${row.hsnCode}</td>
-          <td>${row.qty}</td>
-          <td>${row.units}</td>
-          <td>${row.mrp}</td>
-          <td>${row.discountpercent}% ${row.discountRS}</td>
-          <td>${row.taxable}</td>
-          <td>${row.totalValue}</td> <!-- Removed GST related fields -->
-        </tr>`
-      )
-      .join("");
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 10px;
-            }
-            .header, .section-header, .table th {
-              color: red;
-              font-weight: bold;
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 20px;
-              font-size: 24px;
-            }
-            .table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-            }
-            .table th, .table td {
-              border: 1px solid black;
-              padding: 5px;
-              text-align: center;
-              font-size: 12px;
-            }
-            .table th {
-              background-color: #ff0000; /* Red header */
-              color: black;
-            }
-            .signature {
-              text-align: right;
-              margin-top: 50px;
-              font-size: 12px;
-            }
-          </style>
-        </head>
-        <body>
-        <div class="header">
-          
-            <div class="business-name"> ${company?.businessName} </div>
-              <div> ${company?.address} </div>
-              <div>GSTIN: ${company?.gstIn}</div>
-            </div>
-          <table class="table">
-            <tr>
-              <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;">
-                Credit Note
-              </th>
-            </tr>
-            <tr>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>${
-                    chooseUser.name
-                  }</span></div>
-                  <div class="details">Address: <span>${
-                    chooseUser.address
-                  }</span></div>
-                  <div class="details">Contact: <span>${
-                    chooseUser.contact
-                  }</span></div>
-                  <div class="details">GSTIN: <span>${
-                    chooseUser.gstin
-                  }</span></div>
-                </div>
-              </td>
-              <td style="width: 30%;">
-                <div style="text-align:left;" class="sales-estimate">
-                  <div class="section-header">Credit Note Details</div>
-                  <div class="details">Credit Note No: <span>${
-                    updatedFormData.creditNoteNo
-                  }</span></div>
-                  <div class="details">Credit Note Date: <span>${
-                    updatedFormData.date
-                  }</span></div>
-                  <div class="details">Place of Supply: <span>${
-                    updatedFormData.placeOfSupply
-                  }</span></div>
-                   <div class="details">Due Date: <span>${
-                     updatedFormData.dueDate
-                   }</span></div>
-                
-                </div>
-              </td>
-              <td style="width: 40%;">
-                <div style="text-align:left;" class="transport-details">
-                  <div class="section-header">Transport Details</div>
-                  
-                  <div class="details">Dispatch Through: <span>${
-                    updatedFormData.dispatchedThrough
-                  }</span></div>
-                  <div class="details">Destination: <span>${
-                    updatedFormData.destination
-                  }</span></div>
-                  <div class="details">Carrier Name/Agent: <span>${
-                    updatedFormData.carrierNameAgent
-                  }</span></div>
-                  <div class="details">Bill of Lading/LR-RR No.: <span>${
-                    updatedFormData.billOfLading
-                  }</span></div>
-                
-                </div>
-              </td>
-            </tr>
-          </table>
-  
-          <table class="table">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Item Code</th>
-                <th>Product Name</th>
-                <th>HSN Code</th>
-                <th>QTY</th>
-                <th>UOM</th>
-                <th>MRP</th>
-                <th>Discount</th>
-                <th>Taxable Value</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${gstRows}
-            </tbody>
-          </table>
-  
-          <table class="" style="width: 100%;">
-            <tr style="height: 100%;">
-              <td style="width: 33.33%; vertical-align: bottom; height: 100%; text-align: right;">
-                <div class="amount-details" style="margin-top: 50px; float: right; text-align: left;">
-                  <div class="section-header">Amount Details</div>
-                  <div class="details">Gross Total: ₹${
-                    updatedFormData.grossAmount
-                  }</div>
-                  <div class="details">GST Amount: ₹${
-                    updatedFormData.GstAmount
-                  }</div>
-                  <div class="details">Additional Charges: ₹${
-                    updatedFormData.otherCharges
-                  }</div>
-                  <div class="details">Net Total: ₹${
-                    updatedFormData.netAmount
-                  }</div>
-                  <div class="details">Amount in Words: ${numberToWords(
-                    updatedFormData.netAmount
-                  )}</div>
-                </div>
-              </td>
-            </tr>
-          </table>
-
-  
-          <div style="margin-top:100px" class="mt-10">
-            <div class="section-header">Terms & Condition</div>
-            <div class="details">Your terms and conditions go here...</div>
-          </div>
-  
-          <div class="signature">
-            <div>For ${company.businessName}</div>
-            <div style="margin-top: 20px;">Signature</div>
-          </div>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-
-    // Set the onafterprint event before calling print()
     printWindow.onafterprint = () => {
       printWindow.close(); // Close the print window after printing
 
@@ -1360,17 +1243,17 @@ const CreateDeliveryChallan = () => {
   return (
     <>
       <div
-        style={{ backgroundColor: "#FFFFFF" }}
+        style={{ backgroundColor: "##FFFFFF" }}
         className="p-4 responsive-container"
       >
         {/* Top Section */}
-        <h1 className="text-center font-bold text-3xl mb-5 text-black">
-          Create Sales Return
+        <h1 className="text-center font-bold text-3xl  text-black mb-5">
+          Purchase Invoice
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg::grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">
-              Date:
+              Date
               <input
                 type="date"
                 name="date"
@@ -1379,11 +1262,11 @@ const CreateDeliveryChallan = () => {
                   setDate(e.target.value);
                   handleChange(e);
                 }}
-                className="border p-2 w-full rounded"
+                className="border p-2 w-full   rounded"
               />
             </label>
           </div>
-          <div>
+          {/* <div>
             <label className="font-bold">Sales Type</label>
             <select
               value={salesType}
@@ -1393,34 +1276,45 @@ const CreateDeliveryChallan = () => {
               <option value="GST Invoice">GST Invoice</option>
               <option value="Bill of Supply">Bill of Supply</option>
             </select>
-          </div>
+          </div> */}
           <div>
-            <label className="font-bold">Credit Note No.</label>
+            <label className="font-bold">Invoice No.</label>
             <input
-              name="creditNoteNo"
+              name="invoiceNo"
               type="text"
-              value={creditNoteNo} // Bind to local state
-              onChange={handlecreditNoteNoChange} // Update both local and formData states
+              value={invoiceNo} // Bind to local state
+              onChange={handleinvoiceNoChange} // Update both local and formData states
               className="border p-2 w-full  rounded"
             />
           </div>
 
           <div>
-            <label className="font-bold">Customer Name</label>
+            <label className="font-bold">Supplier Invoice No.</label>
+            <input
+              name="supplierInvoiceNo"
+              type="text"
+              value={supplierInvoiceNo}
+              onChange={handlesupplierInvoiceNoChange}
+              className="border p-2 w-full  rounded"
+            />
+          </div>
+
+          <div>
+            <label className="font-bold">Supplier Name</label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
               value={selectedCustomer}
               onChange={(e) => {
                 if (e.target.value === "add-new-customer") {
-                  window.location.href = "/admin/CreateCustomer";
+                  window.location.href = "/admin/CreateSupplier";
                 } else {
                   handleCustomerChange(e);
                 }
               }}
             >
-              <option value="">Select Customer</option>
+              <option value="">Select Supplier</option>
               <option value="add-new-customer" className="text-blue-500">
-                + Add New Customer
+                + Add New Supplier
               </option>
               {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
@@ -1430,6 +1324,7 @@ const CreateDeliveryChallan = () => {
               {/* Add Customer option at the end of the list */}
             </select>
           </div>
+
           <div>
             <label className="font-bold">Place of Supply</label>
             <input
@@ -1440,21 +1335,9 @@ const CreateDeliveryChallan = () => {
               className="border p-2 w-full  rounded"
             />
           </div>
-
-          <div>
-            <label className="font-bold">Customer Type</label>
-            <select
-              value={customerType}
-              onChange={handleCustomerTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Retailer">Retailer</option>
-              <option value="Wholesaler">Wholesaler</option>
-            </select>
-          </div>
           <div>
             <label className="font-bold">
-              Payment Term (days):
+              Payment Term (days)
               <input
                 type="text"
                 name="paymentTerm"
@@ -1476,42 +1359,15 @@ const CreateDeliveryChallan = () => {
               />
             </label>
           </div>
-          <div className="mb-4 w-full">
-            <label className="font-bold">Reverse Charge</label>
-            <select
-              value={reverseCharge}
-              onChange={handleReverseChargeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-          <div className="">
-            <label className="font-bold">Billing Address</label>
-            <textarea
-              value={billingAddress}
-              onChange={handleBillingAddressChange}
-              className="border p-2 w-full  rounded"
-            />
-          </div>
-          <div className="">
-            <label className="font-bold">Reason Of Return</label>
-            <textarea
-              value={reasonForReturn}
-              onChange={handleReasonOfReturn}
-              className="border p-2 w-full  rounded"
-            />
-          </div>
-        </div>
 
-        <div className="mb-1">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-black p-2 rounded"
-          >
-            Transport Details
-          </button>
+          <div className="mt-6">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-black p-2"
+            >
+              Transport Details
+            </button>
+          </div>
         </div>
 
         {isModalOpen && (
@@ -1519,21 +1375,6 @@ const CreateDeliveryChallan = () => {
             <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
               <h4 className="font-bold mb-4">Transport Details</h4>
               <div className="grid grid-cols-2 gap-4 mb-4">
-                {/* <div>
-                  <label>Receipt Doc No.</label>
-                  <input
-                    type="text"
-                    name="receiptDocNo"
-                    value={transportDetails.receiptDocNo}
-                    onChange={(e) =>
-                      handleTransportDetailChange(
-                        "receiptDocNo",
-                        e.target.value
-                      )
-                    }
-                    className="border p-2 w-full  rounded"
-                  />
-                </div> */}
                 <div>
                   <label>Dispatched Through</label>
                   <input
@@ -1587,20 +1428,6 @@ const CreateDeliveryChallan = () => {
                     className="border p-2 w-full  rounded"
                   />
                 </div>
-                {/* <div>
-                  <label>Motor Vehicle No.</label>
-                  <input
-                    type="text"
-                    value={transportDetails.motorVehicleNo}
-                    onChange={(e) =>
-                      handleTransportDetailChange(
-                        "motorVehicleNo",
-                        e.target.value
-                      )
-                    }
-                    className="border p-2 w-full  rounded"
-                  />
-                </div> */}
               </div>
               <div className="flex justify-end">
                 <button
@@ -1620,12 +1447,31 @@ const CreateDeliveryChallan = () => {
           </div>
         )}
 
-        {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4"> */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+          <div className="mb-4">
+            <label className="font-bold">Billing Address</label>
+            <textarea
+              name="billingAddress"
+              value={billingAddress}
+              onChange={handleBillingAddressChange}
+              className="border p-2 w-full  rounded"
+            />
+          </div>
+          {/* Reverse Charge Section */}
+          <div className="mb-4 w-full">
+            <label className="font-bold">Reverse Charge</label>
+            <select
+              value={reverseCharge}
+              onChange={handleReverseChargeChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
 
-        {/* Reverse Charge Section */}
-
-        {/* GST Type Section */}
-        {/* {salesType === "GST Invoice" && (
+          {/* GST Type Section */}
+          {/* {salesType === "GST Invoice" && (
             <div className="mb-4 w-full">
               <label className="font-bold">GST Type:</label>
               <select
@@ -1638,8 +1484,7 @@ const CreateDeliveryChallan = () => {
               </select>
             </div>
           )} */}
-
-        {/* </div> */}
+        </div>
 
         {/* Items Section */}
         <div className="overflow-x-auto">
@@ -1647,13 +1492,19 @@ const CreateDeliveryChallan = () => {
             <thead>
               <tr>
                 <th className="border p-1">#</th>
-                <th className="border text-bold text-sm ">Item Code</th>
-                <th className="border ">Product Name</th>
+                <th className="border text-bold text-sm   text-nowrap">
+                  Item Code
+                </th>
+                <th className="border  text-nowrap">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
                 <th className="border p-1">Units</th>
+                <th className="border p-1  text-nowrap">Free Qty</th>
                 <th className="border p-1">MRP</th>
-                <th className="border p-1">
+                <th className="border p-1 text-nowrap">Unit Cost</th>
+                <th className="border p-1  text-nowrap">Scheme Margin</th>
+
+                <th className="border p-1  text-nowrap">
                   Discount
                   <div className="flex justify-between">
                     <span className="">%</span> <span>RS</span>
@@ -1662,7 +1513,7 @@ const CreateDeliveryChallan = () => {
 
                 {salesType === "GST Invoice" && (
                   <>
-                    <th className="border p-2">Taxable Value</th>
+                    <th className="border p-2  text-nowrap">Taxable Value</th>
                     {gstType === "CGST/SGST" && (
                       <>
                         <th className="border p-2">
@@ -1731,7 +1582,6 @@ const CreateDeliveryChallan = () => {
                       menuPosition="fixed"
                     />
                   </td>
-
                   <td className="border ">
                     <Select
                       id="product-select"
@@ -1766,8 +1616,14 @@ const CreateDeliveryChallan = () => {
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                     />
+                    <div style={{ marginTop: "10px", fontSize: "12px" }}>
+                      <div>
+                        {row.expiryDate ? `Exp Dt: ${row.expiryDate}` : ""}
+                        <br />
+                        {row.batchNo ? `Batch No: ${row.batchNo}` : ""}
+                      </div>
+                    </div>
                   </td>
-
                   <td className="border p-1">
                     <input
                       type="text"
@@ -1781,7 +1637,7 @@ const CreateDeliveryChallan = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={rows[index]?.qty || ""}
+                      value={row.qty}
                       onChange={(e) => handlQtyChange(index, e.target.value)}
                       className="w-full"
                     />
@@ -1794,6 +1650,21 @@ const CreateDeliveryChallan = () => {
                         handleRowChange(index, "units", e.target.value)
                       }
                       className="w-full"
+                    />
+                  </td>
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.freeQty || ""} // Display freeQty or empty string if undefined
+                      onChange={(e) =>
+                        handleFreeQtyChange(index, e.target.value)
+                      } // Call your handler
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
                     />
                   </td>
                   <td className="border p-2">
@@ -1809,71 +1680,61 @@ const CreateDeliveryChallan = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px", // Set a small minimum width to ensure visibility
-                        flexBasis: "70px", // Allow it to shrink, but still have a base width
-                        flexShrink: 1, // Allow it to shrink on mobile
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
                       }}
                     />
                   </td>
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.unitCost}
+                      onChange={(e) =>
+                        handleRowChange(index, "unitCost", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>{" "}
+                  <td className="border p-1">
+                    <input
+                      type="text"
+                      value={row.schemeMargin}
+                      onChange={(e) =>
+                        handleRowChange(index, "schemeMargin", e.target.value)
+                      }
+                      className="w-full"
+                    />
+                  </td>
                   <td className="border">
-                    {customerType === "Wholesaler" && (
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.wholesalerDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px", // Set a small minimum width to ensure visibility
-                            flexBasis: "20px", // Allow it to shrink, but still have a base width
-                            flexShrink: 1, // Allow it to shrink on mobile
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.wholeselerDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    )}
-                    {customerType === "Retailer" && (
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.retailDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px", // Set a small minimum width to ensure visibility
-                            flexBasis: "20px", // Allow it to shrink, but still have a base width
-                            flexShrink: 1, // Allow it to shrink on mobile
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.retailDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    )}
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={row.discountpercent}
+                        onChange={(e) =>
+                          handleRowChange(
+                            index,
+                            "discountpercent",
+                            e.target.value
+                          )
+                        }
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: "20px", // Set a small minimum width to ensure visibility
+                          flexBasis: "20px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}
+                      />
+                      <input
+                        type="text"
+                        value={row.discountRs}
+                        onChange={
+                          (e) =>
+                            handleRowChange(index, "discountRs", e.target.value) // Fix here
+                        }
+                        className="w-full"
+                      />
+                    </div>
                   </td>
                   {salesType === "GST Invoice" && (
                     <>
@@ -1882,7 +1743,7 @@ const CreateDeliveryChallan = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue.toFixed(2)}
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -1892,9 +1753,9 @@ const CreateDeliveryChallan = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px", // Set a small minimum width to ensure visibility
-                                flexBasis: "70px", // Allow it to shrink, but still have a base width
-                                flexShrink: 1, // Allow it to shrink on mobile
+                                minWidth: "70px",
+                                flexBasis: "70px",
+                                flexShrink: 1,
                               }}
                             />
                           </td>
@@ -1902,11 +1763,11 @@ const CreateDeliveryChallan = () => {
                             <div className="p-1 flex gap-1">
                               <input
                                 type="text"
-                                value={row.cgstp}
+                                value={row.cgstpercent}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "cgstpercent",
+                                    "cgstpercentercent",
                                     e.target.value
                                   )
                                 }
@@ -1919,7 +1780,7 @@ const CreateDeliveryChallan = () => {
                               />
                               <input
                                 type="text"
-                                value={row.cgstrs}
+                                value={row.cgstRS}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -1940,11 +1801,11 @@ const CreateDeliveryChallan = () => {
                             <div className="p-1 flex gap-1">
                               <input
                                 type="text"
-                                value={row.sgstp}
+                                value={row.sgstpercent}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "sgstpercent",
+                                    "sgstpercentercent",
                                     e.target.value
                                   )
                                 }
@@ -1957,7 +1818,7 @@ const CreateDeliveryChallan = () => {
                               />
                               <input
                                 type="text"
-                                value={row.sgstrs}
+                                value={row.sgstRS}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -1981,7 +1842,7 @@ const CreateDeliveryChallan = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue.toFixed(2)}
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -1996,11 +1857,11 @@ const CreateDeliveryChallan = () => {
                             <div className="flex gap-1">
                               <input
                                 type="text"
-                                value={row.igstp}
+                                value={row.igstpercent}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "igstpercent",
+                                    "igstpercentercent",
                                     e.target.value
                                   )
                                 }
@@ -2013,7 +1874,7 @@ const CreateDeliveryChallan = () => {
                               />
                               <input
                                 type="text"
-                                value={row.igstrs}
+                                value={row.igstRS}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -2037,7 +1898,7 @@ const CreateDeliveryChallan = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.totalvalue}
+                      value={row.totalValue}
                       onChange={(e) =>
                         handleRowChange(index, "totalValue", e.target.value)
                       }
@@ -2075,38 +1936,83 @@ const CreateDeliveryChallan = () => {
             </tbody>
           </table>
         </div>
-        <div className="flex  justify-between">
-          <div>
-            <button
-              onClick={addRow}
-              className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+
+        <button
+          onClick={addRow}
+          className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+        >
+          <svg
+            xmlns="http//www.w3.org/2000/svg"
+            className="h-4 w-4 "
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Add New Row
+        </button>
+        {/* 
+        <button
+          onClick={() => setIsModalOtherChargesOpen(true)}
+          className=" text-blue-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+        >
+          <svg
+            xmlns="http//www.w3.org/2000/svg"
+            className="h-4 w-4 "
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Add Other Charges
+        </button>
+
+        <div className="gap-2">
+          <label className=" w-1/3 mb-2 text-white mt-8 text-md p-2 mt-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <svg
-                xmlns="http//www.w3.org/2000/svg"
-                className="h-4 w-4 "
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              Add New Row
-            </button>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>{" "}
+            Upload Document
+            <input
+              type="file"
+              className="hidden"
+              onChange={(e) => setdocumentPath(e.target.files[0])} // Assuming you have setdocumentPath in your state
+            />
+          </label>
+        </div> */}
+        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+          {/* First button in a div */}
           <div>
-            {" "}
             <button
               onClick={() => setIsModalOtherChargesOpen(true)}
-              className="bg-blue-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+              className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
             >
               <svg
-                xmlns="http//www.w3.org/2000/svg"
-                className="h-4 w-4 "
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -2121,6 +2027,32 @@ const CreateDeliveryChallan = () => {
               Add Other Charges
             </button>
           </div>
+
+          {/* Second button in a div */}
+          <div>
+            <label className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>{" "}
+              Upload Document
+              <input
+                type="file"
+                className="hidden"
+                onChange={(e) => setdocumentPath(e.target.files[0])}
+              />
+            </label>
+          </div>
         </div>
 
         {isModalOtherChargesOpen && (
@@ -2129,9 +2061,7 @@ const CreateDeliveryChallan = () => {
               <h4 className="font-bold mb-4">Other Charges Details</h4>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label htmlFor="other-charges">
-                    Other Charges Description
-                  </label>
+                  <label htmlFor="other-charges">Description</label>
                   <input
                     type="text"
                     id="other-charges"
@@ -2143,7 +2073,7 @@ const CreateDeliveryChallan = () => {
                   />
                 </div>
                 <div>
-                  <label>Other Charges</label>
+                  <label>Amount</label>
                   <input
                     type="text"
                     value={otherCharges}
@@ -2156,13 +2086,13 @@ const CreateDeliveryChallan = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-gray-500 text-black p-2 mr-2 rounded"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleOtherChargesSave}
-                  className="bg-gray-500 text-black p-2 mr-2 rounded"
+                  className="bg-gray-500 text-black p-2 mr-2"
                 >
                   Save
                 </button>
@@ -2184,7 +2114,7 @@ const CreateDeliveryChallan = () => {
                   narration: e.target.value,
                 }));
               }}
-              className="bg-white text-black border p-1 w-full  rounded"
+              className=" text-black border p-1 w-full  rounded"
             />
           </div>
           <div className="w-full lg:w-1/3 mt-5">
@@ -2195,7 +2125,7 @@ const CreateDeliveryChallan = () => {
               <input
                 value={grossAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
             {salesType === "GST Invoice" && (
@@ -2206,40 +2136,247 @@ const CreateDeliveryChallan = () => {
                 <input
                   value={GstAmount.toFixed(2)}
                   // onChange={handleBillingAddressChange}
-                  className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
+                  className=" text-black border p-1 w-full  rounded lg:w-2/3"
                 />
               </div>
             )}
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                Other Charge
+                {otherChargesDescriptions || "Other Charges"}
               </label>
               <input
                 value={otherCharges.toFixed(2)}
                 onChange={handleOtherChargesChange}
-                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-bold lg:w-1/2 text-nowrap">
+              <label className="font-bold  lg:w-1/2 text-nowrap">
                 Net Amount
               </label>
               <input
-                value={netAmount.toFixed(2)}
+                value={Math.round(netAmount).toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 text-2xl w-full font-bold  rounded lg:w-2/3"
               />
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={() => openViewModal()}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Add Payment
+          </button>
+
+          <Modal
+            isOpen={viewModal}
+            onRequestClose={closeModal}
+            contentLabel="View Item Modal"
+            style={{
+              content: {
+                width: "80%",
+                height: "90%",
+                maxWidth: "800px",
+                margin: "auto",
+                padding: "5px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                borderRadius: "5px",
+              },
+            }}
+          >
+            <div className="bg-white p-4 rounded shadow-lg w-full relative">
+              <button
+                onClick={closeModal}
+                className="absolute text-3xl top-2 right-2 text-gray-500 hover:text-gray-700"
+              >
+                &times;
+              </button>
+              <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
+
+              {/* Radio buttons to select payment method */}
+              <div className="gap-5 mb-4">
+                <label className="font-bold">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Cash"
+                    onChange={handlePaymentMethodChange}
+                  />
+                  Cash
+                </label>
+                <label className="ml-5 font-bold">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Bank"
+                    onChange={handlePaymentMethodChange}
+                  />
+                  Bank
+                </label>
+              </div>
+
+              {/* Conditional form rendering based on payment method */}
+              <form onSubmit={handleSubmit}>
+                {paymentMethod === "Cash" && (
+                  <>
+                    <label className="font-bold">Amount</label>
+                    <input
+                      type="text"
+                      name="Amount"
+                      value={cashDetails.Amount}
+                      onChange={handleCashDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Advance</label>
+                    <input
+                      type="text"
+                      name="Advance"
+                      value={cashDetails.Advance}
+                      onChange={handleCashDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Received</label>
+                    <input
+                      type="text"
+                      name="Received"
+                      value={cashDetails.Received}
+                      onChange={handleCashDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Balance</label>
+                    <input
+                      type="text"
+                      name="Balance"
+                      value={cashDetails.Balance}
+                      onChange={handleCashDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                  </>
+                )}
+
+                {paymentMethod === "Bank" && (
+                  <>
+                    <label className="font-bold">Select Bank</label>
+                    <select
+                      name="bank"
+                      value={bankDetails.bank}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    >
+                      <option value="">Select Bank</option>
+                      <option value="Bank 1">Bank 1</option>
+                      <option value="Bank 2">Bank 2</option>
+                    </select>
+                    <select
+                      name="subPaymentType"
+                      value={subPaymentType}
+                      onChange={handleSubPaymentTypeChange}
+                      className="border p-2 mb-2 w-full"
+                    >
+                      <option value="">Select Payment Type</option>
+                      <option value="Online">Online</option>
+                      <option value="Cheque">Cheque</option>
+                    </select>
+                    {subPaymentType === "Online" && (
+                      <>
+                        <label className="font-bold">Transaction Date</label>
+                        <input
+                          type="date"
+                          name="transactionDate"
+                          value={bankDetails.transactionDate}
+                          onChange={handleBankDetailsChange}
+                          className="border p-2 mb-2 w-full"
+                        />
+                        <label className="font-bold">Transaction No</label>
+                        <input
+                          type="text"
+                          name="transactionNo"
+                          value={bankDetails.transactionNo}
+                          onChange={handleBankDetailsChange}
+                          className="border p-2 mb-2 w-full"
+                        />
+                      </>
+                    )}
+                    {subPaymentType === "Cheque" && (
+                      <>
+                        <label className="font-bold">Transaction Date</label>
+                        <input
+                          type="date"
+                          name="transactionDate"
+                          value={bankDetails.transactionDate}
+                          onChange={handleBankDetailsChange}
+                          className="border p-2 mb-2 w-full"
+                        />
+                        <label className="font-bold">Cheque No</label>
+                        <input
+                          type="text"
+                          name="chequeNo"
+                          value={bankDetails.chequeNo}
+                          onChange={handleBankDetailsChange}
+                          className="border p-2 mb-2 w-full"
+                        />
+                      </>
+                    )}
+                    <label className="font-bold">Amount</label>
+                    <input
+                      type="text"
+                      name="Amount"
+                      value={bankDetails.Amount}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Advance</label>
+                    <input
+                      type="text"
+                      name="Advance"
+                      value={bankDetails.Advance}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />
+                    <label className="font-bold">Received</label>
+                    <input
+                      type="text"
+                      name="Received"
+                      value={bankDetails.Received}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />{" "}
+                    <label className="font-bold">Balance</label>
+                    <input
+                      type="text"
+                      name="Balance"
+                      value={bankDetails.Balance}
+                      onChange={handleBankDetailsChange}
+                      className="border p-2 mb-2 w-full"
+                    />{" "}
+                  </>
+                )}
+
+                {/* Submit button */}
+                <div className="flex justify-center items-center">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 h-10"
+                    onClick={closeModal}
+                  >
+                    save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Modal>
         </div>
 
         {/* Buttons for saving and printing */}
         <div className="mt-8 flex justify-center">
           <button
             // onClick={}
-            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2 rounded"
+            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2"
             onClick={handleSubmit}
           >
             Save
@@ -2247,15 +2384,7 @@ const CreateDeliveryChallan = () => {
           {salesType === "GST Invoice" && (
             <button
               onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2 rounded"
-            >
-              Save and Print
-            </button>
-          )}
-          {salesType !== "GST Invoice" && (
-            <button
-              onClick={handlePrintOnlyWithoutGST}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2 rounded"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
             >
               Save and Print
             </button>
@@ -2267,4 +2396,4 @@ const CreateDeliveryChallan = () => {
   );
 };
 
-export default CreateDeliveryChallan;
+export default OrderPurchaseInvoice;

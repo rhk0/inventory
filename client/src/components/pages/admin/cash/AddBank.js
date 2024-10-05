@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import {
+import { useAuth } from "../../../context/Auth";
+import{
   Button,
   TextField,
   Dialog,
@@ -42,18 +42,28 @@ const AddBank = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(7);
-
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
+   
   useEffect(() => {
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
     fetchBanks();
-  }, []);
+  }, [auth,userId]);
 
   const fetchBanks = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageBank");
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
       setBanks(response.data.data);
     } catch (error) {
       console.error("Error fetching Bank data", error);
-      toast.error("Error fetching bank data");
+      toast.error(error.response.data.message);
     }
   };
 
@@ -75,9 +85,10 @@ const AddBank = () => {
     }
 
     try {
-      const response = await axios.post("/api/v1/auth/createBank", formData);
+      const updatedFormData = { ...formData, userId };
+      const response = await axios.post("/api/v1/auth/createBank", updatedFormData);
       if (response) {
-        toast.success("Bank created successfully");
+        toast.success(response.data.message);
         fetchBanks();
         clearData();
       }
@@ -156,8 +167,8 @@ const AddBank = () => {
           </TableHead>
           <TableBody>
             {banks
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((bank, index) => (
+              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              ?.map((bank, index) => (
                 <TableRow key={bank._id}>
                   <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                   <TableCell>{bank.name}</TableCell>
@@ -176,7 +187,7 @@ const AddBank = () => {
       </TableContainer>
       <TablePagination
         component="div"
-        count={banks.length}
+        count={banks?.length}
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
