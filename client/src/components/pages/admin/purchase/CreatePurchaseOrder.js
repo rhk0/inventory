@@ -325,7 +325,7 @@ import { useAuth } from "../../../context/Auth.js";
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageproduct/${userid}`);
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
       if (response.data && Array.isArray(response.data.data)) {
         setProducts(response.data.data);
       } else {
@@ -338,7 +338,7 @@ import { useAuth } from "../../../context/Auth.js";
   };
   useEffect(() => {
     fetchProducts();
-  }, [auth, userid]);
+  }, [auth, userId]);
   const handlQtyChange = (rowIndex, qty) => {
     // Parse the new quantity to ensure it's a number
     const newQty = parseFloat(qty) || 0;
