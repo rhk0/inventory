@@ -248,15 +248,14 @@ export const updatePurchaseInvoiceByIdController = async (req, res) => {
   });
 };
 
-
-
-
 export const getAllPurchaseByNameInvoiceController = async (req, res) => {
   try {
     const { supplierName } = req.params;
 
     // If name is provided, filter by name; otherwise, return all documents
-    const filter = supplierName ? { supplierName: new RegExp(supplierName, "i") } : {};
+    const filter = supplierName
+      ? { supplierName: new RegExp(supplierName, "i") }
+      : {};
 
     const response = await purchesInvoiceModel.find(filter);
 

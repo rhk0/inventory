@@ -3,7 +3,8 @@ import { FaTimes } from "react-icons/fa";
 import Modal from "react-modal";
 
 const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
-  console.log(estimate, "dkasjfk");
+  const [documentPath, setdocumentPath] = useState(null);
+
   const [date, setDate] = useState("");
   const [invoiceNo, setInvoiceNo] = useState("");
   const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
@@ -110,6 +111,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
       setGrossAmount(estimate.grossAmount || "");
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
+      setdocumentPath(estimate.documentPath || "");
     }
   }, [estimate]);
 
@@ -129,6 +131,27 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
 
   const handleSubPaymentTypeChange = (e) => {
     setSubPaymentType(e.target.value);
+  };
+
+  const handleDownload = () => {
+    if (!documentPath || typeof documentPath !== "string") {
+      console.error("Invalid document path.");
+      return;
+    }
+
+    console.log(documentPath, "Document path for download");
+
+    const fileUrl = documentPath ? documentPath : `/${documentPath}`;
+
+    // Create an anchor element and trigger download
+    const link = document.createElement("a");
+
+    link.href = fileUrl;
+    link.download = "document.pdf";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -404,7 +427,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.quantity}
+                    value={row.qty}
                     disabled
                     className="w-full"
                   />
@@ -605,6 +628,29 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
           </div>
         </div>
       )}
+
+      <div className="mt-4 mb-4">
+        <button
+          onClick={handleDownload}
+          className="w-1/4 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Download Document
+        </button>
+      </div>
 
       {/* Narration and Amounts */}
       <div className="flex flex-col lg:flex-row lg:justify-between mb-4">

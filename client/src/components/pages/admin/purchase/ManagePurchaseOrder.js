@@ -120,8 +120,7 @@ const ManagePurchaseOrder = () => {
                   "Order  No.",
                   "Supplier Name",
                   "Place of Supply",
-                  "Payment Term",
-                  "Due Date",
+                 
                   "GST Type",
                   "Product Code",
                   "UOM",
@@ -163,12 +162,7 @@ const ManagePurchaseOrder = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.paymentTerm}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-center whitespace-nowrap">
-                      {estimate.dueDate}
-                    </td>
+                   
 
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}

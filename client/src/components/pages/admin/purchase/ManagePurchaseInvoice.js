@@ -133,8 +133,7 @@ const ManagePurchaseInvoice = () => {
                   "Supplier Invoice No",
                   "Supplier Name",
                   "Place of Supply",
-                  "Payment Term",
-                  "Due Date",
+            
                   "GST Type",
                   "Product Code",
                   "UOM",
@@ -179,12 +178,7 @@ const ManagePurchaseInvoice = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.paymentTerm}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-center whitespace-nowrap">
-                      {estimate.dueDate}
-                    </td>
+                
 
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
@@ -200,7 +194,7 @@ const ManagePurchaseInvoice = () => {
                       {estimate.rows?.[0]?.maxmimunRetailPrice || "-"}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.quantity || "-"}
+                      {estimate.rows?.[0]?.qty || "-"}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">

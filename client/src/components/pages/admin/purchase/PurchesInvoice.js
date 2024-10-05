@@ -197,6 +197,15 @@ const PurchesInvoice = () => {
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
     setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+  
+    if (
+       selectedCustomerData.state.trim().toLowerCase() ===
+      company.state.trim().toLowerCase()
+    ) {
+      setGstType("CGST/SGST");
+    } else {
+      setGstType("IGST");
+    }
   };
 
   const handleOtherChargesChange = (event) => {
@@ -244,14 +253,14 @@ const PurchesInvoice = () => {
     }));
   };
 
-  const handleGstTypeChange = (e) => {
-    const value = e.target.value;
-    setGstType(value);
-    setFormData((prev) => ({
-      ...prev,
-      gstType: value,
-    }));
-  };
+  // const handleGstTypeChange = (e) => {
+  //   const value = e.target.value;
+  //   setGstType(value);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     gstType: value,
+  //   }));
+  // };
 
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -357,7 +366,7 @@ const PurchesInvoice = () => {
       currentRow.cgstRS = cgstRS.toFixed(2);
       currentRow.sgstRS = sgstRS.toFixed(2);
       currentRow.igstRS = igstRS.toFixed(2);
-
+//dd
       // Update totalValue as taxableValue + GST amount (CGST + SGST or IGST)
       const totalGST =
         currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
@@ -493,7 +502,7 @@ const PurchesInvoice = () => {
   }, [auth, userId]);
 
   const handleFreeQtyChange = (rowIndex, newFreeQty) => {
-    console.log(newFreeQty,"hfgdhghdhf  dfsf dad")
+
     const updatedRows = [...rows];
     const selectedRow = updatedRows[rowIndex];
 
@@ -501,15 +510,15 @@ const PurchesInvoice = () => {
     const freeQty = parseFloat(newFreeQty) || 0; // Ensure it's a valid number
 
     // Calculate total quantity using the quantity from the selected row
-    const totalQuantity = Number(selectedRow.quantity) + freeQty;
+    const totalQuantity = Number(qty) + freeQty;
 
     // Calculate schemeMargin only if both freeQty and quantity exist
     const schemeMargin =
-      freeQty && selectedRow.quantity
+      freeQty && qty
         ? ((freeQty / totalQuantity) * 100).toFixed(2)
         : 0;
 
-    console.log(schemeMargin, "schemeMargin");
+
 
     // Update the row with the new freeQty and schemeMargin
     updatedRows[rowIndex] = {
@@ -1457,7 +1466,7 @@ const PurchesInvoice = () => {
           </div>
 
           {/* GST Type Section */}
-          {salesType === "GST Invoice" && (
+          {/* {salesType === "GST Invoice" && (
             <div className="mb-4 w-full">
               <label className="font-bold">GST Type:</label>
               <select
@@ -1469,7 +1478,7 @@ const PurchesInvoice = () => {
                 <option value="IGST">IGST</option>
               </select>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Items Section */}
@@ -2157,7 +2166,7 @@ const PurchesInvoice = () => {
             onClick={() => openViewModal()}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            Add Receipt
+            Add Payment
           </button>
 
           <Modal
