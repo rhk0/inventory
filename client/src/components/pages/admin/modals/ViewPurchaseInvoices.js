@@ -133,7 +133,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
     setSubPaymentType(e.target.value);
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!documentPath || typeof documentPath !== "string") {
       console.error("Invalid document path.");
       return;
@@ -141,17 +141,31 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
 
     console.log(documentPath, "Document path for download");
 
-    const fileUrl = documentPath ? documentPath : `/${documentPath}`;
+    const fileUrl = `/${documentPath}`;
 
-    // Create an anchor element and trigger download
-    const link = document.createElement("a");
+    try {
+      const response = await fetch(fileUrl);
 
-    link.href = fileUrl;
-    link.download = "document.pdf";
+      if (!response.ok) {
+        throw new Error("Failed to download document");
+      }
 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "document.pdf";
+
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Error while downloading document:", error);
+    }
   };
 
   return (

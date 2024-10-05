@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
-import EditPurchaseInvoice from "../modals/EditPurchaseInvoice";
 import ViewPurchaseReturn from "../modals/ViewPurchaseReturn";
+import EditPurchaseReturn from "../modals/EditPurchaseReturn";
 
 const ManagePurchaseReturn = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -285,7 +285,7 @@ const ManagePurchaseReturn = () => {
           },
         }}
       >
-        <EditPurchaseInvoice
+        <EditPurchaseReturn
           isOpen={editModalOpen}
           estimate={selectedEstimate}
           closeModal={closeModal}
