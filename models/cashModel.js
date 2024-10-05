@@ -11,6 +11,10 @@ const cashSchema = new mongoose.Schema({
 
   openingBalance:{
     type:String,
+  },
+  admin:{type:mongoose.Schema.Types.ObjectId,
+    ref:"user",
+    required:true,
   }
 }, {
   timestamps: true,

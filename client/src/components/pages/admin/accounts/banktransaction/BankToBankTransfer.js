@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../../../context/Auth";
 import {
   Container,
   Typography,
@@ -16,6 +17,7 @@ import {
 } from "@mui/material";
 
 function BankToBankTransfer() {
+  const [bank,setBanks]=useState([]);
   const [formData, setFormData] = useState({
     date: "",
     contraNo: "",
@@ -23,7 +25,34 @@ function BankToBankTransfer() {
     amount: "",
     toAccount: "",
   });
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
 
+  useEffect(() => {
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
+    fetchBanks();
+  }, [auth,userId]);
+
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
+     setBanks(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Bank data", error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+   
+
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -107,27 +136,30 @@ function BankToBankTransfer() {
               />
             </Grid>
             <Grid item xs={12} md={4}>
-              <FormControl fullWidth>
-                <InputLabel sx={{  background:"white"}}>From Account</InputLabel>
-                <Select
-                  name="fromAccount"
-                  value={formData.fromAccount}
-                  onChange={handleChange}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 200, // Adjust the height of the dropdown
-                        top: 56, // Adjust the top position to align properly
-                      },
-                    },
-                  }}
-                >
-                  <MenuItem value="">Select Bank</MenuItem>
-                  <MenuItem value="BankA">Bank A</MenuItem>
-                  <MenuItem value="BankB">Bank B</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
+  <FormControl fullWidth>
+    <InputLabel sx={{ background: "white" }}>From Account</InputLabel>
+    <Select
+      name="fromAccount"
+      value={formData.fromAccount}
+      onChange={handleChange}
+      MenuProps={{
+        PaperProps: {
+          style: {
+            maxHeight: 200,
+            top: 56,
+          },
+        },
+      }}
+    >
+      <MenuItem value="">Select Bank</MenuItem>
+      {bank?.map((bankItem) => (
+        <MenuItem key={bankItem._id} value={bankItem._id}>
+          {bankItem.name}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+</Grid>
             <Grid item xs={12} md={4}>
               <TextField
                 label="Amount"
@@ -138,29 +170,35 @@ function BankToBankTransfer() {
                 fullWidth
               />
             </Grid>
+         
+            
             <Grid item xs={12} md={4}>
-              <FormControl fullWidth>
-                <InputLabel sx={{  background:"white"}}>To Account</InputLabel>
-                <Select
-                  name="toAccount"
-                  value={formData.toAccount}
-                  onChange={handleChange}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 200, // Adjust the height of the dropdown
-                        top: 56, // Adjust the top position to align properly
-                      },
-                    },
-                  }}
-                >
-                  <MenuItem value="">Select Bank</MenuItem>
-                  <MenuItem value="BankA">Bank A</MenuItem>
-                  <MenuItem value="BankB">Bank B</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
+  <FormControl fullWidth>
+    <InputLabel sx={{ background: "white" }}>To Account</InputLabel>
+    <Select
+      name="toAccount"
+      value={formData.toAccount}
+      onChange={handleChange}
+      MenuProps={{
+        PaperProps: {
+          style: {
+            maxHeight: 200,
+            top: 56,
+          },
+        },
+      }}
+    >
+      <MenuItem value="">Select Bank</MenuItem>
+      {bank?.map((bankItem) => (
+        <MenuItem key={bankItem._id} value={bankItem._id}>
+          {bankItem.name}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+</Grid>
+
+              <Grid item xs={12} md={4}>
               <TextField
                 label="To Amount"
                 type="text"
@@ -170,6 +208,8 @@ function BankToBankTransfer() {
                 fullWidth
               />
             </Grid>
+
+
           </Grid>
           <Box display="flex" justifyContent="center" sx={{ mt: 4 }}>
             <Button

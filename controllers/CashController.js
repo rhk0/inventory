@@ -6,17 +6,12 @@ export const createCashController = async (req, res) => {
       name,
       drCr,
       openingBalance,
+      userId,
     } = req.body;
 
-    // const old = await cashModel.findOne({ name });
-    // if (old) {
-    //   return res.status(400).send({
-    //     success: false,
-    //     message: "This Cash already exists",
-    //   });
-    // }
 
     const data = await cashModel.create({
+      admin:userId,
       name,
       drCr,
       openingBalance,
@@ -30,13 +25,14 @@ export const createCashController = async (req, res) => {
     console.log(error);
     return res
       .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
+      .json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 export const manageCashController = async (req, res) => {
   try {
-    const data = await cashModel.find();
+    const _id  = req.params._id;
+    const data = await cashModel.find({admin:_id});
     if (data && data.length > 0) {
       return res
         .status(200)

@@ -2,7 +2,7 @@ import bankModel from "../models/bankModel.js";
 
 export const createBankController = async (req, res) => {
   try {
-    const { name, ifscCode, accountNumber, openingBalance, drCr } = req.body;
+    const { name, ifscCode, accountNumber, openingBalance, drCr,userId } = req.body;
 
     const requiredFields = [
       "name",
@@ -30,12 +30,15 @@ export const createBankController = async (req, res) => {
     }
 
     const data = await bankModel.create({
+      admin:userId,
       name,
       ifscCode,
       accountNumber,
       openingBalance,
       drCr,
     });
+
+
     return res.status(201).send({
       success: true,
       message: "Bank Create successful",
@@ -49,9 +52,12 @@ export const createBankController = async (req, res) => {
   }
 };
 
+
+
 export const manageBankController = async (req, res) => {
   try {
-    const data = await bankModel.find();
+    const _id= req.params._id;
+    const data = await bankModel.find({admin:_id});
     if (data && data.length > 0) {
       return res
         .status(200)

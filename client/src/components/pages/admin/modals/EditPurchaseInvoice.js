@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import { useAuth } from "../../../context/Auth.js";
 
 const EditPurchaseInvoice = ({ closeModal, estimate }) => {
+  const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");
   const [InvoiceNo, setInvoiceNo] = useState("");
   const [salesType, setSalesType] = useState("");
@@ -22,7 +23,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
   const [motorVehicleNo, setMotorVehicleNo] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
   const [reverseCharge, setReverseCharge] = useState("");
-  const [gstType, setGstType] = useState("");
+  const [gstType, setGstType] = useState();
   const [rows, setRows] = useState([]);
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
   const [otherCharges, setOtherCharges] = useState("");
@@ -31,9 +32,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
   const [GstAmount, setGstAmount] = useState("");
   const [netAmount, setNetAmount] = useState("");
   const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
-
   const [qty, setQty] = useState(0);
-  const [gstRatev, setgstRatev] = useState(0);
+  const [gstRatev, setgstRatev] = useState();
 
   const [viewModal, setViewModal] = useState(false);
   const [bank, setBank] = useState([]);
@@ -46,6 +46,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
 
   useEffect(() => {
     if (estimate) {
+      console.log(estimate, "sdkjfk");
+
       setDate(estimate.date || "");
       setInvoiceNo(estimate.invoiceNo || "");
       setsupplierInvoiceNo(estimate.supplierInvoiceNo || "");
@@ -112,6 +114,13 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
       setGrossAmount(estimate.grossAmount || "");
       setGstAmount(estimate.GstAmount || "");
       setNetAmount(estimate.netAmount || "");
+
+      setdocumentPath(estimate.documentPath || "");
+
+      const updatedRows = estimate.rows.map((row) => {
+        const { igstpercent, ...rest } = row;
+        setgstRatev(igstpercent);
+      });
     }
   }, [estimate]);
 
@@ -229,10 +238,13 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
         hsnCode: "",
         qty: 0,
         units: "",
-        mrp: 0,
+        freeQty: "",
+        maxmimunRetailPrice: 0,
+        unitCost: 0,
+        schemeMargin: 0,
         discountpercent: 0,
         discountRS: 0,
-        taxable: 0,
+        taxableValue: 0,
         cgstpercent: 0,
         cgstRS: 0,
         sgstRS: 0,
@@ -250,123 +262,51 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
     }
   };
 
-  const calculateTotalAmounts = () => {
-    let grossAmount = 0;
-    let totalGST = 0;
-    let totalOtherCharges = parseFloat(otherCharges) || 0;
-
-    rows.forEach((row) => {
-      grossAmount += parseFloat(row.taxable) || 0;
-      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0);
-    });
-
-    let netAmount;
-    // Check if otherChargesDescriptions includes "discount" to decide calculation
-    if (otherChargesDescriptions.toLowerCase().includes("discount")) {
-      netAmount = grossAmount + GstAmount - totalOtherCharges;
-    } else {
-      netAmount = grossAmount + GstAmount + totalOtherCharges;
-    }
-
-    setGrossAmount(grossAmount.toFixed(2));
-    setGstAmount(totalGST.toFixed(2));
-    setNetAmount(netAmount);
-  };
-
-  const calculateRowValues = (index) => {
-    const row = rows[index];
-    let discountAmount = 0;
-
-    if (row.discountpercent) {
-      discountAmount = (row.mrp * row.discountpercent) / 100;
-    } else if (row.discountRS) {
-      discountAmount = parseFloat(row.discountRS) || 0;
-    }
-
-    const taxableValue = row.mrp - discountAmount;
-
-    let cgstRS = 0,
-      sgstRS = 0,
-      igstRS = 0;
-
-    if (gstType === "CGST/SGST") {
-      cgstRS = (taxableValue * row.cgstpercent) / 100;
-      sgstRS = (taxableValue * row.sgstpercent) / 100;
-    } else if (gstType === "IGST") {
-      igstRS = (taxableValue * row.igstpercent) / 100;
-    }
-
-    const totalValue = taxableValue + cgstRS + sgstRS + igstRS;
-
-    const updatedRow = {
-      ...row,
-      taxable: taxableValue.toFixed(2),
-      cgstRS: cgstRS.toFixed(2),
-      sgstRS: sgstRS.toFixed(2),
-      igstRS: igstRS.toFixed(2),
-      totalValue: totalValue.toFixed(2),
-    };
-
-    const updatedRows = [...rows];
-    updatedRows[index] = updatedRow;
-    setRows(updatedRows);
-  };
-
   const handleRowChange = (rowIndex, field, value) => {
     const updatedRows = [...rows]; // Clone the existing rows array
     const currentRow = updatedRows[rowIndex]; // Get the current row
+
     if (field === "discountpercent") {
-      // Calculate discountRs based on discountpercent and maxmimunRetailPrice
       const discountPercent = parseFloat(value) || 0; // Ensure a valid number
-      const discountRs = (currentRow.unitCost * discountPercent) / 100; // Calculate discount in Rs
-
-      // Update discount percent, discountRs, and taxable value
       currentRow.discountpercent = discountPercent;
-      currentRow.discountRs = discountRs.toFixed(2);
-
-      // Update taxable value based on MRP, discountRs, and quantity
 
       const unitCost = Number(currentRow.unitCost);
-      const discountRS = Number(currentRow.discountRs);
+      const discountRS = (unitCost * discountPercent) / 100; // Calculate discount in Rs
+      currentRow.discountRs = discountRS.toFixed(2);
 
-      const qt = Number(qty);
-      const taxableValue = (unitCost - discountRS) * qt;
-      currentRow.taxableValue = taxableValue.toFixed(2); // Ensure toFixed(2) for consistent format
+      const qt = Number(currentRow.qty); // Make sure you're using the correct qty for the current row
+      const taxableValue = (unitCost - discountRS) * qt; // Calculate taxable value
+      currentRow.taxableValue = taxableValue.toFixed(2); // Ensure consistent format
 
-      // Calculate GST amounts (assuming the GST rate is split into CGST and SGST for intra-state transactions)
-
-      const gstRate = Number(gstRatev) || 0;
+      const gstRate = Number(gstRatev) || 0; // Get the GST rate
+      {
+        console.log(gstRate, "aslkfdj");
+      }
       const cgstRS = (taxableValue * (gstRate / 2)) / 100;
       const sgstRS = (taxableValue * (gstRate / 2)) / 100;
       const igstRS = (taxableValue * gstRate) / 100;
+
       currentRow.cgstRS = cgstRS.toFixed(2);
       currentRow.sgstRS = sgstRS.toFixed(2);
       currentRow.igstRS = igstRS.toFixed(2);
 
-      // Update totalValue as taxableValue + GST amount (CGST + SGST or IGST)
+      // Update totalValue as taxableValue + GST amount
       const totalGST =
         currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
-
       currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
     } else if (field === "discountRs") {
-      // Calculate discount percentage based on discountRs and maxmimunRetailPrice
       const discountRs = parseFloat(value) || 0;
-      const discountPercent = (discountRs / currentRow.unitCost) * 100;
+      const unitCost = Number(currentRow.unitCost);
+      const discountPercent = (discountRs / unitCost) * 100;
 
-      // Update discount percent, discountRs, and taxable value
       currentRow.discountpercent = discountPercent.toFixed(2);
       currentRow.discountRs = discountRs.toFixed(2);
 
-      // Update taxable value based on MRP, discountRs, and quantity
-      const unitCost = Number(currentRow.unitCost);
-      const discountRS = Number(currentRow.discountRs);
-      const qt = Number(qty);
-      const taxableValue = (unitCost - discountRS) * qt;
-      // const taxableValue = (currentRow.maxmimunRetailPrice - discountRs) * currentRow.qty;
+      const qt = Number(currentRow.qty);
+      const taxableValue = (unitCost - discountRs) * qt; // Calculate taxable value
       currentRow.taxableValue = taxableValue.toFixed(2);
-      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
-      // Calculate GST amounts (assuming the GST rate is split into CGST and SGST for intra-state transactions)
-      const gstRate = Number(gstRatev) || 0;
+
+      const gstRate = Number(gstRatev) || 0; // Get the GST rate
       const cgstRS = (taxableValue * (gstRate / 2)) / 100;
       const sgstRS = (taxableValue * (gstRate / 2)) / 100;
       const igstRS = (taxableValue * gstRate) / 100;
@@ -375,12 +315,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
       currentRow.sgstRS = sgstRS.toFixed(2);
       currentRow.igstRS = igstRS.toFixed(2);
 
-      // Update totalValue as taxableValue + GST amount (CGST + SGST or IGST)
+      // Update totalValue as taxableValue + GST amount
       const totalGST =
         currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
-
       currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
     }
+
     // Update the rows state
     updatedRows[rowIndex] = currentRow;
     setRows(updatedRows);
@@ -398,6 +338,33 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
     };
 
     setRows(updatedRows);
+  };
+
+  const calculateTotalAmounts = () => {
+    let grossAmount = 0;
+    let GstAmount = 0;
+    let totalOtherCharges = parseFloat(otherCharges) || 0;
+
+    rows.forEach((row) => {
+      const taxableValue = parseFloat(row.taxableValue) || 0;
+      const cgstRS = parseFloat(row.cgstRS) || 0;
+      const sgstRS = parseFloat(row.sgstRS) || 0;
+      const igstRS = parseFloat(row.igstRS) || 0;
+
+      grossAmount += taxableValue;
+      GstAmount += cgstRS + sgstRS; // Total GST amount for each row
+    });
+
+    let netAmount;
+    // Check if otherChargesDescriptions includes "discount" to decide calculation
+    if (otherChargesDescriptions.toLowerCase().includes("discount")) {
+      netAmount = grossAmount + GstAmount - totalOtherCharges;
+    } else {
+      netAmount = grossAmount + GstAmount + totalOtherCharges;
+    }
+    setGrossAmount(grossAmount.toFixed(2));
+    setGstAmount(GstAmount.toFixed(2));
+    setNetAmount(netAmount);
   };
 
   useEffect(() => {
@@ -432,6 +399,34 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
     fetchProducts();
   }, [auth, userId]);
 
+  const handleFreeQtyChange = (rowIndex, newFreeQty) => {
+    console.log(newFreeQty, "hfgdhghdhf  dfsf dad");
+    const updatedRows = [...rows];
+    const selectedRow = updatedRows[rowIndex];
+
+    // Update the free quantity in the selected row
+    const freeQty = parseFloat(newFreeQty) || 0; // Ensure it's a valid number
+
+    // Calculate total quantity using the quantity from the selected row
+    const totalQuantity = Number(qty) + freeQty;
+
+    // Calculate schemeMargin only if both freeQty and quantity exist
+    const schemeMargin =
+      freeQty && qty ? ((freeQty / totalQuantity) * 100).toFixed(2) : 0;
+
+    console.log(schemeMargin, "schemeMargin");
+
+    // Update the row with the new freeQty and schemeMargin
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      freeQty: freeQty,
+      schemeMargin: schemeMargin,
+    };
+
+    // Update the state with the modified rows
+    setRows(updatedRows);
+  };
+
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
       (product) => product.productName === selectedProductName
@@ -455,56 +450,64 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
   const updateRowValues = (selectedProduct, rowIndex) => {
     const updatedRows = [...rows]; // Clone the current rows
 
-    // Calculate retail price and taxable value based on product details
-    const retailPrice =
-      selectedProduct.maxmimunRetailPrice -
-      (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100;
+    // Calculate retail price and taxableValue value based on product details
+    if (selectedProduct) {
+      console.log(selectedProduct.gstRate, "dhhdhhdhdhhdhd");
+      setgstRatev(selectedProduct.gstRate);
+      const updatedRows = [...rows];
 
-    const taxableValue = selectedProduct.salesTaxInclude
-      ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-        (100 + Number(selectedProduct.gstRate))
-      : retailPrice * selectedProduct.quantity;
+      // Calculate retail price
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
 
-    // Update all relevant fields in the selected row
-    updatedRows[rowIndex] = {
-      ...updatedRows[rowIndex], // Keep any existing row data
-      itemCode: selectedProduct.itemCode || "", // Map itemCode
-      productName: selectedProduct.productName || "", // Map productName
-      hsnCode: selectedProduct.hsnCode || "", // Map HSN code
-      units: selectedProduct.units || "", // Map units
-      mrp: selectedProduct.maxmimunRetailPrice
-        ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-        : "0.00", // Map maximum retail price
+      // Determine if sales tax is included from the fetched product data
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
 
-      qty: selectedProduct.quantity || 0, // Map quantity
-      wholesalerDiscount: selectedProduct.wholesalerDiscount || 0, // Map wholesaler discount
-      wholesalerDiscountRS: (
-        (selectedProduct.maxmimunRetailPrice *
-          selectedProduct.wholesalerDiscount) /
-        100
-      ).toFixed(2), // Calculate wholesaler discount in ₹
+      // Calculate taxable value based on salesTaxInclude
+      const taxableValue = 0;
 
-      taxable: taxableValue.toFixed(2), // Map taxable value
+      // Update the row with the new values, schemeMargin is excluded here since it's handled separately
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        productName: selectedProduct.productName,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        // quantity: selectedProduct.quantity,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
+        unitCost: selectedProduct.purchasePriceExGst,
+        schemeMargin: updatedRows[rowIndex].schemeMargin || 0, // Existing or initial value
 
-      // GST rates
-      cgstpercent: selectedProduct.gstRate / 2 || 0,
-      sgstpercent: selectedProduct.gstRate / 2 || 0,
-      igstpercent: selectedProduct.gstRate || 0,
-      // GST amounts
-      cgstRS: ((taxableValue * selectedProduct.gstRate) / 2 / 100).toFixed(2),
-      sgstRS: ((taxableValue * selectedProduct.gstRate) / 2 / 100).toFixed(2),
-      igstRS: ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2),
+        taxableValue: taxableValue,
 
-      // Total value (taxable value + GST)
-      totalValue: (
-        taxableValue +
-        (taxableValue * selectedProduct.gstRate) / 100
-      ).toFixed(2),
-    };
+        cgstpercent: selectedProduct.gstRate / 2,
+        sgstpercent: selectedProduct.gstRate / 2,
+        igstpercent: selectedProduct.gstRate,
 
-    // Set updated rows back to the state
-    setRows(updatedRows);
+        cgstRS: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstRS: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstRS: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalValue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
+    }
 
     // Recalculate total amounts after updating the row
     calculateTotalAmounts();
@@ -512,59 +515,70 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
 
   const handleUpdate = async () => {
     try {
-      const updatedEstimate = {
+      const submissionData = new FormData();
+
+      // Append non-file form data to formData
+      const transportDetails = estimate.transportDetails || {};
+
+      // Append non-file form data to formData
+      const fields = {
         date,
-        InvoiceNo,
-        salesType,
+        invoiceNo: InvoiceNo, // Fix: Correct casing
+        supplierInvoiceNo,
         customerType,
-        SupplierName,
+        supplierName: SupplierName, // Fix: Correct casing
         placeOfSupply,
         paymentTerm,
         dueDate,
-        receiptDocNo,
-        dispatchedThrough,
-        destination,
-        carrierNameAgent,
-        billOfLading,
-        motorVehicleNo,
+        receiptDocNo: transportDetails.receiptDocNo || "",
+        dispatchedThrough: transportDetails.dispatchedThrough || "",
+        destination: transportDetails.destination || "",
+        carrierNameAgent: transportDetails.carrierNameAgent || "",
+        billOfLading: transportDetails.billOfLading || "",
+        motorVehicleNo: transportDetails.motorVehicleNo || "",
         billingAddress,
         reverseCharge,
         gstType,
-
-        rows: rows.map((row) => ({
-          itemCode: row.itemCode,
-          productName: row.productName,
-          hsnCode: row.hsnCode,
-          qty: row.qty,
-          units: row.units,
-          mrp: row.mrp,
-
-          discountpercent: row.wholesalerDiscount,
-          discountRS: row.wholesalerDiscountRS,
-
-          taxable: row.taxable,
-          cgstpercent: row.cgstpercent,
-          cgstRS: row.cgstRS,
-          sgstpercent: row.sgstpercent,
-          sgstRS: row.sgstRS,
-          igstpercent: row.igstpercent,
-          igstRS: row.igstRS,
-          totalValue: row.totalValue,
-        })),
         otherChargesDescriptions,
-        otherCharges,
-        narration,
-        grossAmount,
-        GstAmount,
-        netAmount,
-        cash,
-        bank,
+        narration, // Fix: Use narration directly (no formData)
+        grossAmount: parseFloat(grossAmount).toFixed(2),
+        GstAmount: parseFloat(GstAmount).toFixed(2),
+        otherCharges: parseFloat(otherCharges).toFixed(2),
+        netAmount: parseFloat(netAmount).toFixed(2),
       };
+      // Append all fields to formData
+      Object.keys(fields).forEach((key) => {
+        if (fields[key]) {
+          submissionData.append(key, fields[key]);
+        }
+      });
+
+      // Append each row individually
+      rows.forEach((row, index) => {
+        Object.keys(row).forEach((key) => {
+          submissionData.append(`rows[${index}][${key}]`, row[key]);
+        });
+      });
+
+      if (paymentMethod === "Cash" && cash) {
+        // Fix: Use cash state
+        submissionData.append("cash", JSON.stringify(cash));
+      } else if (paymentMethod === "Bank" && bank) {
+        // Fix: Use bank state
+        submissionData.append("bank", JSON.stringify(bank));
+      }
+
+      // If a document file has been selected, append it to the FormData
+      if (documentPath) {
+        submissionData.append("documentPath", documentPath);
+      }
 
       const response = await axios.put(
         `/api/v1/purchaseInvoiceRoute/updatepurchaseinvoice/${estimate._id}`,
-        updatedEstimate
+        submissionData
       );
+
+      console.log(response, "kdsjfk");
 
       if (response.data.success) {
         alert("Estimate updated successfully");
@@ -579,7 +593,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
   };
 
   const closeViewModal = () => {
-    setViewModal(false); // Close only the View Receipt modal
+    setViewModal(false);
   };
 
   return (
@@ -791,8 +805,13 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
               <th className="border p-2">Qty</th>
-              <th className="border p-2">Units</th>
+              <th className="border p-2 ">Units</th>
+              <th className="border p-2 ">free Qty</th>
+
               <th className="border p-2">MRP</th>
+              <th className="border p-2">Unit Cost</th>
+              <th className="border p-2">Scheme Margin</th>
+
               <th className="border p-2">
                 Discount
                 <div className="flex justify-between">
@@ -800,7 +819,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                 </div>
               </th>
               <>
-                <th className="border p-2">Taxable Value</th>
+                <th className="border p-2">Taxable</th>
                 {gstType === "CGST/SGST" && (
                   <>
                     <th className="border p-2">
@@ -914,17 +933,26 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) =>
                       handleRowChange(index, "hsnCode", e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "80px",
+                      flexBasis: "80px",
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
                 <td className="border p-2">
                   <input
                     type="number"
+                    name="qty"
                     value={row.qty}
-                    onChange={(e) =>
-                      handleRowChange(index, "qty", e.target.value)
-                    }
-                    className="w-full"
+                    onChange={(e) => handlQtyChange(index, e.target.value)}
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "40px",
+                      flexBasis: "40px",
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
 
@@ -938,81 +966,118 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     className="w-full"
                   />
                 </td>
+
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    name="freeQty"
+                    value={row.freeQty}
+                    onChange={(e) => handleFreeQtyChange(index, e.target.value)}
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "40px",
+                      flexBasis: "40px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.mrp}
+                    value={row.maxmimunRetailPrice}
                     onChange={(e) =>
-                      handleRowChange(index, "mrp", e.target.value)
+                      handleRowChange(
+                        index,
+                        "maxmimunRetailPrice",
+                        e.target.value
+                      )
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "60px",
+                      flexBasis: "60px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={row.unitCost}
+                    onChange={(e) =>
+                      handleRowChange(index, "unitCost", e.target.value)
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "50px",
+                      flexBasis: "50px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={row.schemeMargin}
+                    onChange={(e) =>
+                      handleRowChange(index, "schemeMargin", e.target.value)
                     }
                     className="w-full"
                   />
                 </td>
-                <td className="border">
-                  {row.discountpercent && row.discountRS ? (
-                    // If discountpercent and discountRS exist, show these fields
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        value={row.discountpercent}
-                        readOnly
-                        className="w-full flex-grow"
-                        style={{
-                          minWidth: "20px",
-                          flexBasis: "20px",
-                          flexShrink: 1,
-                        }}
-                      />
-                      <input
-                        type="text"
-                        value={row.discountRS}
-                        readOnly
-                        className="w-full"
-                      />
-                    </div>
-                  ) : (
-                    // If discountpercent and discountRS do not exist, show these input boxes
-                    <>
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.wholesalerDiscount}
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountpercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px",
-                            flexBasis: "20px",
-                            flexShrink: 1,
-                          }}
-                        />
 
-                        <input
-                          type="text"
-                          value={row.wholesalerDiscountRS}
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-                    </>
-                  )}
+                <td className="border">
+                  <div className="p-1 flex gap-1">
+                    <input
+                      type="text"
+                      value={row.discountpercent}
+                      onChange={(e) =>
+                        handleRowChange(
+                          index,
+                          "discountpercent",
+                          e.target.value
+                        )
+                      }
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "20px",
+                        flexBasis: "20px",
+                        flexShrink: 1,
+                      }}
+                    />
+                    <input
+                      type="text"
+                      value={row.discountRs}
+                      onChange={
+                        (e) =>
+                          handleRowChange(index, "discountRs", e.target.value) // Fix here
+                      }
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "40px",
+                        flexBasis: "40px",
+                        flexShrink: 1,
+                      }}
+                    />
+                  </div>
                 </td>
                 <>
                   <td className="border p-2">
                     <input
                       type="number"
-                      value={row.taxable}
+                      value={row.taxableValue}
                       onChange={(e) =>
-                        handleRowChange(index, "taxable", e.target.value)
+                        handleRowChange(index, "taxableValue", e.target.value)
                       }
-                      className="w-full"
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px",
+                        flexBasis: "70px",
+                        flexShrink: 1,
+                      }}
                     />
                   </td>
                   {gstType === "CGST/SGST" && (
@@ -1029,7 +1094,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                           <input
                             type="number"
@@ -1037,7 +1107,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                             onChange={(e) =>
                               handleRowChange(index, "cgstRS", e.target.value)
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                         </div>
                       </td>
@@ -1053,7 +1128,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                           <input
                             type="number"
@@ -1061,7 +1141,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                             onChange={(e) =>
                               handleRowChange(index, "sgstRS", e.target.value)
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                         </div>
                       </td>
@@ -1101,7 +1186,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) =>
                       handleRowChange(index, "totalValue", e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "70px",
+                      flexBasis: "70px",
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
                 <td className="p-1 gap-2 flex">
@@ -1170,9 +1260,10 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               d="M12 4v16m8-8H4"
             />
           </svg>
-          View Other Charges
+          Edit Other Charges
         </button>
       </div>
+
       {isModalOtherChargesOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
@@ -1210,6 +1301,32 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
           </div>
         </div>
       )}
+
+      <div className="mt-4 mb-4">
+        <label className="w-1/4 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>{" "}
+          change Document
+          <input
+            type="file"
+            className="hidden"
+            onChange={(e) => setdocumentPath(e.target.files[0])}
+          />
+        </label>
+      </div>
+
       {/* Narration and Amounts */}
       <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
         <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
@@ -1235,20 +1352,16 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {salesType === "GST Invoice" && (
-            <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-bold lg:w-1/2 text-nowrap">
-                GST Amount
-              </label>
-              <input
-                type="text"
-                name="GstAmount"
-                value={GstAmount}
-                onChange={handleChange}
-                className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
-              />
-            </div>
-          )}
+          <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+            <label className="font-bold lg:w-1/2 text-nowrap">GST Amount</label>
+            <input
+              type="text"
+              name="GstAmount"
+              value={GstAmount}
+              // onChange={handleChange}
+              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+            />
+          </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
             <label className="font-bold lg:w-1/2 text-nowrap">
               Other Charges
