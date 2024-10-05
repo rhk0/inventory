@@ -30,12 +30,10 @@ const CreateSalesInvoice = () => {
   const [rows, setRows] = useState([]);
   const [paymentTerm, setPaymentTerm] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
-
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedAddress, setAddress] = useState("");
   const [viewModal, setViewModal] = useState(false);
-
   const [formData, setFormData] = useState({
     date: "",
     InvoiceNo: "",
@@ -78,7 +76,6 @@ const CreateSalesInvoice = () => {
     otherCharges: "",
     netAmount: "",
   });
-
   const [cashDetails, setCashDetails] = useState({
     Amount: "",
     Advance: "",
@@ -115,13 +112,8 @@ const CreateSalesInvoice = () => {
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
   };
-  const [paymentType, setPaymentType] = useState("");
-  const [subPaymentType, setSubPaymentType] = useState("");
 
-  const handlePaymentTypeChange = (e) => {
-    setPaymentType(e.target.value);
-    setSubPaymentType(""); // Reset subPaymentType when paymentType changes
-  };
+  const [subPaymentType, setSubPaymentType] = useState("");
 
   const handleSubPaymentTypeChange = (e) => {
     const { value } = e.target;
@@ -133,14 +125,13 @@ const CreateSalesInvoice = () => {
   const fetchCustomer = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
-      
+
       setCustomer(response.data.data);
     } catch (error) {
       console.error("Error fetching Customers:", error);
     }
   };
 
-  
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -150,7 +141,7 @@ const CreateSalesInvoice = () => {
       }
     }
     fetchCustomer();
-  }, [auth,userId]);
+  }, [auth, userId]);
 
   useEffect(() => {
     const companyData = async () => {
@@ -159,13 +150,12 @@ const CreateSalesInvoice = () => {
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
-        
       }
     };
 
     companyData(); // Fetch company data on component mount
   }, [userId]); // Empty dependency array ensures this only runs once, on mount
- 
+
   const handleCustomerChange = (e) => {
     const value = e.target.value;
     setSelectedCustomer(value);
@@ -181,6 +171,21 @@ const CreateSalesInvoice = () => {
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
     setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+    console.log(
+      selectedCustomerData.state,
+      " selectedCustomerData.state",
+      company.state,
+      "company.state"
+    );
+
+    if (
+      selectedCustomerData.state.trim().toLowerCase() ===
+      company.state.trim().toLowerCase()
+    ) {
+      setGstType("CGST/SGST");
+    } else {
+      setGstType("IGST");
+    }
   };
 
   const handleOtherChargesChange = (event) => {
@@ -228,14 +233,14 @@ const CreateSalesInvoice = () => {
     }));
   };
 
-  const handleGstTypeChange = (e) => {
-    const value = e.target.value;
-    setGstType(value);
-    setFormData((prev) => ({
-      ...prev,
-      gstType: value,
-    }));
-  };
+  // const handleGstTypeChange = (e) => {
+  //   const value = e.target.value;
+  //   setGstType(value);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     gstType: value,
+  //   }));
+  // };
 
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -257,15 +262,6 @@ const CreateSalesInvoice = () => {
       salesType: value,
     }));
   };
-  const handleCustomerTypeChange = (e) => {
-    const value = e.target.value;
-    setCustomerType(value);
-    setFormData((prev) => ({
-      ...prev,
-      customerType: value,
-    }));
-  };
-
   const handlePlaceOfSupplyChange = (e) => {
     const value = e.target.value;
     setPlaceOfSupply(value);
@@ -274,7 +270,6 @@ const CreateSalesInvoice = () => {
       placeOfSupply: value,
     }));
   };
-
   const handleBillingAddressChange = (e) => {
     const value = e.target.value;
     setBillingAddress(selectedAddress);
@@ -291,7 +286,6 @@ const CreateSalesInvoice = () => {
       reverseCharge: value,
     }));
   };
-
   // Function to handle transport detail change
   const handleTransportDetailChange = (field, value) => {
     setTransportDetails((prev) => ({ ...prev, [field]: value }));
@@ -299,29 +293,6 @@ const CreateSalesInvoice = () => {
       ...prev,
       [field]: value,
     }));
-  };
-  const handleRowChange = (index, field, value) => {
-    const newRows = [...rows];
-    const newValue = parseFloat(value) || 0;
-    newRows[index] = { ...newRows[index], [field]: newValue };
-
-    // Calculate taxable value, GST, and total value
-    const { qty, mrp, discount } = newRows[index];
-    const taxableValue = qty * mrp - discount;
-    const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-    const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-    const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
-    const totalValue = taxableValue + cgst + sgst + igst;
-
-    newRows[index] = {
-      ...newRows[index],
-      taxableValue,
-      cgst,
-      sgst,
-      igst,
-      totalValue,
-    };
-    setRows(newRows);
   };
 
   const addRow = () => {
@@ -355,8 +326,11 @@ const CreateSalesInvoice = () => {
     let GstAmount = 0;
 
     rows.forEach((rows) => {
-      grossAmount += rows.taxableValue;
-      GstAmount += rows.cgstrs + rows.sgstrs;
+      grossAmount += Number(rows.taxableValue);
+      GstAmount +=
+        gstType === "CGST/SGST"
+          ? Number(rows.cgstrs) + Number(rows.sgstrs)
+          : Number(rows.igstrs);
     });
     let netAmount;
 
@@ -385,25 +359,90 @@ const CreateSalesInvoice = () => {
 
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
-     
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        // toast.error("Failed to fetch products. Please try again.");
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
+
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data);
+      } else {
+        console.error("Unexpected response structure:", response.data);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      // toast.error("Failed to fetch products. Please try again.");
+    }
+  };
+  useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [auth, userId]);
+  const handleRowChange = (index, field, value) => {
+    // Create a copy of rows
+    const newRows = [...rows];
 
+    // Update the changed field with the new value
+    newRows[index] = { ...newRows[index], [field]: value };
+
+    // Check if the product is selected
+    const selectedProduct = products.find(
+      (product) => product.productName === newRows[index].productName
+    );
+
+    if (selectedProduct) {
+      // Calculate retail price and apply the discount if applicable
+      const retailPrice = selectedProduct.maxmimunRetailPrice
+        ? selectedProduct.maxmimunRetailPrice -
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+            100
+        : 0;
+
+      // Get sales tax and GST rate
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+      const gstRate = selectedProduct.gstRate;
+
+      // Extract the quantity from the updated row
+      const { qty } = newRows[index];
+
+      // Calculate taxable value
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * qty * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * qty;
+
+      // Calculate GST amounts
+      const cgstrs =
+        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
+      const sgstrs =
+        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
+      const igstrs = gstType === "IGST" ? (taxableValue * gstRate) / 100 : 0;
+
+      // Calculate total value
+      const totalValue = taxableValue + (taxableValue * gstRate) / 100;
+
+      // Update the row with the calculated values
+      newRows[index] = {
+        ...newRows[index],
+        taxableValue: taxableValue.toFixed(2),
+        quantity: qty,
+        cgstrs: cgstrs.toFixed(2),
+        sgstrs: sgstrs.toFixed(2),
+        igstrs: igstrs.toFixed(2),
+        totalvalue: totalValue.toFixed(2),
+      };
+      // Set the updated rows state
+      setRows(newRows);
+      // Trigger total calculation
+      calculateTotals(newRows);
+    }
+  };
+  const handlQtyChange = (rowIndex, qty) => {
+    // Parse the new quantity to ensure it's a number
+    const newQty = parseFloat(qty) || 0;
+
+    // Call handleRowChange to update the row with the new quantity
+    handleRowChange(rowIndex, "qty", newQty);
+  };
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products?.find(
       (product) => product.productName === selectedProductName
@@ -578,7 +617,7 @@ const CreateSalesInvoice = () => {
               ? row.wholeselerDiscountRS
               : row.retailDiscountRS,
 
-          taxable: row.taxableValue.toFixed(2),
+          taxable: row.taxableValue,
           cgstpercent: row.cgstp,
           cgstRS: row.cgstrs,
           sgstpercent: row.sgstp,
@@ -587,9 +626,9 @@ const CreateSalesInvoice = () => {
           igstRS: row.igstrs,
           totalValue: row.totalvalue,
         })),
-        grossAmount: grossAmount.toFixed(2),
-        GstAmount: GstAmount.toFixed(2),
-        otherCharges: otherCharges.toFixed(2),
+        grossAmount: grossAmount,
+        GstAmount: GstAmount,
+        otherCharges: otherCharges,
         otherChargesDescriptions: otherChargesDescriptions,
         salesType,
         customerType,
@@ -603,7 +642,6 @@ const CreateSalesInvoice = () => {
         "/api/v1/salesInvoiceRoute/createsalesinvoice",
         updatedFormData
       );
-     
 
       if (response) {
         toast.success("Sales invoice created successfully...");
@@ -701,9 +739,8 @@ const CreateSalesInvoice = () => {
     setViewModal(false);
   };
   const handlePrintOnly = () => {
-  
     const printWindow = window.open("", "_blank");
-   
+
     const updatedFormData = {
       ...formData,
       rows: rows?.map((row) => ({
@@ -721,7 +758,7 @@ const CreateSalesInvoice = () => {
           customerType === "Wholesaler"
             ? row.wholeselerDiscountRS
             : row.retailDiscountRS,
-        taxable: row.taxableValue.toFixed(2),
+        taxable: row.taxableValue,
         cgstpercent: row.cgstp,
         cgstRS: row.cgstrs,
         sgstpercent: row.sgstp,
@@ -730,19 +767,18 @@ const CreateSalesInvoice = () => {
         igstRS: row.igstrs,
         totalValue: row.totalvalue,
       })),
-      grossAmount: grossAmount.toFixed(2),
-      GstAmount: GstAmount.toFixed(2),
-      otherCharges: otherCharges.toFixed(2),
+      grossAmount: grossAmount,
+      GstAmount: GstAmount,
+      otherCharges: otherCharges,
       otherChargesDescriptions: otherChargesDescriptions,
       salesType,
       customerType,
       reverseCharge,
       gstType,
-      netAmount: netAmount.toFixed(2),
+      netAmount: netAmount,
       cash: paymentMethod === "Cash" ? cashDetails : {},
       bank: paymentMethod === "Bank" ? bankDetails : {},
     };
-
 
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {
@@ -820,8 +856,8 @@ const CreateSalesInvoice = () => {
         ? `<th>CGST</th><th>SGST</th>`
         : `<th>IGST</th>`;
 
-        const paymentModeHTML = updatedFormData.cash.Amount
-        ? `
+    const paymentModeHTML = updatedFormData.cash.Amount
+      ? `
             <td style="width: 33.33%; text-align: left;">
                 <div class="receipt-details">
                     <div class="section-header">Receipt Mode: Cash</div>
@@ -831,17 +867,34 @@ const CreateSalesInvoice = () => {
                     <div class="details">Balance Amount: ₹${updatedFormData.cash.Balance}</div>
                 </div>
             </td>`
-        : `
+      : `
             <td style="width: 33.33%; text-align: left;">
                 <div class="receipt-details">
-                    <div class="section-header">Receipt Mode: Bank - ${updatedFormData.bank.selectBankType}</div>
-                    <div class="details">Bank Name: ${updatedFormData.bank.bank}</div>
-                    <div class="details">Transaction Date: ${updatedFormData.bank.transactionDate}</div>
-                    <div class="details">Transaction / Cheque No: ${updatedFormData.bank.transactionNo || updatedFormData.bank.chequeNo}</div>
-                    <div class="details">Total Amount: ₹${updatedFormData.bank.Amount}</div>
-                    <div class="details">Advance Received: ₹${updatedFormData.bank.Advance}</div>
-                    <div class="details">Amount Received: ₹${updatedFormData.bank.Received}</div>
-                    <div class="details">Balance Amount: ₹${updatedFormData.bank.Balance}</div>
+                    <div class="section-header">Receipt Mode: Bank - ${
+                      updatedFormData.bank.selectBankType
+                    }</div>
+                    <div class="details">Bank Name: ${
+                      updatedFormData.bank.bank
+                    }</div>
+                    <div class="details">Transaction Date: ${
+                      updatedFormData.bank.transactionDate
+                    }</div>
+                    <div class="details">Transaction / Cheque No: ${
+                      updatedFormData.bank.transactionNo ||
+                      updatedFormData.bank.chequeNo
+                    }</div>
+                    <div class="details">Total Amount: ₹${
+                      updatedFormData.bank.Amount
+                    }</div>
+                    <div class="details">Advance Received: ₹${
+                      updatedFormData.bank.Advance
+                    }</div>
+                    <div class="details">Amount Received: ₹${
+                      updatedFormData.bank.Received
+                    }</div>
+                    <div class="details">Balance Amount: ₹${
+                      updatedFormData.bank.Balance
+                    }</div>
                 </div>
             </td>`;
 
@@ -971,8 +1024,8 @@ const CreateSalesInvoice = () => {
                     updatedFormData.placeOfSupply
                   }</span></div>
                    <div class="details">Due Date: <span>${
-                    updatedFormData.dueDate
-                  }</span></div>
+                     updatedFormData.dueDate
+                   }</span></div>
                  
                 </div>
               </td>
@@ -1079,7 +1132,7 @@ const CreateSalesInvoice = () => {
           <div  class="signature">
          
           
-            <div>For (Business Name)</div>
+            <div>For ${company.businessName}</div>
             <div style="margin-top: 20px;">Signature</div>
           </div>
         </body>
@@ -1103,11 +1156,10 @@ const CreateSalesInvoice = () => {
     // Trigger the print dialog
     printWindow.print();
   };
-  
+
   const handlePrintOnlyWithoutGST = () => {
-   
     const printWindow = window.open("", "_blank");
-   
+
     const updatedFormData = {
       ...formData,
       rows: rows?.map((row) => ({
@@ -1125,16 +1177,16 @@ const CreateSalesInvoice = () => {
           customerType === "Wholesaler"
             ? row.wholeselerDiscountRS
             : row.retailDiscountRS,
-        taxable: row.taxableValue.toFixed(2),
+        taxable: row.taxableValue,
         totalValue: row.totalvalue, // GST details removed
       })),
-      grossAmount: grossAmount.toFixed(2),
-      otherCharges: otherCharges.toFixed(2),
+      grossAmount: grossAmount,
+      otherCharges: otherCharges,
       otherChargesDescriptions: otherChargesDescriptions,
       salesType,
       customerType,
       reverseCharge,
-      netAmount: netAmount.toFixed(2),
+      netAmount: netAmount,
       cash: paymentMethod === "Cash" ? cashDetails : {},
       bank: paymentMethod === "Bank" ? bankDetails : {},
     };
@@ -1226,7 +1278,7 @@ const CreateSalesInvoice = () => {
         </tr>`
       )
       .join("");
-      const paymentModeHTML = updatedFormData.cash.Amount
+    const paymentModeHTML = updatedFormData.cash.Amount
       ? `
           <td style="width: 33.33%; text-align: left;">
               <div class="receipt-details">
@@ -1240,14 +1292,31 @@ const CreateSalesInvoice = () => {
       : `
           <td style="width: 33.33%; text-align: left;">
               <div class="receipt-details">
-                  <div class="section-header">Receipt Mode: Bank - ${updatedFormData.bank.selectBankType}</div>
-                  <div class="details">Bank Name: ${updatedFormData.bank.bank}</div>
-                  <div class="details">Transaction Date: ${updatedFormData.bank.transactionDate}</div>
-                  <div class="details">Transaction / Cheque No: ${updatedFormData.bank.transactionNo || updatedFormData.bank.chequeNo}</div>
-                  <div class="details">Total Amount: ₹${updatedFormData.bank.Amount}</div>
-                  <div class="details">Advance Received: ₹${updatedFormData.bank.Advance}</div>
-                  <div class="details">Amount Received: ₹${updatedFormData.bank.Received}</div>
-                  <div class="details">Balance Amount: ₹${updatedFormData.bank.Balance}</div>
+                  <div class="section-header">Receipt Mode: Bank - ${
+                    updatedFormData.bank.selectBankType
+                  }</div>
+                  <div class="details">Bank Name: ${
+                    updatedFormData.bank.bank
+                  }</div>
+                  <div class="details">Transaction Date: ${
+                    updatedFormData.bank.transactionDate
+                  }</div>
+                  <div class="details">Transaction / Cheque No: ${
+                    updatedFormData.bank.transactionNo ||
+                    updatedFormData.bank.chequeNo
+                  }</div>
+                  <div class="details">Total Amount: ₹${
+                    updatedFormData.bank.Amount
+                  }</div>
+                  <div class="details">Advance Received: ₹${
+                    updatedFormData.bank.Advance
+                  }</div>
+                  <div class="details">Amount Received: ₹${
+                    updatedFormData.bank.Received
+                  }</div>
+                  <div class="details">Balance Amount: ₹${
+                    updatedFormData.bank.Balance
+                  }</div>
               </div>
           </td>`;
 
@@ -1293,7 +1362,9 @@ const CreateSalesInvoice = () => {
         <body>
         <div class="header">
           
-            <div class="business-name"> ${company?.businessName || "---------"} </div>
+            <div class="business-name"> ${
+              company?.businessName || "---------"
+            } </div>
               <div> ${company?.address || "---------"} </div>
               <div>GSTIN: ${company?.gstIn || "---------"}</div>
             </div>
@@ -1334,8 +1405,8 @@ const CreateSalesInvoice = () => {
                     updatedFormData.placeOfSupply
                   }</span></div>
                    <div class="details">Due Date: <span>${
-                    updatedFormData.dueDate
-                  }</span></div>
+                     updatedFormData.dueDate
+                   }</span></div>
                 
                 </div>
               </td>
@@ -1433,7 +1504,7 @@ const CreateSalesInvoice = () => {
           </div>
   
           <div class="signature">
-            <div>For (Business Name)</div>
+            <div>For ${company.businessName}</div>
             <div style="margin-top: 20px;">Signature</div>
           </div>
         </body>
@@ -1580,16 +1651,36 @@ const CreateSalesInvoice = () => {
             </label>
           </div>
 
-          <div className="mb-4">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-blue-500 text-black p-2"
+          {/* Reverse Charge Section */}
+          <div className="mb-4 w-full">
+            <label className="font-bold">Reverse Charge</label>
+            <select
+              value={reverseCharge}
+              onChange={handleReverseChargeChange}
+              className="border p-2 w-full  rounded"
             >
-              Transport Details
-            </button>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="font-bold">Billing Address</label>
+            <textarea
+              name="billingAddress"
+              value={billingAddress}
+              onChange={handleBillingAddressChange}
+              className="border p-2 w-full  rounded"
+            />
           </div>
         </div>
-
+        <div className="mb-4">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-500 text-black p-2"
+          >
+            Transport Details
+          </button>
+        </div>
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
             <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
@@ -1652,13 +1743,13 @@ const CreateSalesInvoice = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-blue-500 text-black p-2"
+                  className="bg-blue-500 text-black p-2 rounded"
                 >
                   Save
                 </button>
@@ -1666,45 +1757,6 @@ const CreateSalesInvoice = () => {
             </div>
           </div>
         )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-          <div className="mb-4">
-            <label className="font-bold">Billing Address</label>
-            <textarea
-              name="billingAddress"
-              value={billingAddress}
-              onChange={handleBillingAddressChange}
-              className="border p-2 w-full  rounded"
-            />
-          </div>
-          {/* Reverse Charge Section */}
-          <div className="mb-4 w-full">
-            <label className="font-bold">Reverse Charge</label>
-            <select
-              value={reverseCharge}
-              onChange={handleReverseChargeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-
-          {/* GST Type Section */}
-          {salesType === "GST Invoice" && (
-            <div className="mb-4 w-full">
-              <label className="font-bold">GST Type:</label>
-              <select
-                value={gstType}
-                onChange={handleGstTypeChange}
-                className="border p-2 w-full  rounded"
-              >
-                <option value="CGST/SGST">CGST/SGST</option>
-                <option value="IGST">IGST</option>
-              </select>
-            </div>
-          )}
-        </div>
 
         {/* Items Section */}
         <div className="overflow-x-auto">
@@ -1798,7 +1850,6 @@ const CreateSalesInvoice = () => {
                   </td>
 
                   <td className="border ">
-                  
                     <Select
                       id="product-select"
                       value={
@@ -1853,10 +1904,8 @@ const CreateSalesInvoice = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.quantity}
-                      onChange={(e) =>
-                        handleRowChange(index, "quantity", e.target.value)
-                      }
+                      value={rows[index]?.qty || ""}
+                      onChange={(e) => handlQtyChange(index, e.target.value)}
                       className="w-full"
                     />
                   </td>
@@ -1957,7 +2006,7 @@ const CreateSalesInvoice = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue.toFixed(2)}
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -2056,7 +2105,7 @@ const CreateSalesInvoice = () => {
                           <td className="border p-1">
                             <input
                               type="text"
-                              value={row.taxableValue.toFixed(2)}
+                              value={row.taxableValue}
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
@@ -2151,47 +2200,52 @@ const CreateSalesInvoice = () => {
           </table>
         </div>
 
-        <button
-          onClick={addRow}
-          className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-        >
-          <svg
-            xmlns="http//www.w3.org/2000/svg"
-            className="h-4 w-4 "
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add New Row
-        </button>
-
-        <button
-          onClick={() => setIsModalOtherChargesOpen(true)}
-          className=" text-blue-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-        >
-          <svg
-            xmlns="http//www.w3.org/2000/svg"
-            className="h-4 w-4 "
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add Other Charges
-        </button>
+        <div className="flex justify-between ">
+          <div>
+            <button
+              onClick={addRow}
+              className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+            >
+              <svg
+                xmlns="http//www.w3.org/2000/svg"
+                className="h-4 w-4 "
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add New Row
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => setIsModalOtherChargesOpen(true)}
+              className=" bg-blue-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
+            >
+              <svg
+                xmlns="http//www.w3.org/2000/svg"
+                className="h-4 w-4 "
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add Other Charges
+            </button>
+          </div>
+        </div>
 
         {isModalOtherChargesOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -2224,13 +2278,13 @@ const CreateSalesInvoice = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleOtherChargesSave}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Save
                 </button>
@@ -2255,13 +2309,13 @@ const CreateSalesInvoice = () => {
               className=" text-black border p-1 w-full  rounded"
             />
           </div>
-          <div className="w-full lg:w-1/3">
+          <div className="w-full lg:w-1/3 mt-5">
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 Gross Amount
               </label>
               <input
-                value={grossAmount.toFixed(2)}
+                value={grossAmount}
                 // onChange={handleBillingAddressChange}
                 className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
@@ -2272,7 +2326,7 @@ const CreateSalesInvoice = () => {
                   GST Amount
                 </label>
                 <input
-                  value={GstAmount.toFixed(2)}
+                  value={GstAmount}
                   // onChange={handleBillingAddressChange}
                   className=" text-black border p-1 w-full  rounded lg:w-2/3"
                 />
@@ -2281,7 +2335,7 @@ const CreateSalesInvoice = () => {
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                {otherChargesDescriptions}
+                {otherChargesDescriptions || "Other Charges"}
               </label>
               <input
                 value={otherCharges.toFixed(2)}
@@ -2514,7 +2568,7 @@ const CreateSalesInvoice = () => {
         <div className="mt-8 flex justify-center">
           <button
             // onClick={}
-            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2"
+            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2 rounded"
             onClick={handleSubmit}
           >
             Save
@@ -2522,7 +2576,7 @@ const CreateSalesInvoice = () => {
           {salesType === "GST Invoice" && (
             <button
               onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2 rounded"
             >
               Save and Print
             </button>
@@ -2530,7 +2584,7 @@ const CreateSalesInvoice = () => {
           {salesType !== "GST Invoice" && (
             <button
               onClick={handlePrintOnlyWithoutGST}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2 rounded"
             >
               Save and Print
             </button>
