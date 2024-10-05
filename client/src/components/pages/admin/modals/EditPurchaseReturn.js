@@ -8,7 +8,7 @@ import { useAuth } from "../../../context/Auth.js";
 const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");
-  const [InvoiceNo, setInvoiceNo] = useState("");
+  const [debitNoteNo, setdebitNoteNo] = useState("");
   const [salesType, setSalesType] = useState("");
   const [customerType, setCustomerType] = useState("");
   const [SupplierName, setSupplierName] = useState("");
@@ -22,7 +22,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const [billOfLading, setBillOfLading] = useState("");
   const [motorVehicleNo, setMotorVehicleNo] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
-  const [reverseCharge, setReverseCharge] = useState("");
+  const [reasonForReturn, setreasonForReturn] = useState("");
   const [gstType, setGstType] = useState();
   const [rows, setRows] = useState([]);
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
@@ -31,9 +31,10 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const [grossAmount, setGrossAmount] = useState("");
   const [GstAmount, setGstAmount] = useState("");
   const [netAmount, setNetAmount] = useState("");
-  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
+  const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState("");
   const [qty, setQty] = useState(0);
   const [gstRatev, setgstRatev] = useState();
+  const [selectPurchase, setSelectPurchase] = useState();
 
   const [viewModal, setViewModal] = useState(false);
   const [bank, setBank] = useState([]);
@@ -47,14 +48,15 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   useEffect(() => {
     if (estimate) {
       console.log(estimate, "sdkjfk");
+      setSupplierName(estimate.supplierName || "");
 
       setDate(estimate.date || "");
-      setInvoiceNo(estimate.invoiceNo || "");
-      setsupplierInvoiceNo(estimate.supplierInvoiceNo || "");
-      setSupplierName(estimate.supplierName || "");
+      setdebitNoteNo(estimate.debitNoteNo || "");
+      setsupplierdebitNoteNo(estimate.supplierdebitNoteNo || "");
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
+      setSelectPurchase(estimate.selectPurchase || "");
 
       if (estimate.bank) {
         setBank({
@@ -105,7 +107,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       setBillOfLading(estimate.billOfLading || "");
       setMotorVehicleNo(estimate.motorVehicleNo || "");
       setBillingAddress(estimate.billingAddress || "");
-      setReverseCharge(estimate.reverseCharge || "");
+      setreasonForReturn(estimate.reasonForReturn || "");
       setGstType(estimate.gstType || "");
       setRows(estimate.rows || []);
       setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
@@ -129,7 +131,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   };
 
   const [paymentMethod, setPaymentMethod] = useState("");
-  const [subPaymentType, setSubPaymentType] = useState("");
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
@@ -176,8 +177,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       case "date":
         setDate(value);
         break;
-      case "InvoiceNo":
-        setInvoiceNo(value);
+      case "debitNoteNo":
+        setdebitNoteNo(value);
         break;
       case "salesType":
         setSalesType(value);
@@ -200,8 +201,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       case "billingAddress":
         setBillingAddress(value);
         break;
-      case "reverseCharge":
-        setReverseCharge(value);
+      case "reasonForReturn":
+        setreasonForReturn(value);
         break;
       case "gstType":
         setGstType(value);
@@ -314,7 +315,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       currentRow.cgstRS = cgstRS.toFixed(2);
       currentRow.sgstRS = sgstRS.toFixed(2);
       currentRow.igstRS = igstRS.toFixed(2);
-
+      currentRow.quantity = qt;
       // Update totalValue as taxableValue + GST amount
       const totalGST =
         currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
@@ -523,8 +524,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       // Append non-file form data to formData
       const fields = {
         date,
-        invoiceNo: InvoiceNo, // Fix: Correct casing
-        supplierInvoiceNo,
+        debitNoteNo: debitNoteNo, // Fix: Correct casing
+        selectPurchase,
         customerType,
         supplierName: SupplierName, // Fix: Correct casing
         placeOfSupply,
@@ -537,7 +538,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
         billOfLading: transportDetails.billOfLading || "",
         motorVehicleNo: transportDetails.motorVehicleNo || "",
         billingAddress,
-        reverseCharge,
+        reasonForReturn,
         gstType,
         otherChargesDescriptions,
         narration, // Fix: Use narration directly (no formData)
@@ -612,6 +613,28 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
         <div>
+          <label className="font-bold">Supplier Name</label>
+          <input
+            type="text"
+            name="SupplierName"
+            value={SupplierName}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        <div>
+          <label className="font-bold"> Select Purchase</label>
+          <input
+            type="text"
+            name="debitNoteNo"
+            value={selectPurchase}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        <div>
           <label className="font-bold">
             Date:
             <input
@@ -624,139 +647,17 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
           </label>
         </div>
         <div>
-          <label className="font-bold">Invoice No.</label>
+          <label className="font-bold">Debit Note No</label>
           <input
             type="text"
-            name="InvoiceNo"
-            value={InvoiceNo}
+            name="debitNoteNo"
+            value={debitNoteNo}
             onChange={handleChange}
             className="border p-2 w-full rounded"
           />
-        </div>
-
-        <div>
-          <label className="font-bold"> Supplier Invoice No.</label>
-          <input
-            type="text"
-            name="InvoiceNo"
-            value={supplierInvoiceNo}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-
-        <div>
-          <label className="font-bold">Supplier Name</label>
-          <input
-            type="text"
-            name="SupplierName"
-            value={SupplierName}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-        <div>
-          <label className="font-bold">Place of Supply</label>
-          <input
-            type="text"
-            name="placeOfSupply"
-            value={placeOfSupply}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
-        </div>
-        <div>
-          <label className="font-bold">
-            Payment Term (days):
-            <input
-              type="number"
-              name="paymentTerm"
-              value={paymentTerm}
-              onChange={handleChange}
-              className="border p-2 w-full rounded"
-            />
-          </label>
-        </div>
-
-        <div>
-          <label className="font-bold">
-            Due Date
-            <input
-              type="text"
-              value={dueDate}
-              name="dueDate"
-              onChange={handleChange}
-              className="border p-2 w-full text-black rounded"
-            />
-          </label>
-        </div>
-
-        <div className="mb-4">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-white p-2"
-          >
-            Transport Details
-          </button>
         </div>
       </div>
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
-            <h4 className="font-bold mb-4">Transport Details</h4>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label>Dispatched Through</label>
-                <input
-                  type="text"
-                  name="dispatchedThrough"
-                  value={dispatchedThrough}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Destination</label>
-                <input
-                  type="text"
-                  name="destination"
-                  value={destination}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Carrier Name/Agent</label>
-                <input
-                  type="text"
-                  name="carrierNameAgent"
-                  value={carrierNameAgent}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
-                <label>Bill of Lading/LR-RR No.</label>
-                <input
-                  type="text"
-                  name="billOfLading"
-                  value={billOfLading}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="bg-gray-500 text-white p-2 mr-2"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
         <div className="mb-4">
           <label className="font-bold">Billing Address</label>
@@ -768,11 +669,11 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
           />
         </div>
         <div className="mb-4 w-full">
-          <label className="font-bold">Reverse Charge</label>
+          <label className="font-bold">Reason Of Return </label>
           <select
-            value={reverseCharge}
+            value={reasonForReturn}
             onChange={handleChange}
-            name="reverseCharge"
+            name="reasonForReturn"
             className="border p-2 w-full rounded"
           >
             <option value="Yes">Yes</option>
@@ -1383,218 +1284,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
               onChange={handleChange}
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
-          </div>
-
-          <div className="mt-8 flex justify-center">
-            <button
-              type="button"
-              onClick={() => openViewModal()}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              View Receipt
-            </button>
-
-            <Modal
-              isOpen={viewModal}
-              onRequestClose={closeModal}
-              contentLabel="View Item Modal"
-              style={{
-                content: {
-                  width: "80%",
-                  height: "90%",
-                  maxWidth: "800px",
-                  margin: "auto",
-                  padding: "5px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  borderRadius: "5px",
-                },
-              }}
-            >
-              <div className="bg-white p-4 rounded shadow-lg w-full relative">
-                <button
-                  onClick={closeModal}
-                  className="absolute text-3xl top-2 right-2 text-gray-500 hover:text-gray-700"
-                >
-                  &times;
-                </button>
-                <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
-
-                {/* Radio buttons to select payment method */}
-                <div className="gap-5 mb-4">
-                  <label className="font-bold">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="Cash"
-                      onChange={handlePaymentMethodChange}
-                      checked={paymentMethod === "Cash"}
-                    />
-                    Cash
-                  </label>
-                  <label className="ml-5 font-bold">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="Bank"
-                      onChange={handlePaymentMethodChange}
-                      checked={paymentMethod === "Bank"}
-                    />
-                    Bank
-                  </label>
-                </div>
-
-                {/* Conditional form rendering based on payment method */}
-                <form>
-                  {paymentMethod === "Cash" && (
-                    <>
-                      <label className="font-bold">Amount</label>
-                      <input
-                        type="text"
-                        name="Amount"
-                        value={cash.Amount}
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleCashChange}
-                      />
-                      <label className="font-bold">Advance</label>
-                      <input
-                        type="text"
-                        name="Advance"
-                        value={cash.Advance}
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleCashChange}
-                      />
-                      <label className="font-bold">Received</label>
-                      <input
-                        type="text"
-                        name="Received"
-                        value={cash.Received}
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleCashChange}
-                      />
-                      <label className="font-bold">Balance</label>
-                      <input
-                        type="text"
-                        name="Balance"
-                        value={cash.Balance}
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleCashChange}
-                      />
-                    </>
-                  )}
-
-                  {paymentMethod === "Bank" && (
-                    <>
-                      <label className="font-bold">Select Bank</label>
-                      <input
-                        name="selectBankType"
-                        className="border p-2 mb-2 w-full"
-                        value={bank.bank}
-                        onChange={handleBankChange}
-                        readOnly
-                      >
-                        {/* <option value="">Select Bank</option>
-                        <option value="Bank 1">Bank 1</option>
-                        <option value="Bank 2">Bank 2</option> */}
-                      </input>
-                      <select
-                        name="subPaymentType"
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleSubPaymentTypeChange}
-                        value={bank.selectBankType}
-                      >
-                        <option value="">Select Payment Type</option>
-                        <option value="Online">Online</option>
-                        <option value="Cheque">Cheque</option>
-                      </select>
-                      {bank.selectBankType === "Online" && (
-                        <>
-                          <label className="font-bold">Transaction Date</label>
-                          <input
-                            type="text"
-                            name="transactionDate"
-                            className="border p-2 mb-2 w-full"
-                            value={bank.transactionDate}
-                            onChange={handleBankChange}
-                          />
-                          <label className="font-bold">Transaction No</label>
-                          <input
-                            type="text"
-                            name="transactionNo"
-                            value={bank.transactionNo}
-                            className="border p-2 mb-2 w-full"
-                            onChange={handleBankChange}
-                          />
-                        </>
-                      )}
-                      {bank.selectBankType === "Cheque" && (
-                        <>
-                          <label className="font-bold">Transaction Date</label>
-                          <input
-                            type="text"
-                            name="transactionDate"
-                            value={bank.transactionDate}
-                            className="border p-2 mb-2 w-full"
-                            onChange={handleBankChange}
-                          />
-                          <label className="font-bold">Cheque No</label>
-                          <input
-                            type="text"
-                            name="chequeNo"
-                            value={bank.chequeNo}
-                            className="border p-2 mb-2 w-full"
-                            onChange={handleBankChange}
-                          />
-                        </>
-                      )}
-                      <label className="font-bold">Amount</label>
-                      <input
-                        type="text"
-                        name="Amount"
-                        value={bank.Amount}
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleBankChange}
-                      />
-                      <label className="font-bold">Advance</label>
-                      <input
-                        type="text"
-                        name="Advance"
-                        value={bank.Advance}
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleBankChange}
-                      />
-                      <label className="font-bold">Received</label>
-                      <input
-                        type="text"
-                        name="Received"
-                        value={bank.Received}
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleBankChange}
-                      />
-                      <label className="font-bold">Balance</label>
-                      <input
-                        type="text"
-                        name="Balance"
-                        value={bank.Balance}
-                        className="border p-2 mb-2 w-full"
-                        onChange={handleBankChange}
-                      />
-                    </>
-                  )}
-
-                  {/* Submit button */}
-                  <div className="flex justify-center items-center">
-                    <button
-                      className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 h-10 "
-                      onClick={() => {
-                        closeViewModal();
-                      }}
-                    >
-                      Save
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </Modal>
           </div>
 
           <div className="flex justify-end mt-4">

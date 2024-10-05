@@ -155,6 +155,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
 
       const link = document.createElement("a");
       link.href = blobUrl;
+
       link.download = "document.pdf";
 
       document.body.appendChild(link);
