@@ -113,7 +113,7 @@ const AdminRoute = () => {
         <Route path="/*" element={<Test />} />
         {/* rahul routing */}
         <Route path="/companyregistration" element={<CompanyRegistration />} />
-        <Route path="/orderPurchaseInvoice" element={<OrderPurchaseInvoice />} />
+        <Route path="/orderPurchaseInvoice/:_id" element={<OrderPurchaseInvoice />} />
         <Route path="/CreateSupplier" element={<CreateSupplier />} />
         <Route path="/ManageSupplier" element={<ManageSupplier />} />
         <Route path="CreateCustomer" element={<CreateCustomer />} />

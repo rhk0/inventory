@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
@@ -10,13 +12,11 @@ import Modal from "react-modal";
 import { useLocation } from "react-router-dom";
 
 const OrderPurchaseInvoice = () => {
-
-    const location = useLocation();
-    const { estimate } = location.state || {}; // Retrieve passed estimate data
   
-    console.log(estimate, "estimate data in OrderPurchaseInvoice"); // Check if the data is available
+    const { _id } = useParams();
+    
+    console.log(_id, "ID from URL params"); // Print the ID from URL params
   
-
 
   const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");

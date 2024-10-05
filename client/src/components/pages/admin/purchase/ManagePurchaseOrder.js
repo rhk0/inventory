@@ -209,17 +209,13 @@ const ManagePurchaseOrder = () => {
                         >
                           Delete
                         </button>
-                        <Link
-                          to={{
-                            pathname: "/admin/orderPurchaseInvoice",
-                            state: { estimate: estimate },
-                          }}
-                          className="text-blue-500 hover:underline focus:outline-none"
-                          onClick={handleNavigation(estimate)} // Call your handler on click
-                        >
-                          Go to Invoice
-                        </Link>
-                      </div>
+                                              <Link
+                        to={`/admin/orderPurchaseInvoice/${estimate._id}`} // Pass the ID in the URL
+                        className="text-blue-500 hover:underline focus:outline-none"
+                      >
+                        Go to Invoice
+                      </Link>
+                                            </div>
                     </td>
                   </tr>
                 ))
@@ -283,8 +279,7 @@ const ManagePurchaseOrder = () => {
         <EditPurchaseOrder
           isOpen={editModalOpen}
           estimate={selectedEstimate}
-          closeModal={closeModal}
-          // getSupplierName={getSupplierName}
+          closeModal={closeModal} 
         />
       </Modal>
     </div>
