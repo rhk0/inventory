@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
 import { useAuth } from "../../../context/Auth.js";
-const CreatePurchaseOrder = () => {
+  const CreatePurchaseOrder = () => {
   const [date, setDate] = useState("");
   const [orderNo, setorderNo] = useState("");
   const [customerType, setCustomerType] = useState("Retailer");
@@ -13,7 +13,7 @@ const CreatePurchaseOrder = () => {
   const [supplierType, setsupplierType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [userid, setUserId] = useState("");
+  const [userId, setUserId] = useState("");
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
   const [auth] = useAuth();
@@ -83,7 +83,7 @@ const CreatePurchaseOrder = () => {
 
   const fetchsupplier = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
       setsupplier(response.data.data);
       console.log(response, "dskfkj");
     } catch (error) {
@@ -100,12 +100,12 @@ const CreatePurchaseOrder = () => {
       }
     }
     fetchsupplier();
-  }, [auth, userid]);
+  }, [auth, userId]);
 
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userid}`);
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
         setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -113,7 +113,7 @@ const CreatePurchaseOrder = () => {
     };
 
     companyData(); // Fetch company data on component mount
-  }, [userid]); // Empty dependency array ensures this only runs once, on mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
 
   const handlePurchaseTypeChange = (e) => {
     const value = e.target.value;
@@ -342,7 +342,7 @@ const CreatePurchaseOrder = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageproduct");
-        console.log(response, "dkfjk");
+     
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
@@ -652,9 +652,8 @@ const CreatePurchaseOrder = () => {
       gstType,
       netAmount: netAmount.toFixed(2),
     };
-    console.log(updatedFormData, "dheeru");
-
-    // Determine the table headers and the corresponding data based on gstType
+  
+   
     function numberToWords(num) {
       const ones = [
         "",

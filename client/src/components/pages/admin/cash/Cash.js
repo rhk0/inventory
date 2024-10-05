@@ -19,6 +19,8 @@ import {
   TablePagination,
   Typography,
 } from "@mui/material";
+import { useAuth } from "../../../context/Auth";
+
 
 const initialFormData = {
   name: "",
@@ -35,18 +37,29 @@ const Cash = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(7);
-
+  const [auth]=useAuth();
+  const [userId,setUserId]=useState("")
+   
   useEffect(() => {
+
+    if(auth.user.role===1){
+      setUserId(auth.user._id)
+    
+    }
+    if(auth.user.role===0){
+      setUserId(auth.user.admin)
+     
+    }
     fetchCash();
-  }, []);
+  }, [auth,userId]);
 
   const fetchCash = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageCash");
+      const response = await axios.get(`/api/v1/auth/manageCash/${userId}`);
       setCashData(response.data.data);
     } catch (error) {
       console.error("Error fetching cash data", error);
-      toast.error("Error fetching cash data");
+      toast.error(error.response.data.message);
     }
   };
 
@@ -66,15 +79,16 @@ const Cash = () => {
     }
 
     try {
-      const response = await axios.post("/api/v1/auth/createCash", formData);
+      const updatedFormData = { ...formData, userId };
+      const response = await axios.post("/api/v1/auth/createCash", updatedFormData);
       if (response) {
-        toast.success("Cash created successfully");
+        toast.success(response.data.message);
         fetchCash();
         clearData();
       }
     } catch (error) {
       console.error("Error creating cash entry:", error);
-      toast.error("Error creating cash entry");
+      toast.error(error.response.data.message);
     }
   };
 
@@ -163,13 +177,17 @@ const Cash = () => {
           </TableHead>
           <TableBody>
             {cashData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((cash, index) => (
+              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              ?.map((cash, index) => (
                 <TableRow key={cash._id}>
                   <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                   <TableCell>{cash.name}</TableCell>
                   <TableCell>{cash.openingBalance}</TableCell>
-                  <TableCell>{cash.date}</TableCell> {/* Display Date */}
+                  <TableCell> {new Date(cash.createdAt).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                  })}</TableCell> 
                   <TableCell>
                     <Button color="primary" onClick={() => openViewModal(cash)}>View</Button>
                     <Button color="secondary" onClick={() => openEditModal(cash)}>Edit</Button>
@@ -183,7 +201,7 @@ const Cash = () => {
 
       <TablePagination
         component="div"
-        count={cashData.length}
+        count={cashData?.length}
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
