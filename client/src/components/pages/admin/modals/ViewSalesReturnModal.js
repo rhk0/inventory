@@ -20,6 +20,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
     motorVehicleNo: "",
   });
   const [billingAddress, setBillingAddress] = useState("");
+  const [reasonForReturn, setReasonForReturn] = useState("");
   const [reverseCharge, setReverseCharge] = useState("");
   const [gstType, setGstType] = useState("");
   const [rows, setRows] = useState([]);
@@ -53,6 +54,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
         motorVehicleNo: estimate.motorVehicleNo || "",
       });
       setBillingAddress(estimate.billingAddress || "");
+      setReasonForReturn(estimate.reasonForReturn || "");
       setReverseCharge(estimate.reverseCharge || "");
       setGstType(estimate.gstType || "");
       setRows(estimate.rows || []);
@@ -286,6 +288,16 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
             </select>
           </div>
         )}
+          <div className="mb-4">
+          <label className="font-bold">Reason For Return </label>
+          <textarea
+            value={reasonForReturn}
+            disabled
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+
       </div>
 
       {/* Items Section */}

@@ -391,6 +391,7 @@ import { useAuth } from "../../../context/Auth.js";
       newRows[index] = {
         ...newRows[index],
         taxableValue: taxableValue.toFixed(2),
+        quantity:qty,
         cgstrs: cgstrs.toFixed(2),
         sgstrs: sgstrs.toFixed(2),
         igstrs: igstrs.toFixed(2),

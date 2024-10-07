@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
-import EditPurchaseInvoice from "../modals/EditPurchaseInvoice";
 import ViewPurchaseReturn from "../modals/ViewPurchaseReturn";
+import EditPurchaseReturn from "../modals/EditPurchaseReturn";
 
 const ManagePurchaseReturn = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -110,7 +110,7 @@ const ManagePurchaseReturn = () => {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by order No, supplier Name"
+          placeholder="Search by Debit Note No, supplier Name"
           className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -131,8 +131,7 @@ const ManagePurchaseReturn = () => {
                   "Date",
                   "Debit No",
                   "Supplier Name",
-                  "Payment Term",
-                  "Due Date",
+
                   "GST Type",
                   "Product Code",
                   "UOM",
@@ -173,12 +172,7 @@ const ManagePurchaseReturn = () => {
                       {estimate.supplierName}
                     </td>
 
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.paymentTerm}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-center whitespace-nowrap">
-                      {estimate.dueDate}
-                    </td>
+   
 
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
@@ -285,7 +279,7 @@ const ManagePurchaseReturn = () => {
           },
         }}
       >
-        <EditPurchaseInvoice
+        <EditPurchaseReturn
           isOpen={editModalOpen}
           estimate={selectedEstimate}
           closeModal={closeModal}

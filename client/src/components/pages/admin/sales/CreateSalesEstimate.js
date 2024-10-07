@@ -127,15 +127,7 @@ const CreateSalesEstimate = () => {
     }));
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
-    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
-
-    console.log(
-      selectedCustomerData.state,
-      " selectedCustomerData.state",
-      company.state,
-      "company.state"
-    );
-
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "")
     if (
       selectedCustomerData.state.trim().toLowerCase() ===
       company.state.trim().toLowerCase()
@@ -290,38 +282,6 @@ const CreateSalesEstimate = () => {
     }
   };
 
-  const calculateTotals = () => {
-    let grossAmount = 0;
-    let GstAmount = 0;
-
-    rows.forEach((rows) => {
-      grossAmount += rows.taxableValue;
-      GstAmount += rows.cgstrs + rows.sgstrs;
-    });
-
-    let netAmount;
-
-    // Check if otherChargesDescriptions includes "discount"
-
-    if (salesType === "Bill of Supply") {
-      if (otherChargesDescriptions.includes("discount")) {
-        netAmount = grossAmount - otherCharges; // Do not add GstAmount
-      } else {
-        netAmount = grossAmount + otherCharges; // Do not add GstAmount
-      }
-    } else {
-      if (otherChargesDescriptions.includes("discount")) {
-        netAmount = grossAmount + GstAmount - otherCharges;
-      } else {
-        netAmount = grossAmount + GstAmount + otherCharges;
-      }
-    }
-
-    return { grossAmount, GstAmount, netAmount };
-  };
-
-  const { grossAmount, GstAmount, netAmount } = calculateTotals();
-
   // Function to handle Save and Print
 
   const [products, setProducts] = useState([]);
@@ -365,7 +325,36 @@ const CreateSalesEstimate = () => {
   //   };
   //   setRows(newRows);
   // };
+  const calculateTotals = () => {
+    let grossAmount = 0;
+    let GstAmount = 0;
+    rows.forEach((rows) => {
+      grossAmount += Number(rows.taxableValue);
+      GstAmount +=
+        gstType === "CGST/SGST"
+          ? Number(rows.cgstrs) + Number(rows.sgstrs)
+          : Number(rows.igstrs);
+    });
+    let netAmount;
+    // Check if otherChargesDescriptions includes "discount"
+    if (salesType === "Bill of Supply") {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount - otherCharges; // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges; // Do not add GstAmount
+      }
+    } else {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount + GstAmount - otherCharges;
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges;
+      }
+    }
 
+    return { grossAmount, GstAmount, netAmount };
+  };
+
+  const { grossAmount, GstAmount, netAmount } = calculateTotals();
   const handleRowChange = (index, field, value) => {
     // Create a copy of rows
     const newRows = [...rows];
@@ -396,9 +385,9 @@ const CreateSalesEstimate = () => {
 
       // Calculate taxable value
       const taxableValue = salesTaxInclude
-      ? (selectedProduct.retailPrice * qty * 100) /
-        (100 + Number(selectedProduct.gstRate))
-      : retailPrice * qty;
+        ? (selectedProduct.retailPrice * qty * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * qty;
 
       // Calculate GST amounts
       const cgstrs =
@@ -414,12 +403,12 @@ const CreateSalesEstimate = () => {
       newRows[index] = {
         ...newRows[index],
         taxableValue: taxableValue.toFixed(2),
+        quantity: qty,
         cgstrs: cgstrs.toFixed(2),
         sgstrs: sgstrs.toFixed(2),
         igstrs: igstrs.toFixed(2),
         totalvalue: totalValue.toFixed(2),
       };
-
       // Set the updated rows state
       setRows(newRows);
       // Trigger total calculation
@@ -607,7 +596,7 @@ const CreateSalesEstimate = () => {
               ? row.wholeselerDiscountRS
               : row.retailDiscountRS,
 
-          taxable: row.taxableValue.toFixed(2),
+          taxable: row.taxableValue,
           cgstpercent: row.cgstp,
           cgstRS: row.cgstrs,
           sgstpercent: row.sgstp,
@@ -616,16 +605,16 @@ const CreateSalesEstimate = () => {
           igstRS: row.igstrs,
           totalValue: row.totalvalue,
         })),
-        grossAmount: grossAmount.toFixed(2),
-        GstAmount: GstAmount.toFixed(2),
-        otherCharges: otherCharges.toFixed(2),
+        grossAmount: grossAmount,
+        GstAmount: GstAmount,
+        otherCharges: otherCharges,
         otherChargesDescriptions: otherChargesDescriptions,
         salesType,
         customerType,
         reverseCharge,
         gstType,
 
-        netAmount: netAmount.toFixed(2),
+        netAmount: netAmount,
         userId: userId,
       };
 
@@ -728,7 +717,7 @@ const CreateSalesEstimate = () => {
           customerType === "Wholesaler"
             ? row.wholeselerDiscountRS
             : row.retailDiscountRS,
-        taxable: row.taxableValue.toFixed(2),
+        taxable: row.taxableValue,
         cgstpercent: row.cgstp,
         cgstRS: row.cgstrs,
         sgstpercent: row.sgstp,
@@ -737,15 +726,15 @@ const CreateSalesEstimate = () => {
         igstRS: row.igstrs,
         totalValue: row.totalvalue,
       })),
-      grossAmount: grossAmount.toFixed(2),
-      GstAmount: GstAmount.toFixed(2),
-      otherCharges: otherCharges.toFixed(2),
+      grossAmount: grossAmount,
+      GstAmount: GstAmount,
+      otherCharges: otherCharges,
       otherChargesDescriptions: otherChargesDescriptions,
       salesType,
       customerType,
       reverseCharge,
       gstType,
-      netAmount: netAmount.toFixed(2),
+      netAmount: netAmount,
     };
 
     // Determine the table headers and the corresponding data based on gstType
@@ -1058,7 +1047,7 @@ const CreateSalesEstimate = () => {
           <div  class="signature">
          
           
-            <div>For (Business Name)</div>
+            <div>For ${company.businessName}</div>
             <div style="margin-top: 20px;">Signature</div>
           </div>
         </body>
@@ -1103,16 +1092,16 @@ const CreateSalesEstimate = () => {
           customerType === "Wholesaler"
             ? row.wholeselerDiscountRS
             : row.retailDiscountRS,
-        taxable: row.taxableValue.toFixed(2),
+        taxable: row.taxableValue,
         totalValue: row.totalvalue, // GST details removed
       })),
-      grossAmount: grossAmount.toFixed(2),
-      otherCharges: otherCharges.toFixed(2),
+      grossAmount: grossAmount,
+      otherCharges: otherCharges,
       otherChargesDescriptions: otherChargesDescriptions,
       salesType,
       customerType,
       reverseCharge,
-      netAmount: netAmount.toFixed(2),
+      netAmount: netAmount,
     };
 
     function numberToWords(num) {
@@ -1388,7 +1377,7 @@ const CreateSalesEstimate = () => {
           </div>
   
           <div class="signature">
-            <div>For (Business Name)</div>
+            <div>For ${company.businessName}</div>
             <div style="margin-top: 20px;">Signature</div>
           </div>
         </body>
@@ -1536,7 +1525,7 @@ const CreateSalesEstimate = () => {
           <div className="mb-4">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-gray-500 text-black rounded text-black p-2"
+              className="bg-gray-500 text-black rounded text-black p-2 rounded"
             >
               Transport Details
             </button>
@@ -1634,13 +1623,13 @@ const CreateSalesEstimate = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-blue-500 text-black p-2"
+                  className="bg-blue-500 text-black p-2 rounded"
                 >
                   Save
                 </button>
@@ -1814,10 +1803,10 @@ const CreateSalesEstimate = () => {
                       menuPosition="fixed"
                     />
                     <div style={{ marginTop: "10px", fontSize: "12px" }}>
-                      <div>Date: {row.expiryDate ? row.expiryDate : "N/A"}</div>
                       <div>
-                        Batch Number: {row.batchNo ? row.batchNo : "N/A"}
+                        Exp Dt: {row.expiryDate ? row.expiryDate : "N/A"}
                       </div>
+                      <div>Batch No: {row.batchNo ? row.batchNo : "N/A"}</div>
                     </div>
                   </td>
 
@@ -2116,7 +2105,7 @@ const CreateSalesEstimate = () => {
                   <td className="p-1 gap-2 flex">
                     <button
                       onClick={() => removeRow(index)}
-                      className="bg-red-500 text-black p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+                      className="bg-red-500 text-black p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center "
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -2218,13 +2207,13 @@ const CreateSalesEstimate = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleOtherChargesSave}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Save
                 </button>
@@ -2255,7 +2244,7 @@ const CreateSalesEstimate = () => {
                 Gross Amount
               </label>
               <input
-                value={grossAmount }
+                value={grossAmount}
                 // onChange={handleBillingAddressChange}
                 className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
@@ -2303,7 +2292,7 @@ const CreateSalesEstimate = () => {
         <div className="mt-8 flex justify-center">
           <button
             // onClick={}
-            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2"
+            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2 rounded"
             onClick={handleSubmit}
           >
             Save
@@ -2311,7 +2300,7 @@ const CreateSalesEstimate = () => {
           {salesType === "GST Invoice" && (
             <button
               onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2 rounded"
             >
               Save and Print
             </button>
@@ -2319,7 +2308,7 @@ const CreateSalesEstimate = () => {
           {salesType !== "GST Invoice" && (
             <button
               onClick={handlePrintOnlyWithoutGST}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2 rounded"
             >
               Save and Print
             </button>

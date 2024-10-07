@@ -102,7 +102,7 @@ import { useAuth } from "../../../context/Auth";
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by Estimate number, Customer Name"
+          placeholder="Search by Challan number, Customer Name"
           className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -125,8 +125,6 @@ import { useAuth } from "../../../context/Auth";
                   "Sales Type",
                   "Customer Name",
                   "Place of Supply",
-                  "Payment Term",
-                  "Due Date",
                   "GST Type",
                   "Product Code",
                   "Product Name",
@@ -171,13 +169,6 @@ import { useAuth } from "../../../context/Auth";
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
                     </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.paymentTerm}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-center whitespace-nowrap">
-                      {estimate.dueDate}
-                    </td>
-
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
                     </td>
