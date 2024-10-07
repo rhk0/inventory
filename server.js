@@ -117,14 +117,15 @@ app.use("/api/v1/PayOutRoute", PayOutRoute);
 
 app.use("/api/v1/subscription", subscriptionRoute);
 
-app.use("/uploads", express.static("uploads"));
+// app.use("/uploads", express.static("uploads"));
+
 //super admin routes
 
 app.use("/api/v1/super", superAdminRoutes);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "./client/build")));
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Catch-all route to serve the React app for all non-API routes
 app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "./client/build/index.html"));

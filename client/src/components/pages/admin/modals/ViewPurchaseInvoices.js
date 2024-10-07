@@ -138,12 +138,15 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
       console.error("Invalid document path.");
       return;
     }
-
+ 
     console.log(documentPath, "Document path for download");
+    const ff = "documentPath-1728112826730.pdf"
+    // const fileUrl = documentPath ? documentPath : `/${documentPath}`;
+       const fileUrl = "/uploads/documentPath-1728112826730.pdf";
+                   
+//  const fileUrl = `http://localhost:5011/uploads/${documentPath}`;
 
-    const fileUrl = documentPath ? documentPath : `/${documentPath}`;
-
-    // Create an anchor element and trigger download
+    
     const link = document.createElement("a");
 
     link.href = fileUrl;
