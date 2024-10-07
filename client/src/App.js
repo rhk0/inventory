@@ -24,9 +24,11 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
+      
         <Route path="/" element={<Landing />}/>
-           <Route path="/freeTriel" element={<FreeTriel/>}/>
+          <Route path="/freeTriel" element={<FreeTriel/>}/>
           <Route path="/login" element={<Login />}/>
+       
           <Route path="/registration" element={<Registraion />} />
           <Route path="/forgetpassword" element={<ForgotPassword />} />
           <Route path="/otpverification" element={<Otpverification />} />

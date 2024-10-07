@@ -32,7 +32,7 @@ const ManagePurchaseInvoice = () => {
       console.log(response.data.invoices, "purchase invoice");
       setSalesEstimates(response.data.invoices);
     } catch (error) {
-      setError("Error fetching sales order.");
+      setError(error.response.data.message);
     } finally {
       setLoading(false);
     }

@@ -1,9 +1,9 @@
 import userModel from "../models/userModel.js";
 import nodemailer from "nodemailer";
 import { hashPassword, comparePassword } from "../middleware/authHelper.js";
-import bcrypt from 'bcrypt';
+
 import NodeCache from "node-cache";
-import JWT from "jsonwebtoken";
+
 import { isValidObjectId } from "mongoose";
 
 
