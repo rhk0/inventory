@@ -54,15 +54,15 @@ const ManagePayIn = () => {
     fetchCustomer();
   }, [auth,userId]);
 
-  const fetchPayIns = async () => {
-    try {
-      const response = await axios.get(`/api/v1/payInRoute/getAllpayin/${userId}`);
-      setPayIns(response.data.payInList);
-    } catch (error) {
-      console.error("Error fetching PayIns:", error);
-      toast.error("Error fetching records");
-    }
-  };
+    const fetchPayIns = async () => {
+      try {
+        const response = await axios.get(`/api/v1/payInRoute/getAllpayin/${userId}`);
+        setPayIns(response.data.payInList);
+      } catch (error) {
+        console.error("Error fetching PayIns:", error);
+        toast.error("Error fetching records");
+      }
+    };
   const fetchCustomer = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
@@ -189,12 +189,9 @@ const ManagePayIn = () => {
     return 0;
   };
 
-  // Save changes after edit
-  // Save changes and close the modal without submitting the form
-  // Save changes after edit
+
   const handleSaveEdit = async () => {
     try {
-      // Include Narration and total in the selectedPayIn object before saving
 
       const updatedRows = rows?.map((row) => {
         // Remove _id if it's a new entry or invalid
