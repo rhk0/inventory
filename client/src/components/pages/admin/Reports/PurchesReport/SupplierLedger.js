@@ -180,7 +180,7 @@ const SupplierLedger = () => {
             value={selectedCustomer}
           >
             <option value="">Select Supplier</option>
-            {customers.map((customer, index) => (
+            {customers?.map((customer, index) => (
               <option key={index} value={customer.name}>
                 {customer.name}
               </option>

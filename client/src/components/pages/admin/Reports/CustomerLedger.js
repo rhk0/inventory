@@ -186,7 +186,7 @@ const CustomerLedger = () => {
             value={selectedCustomer}
           >
             <option value="">Select Customer</option>
-            {customers.map((customer, index) => (
+            {customers?.map((customer, index) => (
               <option key={index} value={customer.name}>
                 {customer.name}
               </option>
