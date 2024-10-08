@@ -5,7 +5,7 @@ import { hashPassword, comparePassword } from "../middleware/authHelper.js";
 import NodeCache from "node-cache";
 
 import { isValidObjectId } from "mongoose";
-
+import JWT from "jsonwebtoken"
 
 const node_cache = new NodeCache({ stdTTL: 120 });
     

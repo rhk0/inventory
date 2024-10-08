@@ -24,6 +24,7 @@ function BankToBankTransfer() {
     fromAccount: "",
     amount: "",
     toAccount: "",
+    ToAmount:"",
   });
   const [auth]=useAuth();
   const [userId,setUserId]=useState("")
@@ -80,29 +81,35 @@ function BankToBankTransfer() {
     }
 
     try {
+      if(formData.amount!==formData.ToAmount){
+        alert("Both amount shoud be equal")
+        return ;
+      }
       const response = await axios.post(
         "/api/v1/auth/banktoBankTransfer",
         formData
       );
 
       if (response) {
-        toast.success("Bank to bank transfer created successfully.");
+        toast.success(response.data.message);
       }
 
       clearData();
     } catch (error) {
-      console.error("Error submitting form:", error);
+      toast.error(error.response.data.message)
+      console.error("Error submitting form:", error.response.data.message);
     }
   };
 
   const clearData = () => {
     setFormData({
       date: "",
-      ToAmount:"",
+     
       contraNo: "",
       fromAccount: "",
       amount: "",
       toAccount: "",
+      ToAmount:"",
     });
   };
 
@@ -136,7 +143,7 @@ function BankToBankTransfer() {
               />
             </Grid>
             <Grid item xs={12} md={4}>
-  <FormControl fullWidth>
+      <FormControl fullWidth>
     <InputLabel sx={{ background: "white" }}>From Account</InputLabel>
     <Select
       name="fromAccount"
@@ -160,10 +167,12 @@ function BankToBankTransfer() {
     </Select>
   </FormControl>
 </Grid>
+
+
             <Grid item xs={12} md={4}>
               <TextField
                 label="Amount"
-                type="text"
+                type="number"
                 name="amount"
                 value={formData.amount}
                 onChange={handleChange}
@@ -171,38 +180,37 @@ function BankToBankTransfer() {
               />
             </Grid>
          
-            
-            <Grid item xs={12} md={4}>
-  <FormControl fullWidth>
-    <InputLabel sx={{ background: "white" }}>To Account</InputLabel>
-    <Select
-      name="toAccount"
-      value={formData.toAccount}
-      onChange={handleChange}
-      MenuProps={{
-        PaperProps: {
-          style: {
-            maxHeight: 200,
-            top: 56,
-          },
-        },
-      }}
-    >
-      <MenuItem value="">Select Bank</MenuItem>
-      {bank?.map((bankItem) => (
-        <MenuItem key={bankItem._id} value={bankItem._id}>
-          {bankItem.name}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-</Grid>
 
+       <Grid item xs={12} md={4}>
+                  <FormControl fullWidth>
+                    <InputLabel sx={{ background: "white" }}>To Account</InputLabel>
+                    <Select
+                      name="toAccount"
+                      value={formData.toAccount}
+                      onChange={handleChange}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 200,
+                            top: 56,
+                          },
+                        },
+                      }}
+                    >
+                  <MenuItem value="">Select Bank</MenuItem>
+                  {bank?.map((bankItem) => (
+                    <MenuItem key={bankItem._id} value={bankItem._id}>
+                      {bankItem.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
               <Grid item xs={12} md={4}>
               <TextField
-                label="To Amount"
-                type="text"
-                name="Toamount"
+                label="Amount"
+                type="number"
+                name="ToAmount"
                 value={formData.ToAmount}
                 onChange={handleChange}
                 fullWidth
