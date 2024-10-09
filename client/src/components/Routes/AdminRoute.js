@@ -90,6 +90,9 @@ import ManagePurchaseOrder from "../pages/admin/purchase/ManagePurchaseOrder.js"
 import ManageSalesInvoice from "../pages/admin/sales/ManageSalesInvoice.js";
 import ManagePurchaseReturn from "../pages/admin/purchase/ManagePurchaseReturn.js";
 import OrderPurchaseInvoice from "../pages/admin/purchase/OrderPurchaseInvoice.js";
+import EstimateSalesInvoice from "../pages/admin/sales/EstimateSalesInvoice.js";
+import UpdateCompanyRegistration from "../auth/UpdateCompanyRegistration.js";
+import OnlineStore from "../pages/admin/sales/OnlineStore.js";
 const AdminRoute = () => {
   const [auth] = useAuth();
 
@@ -112,8 +115,9 @@ const AdminRoute = () => {
 
         <Route path="/*" element={<Test />} />
         {/* rahul routing */}
-        <Route path="/companyregistration" element={<CompanyRegistration />} />
+        <Route path="/updateCompanyRegistration" element={<UpdateCompanyRegistration />} />
         <Route path="/orderPurchaseInvoice/:_id" element={<OrderPurchaseInvoice />} />
+        <Route path="/EstimateSalesInvoice/:_id" element={<EstimateSalesInvoice />} />
         <Route path="/CreateSupplier" element={<CreateSupplier />} />
         <Route path="/ManageSupplier" element={<ManageSupplier />} />
         <Route path="CreateCustomer" element={<CreateCustomer />} />
@@ -179,6 +183,7 @@ const AdminRoute = () => {
         />
 
         <Route path="salesreturn" element={<CreateSalesReturn />} />
+        <Route path="onlinestore" element={<OnlineStore />} />
         <Route path="manageSalesReturn" element={<ManageSalesReturn />} />
 
         <Route path="ManageProduct" element={<Manageproducts />} />

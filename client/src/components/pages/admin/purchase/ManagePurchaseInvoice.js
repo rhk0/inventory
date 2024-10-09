@@ -4,7 +4,8 @@ import axios from "axios";
 import { useAuth } from "../../../context/Auth";
 import ViewPurchaseInvoices from "../modals/ViewPurchaseInvoices";
 import EditPurchaseInvoice from "../modals/EditPurchaseInvoice";
-
+import { MdRateReview, MdDelete } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 const ManagePurchaseInvoice = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -207,23 +208,23 @@ const ManagePurchaseInvoice = () => {
                           className="text-blue-500 hover:underline focus:outline-none"
                           onClick={() => handleView(estimate)}
                         >
-                          View
+                            <MdRateReview className="text-xl" />
                         </button>
                         <button
                           className="text-yellow-500 hover:underline focus:outline-none "
                           onClick={() => handleEdit(estimate)}
                         >
-                          Edit
+                            <FiEdit className="text-xl" />
                         </button>
                         <button
                           className="text-red-500 hover:underline focus:outline-none"
                           onClick={() => handleDelete(estimate._id)}
                         >
-                          Delete
+                         <MdDelete className="text-xl" />
                         </button>
-                        <button className="text-green-500 hover:underline focus:outline-none">
+                        {/* <button className="text-green-500 hover:underline focus:outline-none">
                           Create Invoice
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>

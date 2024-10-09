@@ -170,9 +170,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </div>
         </div>
         <span
-          style={{ borderColor: "white" }}
+          // style={{ borderColor: "white" }}
           className="icon close_icon border text-white"
           onClick={OpenSidebar}
+          style={{ color: "white", fontSize: "24px" }}
         >
           <IoMdClose />
         </span>
@@ -595,7 +596,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to=""
+                  to="/admin/onlinestore"
                   className="flex items-center text-white nestitemhover"
                 >
                   Online Store
@@ -915,10 +916,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <ul className="ml-4   ">
               <li className=" ">
                 <Link
-                  to="/admin/companyregistration"
+                  to="/admin/updateCompanyRegistration"
                   className="flex items-center text-white nestitemhover "
                 >
-                  Business Details
+                  Company Setup Update
                 </Link>
               </li>
               <li className="">

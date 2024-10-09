@@ -6,7 +6,9 @@ import Modal from "react-modal";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
 import { Link } from "react-router-dom";
-
+import { MdRateReview, MdDelete } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
+import { FaFileInvoice } from "react-icons/fa";
 const ManagePurchaseOrder = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -31,7 +33,6 @@ const ManagePurchaseOrder = () => {
       const response = await axios.get(
         "/api/v1/purchesOrderRoute/getAllpurchesorder"
       );
-      console.log(response, "skjad");
       setSalesEstimates(response.data.invoices);
     } catch (error) {
       setError("Error fetching sales order.");
@@ -93,10 +94,7 @@ const ManagePurchaseOrder = () => {
       estimate.orderNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       estimate.supplierName.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const handleNavigation = (estimate) => {
-    console.log("Navigating to Invoice with estimate:", estimate);
-    // You can also perform any additional actions here if needed
-  };
+
   return (
     <div className="responsive-container p-4">
       {/* Search Bar */}
@@ -195,27 +193,27 @@ const ManagePurchaseOrder = () => {
                           className="text-blue-500 hover:underline focus:outline-none"
                           onClick={() => handleView(estimate)}
                         >
-                          View
+                          <MdRateReview className="text-xl" />
                         </button>
                         <button
                           className="text-yellow-500 hover:underline focus:outline-none "
                           onClick={() => handleEdit(estimate)}
                         >
-                          Edit
+                          <FiEdit className="text-xl" />
                         </button>
                         <button
                           className="text-red-500 hover:underline focus:outline-none"
                           onClick={() => handleDelete(estimate._id)}
                         >
-                          Delete
+                             <MdDelete className="text-xl" />
                         </button>
-                                              <Link
-                        to={`/admin/orderPurchaseInvoice/${estimate._id}`} // Pass the ID in the URL
-                        className="text-blue-500 hover:underline focus:outline-none"
-                      >
-                        Go to Invoice
-                      </Link>
-                                            </div>
+                        <Link
+                          to={`/admin/orderPurchaseInvoice/${estimate._id}`} // Pass the ID in the URL
+                          className="text-green-500 hover:underline focus:outline-none"
+                        >
+                           <FaFileInvoice className="text-xl" />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -279,7 +277,7 @@ const ManagePurchaseOrder = () => {
         <EditPurchaseOrder
           isOpen={editModalOpen}
           estimate={selectedEstimate}
-          closeModal={closeModal} 
+          closeModal={closeModal}
         />
       </Modal>
     </div>

@@ -4,6 +4,10 @@ import EditEstimateModal from "../modals/EditEstimateModal";
 import Modal from "react-modal";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
+import { FiEdit } from "react-icons/fi";
+import { FaFileInvoice } from "react-icons/fa";
+import { MdRateReview, MdDelete } from "react-icons/md";
+import { Link } from "react-router-dom";
 const ManageSalesEstimate = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -200,23 +204,26 @@ const ManageSalesEstimate = () => {
                           className="text-blue-500 hover:underline focus:outline-none"
                           onClick={() => handleView(estimate)}
                         >
-                          View
+                         <MdRateReview className="text-xl" />
                         </button>
                         <button
                           className="text-yellow-500 hover:underline focus:outline-none "
                           onClick={() => handleEdit(estimate)}
                         >
-                          Edit
+                          <FiEdit className="text-xl" />
                         </button>
                         <button
                           className="text-red-500 hover:underline focus:outline-none"
                           onClick={() => handleDelete(estimate._id)}
                         >
-                          Delete
+                            <MdDelete className="text-xl" />
                         </button>
-                        <button className="text-green-500 hover:underline focus:outline-none">
-                          Create Invoice
-                        </button>
+                        <Link
+                          to={`/admin/EstimateSalesInvoice/${estimate._id}`} // Pass the ID in the URL
+                          className="text-green-500 hover:underline focus:outline-none"
+                        >
+                           <FaFileInvoice className="text-xl" />
+                        </Link>
                       </div>
                     </td>
                   </tr>

@@ -1,37 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
-import { useAuth } from "../../../context/Auth.js";
-
 import Modal from "react-modal";
-
-import { useLocation } from "react-router-dom";
-
-const OrderPurchaseInvoice = () => {
+import { useAuth } from "../../../context/Auth.js";
+import { useParams } from "react-router-dom";
+const EstimateSalesInvoice = () => {
   const { _id } = useParams();
-  const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");
-  const [invoiceNo, setinvoiceNo] = useState("");
+  const [InvoiceNo, setInvoiceNo] = useState("");
   const [salesType, setSalesType] = useState("GST Invoice");
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-
-  const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
-  const [freeQty, setFreeQty] = useState(0);
-  const [qty, setQty] = useState(0);
-  const [margin, setMargin] = useState(0);
-  const [gstRatev, setgstRatev] = useState(0);
+  const [company, setCompanyData] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [salesEstimatesInvoiceData, setSalesEstimatesInvoiceData] = useState(
+    []
+  );
+  const [filteredInvoiceData, setFilteredInvoiceData] = useState(null);
   const [auth] = useAuth();
-  const [userId, setuserId] = useState("");
-  const [salesEstimates, setSalesEstimates] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -46,19 +36,16 @@ const OrderPurchaseInvoice = () => {
   const [rows, setRows] = useState([]);
   const [paymentTerm, setPaymentTerm] = useState(0);
   const [otherCharges, setOtherCharges] = useState(0);
-  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [selectedAddress, setAddress] = useState("");
   const [viewModal, setViewModal] = useState(false);
-
-  const [filteredInvoiceData, setFilteredInvoiceData] = useState(null);
   const [formData, setFormData] = useState({
     date: "",
-    invoiceNo: "",
+    InvoiceNo: "",
     salesType: "",
     customerType: "",
-    supplierName: "",
+    customerName: "",
     placeOfSupply: "",
     paymentTerm: "",
     dueDate: "",
@@ -74,25 +61,17 @@ const OrderPurchaseInvoice = () => {
 
     rows: [
       {
-        itemCode: "", // Item Code
-        productName: "", // Product Name
-        hsnCode: "", // HSN Code
-        qty: null, // Quantity
-        uom: null, // Unit of Measure
-        freeQty: null,
-        mrp: null, // Maximum Retail Price
-        unitCost: null, // Unit Cost
-        schemeMargin: "", // Scheme Margin
-        discountpercent: null, // Discount Percentage
-        discountRs: null, // Discount in Rs
-        taxableValue: null, // Taxable Amount
-        cgstpercentercent: null, // CGST Percentage
-        cgstRS: null, // CGST Amount
-        sgstpercentercent: null, // SGST Percentage
-        sgstRS: null, // SGST Amount
-        igstpercentercent: null, // IGST Percentage
-        igstRS: null, // IGST Amount
-        totalValue: null, // Total Value
+        itemCode: "",
+        productName: "",
+        hsnCode: "",
+        qty: null,
+        uom: null,
+        mrp: null,
+        discount: null,
+        cgst: null,
+        sgst: null,
+        igst: null,
+        totalValue: null,
       },
     ],
 
@@ -103,13 +82,13 @@ const OrderPurchaseInvoice = () => {
     otherCharges: "",
     netAmount: "",
   });
-
   const [cashDetails, setCashDetails] = useState({
     Amount: "",
     Advance: "",
     Received: "",
     Balance: "",
   });
+
   const [bankDetails, setBankDetails] = useState({
     bank: "",
     selectBankType: "",
@@ -137,69 +116,36 @@ const OrderPurchaseInvoice = () => {
 
   const [paymentMethod, setPaymentMethod] = useState("");
 
-  const fetchInvoiceData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get(
-        "/api/v1/purchesOrderRoute/getAllpurchesorder"
-      );
-      setSalesEstimates(response.data.invoices);
-    } catch (error) {
-      setError("Error fetching sales order.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    if (_id && salesEstimates.length > 0) {
-      const match = salesEstimates.find((item) => item._id === _id);
-      if (match) {
-        setFilteredInvoiceData(match); // Set the matching data to the new state
-      }
-    }
-  }, [_id, salesEstimates]);
-  useEffect(() => {
-    fetchInvoiceData();
-  }, []);
-  // Call this function when filteredInvoiceData changes
-  useEffect(() => {
-    if (filteredInvoiceData) {
-      // Call the function to generate rows based on filteredInvoiceData
-      generateRowsFromFilteredData(filteredInvoiceData);
-    }
-  }, [filteredInvoiceData]);
-
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
   };
+
   const [subPaymentType, setSubPaymentType] = useState("");
+
   const handleSubPaymentTypeChange = (e) => {
     const { value } = e.target;
     setSubPaymentType(value); // Set the subPaymentType state
     setBankDetails((prev) => ({ ...prev, selectBankType: value })); // Update bankDetails
   };
-
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
-
-  const fetchsupplier = async () => {
+  const fetchCustomer = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
       setCustomer(response.data.data);
     } catch (error) {
-      console.error("Error fetching suppliers:", error);
+      console.error("Error fetching Customers:", error);
     }
   };
-
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
-        setuserId(auth.user._id);
+        setUserId(auth.user._id);
       } else if (auth.user.role === 0) {
-        setuserId(auth.user.admin);
+        setUserId(auth.user.admin);
       }
     }
-    fetchsupplier();
+    fetchCustomer();
+    fetchEstimateInvoice();
   }, [auth, userId]);
 
   useEffect(() => {
@@ -226,20 +172,7 @@ const OrderPurchaseInvoice = () => {
       billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
       placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
-  
-
-    // setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
-    // setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
-    // if (
-    //   selectedCustomerData.state.trim().toLowerCase() ===
-    //   company.state.trim().toLowerCase()
-    // ) {
-    //   setGstType("CGST/SGST");
-    // } else {
-    //   setGstType("IGST");
-    // }
   };
-
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
@@ -252,12 +185,11 @@ const OrderPurchaseInvoice = () => {
   const handleOtherChargesSave = () => {
     setFormData((prev) => ({
       ...prev,
-      otherCharges: otherCharges,
+      otherCharges: otherCharges.toFixed(2),
       otherChargesDescriptions: otherChargesDescriptions,
     }));
     setIsModalOtherChargesOpen(false);
   };
-
   useEffect(() => {
     if (date && paymentTerm) {
       const selectedDate = new Date(date);
@@ -275,7 +207,6 @@ const OrderPurchaseInvoice = () => {
       }));
     }
   }, [date, paymentTerm]);
-
   const handlePaymentTermChange = (e) => {
     const value = e.target.value;
     setPaymentTerm(value);
@@ -286,22 +217,20 @@ const OrderPurchaseInvoice = () => {
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
-
-  const handleinvoiceNoChange = (e) => {
+  const handleInvoiceNoChange = (e) => {
     const value = e.target.value;
-    setinvoiceNo(value);
+    setInvoiceNo(value);
     setFormData((prev) => ({
       ...prev,
-      invoiceNo: value,
+      InvoiceNo: value,
     }));
   };
-
-  const handlesupplierInvoiceNoChange = (e) => {
+  const handleSalesTypeChange = (e) => {
     const value = e.target.value;
-    setsupplierInvoiceNo(value);
+    setSalesType(value);
     setFormData((prev) => ({
       ...prev,
-      supplierInvoiceNo: value,
+      salesType: value,
     }));
   };
   const handlePlaceOfSupplyChange = (e) => {
@@ -312,7 +241,6 @@ const OrderPurchaseInvoice = () => {
       placeOfSupply: value,
     }));
   };
-
   const handleBillingAddressChange = (e) => {
     const value = e.target.value;
     setBillingAddress(selectedAddress);
@@ -329,93 +257,13 @@ const OrderPurchaseInvoice = () => {
       reverseCharge: value,
     }));
   };
-
   // Function to handle transport detail change
-
   const handleTransportDetailChange = (field, value) => {
     setTransportDetails((prev) => ({ ...prev, [field]: value }));
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-  };
-  const handleRowChange = (rowIndex, field, value) => {
-    const updatedRows = [...rows]; // Clone the existing rows array
-    const currentRow = updatedRows[rowIndex]; // Get the current row
-    if (field === "discountpercent") {
-      // Calculate discountRs based on discountpercent and maxmimunRetailPrice
-      const discountPercent = parseFloat(value) || 0; // Ensure a valid number
-      const discountRs = (currentRow.unitCost * discountPercent) / 100; // Calculate discount in Rs
-      // Update discount percent, discountRs, and taxable value
-      currentRow.discountpercent = discountPercent;
-      currentRow.discountRs = discountRs.toFixed(2);
-      // Update taxable value based on MRP, discountRs, and quantity
-      const unitCost = Number(currentRow.unitCost);
-      const discountRS = Number(currentRow.discountRs);
-      const qt = Number(qty);
-      const taxableValue = (unitCost - discountRS) * qt;
-      currentRow.taxableValue = taxableValue.toFixed(2); // Ensure toFixed(2) for consistent format
-      // Calculate GST amounts (assuming the GST rate is split into CGST and SGST for intra-state transactions)
-      const gstRate = Number(gstRatev) || 0;
-      const cgstRS = (taxableValue * (gstRate / 2)) / 100;
-      const sgstRS = (taxableValue * (gstRate / 2)) / 100;
-      const igstRS = (taxableValue * gstRate) / 100;
-      currentRow.cgstRS = cgstRS.toFixed(2);
-      currentRow.sgstRS = sgstRS.toFixed(2);
-      currentRow.igstRS = igstRS.toFixed(2);
-      //dd
-      // Update totalValue as taxableValue + GST amount (CGST + SGST or IGST)
-      const totalGST =
-        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
-      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
-    } else if (field === "discountRs") {
-      // Calculate discount percentage based on discountRs and maxmimunRetailPrice
-      const discountRs = parseFloat(value) || 0;
-      const discountPercent = (discountRs / currentRow.unitCost) * 100;
-      // Update discount percent, discountRs, and taxable value
-      currentRow.discountpercent = discountPercent.toFixed(2);
-      currentRow.discountRs = discountRs.toFixed(2);
-      // Update taxable value based on MRP, discountRs, and quantity
-      const unitCost = Number(currentRow.unitCost);
-      const discountRS = Number(currentRow.discountRs);
-      const qt = Number(qty);
-      const taxableValue = (unitCost - discountRS) * qt;
-      // const taxableValue = (currentRow.maxmimunRetailPrice - discountRs) * currentRow.qty;
-      currentRow.taxableValue = taxableValue.toFixed(2);
-      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
-      // Calculate GST amounts (assuming the GST rate is split into CGST and SGST for intra-state transactions)
-      const gstRate = Number(gstRatev) || 0;
-      const cgstRS = (taxableValue * (gstRate / 2)) / 100;
-      const sgstRS = (taxableValue * (gstRate / 2)) / 100;
-      const igstRS = (taxableValue * gstRate) / 100;
-      currentRow.quantity = qt;
-      currentRow.cgstRS = cgstRS.toFixed(2);
-      currentRow.sgstRS = sgstRS.toFixed(2);
-      currentRow.igstRS = igstRS.toFixed(2);
-
-      // Update totalValue as taxableValue + GST amount (CGST + SGST or IGST)
-      const totalGST =
-        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
-
-      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
-    }
-    // Update the rows state
-    updatedRows[rowIndex] = currentRow;
-    setRows(updatedRows);
-  };
-
-  const handlQtyChange = (rowIndex, qty) => {
-    const updatedRows = [...rows];
-
-    const selectedRow = updatedRows[rowIndex];
-
-    setQty(qty);
-    updatedRows[rowIndex] = {
-      ...selectedRow,
-      qty: qty,
-    };
-
-    setRows(updatedRows);
   };
 
   const addRow = () => {
@@ -427,14 +275,12 @@ const OrderPurchaseInvoice = () => {
         hsnCode: "",
         qty: 0,
         units: "",
-        maxmimunRetailPrice: 0,
-        discountpercent: 0,
-        discountRs: 0,
+        mrp: 0,
+        discount: 0,
         taxableValue: 0,
         cgst: 0,
         sgst: 0,
         igst: 0,
-        unitCost: 0,
         totalValue: 0,
       },
     ]);
@@ -449,35 +295,45 @@ const OrderPurchaseInvoice = () => {
   const calculateTotals = () => {
     let grossAmount = 0;
     let GstAmount = 0;
-    let totalOtherCharges = parseFloat(otherCharges) || 0;
 
-    rows.forEach((row) => {
-      const taxableValue = parseFloat(row.taxableValue) || 0;
-      const cgstRS = parseFloat(row.cgstRS) || 0;
-      const sgstRS = parseFloat(row.sgstRS) || 0;
-      const igstRS = parseFloat(row.igstRS) || 0;
-
-      grossAmount += taxableValue;
-      GstAmount += cgstRS + sgstRS; // Total GST amount for each row
+    rows.forEach((rows) => {
+      grossAmount += Number(rows.taxableValue);
+      GstAmount +=
+        gstType === "CGST/SGST"
+          ? Number(rows.cgstrs) + Number(rows.sgstrs)
+          : Number(rows.igstrs);
     });
-
     let netAmount;
-    // Check if otherChargesDescriptions includes "discount" to decide calculation
-    if (otherChargesDescriptions.toLowerCase().includes("discount")) {
-      netAmount = grossAmount + GstAmount - totalOtherCharges;
+
+    // Check if otherChargesDescriptions includes "discount"
+
+    if (salesType === "Bill of Supply") {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount - otherCharges; // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges; // Do not add GstAmount
+      }
     } else {
-      netAmount = grossAmount + GstAmount + totalOtherCharges;
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount + GstAmount - otherCharges;
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges;
+      }
     }
 
     return { grossAmount, GstAmount, netAmount };
   };
+
   const { grossAmount, GstAmount, netAmount } = calculateTotals();
+
   // Function to handle Save and Print
+
   const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
+
       if (response.data && Array.isArray(response.data.data)) {
         setProducts(response.data.data);
       } else {
@@ -491,30 +347,83 @@ const OrderPurchaseInvoice = () => {
   useEffect(() => {
     fetchProducts();
   }, [auth, userId]);
+  const handleRowChange = (index, field, value) => {
+    // Create a copy of rows
+    const newRows = [...rows];
 
-  const handleFreeQtyChange = (rowIndex, newFreeQty) => {
-    const updatedRows = [...rows];
-    const selectedRow = updatedRows[rowIndex];
+    // Update the changed field with the new value
+    newRows[index] = { ...newRows[index], [field]: value };
 
-    // Update the free quantity in the selected row
-    const freeQty = parseFloat(newFreeQty) || 0; // Ensure it's a valid number
+    // Check if the product is selected
+    const selectedProduct = products.find(
+      (product) => product.productName === newRows[index].productName
+    );
 
-    // Calculate total quantity using the quantity from the selected row
-    const totalQuantity = Number(qty) + freeQty;
+    if (selectedProduct) {
+      // Calculate retail price and apply the discount if applicable
+      const retailPrice = selectedProduct.maxmimunRetailPrice
+        ? selectedProduct.maxmimunRetailPrice -
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+            100
+        : 0;
 
-    // Calculate schemeMargin only if both freeQty and quantity exist
-    const schemeMargin =
-      freeQty && qty ? ((freeQty / totalQuantity) * 100).toFixed(2) : 0;
+      const discountPercent =
+        customerType === "Wholesaler"
+          ? selectedProduct.wholesalerDiscount || 0
+          : selectedProduct.retailDiscount || 0;
+          const discountRS = (selectedProduct.maxmimunRetailPrice * discountPercent) / 100; // Correct discount calculation
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+      const gstRate = selectedProduct.gstRate;
 
-    // Update the row with the new freeQty and schemeMargin
-    updatedRows[rowIndex] = {
-      ...selectedRow,
-      freeQty: freeQty,
-      schemeMargin: schemeMargin,
-    };
+      // Extract the quantity from the updated row
+      const { qty } = newRows[index];
+      const quantity = Number(qty) || 0;
 
-    // Update the state with the modified rows
-    setRows(updatedRows);
+      // Calculate taxable value
+      const taxableValue = salesTaxInclude
+        ? (retailPrice * quantity * 100) / (100 + Number(gstRate))
+        : retailPrice * quantity;
+
+      // Calculate GST amounts
+      const cgstrs =
+        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
+      const sgstrs =
+        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
+      const igstrs = gstType === "IGST" ? (taxableValue * gstRate) / 100 : 0;
+
+      // Calculate total value
+      const totalValue = taxableValue + (cgstrs + sgstrs + igstrs);
+
+      // Calculate discount values (if applicable)
+     
+
+      // Update the row with the calculated values
+      newRows[index] = {
+        ...newRows[index],
+        taxableValue: taxableValue.toFixed(2),
+        quantity: quantity,
+        discountpercent: discountPercent.toFixed(2), // Ensure this is correctly set
+        discountRS: discountRS.toFixed(2), // Ensure this is correctly set
+        cgstrs: cgstrs.toFixed(2),
+        sgstrs: sgstrs.toFixed(2),
+        igstrs: igstrs.toFixed(2),
+        totalValue: totalValue.toFixed(2),
+      };
+
+      // Set the updated rows state
+      setRows(newRows);
+
+      // Trigger total calculation
+      calculateTotals(newRows);
+    }
+  };
+  const handlQtyChange = (rowIndex, qty) => {
+    // Parse the new quantity to ensure it's a number
+    const newQty = parseFloat(qty) || 0;
+
+    // Call handleRowChange to update the row with the new quantity
+    handleRowChange(rowIndex, "qty", newQty);
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -523,251 +432,306 @@ const OrderPurchaseInvoice = () => {
       [name]: value,
     });
   };
+  const fetchEstimateInvoice = async () => {
+    try {
+      const response = await axios.get(
+        `/api/v1/salesEstimateRoute/getAllSalesEstimatet/${userId}`
+      );
 
+      setSalesEstimatesInvoiceData(response.data.salesEstimates);
+    } catch (error) {
+      console.log("Error fetching sales estimates.");
+    }
+  };
+  useEffect(() => {
+    if (_id && salesEstimatesInvoiceData?.length > 0) {
+      const match = salesEstimatesInvoiceData?.find(
+        (item) => item?._id === _id
+      );
+      if (match) {
+        setFilteredInvoiceData(match); // Set the matching data to the new state
+      }
+    }
+  }, [_id, salesEstimatesInvoiceData]);
+  useEffect(() => {
+    if (filteredInvoiceData) {
+      // Call the function to generate rows based on filteredInvoiceData
+      generateRowsFromFilteredData(filteredInvoiceData);
+    }
+  }, [filteredInvoiceData]);
+  const calculateRowValues = (product, qty, gstType) => {
+
+    const retailPrice = product.maxmimunRetailPrice
+      ? product.maxmimunRetailPrice -
+        (product.maxmimunRetailPrice * product.retailDiscount) / 100
+      : 0;
+
+    const salesTaxInclude = product.salesTaxInclude;
+
+    // Calculate taxable value based on salesTaxInclude
+    const taxableValue = salesTaxInclude
+      ? (retailPrice * qty * 100) / (100 + Number(product.gstRate))
+      : retailPrice * qty;
+
+    // Calculate GST amounts
+    const cgstrs =
+      gstType === "CGST/SGST" ? (taxableValue * product.gstRate) / 2 / 100 : 0;
+    const sgstrs =
+      gstType === "CGST/SGST" ? (taxableValue * product.gstRate) / 2 / 100 : 0;
+    const igstrs =
+      gstType === "IGST" ? (taxableValue * product.gstRate) / 100 : 0;
+
+    // Calculate total value
+    const totalValue = taxableValue + cgstrs + sgstrs + igstrs;
+
+    // Calculate discount values (if applicable)
+    const discountPercent = product.retailDiscount || 0;
+    const discountRS = (product.maxmimunRetailPrice * discountPercent) / 100; // Correct discount calculation
+
+    return {
+      taxableValue: taxableValue.toFixed(2),
+      cgstrs: cgstrs.toFixed(2),
+      sgstrs: sgstrs.toFixed(2),
+      igstrs: igstrs.toFixed(2),
+      totalValue: totalValue.toFixed(2),
+      discountpercent: discountPercent.toFixed(2), // Include discount percent
+      discountRS: discountRS.toFixed(2), // Include discount in rupees
+    };
+  };
   const generateRowsFromFilteredData = (filteredData) => {
-
-    setGstType(filteredData.gstType);
-    setSelectedCustomer(filteredData.supplierName);
+    // Populate customer-related fields
+    setSelectedCustomer(filteredData.customerName);
     setPlaceOfSupply(filteredData.placeOfSupply);
     setBillingAddress(filteredData.billingAddress);
+    setPaymentTerm(filteredData.paymentTerm);
+    setDueDate(filteredData.dueDate);
     setTransportDetails({
       dispatchedThrough: filteredData.dispatchedThrough,
       destination: filteredData.destination,
       carrierNameAgent: filteredData.carrierNameAgent,
       billOfLading: filteredData.billOfLading,
     });
-    filteredData.rows.map((row) => {
-      const { igstpercent, ...rest } = row;
-      setgstRatev(igstpercent);
-    });
-    // Assuming otherCharges is a property in your filteredData
+
+    setGstType(filteredData.gstType);
+    setReverseCharge(filteredData.reverseCharge);
+
     const generatedRows = filteredData.rows.map((row) => {
-      // Existing logic for calculating taxable values and GSTs
-      const taxableValue = row.taxable || 0;
-      const cgstRS = parseFloat(
-        ((taxableValue * row.cgstpercent) / 100).toFixed(2)
-      );
-      const sgstRS = parseFloat(
-        ((taxableValue * row.sgstpercent) / 100).toFixed(2)
-      );
-      const igstRS = parseFloat(
-        ((taxableValue * row.igstpercent) / 100).toFixed(2)
-      );
+      const product = {
+        maxmimunRetailPrice: row.mrp,
+        retailDiscount: row.discountpercent,
+        wholesalerDiscount: row.wholesalerDiscount, // Assuming you have this in the row
+        salesTaxInclude: false, // Adjust based on your requirements
+        gstRate:
+          row.gstType === "CGST/SGST"
+            ? row.cgstpercent + row.sgstpercent
+            : row.igstpercent,
+        itemCode: row.itemCode,
+        hsnCode: row.hsnCode,
+        productName: row.productName,
+        quantity: row.qty,
+      };
+
+      const {
+        taxableValue,
+        cgstrs,
+        sgstrs,
+        igstrs,
+        totalValue,
+        discountpercent,
+        discountRS,
+      } = calculateRowValues(product, row.qty, filteredData.gstType);
 
       return {
-        itemCode: row.itemCode,
-        productName: row.productName,
-        hsnCode: row.hsnCode,
+        itemCode: product.itemCode,
+        productName: product.productName,
+        hsnCode: product.hsnCode,
         qty: row.qty,
         units: row.units,
-        maxmimunRetailPrice: row.mrp ? parseFloat(row.mrp).toFixed(2) : "0.00",
-        expiryDate: row.expiryDate,
-        batchNo: row.batchNo,
-        unitCost: row.unitCost || row.mrp,
-        taxableValue: taxableValue,
-        cgstpercent: row.cgstpercent,
-        sgstpercent: row.sgstpercent,
+        maxmimunRetailPrice: product.maxmimunRetailPrice
+          ? parseFloat(product.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        discountpercent, // This should work
+        discountRS, // This should work
+        taxableValue,
+        cgstp: row.cgstpercent,
+        cgstrs,
+        sgstp: row.sgstpercent,
+        sgstrs,
         igstpercent: row.igstpercent,
-        cgstRS: cgstRS,
-        sgstRS: sgstRS,
-        igstRS: igstRS,
-        totalValue: (
-          taxableValue +
-          (taxableValue * row.igstpercent) / 100
-        ).toFixed(2),
+        igstrs,
+        totalValue,
       };
     });
 
     // Set the generated rows in the state
     setRows(generatedRows);
 
-    // Update otherCharges based on the selectedFilteredData
-    const totalOtherCharges = filteredData.otherCharges || 0; // Adjust according to your data structure
-    setOtherCharges(totalOtherCharges); // Update state for otherCharges
-
-    // Call calculateTotals to update totals after rows and otherCharges are set
-    const totals = calculateTotals();
-    handleCustomerChange(filteredData.supplierName)
+    // Update totals and other dependent fields after setting rows
+    calculateTotals();
+    handleCustomerChange(filteredData.customerName);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Create a FormData instance
-      const submissionData = new FormData();
-
-      // Append non-file form data to formData
-      const fields = {
-        date,
-        invoiceNo,
-        supplierInvoiceNo,
-        customerType,
-        supplierName: formData.supplierName,
-        placeOfSupply,
-        paymentTerm,
-        dueDate,
-        receiptDocNo: transportDetails.receiptDocNo,
-        dispatchedThrough: transportDetails.dispatchedThrough,
-        destination: transportDetails.destination,
-        carrierNameAgent: transportDetails.carrierNameAgent,
-        billOfLading: transportDetails.billOfLading,
-        motorVehicleNo: transportDetails.motorVehicleNo,
-        billingAddress,
-        reverseCharge,
-        gstType,
-        otherChargesDescriptions,
-        narration: formData.narration,
+      const updatedFormData = {
+        ...formData,
+        rows: rows?.map((row) => ({
+          itemCode: row.itemCode,
+          productName: row.productName,
+          hsnCode: row.hsnCode,
+          qty: row.quantity,
+          units: row.units,
+          mrp: row.maxmimunRetailPrice,
+          discountpercent:row.discountpercent,
+          discountRS:row.discountRS,
+          taxable: row.taxableValue,
+          cgstpercent: row.cgstp,
+          cgstRS: row.cgstrs,
+          sgstpercent: row.sgstp,
+          sgstRS: row.sgstrs,
+          igstpercent: row.igstp,
+          igstRS: row.igstrs,
+          totalValue: row.totalValue,
+        })),
         grossAmount: grossAmount,
         GstAmount: GstAmount,
         otherCharges: otherCharges,
-        netAmount: netAmount,
+        otherChargesDescriptions: otherChargesDescriptions,
+        salesType,
+        customerType,
+        reverseCharge,
+        gstType,
+        netAmount: netAmount.toFixed(2),
+        cash: paymentMethod === "Cash" ? cashDetails : {},
+        bank: paymentMethod === "Bank" ? bankDetails : {}, // Ensure bank details are sent correctly
       };
-
-      // Append all fields to formData
-      Object.keys(fields).forEach((key) => {
-        if (fields[key]) {
-          submissionData.append(key, fields[key]);
-        }
-      });
-
-      // Append each row individually
-      rows.forEach((row, index) => {
-        Object.keys(row).forEach((key) => {
-          submissionData.append(`rows[${index}][${key}]`, row[key]);
-        });
-      });
-
-      if (paymentMethod === "Cash") {
-        submissionData.append("cash", JSON.stringify(cashDetails));
-      } else if (paymentMethod === "Bank") {
-        submissionData.append("bank", JSON.stringify(bankDetails));
-      }
-
-      // If a document file has been selected, append it to the FormData
-      if (documentPath) {
-        submissionData.append("documentPath", documentPath);
-      }
-
-      // Send the formData using axios
       const response = await axios.post(
-        "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
-        submissionData
+        "/api/v1/salesInvoiceRoute/createsalesinvoice",
+        updatedFormData
       );
 
       if (response) {
-        toast.success("Purchase invoice created successfully...");
+        toast.success("Sales invoice created successfully...");
       }
+      setFormData({
+        date: "",
+        InvoiceNo: "",
+        salesType: "",
+        customerType: "",
+        customerName: "",
+        placeOfSupply: "",
+        paymentTerm: "",
+        dueDate: "",
+        receiptDocNo: "",
+        dispatchedThrough: "",
+        destination: "",
+        carrierNameAgent: "",
+        billOfLading: "",
+        motorVehicleNo: "",
+        billingAddress: "",
+        reverseCharge: "",
+        gstType: "",
+        rows: [
+          {
+            itemCode: "",
+            productName: "",
+            hsnCode: "",
+            qty: null,
+            uom: null,
+            mrp: null,
+            discount: null,
+            cgst: null,
+            sgst: null,
+            igst: null,
+            totalValue: null,
+          },
+        ],
 
-      // Reset your form data and state
-      resetForm();
+        narration: "",
+        otherChargesDescriptions: "",
+        grossAmount: "",
+        GstAmount: "",
+        otherCharges: "",
+        netAmount: "",
+
+        cash: {},
+        bank: {},
+      });
+
+      setCashDetails({ amount: "", advance: "", received: "", balance: "" });
+      setBankDetails({
+        selectBankType: "",
+        transactionDate: "",
+        chequeNo: "",
+        transactionNo: "",
+        amount: "",
+        advance: "",
+        received: "",
+        balance: "",
+      });
+
+      // Clear other independent states
+      setDate("");
+      setInvoiceNo("");
+      setSalesType("GST Invoice");
+      setCustomerType("Retailer");
+      setPlaceOfSupply("");
+      setDueDate("");
+      setTransportDetails({
+        receiptDocNo: "",
+        dispatchedThrough: "",
+        destination: "",
+        carrierNameAgent: "",
+        billOfLading: "",
+        motorVehicleNo: "",
+      });
+      setBillingAddress("");
+      setReverseCharge("No");
+      setGstType("CGST/SGST");
+      setRows([]);
+      setPaymentTerm(0);
+      setOtherCharges(0);
+      setOtherChargesDescriptions("");
+      setSelectedCustomer("");
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Failed to create sales estimate. Please try again.");
+      toast.error("Failed to create sales Invoice. Please try again.");
     }
   };
-
-  const resetForm = () => {
-    setFormData({
-      date: "",
-      invoiceNo: "",
-      supplierInvoiceNo: "",
-      salesType: "GST Invoice",
-      customerType: "Retailer",
-      supplierName: "",
-      placeOfSupply: "",
-      paymentTerm: "",
-      dueDate: "",
-      receiptDocNo: "",
-      dispatchedThrough: "",
-      destination: "",
-      carrierNameAgent: "",
-      billOfLading: "",
-      motorVehicleNo: "",
-      billingAddress: "",
-      reverseCharge: "No",
-      gstType: "CGST/SGST",
-      rows: [
-        {
-          itemCode: "",
-          productName: "",
-          hsnCode: "",
-          qty: null,
-          units: "",
-          mrp: null,
-          discount: null,
-          taxableValue: 0,
-          cgst: 0,
-          sgst: 0,
-          igst: 0,
-          totalValue: 0,
-        },
-      ],
-      narration: "",
-      otherChargesDescriptions: "",
-      grossAmount: "",
-      GstAmount: "",
-      otherCharges: "",
-      netAmount: "",
-      cash: {},
-      bank: {},
-    });
-
-    setCashDetails({ amount: "", advance: "", received: "", balance: "" });
-    setBankDetails({
-      selectBankType: "",
-      transactionDate: "",
-      chequeNo: "",
-      transactionNo: "",
-      amount: "",
-      advance: "",
-      received: "",
-      balance: "",
-    });
-
-    // Reset additional states as needed...
-    setDate("");
-    setSelectedCustomer("");
-    // Add any other state resets...
-  };
-
   const openViewModal = (suppliers) => {
     setViewModal(true);
   };
   const closeModal = () => {
     setViewModal(false);
   };
-
   const handlePrintOnly = () => {
     const printWindow = window.open("", "_blank");
-
-    const submissionData = {
+    const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+
+      rows: rows?.map((row) => ({
+      
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
-        qty: row.qty,
-        freeQuantity: row.freeQty,
+        qty: row.quantity,
         units: row.units,
         mrp: row.maxmimunRetailPrice,
-        discountRs: row.discountRs,
-        discountpercent: row.discountpercent,
-
-        UnitsCost: row.unitCost,
-        schemeMargin: row.schemeMargin,
-
-        taxableValue: row.taxableValue,
-        cgstpercent: row.cgstpercent,
-        cgstRS: row.cgstRS,
-        sgstpercent: row.sgstpercent,
-        sgstRS: row.sgstRS,
-        igstpercent: row.igstpercent,
-        igstRS: row.igstRS,
+        discountpercent:row.discountpercent,
+        discountRS:row.discountRS,
+        taxable: row.taxableValue,
+        cgstpercent: row.cgstp,
+        cgstRS: row.cgstrs,
+        sgstpercent: row.sgstp,
+        sgstRS: row.sgstrs,
+        igstpercent: row.igstp,
+        igstRS: row.igstrs,
         totalValue: row.totalValue,
       })),
-      grossAmount: grossAmount.toFixed(2),
-      GstAmount: GstAmount.toFixed(2),
+      grossAmount: grossAmount,
+      GstAmount: GstAmount,
       otherCharges: otherCharges,
       otherChargesDescriptions: otherChargesDescriptions,
       salesType,
@@ -851,92 +815,86 @@ const OrderPurchaseInvoice = () => {
       return words;
     }
     const gstHeaders =
-      submissionData.gstType === "CGST/SGST"
+      updatedFormData.gstType === "CGST/SGST"
         ? `<th>CGST</th><th>SGST</th>`
         : `<th>IGST</th>`;
 
-    const paymentModeHTML = submissionData.cash.Amount
+    const paymentModeHTML = updatedFormData.cash.Amount
       ? `
             <td style="width: 33.33%; text-align: left;">
                 <div class="receipt-details">
                     <div class="section-header">Receipt Mode: Cash</div>
-                    <div class="details">Total Amount: ₹${submissionData.cash.Amount}</div>
-                    <div class="details">Advance Received: ₹${submissionData.cash.Advance}</div>
-                    <div class="details">Amount Received: ₹${submissionData.cash.Received}</div>
-                    <div class="details">Balance Amount: ₹${submissionData.cash.Balance}</div>
+                    <div class="details">Total Amount: ₹${updatedFormData.cash.Amount}</div>
+                    <div class="details">Advance Received: ₹${updatedFormData.cash.Advance}</div>
+                    <div class="details">Amount Received: ₹${updatedFormData.cash.Received}</div>
+                    <div class="details">Balance Amount: ₹${updatedFormData.cash.Balance}</div>
                 </div>
             </td>`
       : `
             <td style="width: 33.33%; text-align: left;">
                 <div class="receipt-details">
                     <div class="section-header">Receipt Mode: Bank - ${
-                      submissionData.bank.selectBankType
+                      updatedFormData.bank.selectBankType
                     }</div>
                     <div class="details">Bank Name: ${
-                      submissionData.bank.bank
+                      updatedFormData?.bank?.bank
                     }</div>
                     <div class="details">Transaction Date: ${
-                      submissionData.bank.transactionDate
+                      updatedFormData.bank.transactionDate
                     }</div>
                     <div class="details">Transaction / Cheque No: ${
-                      submissionData.bank.transactionNo ||
-                      submissionData.bank.chequeNo
+                      updatedFormData.bank.transactionNo ||
+                      updatedFormData.bank.chequeNo
                     }</div>
                     <div class="details">Total Amount: ₹${
-                      submissionData.bank.Amount
+                      updatedFormData.bank.Amount
                     }</div>
                     <div class="details">Advance Received: ₹${
-                      submissionData.bank.Advance
+                      updatedFormData.bank.Advance
                     }</div>
                     <div class="details">Amount Received: ₹${
-                      submissionData.bank.Received
+                      updatedFormData.bank.Received
                     }</div>
                     <div class="details">Balance Amount: ₹${
-                      submissionData.bank.Balance
+                      updatedFormData.bank.Balance
                     }</div>
                 </div>
             </td>`;
 
     const gstRows =
-      submissionData.gstType === "CGST/SGST"
-        ? submissionData.rows
-            .map(
+      updatedFormData.gstType === "CGST/SGST"
+        ? updatedFormData.rows
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
             <td>${row.itemCode}</td>
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
-            <td>${row.units}</td>
             <td>${row.qty}</td>
-            <td>${row.freeQuantity}</td>
+            <td>${row.units}</td>
             <td>${row.mrp}</td>
-            <td>${row.UnitsCost}</td>
-            <td>${row.schemeMargin}</td>
-            <td>${row.discountpercent}% ${row.discountRs}</td>
-            <td>${row.taxableValue}</td>
+            <td>${row.discountpercent}% ${row.discountRS}</td>
+            <td>${row.taxable}</td>
             <td>${row.cgstpercent}% ${row.cgstRS}</td>
             <td >${row.sgstpercent}% ${row.sgstRS}</td>
             <td>${row.totalValue}</td>
           </tr>`
             )
             .join("")
-        : submissionData.rows
-            .map(
+        : updatedFormData.rows
+            ?.map(
               (row, index) => `
           <tr>
             <td>${index + 1}</td>
             <td>${row.itemCode}</td>
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
-            <td>${row.units}</td>
             <td>${row.qty}</td>
-            <td>${row.freeQuantity}</td>
+            <td>${row.units}</td>
             <td>${row.mrp}</td>
-            <td>${row.UnitsCost}</td>
-            <td>${row.schemeMargin}</td>
-            <td>${row.discountpercent}% ${row.discountRs}</td>
-            <td>${row.taxableValue}</td>
+            <td>${row.discountpercent}% ${row.discountRS}</td>
+            <td>${row.taxable}</td>
             <td>${row.igstpercent}% ${row.igstRS}</td>
             <td>${row.totalValue}</td>
           </tr>`
@@ -1001,18 +959,18 @@ const OrderPurchaseInvoice = () => {
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Supplier Details</div>
+                  <div class="section-header">Customer Details</div>
                   <div class="details">Name: <span>${
                     chooseUser?.name
                   }</span></div>
                   <div class="details">Address: <span>${
-                    chooseUser?.address
+                    chooseUser.address
                   }</span></div>
                   <div class="details">Contact: <span>${
-                    chooseUser?.contact
+                    chooseUser.contact
                   }</span></div>
                   <div class="details">GSTIN: <span>${
-                    chooseUser?.gstin
+                    chooseUser.gstin
                   }</span></div>
                 </div>
               </td>
@@ -1020,19 +978,16 @@ const OrderPurchaseInvoice = () => {
                 <div style="text-align:left;" class="sales-estimate">
                   <div class="section-header"> Invoice Details</div>
                   <div class="details">Invoice No: <span>${
-                    submissionData?.invoiceNo
+                    updatedFormData.InvoiceNo
                   }</span></div>
                   <div class="details">Invoice Date: <span>${
-                    submissionData?.date
+                    updatedFormData.date
                   }</span></div>
-                     <div class="details">Supplier Invoice: <span>${
-                       submissionData?.supplierInvoiceNo
-                     }</span></div>
                   <div class="details">Place of Supply: <span>${
-                    submissionData?.placeOfSupply
+                    updatedFormData.placeOfSupply
                   }</span></div>
                    <div class="details">Due Date: <span>${
-                     submissionData?.dueDate
+                     updatedFormData.dueDate
                    }</span></div>
                  
                 </div>
@@ -1044,16 +999,16 @@ const OrderPurchaseInvoice = () => {
                    
 
                   <div class="details">Dispatch Through: <span>${
-                    submissionData?.dispatchedThrough
+                    updatedFormData.dispatchedThrough
                   }</span></div>
                    <div class="details">Destination: <span>${
-                     submissionData?.destination
+                     updatedFormData.destination
                    }</span></div>
                    <div class="details">Carrier Name/Agent : <span>${
-                     submissionData?.carrierNameAgent
+                     updatedFormData.carrierNameAgent
                    }</span></div>
                   <div class="details">Bill of Lading/LR-RR No.: <span>${
-                    submissionData?.billOfLading
+                    updatedFormData.billOfLading
                   }</span></div>
                   
                 </div>
@@ -1068,12 +1023,9 @@ const OrderPurchaseInvoice = () => {
                 <th>Item Code</th>
                 <th>Product Name</th>
                 <th>HSN Code</th>
-                <th>UOM</th>
                 <th>QTY</th>
-                <th>Free QTY</th>
+                <th>UOM</th>
                 <th>MRP</th>
-                <th>Unit Cost</th>
-                <th>Scheme Margin %</th>
                 <th>Disccount</th>
                 <th>Taxable Value</th>
                 ${gstHeaders}
@@ -1116,19 +1068,19 @@ const OrderPurchaseInvoice = () => {
                   <div class="amount-details">
                     <div class="section-header">Amount Details</div>
                     <div class="details">Gross Total: ₹${
-                      submissionData.grossAmount
+                      updatedFormData.grossAmount
                     }</div>
                     <div class="details">GST Amount: ₹${
-                      submissionData.GstAmount
+                      updatedFormData.GstAmount
                     }</div>
                     <div class="details">Additional Charges: ₹${
-                      submissionData.otherCharges
+                      updatedFormData.otherCharges
                     }</div>
                     <div class="details">Net Total: ₹${
-                      submissionData.netAmount
+                      updatedFormData.netAmount
                     }</div>
                     <div class="details">Amount in Words:${numberToWords(
-                      submissionData.netAmount
+                      updatedFormData.netAmount
                     )}</div>
                   </div>
                 </td>
@@ -1168,6 +1120,373 @@ const OrderPurchaseInvoice = () => {
     printWindow.print();
   };
 
+  const handlePrintOnlyWithoutGST = () => {
+    const printWindow = window.open("", "_blank");
+
+    const updatedFormData = {
+      ...formData,
+      rows: rows?.map((row) => ({
+        itemCode: row.itemCode,
+        productName: row.productName,
+        hsnCode: row.hsnCode,
+        qty: row.quantity,
+        units: row.units,
+        mrp: row.maxmimunRetailPrice,
+        discountpercent:row.discountpercent,
+        discountRS:row.discountRS,
+        taxable: row.taxableValue,
+        totalValue: row.totalValue, // GST details removed
+      })),
+      grossAmount: grossAmount,
+      otherCharges: otherCharges,
+      otherChargesDescriptions: otherChargesDescriptions,
+      salesType,
+      customerType,
+      reverseCharge,
+      netAmount: netAmount,
+      cash: paymentMethod === "Cash" ? cashDetails : {},
+      bank: paymentMethod === "Bank" ? bankDetails : {},
+    };
+
+    function numberToWords(num) {
+      const ones = [
+        "",
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+        "Ten",
+        "Eleven",
+        "Twelve",
+        "Thirteen",
+        "Fourteen",
+        "Fifteen",
+        "Sixteen",
+        "Seventeen",
+        "Eighteen",
+        "Nineteen",
+      ];
+      const tens = [
+        "",
+        "",
+        "Twenty",
+        "Thirty",
+        "Forty",
+        "Fifty",
+        "Sixty",
+        "Seventy",
+        "Eighty",
+        "Ninety",
+      ];
+
+      function convertToWords(n) {
+        if (n < 20) return ones[n];
+        if (n < 100)
+          return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+        if (n < 1000)
+          return (
+            ones[Math.floor(n / 100)] +
+            " Hundred" +
+            (n % 100 ? " " + convertToWords(n % 100) : "")
+          );
+        if (n < 100000)
+          return (
+            convertToWords(Math.floor(n / 1000)) +
+            " Thousand" +
+            (n % 1000 ? " " + convertToWords(n % 1000) : "")
+          );
+        return "";
+      }
+
+      // Split the number into integer and decimal parts
+      const parts = num.toString().split(".");
+
+      const integerPart = parseInt(parts[0], 10);
+      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0;
+
+      let words = convertToWords(integerPart) + " Rupees";
+
+      // Handle the decimal part (paise)
+      if (decimalPart > 0) {
+        words += " and " + convertToWords(decimalPart) + " Paise";
+      }
+
+      return words;
+    }
+    const gstRows = updatedFormData.rows
+      ?.map(
+        (row, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${row.itemCode}</td>
+          <td>${row.productName}</td>
+          <td>${row.hsnCode}</td>
+          <td>${row.qty}</td>
+          <td>${row.units}</td>
+          <td>${row.mrp}</td>
+          <td>${row.discountpercent}% ${row.discountRS}</td>
+          <td>${row.taxable}</td>
+          <td>${row.totalValue}</td> <!-- Removed GST related fields -->
+        </tr>`
+      )
+      .join("");
+    const paymentModeHTML = updatedFormData.cash.Amount
+      ? `
+          <td style="width: 33.33%; text-align: left;">
+              <div class="receipt-details">
+                  <div class="section-header">Receipt Mode: Cash</div>
+                  <div class="details">Total Amount: ₹${updatedFormData.cash.Amount}</div>
+                  <div class="details">Advance Received: ₹${updatedFormData.cash.Advance}</div>
+                  <div class="details">Amount Received: ₹${updatedFormData.cash.Received}</div>
+                  <div class="details">Balance Amount: ₹${updatedFormData.cash.Balance}</div>
+              </div>
+          </td>`
+      : `
+          <td style="width: 33.33%; text-align: left;">
+              <div class="receipt-details">
+                  <div class="section-header">Receipt Mode: Bank - ${
+                    updatedFormData.bank.selectBankType
+                  }</div>
+                  <div class="details">Bank Name: ${
+                    updatedFormData.bank.bank
+                  }</div>
+                  <div class="details">Transaction Date: ${
+                    updatedFormData.bank.transactionDate
+                  }</div>
+                  <div class="details">Transaction / Cheque No: ${
+                    updatedFormData.bank.transactionNo ||
+                    updatedFormData.bank.chequeNo
+                  }</div>
+                  <div class="details">Total Amount: ₹${
+                    updatedFormData.bank.Amount
+                  }</div>
+                  <div class="details">Advance Received: ₹${
+                    updatedFormData.bank.Advance
+                  }</div>
+                  <div class="details">Amount Received: ₹${
+                    updatedFormData.bank.Received
+                  }</div>
+                  <div class="details">Balance Amount: ₹${
+                    updatedFormData.bank.Balance
+                  }</div>
+              </div>
+          </td>`;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 10px;
+            }
+            .header, .section-header, .table th {
+              color: red;
+              font-weight: bold;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              font-size: 24px;
+            }
+            .table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+            .table th, .table td {
+              border: 1px solid black;
+              padding: 5px;
+              text-align: center;
+              font-size: 12px;
+            }
+            .table th {
+              background-color: #ff0000; /* Red header */
+              color: black;
+            }
+            .signature {
+              text-align: right;
+              margin-top: 50px;
+              font-size: 12px;
+            }
+          </style>
+        </head>
+        <body>
+        <div class="header">
+          
+            <div class="business-name"> ${
+              company?.businessName || "---------"
+            } </div>
+              <div> ${company?.address || "---------"} </div>
+              <div>GSTIN: ${company?.gstIn || "---------"}</div>
+            </div>
+          <table class="table">
+            <tr>
+              <th colspan="100%" style="color: blue; font-size: 24px; font-weight: bold; text-align: center;">
+                GST Invoice
+              </th>
+            </tr>
+            <tr>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="customer-details">
+                  <div class="section-header">Customer Details</div>
+                  <div class="details">Name: <span>${
+                    chooseUser.name
+                  }</span></div>
+                  <div class="details">Address: <span>${
+                    chooseUser.address
+                  }</span></div>
+                  <div class="details">Contact: <span>${
+                    chooseUser.contact
+                  }</span></div>
+                  <div class="details">GSTIN: <span>${
+                    chooseUser.gstin
+                  }</span></div>
+                </div>
+              </td>
+              <td style="width: 30%;">
+                <div style="text-align:left;" class="sales-estimate">
+                  <div class="section-header">Invoice Details</div>
+                  <div class="details">Invoice No: <span>${
+                    updatedFormData.InvoiceNo
+                  }</span></div>
+                  <div class="details">Invoice Date: <span>${
+                    updatedFormData.date
+                  }</span></div>
+                  <div class="details">Place of Supply: <span>${
+                    updatedFormData.placeOfSupply
+                  }</span></div>
+                   <div class="details">Due Date: <span>${
+                     updatedFormData.dueDate
+                   }</span></div>
+                
+                </div>
+              </td>
+              <td style="width: 40%;">
+                <div style="text-align:left;" class="transport-details">
+                  <div class="section-header">Transport Details</div>
+                   <div class="details">Receipt Doc No.: <span>${
+                     updatedFormData.receiptDocNo
+                   }</span></div>
+                  <div class="details">Dispatch Through: <span>${
+                    updatedFormData.dispatchedThrough
+                  }</span></div>
+                  <div class="details">Destination: <span>${
+                    updatedFormData.destination
+                  }</span></div>
+                  <div class="details">Carrier Name/Agent: <span>${
+                    updatedFormData.carrierNameAgent
+                  }</span></div>
+                  <div class="details">Bill of Lading/LR-RR No.: <span>${
+                    updatedFormData.billOfLading
+                  }</span></div>
+                   <div class="details">Motor Vehicle No.: <span>${
+                     updatedFormData.motorVehicleNo
+                   }</span></div>
+                </div>
+              </td>
+            </tr>
+          </table>
+  
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Item Code</th>
+                <th>Product Name</th>
+                <th>HSN Code</th>
+                <th>QTY</th>
+                <th>UOM</th>
+                <th>MRP</th>
+                <th>Discount</th>
+                <th>Taxable Value</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${gstRows}
+            </tbody>
+          </table>
+  
+          <table class="table">
+            <tr>
+              <td style="width: 33.33%; text-align: left;">
+                <div class="banking-details">
+                  <div class="section-header">Banking Details</div>
+                <div class="details">Bank Name: ${
+                  company?.bank_name || "-"
+                }</div>
+                    <div class="details">IFSC Code: ${
+                      company?.ifce_code || "-"
+                    }</div>
+                    <div class="details">Account No:${
+                      company?.accountNumber || "-"
+                    }</div>
+                    <div class="details">Account Holder Name: ${
+                      company?.account_holder_name || "-"
+                    }</div>
+                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                </div>
+                </div>
+              </td>
+               ${paymentModeHTML}
+              <td style="width: 33.33%; text-align: left;">
+                <div class="amount-details">
+                  <div class="section-header">Amount Details</div>
+                  <div class="details">Gross Total: ₹${
+                    updatedFormData.grossAmount
+                  }</div>
+                  <div class="details">Additional Charges: ₹${
+                    updatedFormData.otherCharges
+                  }</div>
+                  <div class="details">Net Total: ₹${
+                    updatedFormData.netAmount
+                  }</div>
+                  <div class="details">Amount in Words: ${numberToWords(
+                    updatedFormData.netAmount
+                  )}</div>
+                </div>
+              </td>
+            </tr>
+          </table>
+  
+          <div style="margin-top:100px" class="mt-10">
+            <div class="section-header">Terms & Condition</div>
+            <div class="details">Your terms and conditions go here...</div>
+          </div>
+  
+          <div class="signature">
+            <div>For ${company.businessName}</div>
+            <div style="margin-top: 20px;">Signature</div>
+          </div>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    // Set the onafterprint event before calling print()
+    printWindow.onafterprint = () => {
+      printWindow.close(); // Close the print window after printing
+
+      // Create a fake event object (optional)
+      const dummyEvent = {
+        preventDefault: () => {},
+      };
+
+      handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
+    };
+
+    // Trigger the print dialog
+    printWindow.print();
+  };
+
   return (
     <>
       <div
@@ -1176,7 +1495,7 @@ const OrderPurchaseInvoice = () => {
       >
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
-          Purchase Invoice
+          Sales Invoice
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
           <div>
@@ -1195,29 +1514,41 @@ const OrderPurchaseInvoice = () => {
             </label>
           </div>
           <div>
+            <label className="font-bold">Sales Type</label>
+            <select
+              value={salesType}
+              onChange={handleSalesTypeChange}
+              className="border p-2 w-full  rounded"
+            >
+              <option value="GST Invoice">GST Invoice</option>
+              <option value="Bill of Supply">Bill of Supply</option>
+            </select>
+          </div>
+          <div>
             <label className="font-bold">Invoice No.</label>
             <input
-              name="invoiceNo"
+              name="InvoiceNo"
               type="text"
-              value={invoiceNo} // Bind to local state
-              onChange={handleinvoiceNoChange} // Update both local and formData states
+              value={InvoiceNo} // Bind to local state
+              onChange={handleInvoiceNoChange} // Update both local and formData states
               className="border p-2 w-full  rounded"
             />
           </div>
 
-          <div>
-            <label className="font-bold">Supplier Invoice No.</label>
-            <input
-              name="supplierInvoiceNo"
-              type="text"
-              value={supplierInvoiceNo}
-              onChange={handlesupplierInvoiceNoChange}
+          {/* <div>
+            <label className="font-bold">Customer Type</label>
+            <select
+              value={customerType}
+              onChange={handleCustomerTypeChange}
               className="border p-2 w-full  rounded"
-            />
-          </div>
+            >
+              <option value="Retailer">Retailer</option>
+              <option value="Wholesaler">Wholesaler</option>
+            </select>
+          </div> */}
 
           <div>
-            <label className="font-bold">Supplier Name</label>
+            <label className="font-bold">Customer Name</label>
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded"
@@ -1228,6 +1559,7 @@ const OrderPurchaseInvoice = () => {
               placeholder="Select Supplier or type to add"
             />
           </div>
+
           <div>
             <label className="font-bold">Place of Supply</label>
             <input
@@ -1263,16 +1595,36 @@ const OrderPurchaseInvoice = () => {
             </label>
           </div>
 
-          <div className="mt-6">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-blue-500 text-black p-2"
+          {/* Reverse Charge Section */}
+          <div className="mb-4 w-full">
+            <label className="font-bold">Reverse Charge</label>
+            <select
+              value={reverseCharge}
+              onChange={handleReverseChargeChange}
+              className="border p-2 w-full  rounded"
             >
-              Transport Details
-            </button>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="font-bold">Billing Address</label>
+            <textarea
+              name="billingAddress"
+              value={billingAddress}
+              onChange={handleBillingAddressChange}
+              className="border p-2 w-full  rounded"
+            />
           </div>
         </div>
-
+        <div className="mb-4">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-500 text-black p-2"
+          >
+            Transport Details
+          </button>
+        </div>
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
             <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
@@ -1335,13 +1687,13 @@ const OrderPurchaseInvoice = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-blue-500 text-black p-2"
+                  className="bg-blue-500 text-black p-2 rounded"
                 >
                   Save
                 </button>
@@ -1350,49 +1702,19 @@ const OrderPurchaseInvoice = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-          <div className="mb-4">
-            <label className="font-bold">Billing Address</label>
-            <textarea
-              name="billingAddress"
-              value={billingAddress}
-              onChange={handleBillingAddressChange}
-              className="border p-2 w-full  rounded"
-            />
-          </div>
-          {/* Reverse Charge Section */}
-          <div className="mb-4 w-full">
-            <label className="font-bold">Reverse Charge</label>
-            <select
-              value={reverseCharge}
-              onChange={handleReverseChargeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-        </div>
-
         {/* Items Section */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse overflow-x-auto">
             <thead>
               <tr>
                 <th className="border p-1">#</th>
-                <th className="border text-bold text-sm   text-nowrap">
-                  Item Code
-                </th>
-                <th className="border  text-nowrap">Product Name</th>
+                <th className="border text-bold text-sm ">Item Code</th>
+                <th className="border ">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
                 <th className="border p-1">Units</th>
-                <th className="border p-1  text-nowrap">Free Qty</th>
                 <th className="border p-1">MRP</th>
-                <th className="border p-1 text-nowrap">Unit Cost</th>
-                <th className="border p-1  text-nowrap">Scheme Margin</th>
-
-                <th className="border p-1  text-nowrap">
+                <th className="border p-1">
                   Discount
                   <div className="flex justify-between">
                     <span className="">%</span> <span>RS</span>
@@ -1401,7 +1723,7 @@ const OrderPurchaseInvoice = () => {
 
                 {salesType === "GST Invoice" && (
                   <>
-                    <th className="border p-2  text-nowrap">Taxable Value</th>
+                    <th className="border p-2">Taxable Value</th>
                     {gstType === "CGST/SGST" && (
                       <>
                         <th className="border p-2">
@@ -1432,41 +1754,57 @@ const OrderPurchaseInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
+              {rows?.map((row, index) => (
                 <tr key={index}>
                   <td className="border p-1">{index + 1}</td>
                   <td className="border">
-                    <td className="border p-1">
-                      <input
-                        type="text"
-                        value={rows[index].itemCode} // Bind the input value to itemCode
-                        onChange={
-                          (e) =>
-                            handleRowChange(index, "itemCode", e.target.value) // Update itemCode in the row
-                        }
-                        className="w-full" // Full width of the cell
-                        placeholder="Enter Item Code" // Optional placeholder
-                      />
-                    </td>
+                    <input
+                      type="text"
+                      value={rows[index].itemCode} // Bind the input value to itemCode
+                      onChange={
+                        (e) =>
+                          handleRowChange(index, "itemCode", e.target.value) // Update itemCode in the row
+                      }
+                      className="w-full" // Full width of the cell
+                      placeholder="Enter Item Code" // Optional placeholder
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "200px",
+                          maxWidth: "500px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                    />
                   </td>
+
                   <td className="border ">
-                    <td className="border p-1">
-                      <input
-                        type="text"
-                        value={rows[index].productName} // Set the value based on the row's productName
-                        onChange={
-                          (e) =>
-                            handleRowChange(
-                              index,
-                              "productName",
-                              e.target.value
-                            ) // Update the productName using handleRowChange
-                        }
-                        className="w-full" // Keeping the same class for styling
-                        placeholder="Enter Product Name" // Optional placeholder
-                      />
-                    </td>
+                    <input
+                      type="text"
+                      value={rows[index].productName} // Set the value based on the row's productName
+                      onChange={
+                        (e) =>
+                          handleRowChange(index, "productName", e.target.value) // Update the productName using handleRowChange
+                      }
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "200px",
+                          maxWidth: "500px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      className="w-full" // Keeping the same class for styling
+                      placeholder="Enter Product Name" // Optional placeholder
+                    />
                   </td>
+
                   <td className="border p-1">
                     <input
                       type="text"
@@ -1480,7 +1818,7 @@ const OrderPurchaseInvoice = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.qty}
+                      value={rows[index]?.qty || ""}
                       onChange={(e) => handlQtyChange(index, e.target.value)}
                       className="w-full"
                     />
@@ -1493,21 +1831,6 @@ const OrderPurchaseInvoice = () => {
                         handleRowChange(index, "units", e.target.value)
                       }
                       className="w-full"
-                    />
-                  </td>
-                  <td className="border p-1">
-                    <input
-                      type="text"
-                      value={row.freeQty || ""} // Display freeQty or empty string if undefined
-                      onChange={(e) =>
-                        handleFreeQtyChange(index, e.target.value)
-                      } // Call your handler
-                      className="w-full flex-grow"
-                      style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
-                        flexShrink: 1,
-                      }}
                     />
                   </td>
                   <td className="border p-2">
@@ -1523,61 +1846,44 @@ const OrderPurchaseInvoice = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
-                        flexShrink: 1,
+                        minWidth: "70px", // Set a small minimum width to ensure visibility
+                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
                       }}
                     />
                   </td>
-                  <td className="border p-1">
-                    <input
-                      type="text"
-                      value={row.unitCost}
-                      onChange={(e) =>
-                        handleRowChange(index, "unitCost", e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </td>{" "}
-                  <td className="border p-1">
-                    <input
-                      type="text"
-                      value={row.schemeMargin}
-                      onChange={(e) =>
-                        handleRowChange(index, "schemeMargin", e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </td>
+
                   <td className="border">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        value={row.discountpercent}
-                        onChange={(e) =>
-                          handleRowChange(
-                            index,
-                            "discountpercent",
-                            e.target.value
-                          )
-                        }
-                        className="w-full flex-grow"
-                        style={{
-                          minWidth: "20px", // Set a small minimum width to ensure visibility
-                          flexBasis: "20px", // Allow it to shrink, but still have a base width
-                          flexShrink: 1, // Allow it to shrink on mobile
-                        }}
-                      />
-                      <input
-                        type="text"
-                        value={row.discountRs}
-                        onChange={
-                          (e) =>
-                            handleRowChange(index, "discountRs", e.target.value) // Fix here
-                        }
-                        className="w-full"
-                      />
-                    </div>
+                 
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          value={row.discountpercent || ""} // Ensure a default value
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              "discountPercent",
+                              e.target.value
+                            )
+                          }
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: "20px",
+                            flexBasis: "20px",
+                            flexShrink: 1,
+                          }}
+                        />
+                        <input
+                          type="text"
+                          value={row.discountRS || ""} // Ensure a default value
+                          onChange={(e) =>
+                            handleRowChange(index, "discountRS", e.target.value)
+                          }
+                          className="w-full"
+                        />
+                      </div>
+             
+                  
                   </td>
                   {salesType === "GST Invoice" && (
                     <>
@@ -1606,11 +1912,11 @@ const OrderPurchaseInvoice = () => {
                             <div className="p-1 flex gap-1">
                               <input
                                 type="text"
-                                value={row.cgstpercent}
+                                value={row.cgstp}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "cgstpercentercent",
+                                    "cgstpercent",
                                     e.target.value
                                   )
                                 }
@@ -1623,7 +1929,7 @@ const OrderPurchaseInvoice = () => {
                               />
                               <input
                                 type="text"
-                                value={row.cgstRS}
+                                value={row.cgstrs}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -1644,11 +1950,11 @@ const OrderPurchaseInvoice = () => {
                             <div className="p-1 flex gap-1">
                               <input
                                 type="text"
-                                value={row.sgstpercent}
+                                value={row.sgstp}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "sgstpercentercent",
+                                    "sgstpercent",
                                     e.target.value
                                   )
                                 }
@@ -1661,7 +1967,7 @@ const OrderPurchaseInvoice = () => {
                               />
                               <input
                                 type="text"
-                                value={row.sgstRS}
+                                value={row.sgstrs}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -1700,11 +2006,11 @@ const OrderPurchaseInvoice = () => {
                             <div className="flex gap-1">
                               <input
                                 type="text"
-                                value={row.igstpercent}
+                                value={row.igstp}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "igstpercentercent",
+                                    "igstpercent",
                                     e.target.value
                                   )
                                 }
@@ -1717,7 +2023,7 @@ const OrderPurchaseInvoice = () => {
                               />
                               <input
                                 type="text"
-                                value={row.igstRS}
+                                value={row.igstrs}
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
@@ -1780,82 +2086,37 @@ const OrderPurchaseInvoice = () => {
           </table>
         </div>
 
-        <button
-          onClick={addRow}
-          className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-        >
-          <svg
-            xmlns="http//www.w3.org/2000/svg"
-            className="h-4 w-4 "
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add New Row
-        </button>
-        {/* 
-        <button
-          onClick={() => setIsModalOtherChargesOpen(true)}
-          className=" text-blue-800 mt-8 text-md p-2 mt-2 p-2 mt-2 rounded hoverbg-orange-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
-        >
-          <svg
-            xmlns="http//www.w3.org/2000/svg"
-            className="h-4 w-4 "
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add Other Charges
-        </button>
-
-        <div className="gap-2">
-          <label className=" w-1/3 mb-2 text-white mt-8 text-md p-2 mt-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        <div className="flex justify-between ">
+          <div>
+            <button
+              onClick={addRow}
+              className="bg-green-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>{" "}
-            Upload Document
-            <input
-              type="file"
-              className="hidden"
-              onChange={(e) => setdocumentPath(e.target.files[0])} // Assuming you have setdocumentPath in your state
-            />
-          </label>
-        </div> */}
-        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
-          {/* First button in a div */}
+              <svg
+                xmlns="http//www.w3.org/2000/svg"
+                className="h-4 w-4 "
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add New Row
+            </button>
+          </div>
           <div>
             <button
               onClick={() => setIsModalOtherChargesOpen(true)}
-              className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+              className=" bg-blue-500 text-black p-2 mt-2 rounded hoverbg-green-600 focusoutline-none focusring-2 focusring-green-400 focusring-opacity-50 flex items-center justify-center"
             >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1"
+                xmlns="http//www.w3.org/2000/svg"
+                className="h-4 w-4 "
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -1869,32 +2130,6 @@ const OrderPurchaseInvoice = () => {
               </svg>
               Add Other Charges
             </button>
-          </div>
-
-          {/* Second button in a div */}
-          <div>
-            <label className="w-1/2 text-white text-md p-2 rounded bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>{" "}
-              Upload Document
-              <input
-                type="file"
-                className="hidden"
-                onChange={(e) => setdocumentPath(e.target.files[0])}
-              />
-            </label>
           </div>
         </div>
 
@@ -1929,13 +2164,13 @@ const OrderPurchaseInvoice = () => {
               <div className="flex justify-end">
                 <button
                   onClick={() => setIsModalOtherChargesOpen(false)}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleOtherChargesSave}
-                  className="bg-gray-500 text-black p-2 mr-2"
+                  className="bg-gray-500 text-black p-2 mr-2 rounded"
                 >
                   Save
                 </button>
@@ -1966,7 +2201,7 @@ const OrderPurchaseInvoice = () => {
                 Gross Amount
               </label>
               <input
-                value={grossAmount.toFixed(2)}
+                value={grossAmount}
                 // onChange={handleBillingAddressChange}
                 className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
@@ -1977,7 +2212,7 @@ const OrderPurchaseInvoice = () => {
                   GST Amount
                 </label>
                 <input
-                  value={GstAmount.toFixed(2)}
+                  value={GstAmount}
                   // onChange={handleBillingAddressChange}
                   className=" text-black border p-1 w-full  rounded lg:w-2/3"
                 />
@@ -2014,7 +2249,7 @@ const OrderPurchaseInvoice = () => {
             onClick={() => openViewModal()}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            Add Payment
+            Add Receipt
           </button>
 
           <Modal
@@ -2219,7 +2454,7 @@ const OrderPurchaseInvoice = () => {
         <div className="mt-8 flex justify-center">
           <button
             // onClick={}
-            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2"
+            className="bg-blue-500 pl-4 pr-4 hoverbg-sky-700  text-black p-2 mr-2 rounded"
             onClick={handleSubmit}
           >
             Save
@@ -2227,7 +2462,15 @@ const OrderPurchaseInvoice = () => {
           {salesType === "GST Invoice" && (
             <button
               onClick={handlePrintOnly}
-              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2 rounded"
+            >
+              Save and Print
+            </button>
+          )}
+          {salesType !== "GST Invoice" && (
+            <button
+              onClick={handlePrintOnlyWithoutGST}
+              className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2 rounded"
             >
               Save and Print
             </button>
@@ -2239,4 +2482,4 @@ const OrderPurchaseInvoice = () => {
   );
 };
 
-export default OrderPurchaseInvoice;
+export default EstimateSalesInvoice;

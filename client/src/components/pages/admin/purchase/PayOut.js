@@ -93,7 +93,7 @@ const PayOut = () => {
     setRows([
       ...rows,
       {
-        id: rows.length ? Math.max(...rows.map((row) => row.id)) + 1 : 1,
+        id: rows.length ? Math.max(...rows?.map((row) => row.id)) + 1 : 1,
         billNo: "",
         billAmount: "",
         paidAmount: "",
@@ -146,7 +146,7 @@ const PayOut = () => {
       selectBank,
       method,
       transactionCheckNo,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         billNo: row.billNo,
         billAmount: row.billAmount,
         recievedAmount: row.recievedAmount,
@@ -226,7 +226,7 @@ const PayOut = () => {
             onChange={handleSupplierChange}
           >
             <option value="">Select Supplier</option>
-            {Supplier.map((Supplier) => (
+            {Supplier?.map((Supplier) => (
               <option key={Supplier._id} value={Supplier.name}>
                 {Supplier.name}
               </option>
@@ -302,7 +302,7 @@ const PayOut = () => {
           </thead>
 
           <tbody>
-            {rows.map((row, index) => (
+            {rows?.map((row, index) => (
               <tr key={row.id}>
                 <td className="border border-gray-500 p-1 text-center">
                   {index + 1}
@@ -316,7 +316,7 @@ const PayOut = () => {
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option className="text-black">Select</option>
-                    {selctedSupplierInvoiceData.map((item, idx) => (
+                    {selctedSupplierInvoiceData?.map((item, idx) => (
                       <option key={idx} value={item.invoiceNo}>
                         {item.invoiceNo ? item.invoiceNo : "NA"}
                       </option>

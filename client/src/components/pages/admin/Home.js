@@ -63,7 +63,7 @@ const Home = () => {
         <div className="text-3xl font-bold text-indigo-700 text-center">
           Dashboard
         </div>
-        <div className="flex justify-start items-center mb-4 space-x-4">
+        {/* <div className="flex justify-start items-center mb-4 space-x-4">
           <div className="relative inline-block" ref={filterRef}>
             <button
               className="bg-blue-500 hover:bg-green-500 text-white py-2 px-4 rounded"
@@ -88,7 +88,7 @@ const Home = () => {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           <div className="flex  flex-col  hover:scale-95 items-center rounded-md ">

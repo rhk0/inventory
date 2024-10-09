@@ -15,12 +15,16 @@ function Header({ OpenSidebar }) {
     setIsMenuOpen(false);
   };
   return (
-    <header  className="header">
+    <header className="header">
       <div className="menu-icon">
-        <BsJustify className="icon text-white" onClick={OpenSidebar} />
+        <BsJustify
+          className="icon"
+          style={{ color: "white", fontSize: "24px" }}
+          onClick={OpenSidebar}
+        />
       </div>
 
-      <div className="header-left"></div>
+      <div  className="header-left"></div>
 
       {/* <div className="header-right ml-1 flex  flex-wrap gap-5">
         <span
