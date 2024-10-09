@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,7 +6,7 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS for Toastify
 import Loader from "../loader/LoaderHand.js"; // Import the Loader component
 import { useAuth } from "../context/Auth.js";
-import { Cancel } from '@mui/icons-material';
+import { Cancel } from "@mui/icons-material";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -186,25 +185,46 @@ const Login = () => {
   
   
   return (
-    <div className="bg-gray-100 min-h-screen flex justify-center items-center font-montserrat px-2" data-aos="fade-right">
-    {loading ? (
-      <Loader />
-    ) : (
-        <div className="p-6 shadow-lg rounded-lg bg-white w-full max-w-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" data-aos="fade-up"
-        data-aos-duration="3000">
+    <div
+      className="bg-gray-100 min-h-screen flex justify-center items-center font-montserrat px-2"
+      data-aos="fade-right"
+    >
+      {loading ? (
+        <Loader />
+      ) : (
+        <div
+          className="p-6 shadow-lg rounded-lg bg-white w-full max-w-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+          data-aos="fade-up"
+          data-aos-duration="3000"
+        >
           {/* Logo and title */}
-          <div className="text-center mb-6 " data-aos="zoom-in-down" data-aos-delay="1000">
+          <div
+            className="text-center mb-6 "
+            data-aos="zoom-in-down"
+            data-aos-delay="1000"
+          >
             <div className="logo rounded-full w-16 h-16 mx-auto bg-blue-500 text-white flex justify-center items-center">
               <FaUserAlt className="text-3xl" />
             </div>
-            <h2 className="text-2xl font-bold mt-4" data-aos="zoom-in-down" data-aos-delay="300">Login</h2>
+            <h2
+              className="text-2xl font-bold mt-4"
+              data-aos="zoom-in-down"
+              data-aos-delay="300"
+            >
+              Login
+            </h2>
           </div>
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4 " data-aos="zoom-in-up">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 "
+            data-aos="zoom-in-up"
+          >
             <div className="relative">
               <FaUserAlt className="absolute left-3 top-3 text-gray-500" />
-              <input 
-             data-aos="zoom-in-down" data-aos-delay="800"
+              <input
+                data-aos="zoom-in-down"
+                data-aos-delay="800"
                 type="email"
                 name="email"
                 placeholder="Email"
@@ -215,7 +235,9 @@ const Login = () => {
             </div>
             <div className="relative">
               <FaLock className="absolute left-3 top-3 text-gray-500" />
-              <input data-aos="zoom-in-down" data-aos-delay="1000"
+              <input
+                data-aos="zoom-in-down"
+                data-aos-delay="1000"
                 type="password"
                 name="password"
                 placeholder="Password"
@@ -224,9 +246,12 @@ const Login = () => {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="flex justify-center space-x-4 mt-6"> {/* Flex container for buttons */}
+            <div className="flex justify-center space-x-4 mt-6">
+              {" "}
+              {/* Flex container for buttons */}
               <button
-              data-aos="zoom-out-right" data-aos-delay="2000"
+                data-aos="zoom-out-right"
+                data-aos-delay="2000"
                 type="button" // Changed to type="button" for Cancel
                 className="py-3 text-center px-4 rounded-md bg-gradient-to-r from-red-400 to-blue-500 hover:from-teal-500 hover:to-orange-500"
                 onClick={() => navigate(-1)} // Navigate to another page on Cancel
@@ -234,7 +259,8 @@ const Login = () => {
                 Cancel
               </button>
               <button
-               data-aos="zoom-out-left" data-aos-delay="2000"
+                data-aos="zoom-out-left"
+                data-aos-delay="2000"
                 type="submit"
                 className="py-3 text-center px-4 rounded-md bg-gradient-to-r from-teal-400 to-blue-500 hover:from-pink-500 hover:to-orange-500"
                 disabled={loading} // Disable button while loading
@@ -246,12 +272,18 @@ const Login = () => {
           <div className="text-center mt-4">
             <p className="text-sm ">
               Don't have an account?{" "}
-              <Link to="/registration" className="text-yellow-500 font-mono hover:underline">
+              <Link
+                to="/registration"
+                className="text-yellow-500 font-mono hover:underline"
+              >
                 Sign Up
               </Link>
-            </p>  
+            </p>
             <p className="text-sm text-gray-600">
-              <Link to="/forgetpassword" className="text-yellow-500 font-light hover:underline">
+              <Link
+                to="/forgetpassword"
+                className="text-yellow-500 font-light hover:underline"
+              >
                 Forgot password?
               </Link>
             </p>
