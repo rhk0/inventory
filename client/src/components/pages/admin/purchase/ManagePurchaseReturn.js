@@ -3,14 +3,9 @@ import Modal from "react-modal";
 import axios from "axios";
 import { useAuth } from "../../../context/Auth";
 import ViewPurchaseReturn from "../modals/ViewPurchaseReturn";
-<<<<<<< HEAD
-import { FiEdit } from "react-icons/fi";
-import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
-import { MdRateReview, MdDelete } from "react-icons/md";
-=======
 import EditPurchaseReturn from "../modals/EditPurchaseReturn";
->>>>>>> d35c35b52e27c9f747752eba6f9c64233d6e384b
-
+import { MdRateReview, MdDelete } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 const ManagePurchaseReturn = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);

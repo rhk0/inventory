@@ -57,8 +57,6 @@ const Login = () => {
     
     try {
       const response = await axios.post("/api/v1/auth/login", formData);
-      console.log(response, "res");
-      
       if (response.data.success) {
         setAuth({
           ...auth,
@@ -71,9 +69,7 @@ const Login = () => {
         if (response.data.user.role === 1) {
           // Role is 1, so we hit the company API
           try {
-            const companyResponse = await axios.get(`/api/v1/company/get/${response.data.user._id}`);
-            console.log(companyResponse, "companyResponse");
-            
+            const companyResponse = await axios.get(`/api/v1/company/get/${response.data.user._id}`);           
             if (companyResponse.data.success) {
               toast.success(response.data.message);
               setAuth({
@@ -89,12 +85,11 @@ const Login = () => {
                 navigate("/admin");
               }
             } else {
-              console.log("Company data not found, redirecting...");
+
               navigate("/companyregistration");
             }
           } catch (error) {
             if (error.response && error.response.status === 404) {
-              console.log("Company data not found (404), redirecting...");
               navigate("/CompanyRegistration");
               return;
             } else {
