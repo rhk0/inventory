@@ -165,7 +165,7 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
           />
         </div>
 
-        <div>
+        {/* <div>
           <label className="font-bold">
             Payment Term (days):
             <input
@@ -187,7 +187,9 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
               className="border p-2 w-full text-black rounded"
             />
           </label>
-        </div>
+        </div> */}
+
+        
 
         <div className="mb-4">
           <label className="font-bold">Billing Address</label>

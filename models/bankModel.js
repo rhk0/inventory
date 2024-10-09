@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const bankSchema = new mongoose.Schema({
   name: {
     type: String,
+     required:true,
     
   },
  admin:{
@@ -12,12 +13,15 @@ const bankSchema = new mongoose.Schema({
  },
   ifscCode:{
     type:String,
+    required:true,
   },
   accountNumber:{
     type:String,
+    required:true,
   },
   openingBalance:{
     type:String,
+    required:true,
   },
   drCr: {
     type: String,

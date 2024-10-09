@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
-import { AiOutlinePlus, AiOutlineClose } from 'react-icons/ai';
+import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 import { useAuth } from "../../../context/Auth.js";
 const PayIn = () => {
   const [customer, setCustomer] = useState([]);
@@ -12,9 +12,11 @@ const PayIn = () => {
   const [Narration, setNarration] = useState(""); // Ensure narration is defined
   const [receiptMode, setReceiptMode] = useState("Cash");
   const [selectBank, setSelectBank] = useState("");
-  const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState([]);
-  const [auth] =useAuth();
-  const [userId ,setUserId] =useState("");
+  const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState(
+    []
+  );
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -31,8 +33,6 @@ const PayIn = () => {
   const [transactionCheckNo, setTransactionCheckNo] = useState(""); // Added state for transaction check number
 
   useEffect(() => {
-
-    
     if (auth?.user) {
       if (auth.user.role === 1) {
         setUserId(auth.user._id);
@@ -41,7 +41,7 @@ const PayIn = () => {
       }
     }
     fetchCustomer();
-  }, [auth,userId]);
+  }, [auth, userId]);
 
   const fetchCustomer = async () => {
     try {
@@ -110,58 +110,59 @@ const PayIn = () => {
       setRows(rows.filter((row) => row.id !== id));
     }
   };
-let grandtotal=0;
+  let grandtotal = 0;
   const calculateBalance = (billAmount, paidAmount, receivedAmount) => {
     const bill = parseFloat(billAmount) || 0;
     const credit = parseFloat(paidAmount) || 0;
     const received = parseFloat(receivedAmount) || 0;
-    grandtotal+=(bill - credit - received)
+    grandtotal += bill - credit - received;
     return (bill - credit - received).toFixed(2);
   };
 
-  let alltotal=0;
+  let alltotal = 0;
   const GrandTotal = (billAmount, paidAmount, receivedAmount) => {
     const bill = parseFloat(billAmount) || 0;
     const credit = parseFloat(paidAmount) || 0;
     const received = parseFloat(receivedAmount) || 0;
-    alltotal+=(bill - credit - received)
+    alltotal += bill - credit - received;
     return alltotal;
   };
   const calculateTotalReceived = () => {
-    return rows.reduce((total, row) => {
-      return total + parseFloat(row.recievedAmount || 0);
-    }, 0).toFixed(2);
+    return rows
+      .reduce((total, row) => {
+        return total + parseFloat(row.recievedAmount || 0);
+      }, 0)
+      .toFixed(2);
   };
-  
 
   const handleSave = async () => {
     const totalAmount = calculateTotalReceived(); // This needs to be defined correctly
-   const grandTotal= GrandTotal();
+    const grandTotal = GrandTotal();
     grandtotal = grandTotal; // Ensure grandtotal is set correctly
 
-  const dataToSubmit = {
-    userId:userId,
-    date,
-    receiptNo,
-    selectCustomer: selectedCustomer,
-    receiptMode,
-    selectBank,
-    method,
-    transactionCheckNo,
-    rows: rows?.map((row) => ({
-      billNo: row.billNo,
-      billAmount: row.billAmount,
-      paidAmount: row.paidAmount, // Ensure this is defined and sent
-      recievedAmount: row.recievedAmount,
-      balanceAmount: calculateBalance(row.billAmount, row.paidAmount, row.recievedAmount),
-    })),
-    grandtotal, // Ensure grandtotal is set correctly
-    Narration,
-  };
-
-     
-
-
+    const dataToSubmit = {
+      userId: userId,
+      date,
+      receiptNo,
+      selectCustomer: selectedCustomer,
+      receiptMode,
+      selectBank,
+      method,
+      transactionCheckNo,
+      rows: rows?.map((row) => ({
+        billNo: row.billNo,
+        billAmount: row.billAmount,
+        paidAmount: row.paidAmount, // Ensure this is defined and sent
+        recievedAmount: row.recievedAmount,
+        balanceAmount: calculateBalance(
+          row.billAmount,
+          row.paidAmount,
+          row.recievedAmount
+        ),
+      })),
+      grandtotal, // Ensure grandtotal is set correctly
+      Narration,
+    };
 
     try {
       await axios.post("/api/v1/payInRoute/createsalespayin", dataToSubmit);
@@ -176,7 +177,16 @@ let grandtotal=0;
       setReceiptMode("Cash");
       setMethod(""); // Reset method
       setTransactionCheckNo(""); // Reset transaction check number
-      setRows([{ id: 1, billNo: "", billAmount: "", paidAmount: "", recievedAmount: "", balanceAmount: "" }]);
+      setRows([
+        {
+          id: 1,
+          billNo: "",
+          billAmount: "",
+          paidAmount: "",
+          recievedAmount: "",
+          balanceAmount: "",
+        },
+      ]);
       setNarration("");
     } catch (error) {
       toast.error("Error saving data. Please try again!", {
@@ -284,7 +294,7 @@ let grandtotal=0;
         )}
       </div>
       <div className="overflow-x-auto mt-5">
-      <table className="w-full border-collapse">
+        <table className="w-full border-collapse">
           <thead>
             <tr>
               <th className="border border-gray-500 p-1">#</th>
@@ -293,18 +303,21 @@ let grandtotal=0;
               <th className="border border-gray-500 p-1">Credit Amount</th>
               <th className="border border-gray-500 p-1">Received Amount</th>
               <th className="border border-gray-500 p-1">Balance Amount</th>
-              <th className="border border-gray-500 p-1">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {rows?.map((row, index) => (
               <tr key={row.id}>
-                <td className="border border-gray-500 p-1 text-center">{index + 1}</td>
+                <td className="border border-gray-500 p-1 text-center">
+                  {index + 1}
+                </td>
                 <td className="border border-gray-500 p-1">
                   <select
                     value={row.billNo}
-                    onChange={(e) => handleRowChange(index, "billNo", e.target.value)}
+                    onChange={(e) =>
+                      handleRowChange(index, "billNo", e.target.value)
+                    }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option className="text-black">Select</option>
@@ -315,18 +328,28 @@ let grandtotal=0;
                     ))}
                   </select>
                 </td>
-                <td className="border border-gray-500 p-1">{row.billAmount || "NA"}</td>
-                <td className="border border-gray-500 p-1">{row.paidAmount || "NA"}</td>
+                <td className="border border-gray-500 p-1">
+                  {row.billAmount || "NA"}
+                </td>
+                <td className="border border-gray-500 p-1">
+                  {row.paidAmount || "NA"}
+                </td>
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"
                     value={row.recievedAmount || ""}
-                    onChange={(e) => handleRowChange(index, "recievedAmount", e.target.value)}
+                    onChange={(e) =>
+                      handleRowChange(index, "recievedAmount", e.target.value)
+                    }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
                 <td className="border border-gray-500 p-1">
-                  {calculateBalance(row.billAmount, row.paidAmount, row.recievedAmount)}
+                  {calculateBalance(
+                    row.billAmount,
+                    row.paidAmount,
+                    row.recievedAmount
+                  )}
                 </td>
                 <td className="text-center flex gap-2 pl-1">
                   <button
@@ -349,12 +372,16 @@ let grandtotal=0;
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={4} className="border border-gray-500 p-1 text-right font-bold">Total Received Amount:</td>
+              <td
+                colSpan={4}
+                className="border border-gray-500 p-1 text-right font-bold"
+              >
+                Total Received Amount:
+              </td>
               <td className="border border-gray-500 p-1 font-bold">
                 {calculateTotalReceived()}
               </td>
               <td className="border border-gray-500 p-1"></td>
-             
             </tr>
           </tfoot>
         </table>

@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
+import { useAuth } from "../../../context/Auth";
+
 const PayOut = () => {
   const [Supplier, setSupplier] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState("");
@@ -15,6 +16,9 @@ const PayOut = () => {
   const [selctedSupplierInvoiceData, setSelctedSupplierInvoiceData] = useState(
     []
   );
+
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
 
   const [rows, setRows] = useState([
     {
@@ -28,16 +32,22 @@ const PayOut = () => {
   ]);
 
   // Add new states for method and transactionCheckNo
-  const [method, setMethod] = useState(""); // Added state for method
-  const [transactionCheckNo, setTransactionCheckNo] = useState(""); // Added state for transaction check number
+  const [method, setMethod] = useState("");
+  const [transactionCheckNo, setTransactionCheckNo] = useState("");
 
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchSupplier();
-  }, []);
+  }, [auth, userId]);
 
   const fetchSupplier = async () => {
     try {
-      const response = await axios.get("/api/v1/auth/manageSupplier");
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
       setSupplier(response.data.data);
     } catch (error) {
       console.error("Error fetching Supplier:", error);
@@ -150,10 +160,7 @@ const PayOut = () => {
         billNo: row.billNo,
         billAmount: row.billAmount,
         recievedAmount: row.recievedAmount,
-        balanceAmount: calculateBalance(
-          row.billAmount,
-          row.recievedAmount
-        ),
+        balanceAmount: calculateBalance(row.billAmount, row.recievedAmount),
       })),
       grandtotal, // Ensure grandtotal is set correctly
       Narration,
@@ -326,7 +333,7 @@ const PayOut = () => {
                 <td className="border border-gray-500 p-1">
                   {row.billAmount || "NA"}
                 </td>
-    
+
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"

@@ -1,95 +1,275 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../../../../context/Auth";
 
 const SupplierLedger = () => {
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [selectedCustomer, setSelectedCustomer] = useState('');
-  
-  // Dummy customer list and ledger data
-  const customers = ["Customer 1", "Customer 2", "Customer 3"];
-  const ledgerData = [
-    { date: "01-04-2024", particular: "Opening Balance", voucherType: "", voucherNo: "", debit: "", credit: "******" },
-    { date: "02-04-2024", particular: "To Sales", voucherType: "Sales", voucherNo: "123", debit: "******", credit: "" },
-    { date: "03-04-2024", particular: "By Bank", voucherType: "Pay In", voucherNo: "124", debit: "", credit: "" },
-    { date: "04-04-2024", particular: "Closing Balance", voucherType: "", voucherNo: "", debit: "*******", credit: "" }
-  ];
+  const [userId, setUserId] = useState("");
+  const [salesInvoice, setSalesInvoice] = useState([]);
+  const [payIns, setPayIns] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [openingBalance, setOpeningBalance] = useState(0);
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [totalDebit, setTotalDebit] = useState(0);
+  const [totalCredit, setTotalCredit] = useState(0);
+  const [closingBalance, setClosingBalance] = useState(0);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-  const handleCustomerChange = (event) => {
-    setSelectedCustomer(event.target.value);
+  const [auth] = useAuth();
+
+  const fetchInvoice = async () => {
+    try {
+      const response = await axios.get(
+        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/"
+      );
+      const invoices = response.data.invoices;
+      setSalesInvoice(invoices);
+      console.log(response, "ksjdfkjs");
+    } catch (error) {
+      console.log("Error fetching sales invoices.");
+    }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
+      const customerData = response.data.data;
+      setCustomers(customerData);
+    } catch (error) {
+      console.log("Error fetching customers.");
+    }
+  };
+
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    } else if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+  }, [auth]);
+
+  const fetchPayIns = async () => {
+    try {
+      const response = await axios.get("/api/v1/payOutRoute/getAllpayOut");
+      setPayIns(response.data.payOutList);
+      console.log(response, "aksjdfksdj");
+    } catch (error) {
+      console.error("Error fetching PayOuts:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPayIns();
+    fetchInvoice();
+    if (userId) {
+      fetchCustomers();
+    }
+  }, [userId]);
+
+  const handleCustomerSelect = (e) => {
+    const name = e.target.value;
+    setSelectedCustomer(name);
+
+    const selectedCustomerData = customers.find(
+      (customer) => customer.name === name
+    );
+
+    if (selectedCustomerData) {
+      setOpeningBalance(selectedCustomerData.openingBalance);
+    } else {
+      setOpeningBalance(0);
+    }
+  };
+
+  // Filter sales invoices and pay-ins based on customer and date range
+  const filterTransactions = (transactions, isInvoice = true) => {
+    return transactions?.filter((transaction) => {
+      const transactionDate = new Date(transaction.date);
+      const isWithinDateRange =
+        (!startDate || transactionDate >= new Date(startDate)) &&
+        (!endDate || transactionDate <= new Date(endDate));
+
+      const customerField = isInvoice
+        ? transaction.supplierName
+        : transaction.supplierName;
+      return selectedCustomer === customerField && isWithinDateRange;
+    });
+  };
+
+  useEffect(() => {
+    if (selectedCustomer) {
+      const filteredInvoices = filterTransactions(salesInvoice, true);
+      const filteredPayIns = filterTransactions(payIns, false);
+
+      const debitTotal = filteredInvoices.reduce(
+        (sum, invoice) => sum + (Number(invoice.netAmount) || 0),
+        openingBalance || 0
+      );
+
+      const creditTotal = filteredPayIns.reduce(
+        (sum, payIn) => sum + (Number(payIn.grandtotal) || 0),
+        0
+      );
+
+      const totalClosingBalance = creditTotal - debitTotal;
+
+      setTotalDebit(debitTotal + totalClosingBalance);
+      setTotalCredit(creditTotal);
+      setClosingBalance(totalClosingBalance);
+    }
+  }, [
+    selectedCustomer,
+    salesInvoice,
+    payIns,
+    openingBalance,
+    startDate,
+    endDate,
+  ]);
+
+  const handleReset = () => {
+    setSelectedCustomer("");
+    setStartDate("");
+    setEndDate("");
+    setOpeningBalance(0);
+    setTotalDebit(0);
+    setTotalCredit(0);
+    setClosingBalance(0);
   };
 
   return (
-    <div className='responsive-container' style={{ backgroundColor: '#FFFFFF', color: 'black', padding: '20px' }}>
-      <h2 className='text-center text-3xl '>Supplier Ledger</h2>
-      <div class=" p-1 rounded-lg  flex gap-3">
-        <div class="mb-4 w-1/4">
+    <div
+      className="responsive-container"
+      style={{ backgroundColor: "#FFFFFF", color: "black", padding: "20px" }}
+    >
+      <h2 className="text-center text-3xl">Supplier Ledger</h2>
+      <div className="p-1 rounded-lg flex gap-3">
+        <div className="mb-4 w-1/4">
           <label
             htmlFor="startdate"
-            class="block text-sm font-medium text-gray-600"
+            className="block text-sm font-medium text-gray-600"
           >
             From
           </label>
           <input
             id="startdate"
             type="date"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
           />
         </div>
-        <div class="mb-4 w-1/4">
+        <div className="mb-4 w-1/4">
           <label
             htmlFor="enddate"
-            class="block text-sm font-medium text-gray-600"
+            className="block text-sm font-medium text-gray-600"
           >
             To
           </label>
           <input
             id="enddate"
             type="date"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
           />
         </div>
-        <div class="mt-5 w-1/4">
-          <select className=" block w-full border p-3 border-gray-300 rounded-md shadow-sm  focus:ring focus:ring-blue-200 focus:outline-none">
-            <option value="Select Customer" className="">
-              Select Supplier
-            </option>
+        <div className="mt-5 w-1/4">
+          <select
+            className="block w-full border p-3 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
+            onChange={handleCustomerSelect}
+            value={selectedCustomer}
+          >
+            <option value="">Select Supplier</option>
+            {customers.map((customer, index) => (
+              <option key={index} value={customer.name}>
+                {customer.name}
+              </option>
+            ))}
           </select>
         </div>
+        <div className="mt-5 w-1/4">
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+            onClick={handleReset}
+          >
+            Reset Filters
+          </button>
+        </div>
       </div>
-      <div>
-       
-      </div>
-      <table border="1" style={{ width: '100%', textAlign: 'center' }}>
-        <thead>
-          <tr>
-            <th className='p-2 border border-black'>Date</th>
-            <th className='p-2 border border-black'>Particular</th>
-            <th className='p-2 border border-black'>Voucher Type</th>
-            <th className='p-2 border border-black'>Voucher No.</th>
-            <th className='p-2 border border-black'>Debit Amount</th>
-            <th className='p-2 border border-black'>Credit Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ledgerData.map((entry, index) => (
-            <tr key={index}>
-              <td className='p-2 border border-black'>{entry.date}</td>
-              <td className='p-2 border border-black'>{entry.particular}</td>
-              <td className='p-2 border border-black'>{entry.voucherType}</td>
-              <td className='p-2 border border-black'>{entry.voucherNo}</td>
-              <td className='p-2 border border-black'>{entry.debit}</td>
-              <td className='p-2 border border-black'>{entry.credit}</td>
+      {selectedCustomer && ( // Only render the table if a supplier is selected
+        <table border="1" style={{ width: "100%", textAlign: "center" }}>
+          <thead>
+            <tr>
+              <th className="p-2 border border-black">Date</th>
+              <th className="p-2 border border-black">Particular</th>
+              <th className="p-2 border border-black">Voucher Type</th>
+              <th className="p-2 border border-black">Voucher No.</th>
+              <th className="p-2 border border-black">Debit Amount</th>
+              <th className="p-2 border border-black">Credit Amount</th>
             </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan="4">TOTAL</td>
-            <td>******</td>
-            <td>******</td>
-          </tr>
-        </tfoot>
-      </table>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="p-2 border border-black"></td>
+              <td className="p-2 border border-black">
+                <strong style={{ fontSize: "1.2em" }}>Opening Balance</strong>
+              </td>
+              <td className="p-2 border border-black"></td>
+              <td className="p-2 border border-black"></td>
+              <td className="p-2 border border-black"></td>
+              <td className="p-2 border border-black">
+                <strong style={{ fontSize: "1.2em" }}>{openingBalance}</strong>
+              </td>
+            </tr>
+            {filterTransactions(salesInvoice, true)?.map((invoice, index) => (
+              <tr key={index}>
+                <td className="p-2 border border-black">{invoice.date}</td>
+                <td className="p-2 border border-black">By Purchase</td>
+                <td className="p-2 border border-black">Purchase</td>
+                <td className="p-2 border border-black">{invoice.invoiceNo}</td>
+                <td className="p-2 border border-black">{invoice.netAmount}</td>
+                <td className="p-2 border border-black"></td>
+              </tr>
+            ))}
+            {filterTransactions(payIns, false)?.map((payIn, index) => (
+              <tr key={index}>
+                <td className="p-2 border border-black">{payIn.date}</td>
+                <td className="p-2 border border-black">
+                  By {payIn.paymentMode}
+                </td>
+                <td className="p-2 border border-black">Payment</td>
+                <td className="p-2 border border-black">{payIn.paymentNo}</td>
+                <td className="p-2 border border-black"></td>
+                <td className="p-2 border border-black">{payIn.grandtotal}</td>
+              </tr>
+            ))}
+            <tr className="p-2 border border-black">
+              <td></td>
+              <td>
+                <strong style={{ fontSize: "1.2em" }}>Closing Balance</strong>
+              </td>
+              <td></td>
+              <td></td>
+              <td className="p-2">
+                <strong style={{ fontSize: "1.2em" }}>{closingBalance}</strong>
+              </td>
+              <td></td>
+            </tr>
+
+            <tr className="p-2 border border-black">
+              <td colSpan="4">
+                <strong style={{ fontSize: "1.2em" }}>TOTAL</strong>
+              </td>
+              <td>
+                <strong style={{ fontSize: "1.2em" }}>{totalDebit}</strong>
+              </td>
+              <td className="p-2">
+                <strong style={{ fontSize: "1.2em" }}>{totalCredit}</strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
