@@ -43,21 +43,19 @@ export const bankToBankTransferController = async (req, res) => {
      if(!toB){
       return res.status(404).send({success:false,message:"toAccount  not found "})
      }
-   
+     console.log(amount,fromB.openingBalance)
     
-     if(amount<=fromB.openingBalance){
-
+     if(amount<=fromB.openingBalance){ 
       let newAmt = Number(fromB.openingBalance) -  Number(amount)
       let newAmt2 = Number(toB.openingBalance) + Number(amount)
       const tr1 = await bankModel.findByIdAndUpdate(fromAccount,{openingBalance:newAmt},{new:true})
 
       const tr2 = await bankModel.findByIdAndUpdate(toAccount,{openingBalance:newAmt2},{new:true})
-      
+      console.log(tr1,tr2)
      }
      if(amount> fromB.openingBalance){
-      console.log("insufficientAmt",fromB.openingBalance)
+      return res.status(404).send({success:false,message:"Insufficient amount in Bank"})       
      }
-
 
     const response = await bankTransactionModel.create({
       date,
