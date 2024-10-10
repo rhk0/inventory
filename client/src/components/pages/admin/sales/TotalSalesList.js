@@ -1,14 +1,96 @@
-import React from "react";
-import { MdRateReview } from "react-icons/md";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../../../context/Auth";
 
 const TotalSalesList = () => {
+  const [salesEstimates, setSalesEstimates] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [customers, setCustomers] = useState([]);
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchEstimate();
+    fetchCustomers();
+  }, [auth, userId]);
+
+  const fetchEstimate = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        "/api/v1/salesInvoiceRoute/getAllsalesinvoice"
+      );
+      setSalesEstimates(response.data.response);
+    } catch (error) {
+      setError("Error fetching sales estimates.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      setCustomers(response.data.data);
+    } catch (error) {
+      console.error("Error fetching customers", error);
+    }
+  };
+
+  const resetFilters = () => {
+    setFromDate("");
+    setToDate("");
+    setSearchTerm("");
+  };
+  // Filter sales estimates based on search term and date range
+  const filteredEstimates = salesEstimates?.filter((estimate) => {
+    const invoiceNo = estimate.InvoiceNo
+      ? estimate.InvoiceNo.toLowerCase()
+      : "";
+    const customerName = estimate.customerName
+      ? estimate.customerName.toLowerCase()
+      : "";
+    const searchMatch =
+      invoiceNo.includes(searchTerm.toLowerCase()) ||
+      customerName.includes(searchTerm.toLowerCase());
+
+    // Date range filtering
+    const estimateDate = new Date(estimate.date);
+    const isWithinDateRange =
+      (!fromDate || estimateDate >= new Date(fromDate)) &&
+      (!toDate || estimateDate <= new Date(toDate));
+
+    return searchMatch && isWithinDateRange;
+  });
+
+  // Calculate total gross amount for filtered estimates
+  const totalGrossAmount = filteredEstimates.reduce(
+    (sum, estimate) => sum + (Number(estimate.grossAmount) || 0),
+    0
+  );
+  const totalNetAmount = filteredEstimates.reduce(
+    (sum, estimate) => sum + (Number(estimate.netAmount) || 0),
+    0
+  );
+
   return (
     <div
-      style={{ padding: "20px", backgroundColor: "#b9b783" }}
+      style={{ padding: "20px", backgroundColor: "white" }}
       className="responsive-container"
     >
       {/* Heading */}
-      <h1 className="text-center text-2xl bg-gray-500 mt-3 mb-10">
+      <h1 className="text-center text-black text-4xl  mt-3 mb-3">
         Total Sales List
       </h1>
 
@@ -20,6 +102,8 @@ const TotalSalesList = () => {
             <input
               type="date"
               className="border p-2 rounded bg-gray-200 w-full md:w-auto"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
             />
           </div>
           <div className="flex flex-col space-y-2 md:space-y-0">
@@ -27,58 +111,131 @@ const TotalSalesList = () => {
             <input
               type="date"
               className="border p-2 rounded bg-gray-200 w-full md:w-auto"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
             />
           </div>
         </div>
-        <div className="w-full md:w-1/3">
+        <div className="flex flex-col space-y-2 md:space-y-0 mt-3">
           <input
             type="text"
-            placeholder="Search Bar"
-            className="border rounded w-full p-2 bg-gray-300 text-black"
+            placeholder="Search by Invoice number, Customer Name"
+            className="border p-2 rounded bg-gray-200 w-full md:w-auto"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
-
-      {/* Table */}
+      {/* Reset Button */}
+      <div className="flex flex-col space-y-2 text-center md:space-y-0 mt-3 mb-3">
+        <button
+          onClick={resetFilters}
+          className="bg-red-500 w-1/6 text text-center text-white p-2 rounded-md"
+        >
+          Reset Filters
+        </button>
+      </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full  text-white">
-          <thead>
-            <tr className="bg-gray-500 text-black">
-              <th className=" py-2 border">#</th>
-              <th className="px-4 py-2 border">Date</th>
-              <th className="px-4 py-2 border">Invoice No.</th>
-              <th className="px-4 py-2 border">Sales Type</th>
-              <th className="px-4 py-2 border">Customer Type</th>
-              <th className="px-4 py-2 border">Customer Name</th>
-              <th className="px-4 py-2 border">Place of Supply</th>
-              <th className="px-4 py-2 border">Taxable Value</th>
-              <th className="px-4 py-2 border">CGST</th>
-              <th className="px-4 py-2 border">SGST</th>
-              <th className="px-4 py-2 border">Total Value</th>
-              <th className="px-4 py-2 border">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="px-1 py-2 border text-black">1</td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border"></td>
-              <td className="px-4 py-2 border">
-                <button className="mx-1 text-white bg-green-500 rounded p-2">
-                  <MdRateReview className="text-xl" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {loading ? (
+          <p className="text-center text-blue-500">Loading...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
+        ) : (
+          <table className="min-w-full border-collapse border border-gray-300 bg-gray-100 text-black rounded-lg shadow-lg">
+            <thead className="bg-blue-500 text-white">
+              <tr>
+                {[
+                  "No.",
+                  "Date",
+                  "Invoice No.",
+                  "Customer Name",
+                  "Place of Supply",
+                  "Taxable Value",
+                  "CGST",
+                  "SGST",
+                  "IGST",
+                  "Net Amount",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    className="border border-gray-300 p-2 text-center"
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredEstimates?.length > 0 ? (
+                filteredEstimates?.map((estimate, index) => (
+                  <tr
+                    key={estimate._id}
+                    className="hover:bg-gray-200 transition-all"
+                  >
+                    <td className="border border-gray-300 text-center">
+                      {index + 1}
+                    </td>
+                    <td className="border border-gray-300 p-2 text-center whitespace-nowrap">
+                      {estimate.date}
+                    </td>
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate.InvoiceNo}
+                    </td>
+
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate?.customerName}
+                    </td>
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate?.placeOfSupply}
+                    </td>
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate?.grossAmount || "0"}
+                    </td>
+
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate.gstType === "CGST/SGST"
+                        ? estimate?.GstAmount
+                        : "NA"}
+                    </td>
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate.gstType === "CGST/SGST"
+                        ? estimate?.GstAmount
+                        : "NA"}
+                    </td>
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate.gstType === "IGST" ? estimate?.GstAmount : "NA"}
+                    </td>
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate?.netAmount || "0"}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="10"
+                    className="text-center p-4 border border-gray-300"
+                  >
+                    No sales invoice found.
+                  </td>
+                </tr>
+              )}
+              <tr>
+                <td colSpan="5"></td>
+                <td colSpan="4" className="text-center   ">
+                  <div className="text-left font-bold text-2xl ">
+                    Total Net Amount:
+                  </div>
+                </td>
+                <td colSpan="1" className="text-center font-bold text-2xl ">
+                  {totalNetAmount}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        )}
+
+        {/* Display the total gross amount */}
       </div>
     </div>
   );
