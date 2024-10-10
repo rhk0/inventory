@@ -200,19 +200,19 @@ const ManagePurchaseReturn = () => {
                           className="text-blue-500 hover:underline focus:outline-none"
                           onClick={() => handleView(estimate)}
                         >
-                         <MdRateReview className="text-xl" />
+                          <MdRateReview className="text-xl" />
                         </button>
                         <button
                           className="text-yellow-500 hover:underline focus:outline-none "
                           onClick={() => handleEdit(estimate)}
                         >
-                            <FiEdit className="text-xl" />
+                          <FiEdit className="text-xl" />
                         </button>
                         <button
                           className="text-red-500 hover:underline focus:outline-none"
                           onClick={() => handleDelete(estimate._id)}
                         >
-                           <MdDelete className="text-xl" />
+                          <MdDelete className="text-xl" />
                         </button>
                         {/* <button className="text-green-500 hover:underline focus:outline-none">
                           Create Invoice
