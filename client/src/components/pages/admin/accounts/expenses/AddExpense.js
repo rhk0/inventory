@@ -1,7 +1,8 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../../../context/Auth.js";
 
 const AddExpense = () => {
   const [formData, setFormData] = useState({
@@ -22,25 +23,62 @@ const AddExpense = () => {
 
   const [vendor, setVendor] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState("");
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+  const [company, setCompanyData] = useState([]);
+  const [chooseUser, setChooseUser] = useState([]);
+  const [gstType, setGstType] = useState("CGST/SGST");
 
   useEffect(() => {
-    const fetchVendor = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageVendor");
-        setVendor(response.data.data);
-      } catch (error) {
-        console.error("Error fetching suppliers:", error);
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
       }
-    };
-
+    }
     fetchVendor();
-  }, []);
+    companyData();
+  }, [auth, userId]);
 
-  const handleVendorChange = (e) => {
-    setSelectedVendor(e.target.value);
+  const companyData = async () => {
+    try {
+      const response = await axios.get(`/api/v1/company/get/${userId}`);
+      setCompanyData(response.data.data);
+      console.log(response, "jsdkjf");
+    } catch (error) {
+      console.error("Error fetching company data:", error);
+    }
   };
 
-  // Helper function to calculate GST and Total
+  const fetchVendor = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageVendor/${userId}`);
+      setVendor(response.data.data);
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+    }
+  };
+
+  const handleVendorChange = (e) => {
+    const value = e.target.value;
+    setSelectedVendor(value);
+
+    const selectedVendorData = vendor.find((cust) => cust._id === value);
+    setChooseUser(selectedVendorData);
+
+    if (
+      selectedVendorData?.state?.trim().toLowerCase() ===
+      company?.state?.trim().toLowerCase()
+    ) {
+      setGstType("CGST/SGST"); // Set to CGST/SGST when states match
+      setFormData({ ...formData, gstType: "cgst-sgst" });
+    } else {
+      setGstType("IGST"); // Set to IGST when states don't match
+      setFormData({ ...formData, gstType: "igst" });
+    }
+  };
+
   const calculateGSTAndTotal = (gstType, amount, gstRate) => {
     let cgstAmount = 0;
     let sgstAmount = 0;
@@ -59,7 +97,6 @@ const AddExpense = () => {
     return { cgstAmount, sgstAmount, igstAmount, total };
   };
 
-  // Handler for input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedData = { ...formData, [name]: value };
@@ -89,7 +126,6 @@ const AddExpense = () => {
     setFormData(updatedData);
   };
 
-  // Handler for GST Type change and resetting GST fields
   const handleGstTypeChange = (e) => {
     const gstType = e.target.value;
     setFormData({
@@ -102,7 +138,6 @@ const AddExpense = () => {
     });
   };
 
-  // Handler for form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -142,7 +177,6 @@ const AddExpense = () => {
     <div className="p-2 flex justify-center responsive-container">
       <div className="p-2 rounded-lg shadow-lg w-full max-w-7xl">
         <h1 className="text-2xl font-bold mb-4 text-center">Add Expense</h1>
-
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4">
             <div>
@@ -208,7 +242,7 @@ const AddExpense = () => {
                 onChange={handleVendorChange}
               >
                 <option value="">Select Vendor</option>
-                {vendor.map((vendor) => (
+                {vendor?.map((vendor) => (
                   <option key={vendor._id} value={vendor._id}>
                     {vendor.name}
                   </option>

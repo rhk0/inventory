@@ -6,6 +6,8 @@ import Modal from "react-modal";
 import { useAuth } from "../../../context/Auth.js";
 
 const EditPurchaseReturn = ({ closeModal, estimate }) => {
+  console.log(estimate, "slakfldklkafsdlkf");
+
   const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");
   const [debitNoteNo, setdebitNoteNo] = useState("");
@@ -32,10 +34,9 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const [GstAmount, setGstAmount] = useState("");
   const [netAmount, setNetAmount] = useState("");
   const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState("");
-  const [qty, setQty] = useState(0);
+  const [quantity, setQty] = useState(0);
   const [gstRatev, setgstRatev] = useState();
   const [selectPurchase, setSelectPurchase] = useState();
-
   const [viewModal, setViewModal] = useState(false);
   const [bank, setBank] = useState([]);
   const [cash, setCash] = useState([]);
@@ -237,7 +238,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
         itemCode: "",
         productName: "",
         hsnCode: "",
-        qty: 0,
+        quantity: 0,
         units: "",
         freeQty: "",
         maxmimunRetailPrice: 0,
@@ -275,7 +276,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       const discountRS = (unitCost * discountPercent) / 100; // Calculate discount in Rs
       currentRow.discountRs = discountRS.toFixed(2);
 
-      const qt = Number(currentRow.qty); // Make sure you're using the correct qty for the current row
+      const qt = Number(currentRow.quantity); // Make sure you're using the correct qty for the current row
       const taxableValue = (unitCost - discountRS) * qt; // Calculate taxable value
       currentRow.taxableValue = taxableValue.toFixed(2); // Ensure consistent format
 
@@ -303,7 +304,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       currentRow.discountpercent = discountPercent.toFixed(2);
       currentRow.discountRs = discountRs.toFixed(2);
 
-      const qt = Number(currentRow.qty);
+      const qt = Number(currentRow.quantity);
       const taxableValue = (unitCost - discountRs) * qt; // Calculate taxable value
       currentRow.taxableValue = taxableValue.toFixed(2);
 
@@ -327,15 +328,15 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
     setRows(updatedRows);
   };
 
-  const handlQtyChange = (rowIndex, qty) => {
+  const handlQtyChange = (rowIndex, quantity) => {
     const updatedRows = [...rows];
 
     const selectedRow = updatedRows[rowIndex];
 
-    setQty(qty);
+    setQty(quantity);
     updatedRows[rowIndex] = {
       ...selectedRow,
-      qty: qty,
+      quantity: quantity,
     };
 
     setRows(updatedRows);
@@ -409,11 +410,11 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
     const freeQty = parseFloat(newFreeQty) || 0; // Ensure it's a valid number
 
     // Calculate total quantity using the quantity from the selected row
-    const totalQuantity = Number(qty) + freeQty;
+    const totalquantity = Number(quantity) + freeQty;
 
     // Calculate schemeMargin only if both freeQty and quantity exist
     const schemeMargin =
-      freeQty && qty ? ((freeQty / totalQuantity) * 100).toFixed(2) : 0;
+      freeQty && quantity ? ((freeQty / totalquantity) * 100).toFixed(2) : 0;
 
     console.log(schemeMargin, "schemeMargin");
 
@@ -453,7 +454,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
     // Calculate retail price and taxableValue value based on product details
     if (selectedProduct) {
-      console.log(selectedProduct.gstRate, "dhhdhhdhdhhdhd");
       setgstRatev(selectedProduct.gstRate);
       const updatedRows = [...rows];
 
@@ -599,10 +599,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
   return (
     <div style={{ backgroundColor: "#82ac73" }} className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          Edit Purchase Return
-        </h1>
+      <div className="flex justify-end items-center mb-4">
         <button
           type="button"
           className="text-black hover:text-black border"
@@ -845,8 +842,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    name="qty"
-                    value={row.qty}
+                    name="quantity"
+                    value={row.quantity}
                     onChange={(e) => handlQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{

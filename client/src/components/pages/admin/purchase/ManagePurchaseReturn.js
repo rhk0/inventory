@@ -172,8 +172,6 @@ const ManagePurchaseReturn = () => {
                       {estimate.supplierName}
                     </td>
 
-   
-
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
                     </td>

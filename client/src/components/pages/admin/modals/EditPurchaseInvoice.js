@@ -5,7 +5,10 @@ import Select from "react-select";
 import Modal from "react-modal";
 import { useAuth } from "../../../context/Auth.js";
 
+
 const EditPurchaseInvoice = ({ closeModal, estimate }) => {
+  console.log(estimate,"slakfldklkafsdlkf")
+
   const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");
   const [InvoiceNo, setInvoiceNo] = useState("");
