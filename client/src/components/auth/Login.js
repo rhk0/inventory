@@ -11,10 +11,14 @@ import { Cancel } from "@mui/icons-material";
 const Login = () => {
   const navigate = useNavigate();
   const [auth, setAuth] = useAuth();
+
   const [dauth] = useAuth();
 
+
   useEffect(() => {
+  
     if (dauth?.user?.role === 1 && dauth?.user?.status === "Active") {
+
       navigate("/admin");
     }
     if (dauth?.user?.role === 1 && dauth?.user?.status === "Inactive") {
@@ -50,51 +54,65 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
     try {
       const response = await axios.post("/api/v1/auth/login", formData);
-
       if (response.data.success) {
-        toast.success(response.data.message);
-
         setAuth({
           ...auth,
           user: response.data.user,
           AccessToken: response.data.AccessToken,
         });
         sessionStorage.setItem("dauth", JSON.stringify(response.data));
+        
+        // Check the user's role
+        if (response.data.user.role === 1) {
+          // Role is 1, so we hit the company API
+          try {
+            const companyResponse = await axios.get(`/api/v1/company/get/${response.data.user._id}`);           
+            if (companyResponse.data.success) {
+              toast.success(response.data.message);
+              setAuth({
+                ...auth,
+                user: response.data.user,
+                AccessToken: response.data.AccessToken,
+              });
+              sessionStorage.setItem("dauth", JSON.stringify(response.data));
+              
+              if (response.data.user.status === "Inactive") {
+                navigate("/checkout");
+              } else if (response.data.user.status === "Active") {
+                navigate("/admin");
+              }
+            } else {
 
-        if (response.data.user.role === 0) {
-          navigate("/staff");
-        }
-        if (
-          response.data.user.role === 1 &&
-          response.data.user.status === "Inactive"
-        ) {
-          navigate("/checkout");
-        }
-        if (
-          response.data.user.role === 1 &&
-          response.data.user.status === "Active"
-        ) {
-          navigate("/admin");
-        }
-        if (response.data.user.role === 2) {
-          navigate("/superadmin");
+              navigate("/companyregistration");
+            }
+          } catch (error) {
+            if (error.response && error.response.status === 404) {
+              navigate("/CompanyRegistration");
+              return;
+            } else {
+              console.error("Error fetching company data:", error);
+            }
+          }
+        } else {
+          // Role is not 1, so handle navigation for staff or superadmin
+          if (response.data.user.role === 0) {
+            navigate("/staff");
+          } else if (response.data.user.role === 2) {
+            navigate("/superadmin");
+          }
         }
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.log("er", error);
-
+      console.log("Error during login:", error);
       if (error.response) {
-        toast.error(
-          `Server error: ${error.response.status} - ${error.response.data.message}`
-        );
+        toast.error(`Server error: ${error.response.status} - ${error.response.data.message}`);
       } else if (error.request) {
-        toast.error(
-          "Network error: No response from the server. Please check your connection."
-        );
+        toast.error("Network error: No response from the server. Please check your connection.");
       } else {
         toast.error(`Error: ${error.message}`);
       }
@@ -102,7 +120,65 @@ const Login = () => {
       setLoading(false);
     }
   };
+  
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  
+  //   try {
+  //     // Attempt to log in
+  //     const response = await axios.post("/api/v1/auth/login", formData);
+  //     console.log(response, "res");
+  
+  //     if (response.data.success) {
+  //       // If login is successful, check the next API
+  //       const companyResponse = await axios.get(`/api/v1/company/get/${response.data.user._id}`); // Replace with the appropriate ID
+  //       console.log(companyResponse, "companyRes");
+  
+  //       if (companyResponse.data.success) {
+  //         // If the company response is successful, proceed with the login
+  //         toast.success(companyResponse.data.message);
+  //         setAuth({
+  //           ...auth,
+  //           user: response.data.user,
+  //           AccessToken: response.data.AccessToken,
+  //         });
+  
+  //         sessionStorage.setItem("dauth", JSON.stringify(response.data));
+  
+  //         // Navigate based on user role
+  //         if (response.data.user.role === 0) {
+  //           navigate("/staff");
+  //         } else if (response.data.user.role === 1) {
+  //           navigate(response.data.user.status === "Inactive" ? "/checkout" : "/admin");
+  //         } else if (response.data.user.role === 2) {
+  //           navigate("/superadmin");
+  //         }
+  //       } else {
+  //         // This else block will no longer be reached for company not found
+  //         toast.error("Company Setup is pending");
+  //         navigate("/admin/companyregistration"); // Change to the desired route
+  //       }
+  //     } else {
+  //       toast.error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.log("er", error);
+  
+  //     if (error.response) {
+  //       toast.error(`Server error: ${error.response.status} - ${error.response.data.message}`);
+  //     } else if (error.request) {
+  //       toast.error("Network error: No response from the server. Please check your connection.");
+  //     } else {
+  //       toast.error(`Error: ${error.message}`);
+  //     }
+  //   } finally {
+  //     setLoading(false); 
+  //   }
+  // };
+  
+  
   return (
     <div
       className="bg-gray-100 min-h-screen flex justify-center items-center font-montserrat px-2"

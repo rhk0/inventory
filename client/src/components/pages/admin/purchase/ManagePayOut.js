@@ -189,7 +189,7 @@ const ManagePayIn = () => {
     try {
       // Include Narration and total in the selectedPayIn object before saving
 
-      const updatedRows = rows.map((row) => {
+      const updatedRows = rows?.map((row) => {
         // Remove _id if it's a new entry or invalid
         if (!row._id || typeof row._id === "number") {
           const { _id, ...rest } = row;
@@ -280,7 +280,7 @@ const ManagePayIn = () => {
             </tr>
           </thead>
           <tbody>
-            {payIns.map((payIn, index) => (
+            {payIns?.map((payIn, index) => (
               <tr key={payIn._id}>
                 <td className="px-4 py-2 border text-black">{index + 1}</td>
                 <td className="px-4 py-2 border text-black">
@@ -295,22 +295,22 @@ const ManagePayIn = () => {
                 <td className="px-4 py-2 border text-black">
                   {payIn.paymentMode}
                 </td>
-                <td className="px-4 py-2 border text-black">
+                <td className=" gap-5 py-2 border text-center item-center text-black">
                   <button
                     onClick={() => openViewModal(payIn)}
-                    className="mx-1 text-black bg-green-500 rounded p-2"
+                    className="text-blue-500 mr-2 hover:underline focus:outline-none"
                   >
                     <MdRateReview className="text-xl" />
                   </button>
                   <button
                     onClick={() => openEditModal(payIn)}
-                    className="mx-1 text-black bg-blue-500 pl-3 pr-3 p-1 rounded"
+                    className="text-yellow-500 hover:underline focus:outline-none"
                   >
                     <FiEdit className="text-xl" />
                   </button>
                   <button
                     onClick={() => handleDelete(payIn._id)}
-                    className="mx-1 text-black bg-red-500 pl-3 pr-3 p-1 rounded"
+                    className="text-red-500 ml-2 hover:underline focus:outline-none"
                   >
                     <MdDelete className="text-xl" />
                   </button>
@@ -446,7 +446,7 @@ const ManagePayIn = () => {
                 </tr>
               </thead>
               <tbody>
-                {selectedPayIn.rows.map((row) => (
+                {selectedPayIn?.rows?.map((row) => (
                   <tr className="text-black" key={row._id}>
                     <td className="px-4 py-2 border">{row.billNo}</td>
                     <td className="px-4 py-2 border">{row.billAmount}</td>
@@ -550,7 +550,7 @@ const ManagePayIn = () => {
                   onChange={handlesupplierChange}
                 >
                   <option value="">Select supplier</option>
-                  {supplier.map((supplier) => (
+                  {supplier?.map((supplier) => (
                     <option key={supplier._id} value={supplier.name}>
                       {supplier.name}
                     </option>
@@ -637,7 +637,7 @@ const ManagePayIn = () => {
                 </thead>
 
                 <tbody>
-                  {rows.map((row, index) => (
+                  {rows?.map((row, index) => (
                     <tr key={row.id}>
                       <td className="border border-gray-500 p-1 text-center">
                         {index + 1}
@@ -651,7 +651,7 @@ const ManagePayIn = () => {
                           className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option className="text-black">Select</option>
-                          {selctedsupplierInvoiceData.map((item, idx) => (
+                          {selctedsupplierInvoiceData?.map((item, idx) => (
                             <option key={idx} value={item.invoiceNo}>
                               {item.invoiceNo ? item.invoiceNo : "NA"}
                             </option>

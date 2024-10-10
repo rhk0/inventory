@@ -436,6 +436,7 @@ const CreateSalesInvoice = () => {
       calculateTotals(newRows);
     }
   };
+  
   const handlQtyChange = (rowIndex, qty) => {
     // Parse the new quantity to ensure it's a number
     const newQty = parseFloat(qty) || 0;

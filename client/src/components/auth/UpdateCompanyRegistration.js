@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Country, State } from "country-state-city";
 import { useAuth } from "../context/Auth.js";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const initialFormData = {
   photo: "",
@@ -35,7 +35,7 @@ const initialFormData = {
   upiId: "",
 };
 
-const CompanyRegistration = () => {
+const UpdateCompanyRegistration = () => {
   const [formData, setFormData] = useState(initialFormData);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -44,8 +44,26 @@ const CompanyRegistration = () => {
   const [photo, setPhoto] = useState([]);
   const [auth] = useAuth(); // Get auth context
   const navigate = useNavigate();
+
+  // Fetch existing company data and set it to formData
+ const [_id,setId]=useState("")
+  const fetchCompanyData = async () => {
+    try {
+      const response = await axios.get(`/api/v1/company/get/${auth.user._id}`);
+      console.log("companyResponse", response.data);
+      setId(response.data.data._id)
+      console.log(response.data.data._id,"dheeru id")
+      setFormData({
+        ...response.data.data,
+        bookFrom: response.data.data.bookFrom.substring(0, 10), // Format date if needed
+      });
+    } catch (error) {
+      console.error("Error fetching company data", error);
+    }
+  };
+
   useEffect(() => {
-    console.log("auth", auth);
+    fetchCompanyData();
   }, []);
 
   useEffect(() => {
@@ -63,7 +81,6 @@ const CompanyRegistration = () => {
   const handleCountryChange = (e) => {
     const countryCode = e.target.value;
     setSelectedCountry(countryCode);
-
     const country = countries.find((c) => c.isoCode === countryCode);
     setFormData({ ...formData, country: country ? country.name : "" });
   };
@@ -107,61 +124,48 @@ const CompanyRegistration = () => {
       console.error("No file selected or error in selecting file.");
     }
   };
-
+ const admin=auth.user._id;
   const userId = auth.user._id; // Get the userId from the auth context
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     const formDataToSend = new FormData();
-
-    // Append all form data except the file
+    
+    // Append all form data except the photo
     for (let key in formData) {
       if (formData[key] !== undefined && key !== "photo") {
         formDataToSend.append(key, formData[key]);
       }
     }
-
+  
     // Append the photo if it exists
-    if (formData.photo) {
-      console.log("Photo file in formData:", formData.photo);
+    if (formData.photo && formData.photo instanceof File) {
       formDataToSend.append("photo", formData.photo);
-    } else {
-      console.error("Photo is missing from formData.");
     }
-
-    // Append the userId as admin
+  
+    // Append the admin ID
     formDataToSend.append("admin", userId);
-
+  
     try {
-      const response = await axios.post(
-        "/api/v1/company/register",
-        formDataToSend
+        console.log(`/api/v1/company/update/${_id} dsss`)
+      const response = await axios.put(
+        `/api/v1/company/update/${_id}`,
+        formDataToSend,
       );
-      console.log(response, "response");
-     if(response.data.success){
-      toast.success(`${response.data.message}`);
-      if(auth.user.role === 1){
-        if (auth.user.status === "Inactive") {
-          navigate("/checkout");
-        } else if (auth.user.status === "Active") {
-          navigate("/admin");
-        }
+  
+      if (response.data.success) {
+        toast.success(`${response.data.message}`);
       }
-     }
-      
     } catch (error) {
-      console.error(
-        "Error creating company:",
-        error.response ? error.response.data : error.message
-      );
+      console.error("Error updating company:", error.response ? error.response.data : error.message);
       toast.error(
-        `There was an error creating the company: ${
+        `There was an error updating the company: ${
           error.response ? error.response.data.message : error.message
         }`
       );
     }
   };
-
+  
   const clearData = () => {
     setFormData(initialFormData);
   };
@@ -174,7 +178,7 @@ const CompanyRegistration = () => {
       onSubmit={handleSubmit}
     >
       <h4 className="text-3xl font-semibold mb-4 text-center underline mb-6 text-violet-800">
-        Set Up Business
+      Update  Set Up Business
       </h4>
       <div className="font-bold underline">Business Information </div>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
@@ -502,7 +506,7 @@ const CompanyRegistration = () => {
         </label>
       </div>
       <div onClick={handleSubmit} className="flex justify-center item-center ">
-        <button className="bg-green-500 p-2 pl-5 pr-5 rounded">Create </button>
+        <button className="bg-green-500 p-2 pl-5 pr-5 rounded">Update Set Up Business </button>
       </div>
 
       <ToastContainer />
@@ -510,4 +514,4 @@ const CompanyRegistration = () => {
   );
 };
 
-export default CompanyRegistration;
+export default UpdateCompanyRegistration;
