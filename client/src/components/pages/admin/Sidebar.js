@@ -184,7 +184,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="">
           <a href="../src/pages/Dharma.js" className="w-full">
             <Link
-              to="/admin/dash"
+              to="/admin/admindash"
               className="w-full sidebar-list-item flex items-center innerlist justify-between focus:outline-none text-white "
             >
               <MdDashboard className="mr-2" /> <span>Admin Dashboard</span>

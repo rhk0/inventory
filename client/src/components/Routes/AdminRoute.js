@@ -111,6 +111,7 @@ const AdminRoute = () => {
       />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/admindash" element={<Home />} />
         {/* <Route path="/dash" element={<Home />} /> */}
 
         <Route path="/*" element={<Test />} />

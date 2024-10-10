@@ -34,33 +34,12 @@ const Home = () => {
     };
   }, []);
 
-  const toggleFilter = () => {
-    setIsFilterOpen(!isFilterOpen);
-  };
 
-  const closeFilter = () => {
-    setIsFilterOpen(false);
-  };
-
-  const handleOptionClick = (event) => {
-    // Preventing the event propagation to avoid closing the filter options
-    event.stopPropagation();
-  };
-
-  const filterOptions = [
-    "Today",
-    "Last 7 days",
-    "Last 15 days",
-    "Last Month",
-    "Last Quarter",
-    "Last 6 Month",
-    "Last Year",
-  ];
 
   return (
-    <main className="main-container">
-      <div className=" p-2 bg-gray-100 ">
-        <div className="text-3xl font-bold text-indigo-700 text-center">
+    <main className="responsive-container">
+      <div className="  bg-gray-100 ">
+        <div className="text-3xl mb-3 font-bold text-indigo-700 text-center">
           Dashboard
         </div>
         {/* <div className="flex justify-start items-center mb-4 space-x-4">
@@ -90,7 +69,7 @@ const Home = () => {
           </div>
         </div> */}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4  gap-4">
           <div className="flex  flex-col  hover:scale-95 items-center rounded-md ">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex gap-16 items-center justify-center rounded-md">
               <span>900</span>
