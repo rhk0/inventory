@@ -19,16 +19,14 @@ const ManagePurchaseReturn = () => {
   const [auth] = useAuth();
   const [userid, setUserId] = useState("");
 
-  useEffect(() => {
-    fetchEstimate();
-  }, []);
+
 
   const fetchEstimate = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        "/api/v1/purchesReturnRoute/getAllpurchasereturn"
+        `/api/v1/purchesReturnRoute/getAllpurchasereturn/${userid}`
       );
       console.log(response.data.returns, "purchase Return");
       setSalesEstimates(response.data.returns);
@@ -38,6 +36,15 @@ const ManagePurchaseReturn = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchEstimate();
+  }, [auth,userid]);
 
   const handleView = (estimate) => {
     setSelectedEstimate(estimate);
@@ -153,8 +160,8 @@ const ManagePurchaseReturn = () => {
             </thead>
 
             <tbody>
-              {filteredEstimates.length > 0 ? (
-                filteredEstimates.map((estimate, index) => (
+              {filteredEstimates?.length > 0 ? (
+                filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}
                     className="hover:bg-gray-200 transition-all"

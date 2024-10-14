@@ -666,6 +666,7 @@ const CreateSalesEstimate = () => {
         GstAmount: "",
         otherCharges: "",
         netAmount: "",
+        userId:userId,
       });
 
       // Clear other independent states

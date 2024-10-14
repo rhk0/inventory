@@ -3,6 +3,7 @@ import purchesOrderModel from "../models/purchesOrderModel.js";
 export const createPurchesOrderController = async (req, res) => {
   try {
     const {
+      userId,
       date,
       orderNo, // Make sure you're receiving this
       purchaseType, // Make sure you're receiving this
@@ -29,10 +30,10 @@ export const createPurchesOrderController = async (req, res) => {
     } = req.body;
 
     // Creating a new purchase order
-    const { _id } = req.user;
+  
 
     const newInvoice = new purchesOrderModel({
-      admin: _id,
+      admin: userId,
       date,
       orderNo, // Assign this correctly
       purchaseType, // Assign this correctly
@@ -70,7 +71,8 @@ export const createPurchesOrderController = async (req, res) => {
 };
 export const getAllPurchesOrderController = async (req, res) => {
   try {
-    const invoices = await purchesOrderModel.find();
+    const _id = req.params._id;
+    const invoices = await purchesOrderModel.find({admin:_id});
 
     if (!invoices.length) {
       return res.status(404).send({

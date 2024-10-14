@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const salesquotationSchema = new mongoose.Schema({
   date: { type: Date },
+  admin :{type:mongoose.Schema.Types.ObjectId,
+    ref:"user",
+    required:true,
+  },
   quotationNo: { type: String },
   selectCustomer: { type: String },
   reverseCharge: { type: String },

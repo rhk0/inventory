@@ -59,7 +59,7 @@ const PayOut = () => {
       const response = await axios.get(
         `/api/v1/purchaseInvoiceRoute/purchaseinvoicesByName/${selectedSupplier}`
       );
-      console.log(response, "lfjdjhsdfjahj");
+      console.log(response, "dheeeruururu");
 
       setSelctedSupplierInvoiceData(response.data.response);
       console.log(response, "lfjdjhsdfjahj");
@@ -167,7 +167,8 @@ const PayOut = () => {
     };
 
     try {
-      await axios.post("/api/v1/payOutRoute/PayOutRoute", dataToSubmit);
+      const data = await axios.post("/api/v1/payOutRoute/PayOutRoute", dataToSubmit);
+     console.log(data,"pay out")
       toast.success("Data saved successfully!", {
         position: "top-right",
         autoClose: 3000,

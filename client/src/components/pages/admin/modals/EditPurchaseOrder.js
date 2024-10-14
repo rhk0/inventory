@@ -28,6 +28,8 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
   const [grossAmount, setGrossAmount] = useState("");
   const [GstAmount, setGstAmount] = useState("");
   const [netAmount, setNetAmount] = useState("");
+  const [qty, setQty] = useState(0);
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
@@ -253,7 +255,8 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
         [field]: value,
       };
     }
-
+    const { qty } = updatedRows[index];
+     console.log(qty,"qty")
     setRows(updatedRows);
     calculateRowValues(index);
     calculateTotalAmounts();
@@ -283,23 +286,142 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
     fetchProducts();
   }, []);
 
+
+  const handlQtyChange = (rowIndex, qty) => {
+    const updatedRows = [...rows];
+
+    const selectedRow = updatedRows[rowIndex];
+
+    setQty(qty);
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      qty: qty,
+    };
+
+    setRows(updatedRows);
+  };
+
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
       (product) => product.productName === selectedProductName
     );
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex);
+      const updatedRows = [...rows];
+
+      // Calculate retail price
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      // Determine if sales tax is included from the fetched product data
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+
+      // Calculate taxable value based on salesTaxInclude
+
+      const taxableValue = selectedProduct.purchasePriceExGst * selectedProduct.quantity;
+      // Update the row with the new values
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        productName: selectedProduct.productName,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        quantity: selectedProduct.quantity,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        wholeselerDiscountRS:
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.wholesalerDiscount) /
+          100,
+
+        // taxable value based on salesTaxInclude
+        taxableValue: taxableValue,
+
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
     }
   };
-
   const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
     const selectedProduct = products.find(
       (product) => product.itemCode === selectedItemCode
     );
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex);
+      const updatedRows = [...rows];
+
+      // Calculate retail price and taxable value based on the product details
+      const retailPrice =
+        selectedProduct.maxmimunRetailPrice -
+        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
+          100;
+
+      const taxableValue = selectedProduct.salesTaxInclude
+        ? (retailPrice * selectedProduct.quantity * 100) /
+          (100 + selectedProduct.gstRate)
+        : retailPrice * selectedProduct.quantity;
+
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        productName: selectedProduct.productName,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
+          ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
+          : "0.00",
+        quantity: selectedProduct.quantity,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount,
+        wholeselerDiscountRS: (
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.wholesalerDiscount) /
+          100
+        ).toFixed(2),
+
+        taxableValue: taxableValue,
+        cgstp: selectedProduct.gstRate / 2,
+        sgstp: selectedProduct.gstRate / 2,
+        igstp: selectedProduct.gstRate,
+
+        cgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        sgstrs: parseFloat(
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+        ),
+        igstrs: parseFloat(
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+        ),
+
+        totalvalue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      };
+
+      setRows(updatedRows);
     }
   };
 
@@ -813,7 +935,7 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                     type="number"
                     value={row.qty}
                     onChange={(e) =>
-                      handleRowChange(index, "qty", e.target.value)
+                      handlQtyChange(index, e.target.value)
                     }
                     className="w-full"
                   />

@@ -57,6 +57,7 @@ export const createPurchaseReturnController = async (req, res) => {
 
     try {
       const {
+        userId,
         date,
         debitNoteNo,
         paymentTerm,
@@ -83,7 +84,7 @@ export const createPurchaseReturnController = async (req, res) => {
       }
 
       const newReturn = new purchesReturnModel({
-        admin: req.user._id,
+        admin: userId,
         date,
         debitNoteNo,
         paymentTerm,
@@ -121,7 +122,8 @@ export const createPurchaseReturnController = async (req, res) => {
 
 export const getAllPurchaseReturnController = async (req, res) => {
   try {
-    const returns = await purchesReturnModel.find();
+    const _id = req.params._id;
+    const returns = await purchesReturnModel.find({admin:_id});
 
     if (!returns.length) {
       return res.status(404).json({

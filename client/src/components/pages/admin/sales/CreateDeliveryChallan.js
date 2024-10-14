@@ -584,7 +584,6 @@ const CreateDeliveryChallan = () => {
         customerType,
         reverseCharge,
         gstType,
-
         netAmount: netAmount,
         userId: userId,
       };

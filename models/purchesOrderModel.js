@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const purchesOrderSchema = new mongoose.Schema(
   {
-    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    admin :{type:mongoose.Schema.Types.ObjectId,
+      ref:"user",
+      required:true,
+    },
     date: { type: String },
     orderNo: { type: String },
     purchaseType: { type: String },

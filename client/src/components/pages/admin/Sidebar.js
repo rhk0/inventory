@@ -1044,6 +1044,22 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   Day Book
                 </Link>
               </li>
+              <li className="nestedlist innerlist sidebar-list-item">
+                <Link
+                  to="/admin/cashledger"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Cash Ledger
+                </Link>
+              </li>
+              <li className="nestedlist innerlist sidebar-list-item">
+                <Link
+                  to="/admin/bankledger"
+                  className="flex items-center text-white nestitemhover"
+                >
+                  Bank Ledger
+                </Link>
+              </li>
             </ul>
           )}
         </li>

@@ -16,26 +16,20 @@ import {
   FaDollarSign,
   FaCalculator,
 } from "react-icons/fa";
-
 const Home = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef(null);
-
   useEffect(() => {
     function handleClickOutside(event) {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
         setIsFilterOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-
-
   return (
     <main className="responsive-container">
       <div className="  bg-gray-100 ">
@@ -68,7 +62,6 @@ const Home = () => {
             )}
           </div>
         </div> */}
-
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4  gap-4">
           <div className="flex  flex-col  hover:scale-95 items-center rounded-md ">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex gap-16 items-center justify-center rounded-md">
@@ -214,12 +207,3 @@ const Home = () => {
 export default Home;
 
 
-// import React from 'react'
-
-// const Home = () => {
-//   return (
-//     <div>Home</div>
-//   )
-// }
-
-// export default Home

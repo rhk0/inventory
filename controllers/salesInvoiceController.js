@@ -78,7 +78,8 @@ export const createSalesInvoiceController = async (req, res) => {
 
 export const getAllSalesInvoiceCOntroller = async (req, res) => {
   try {
-    const response = await salesInvoiceModel.find();
+    const _id = req.params._id;
+    const response = await salesInvoiceModel.find({admin:_id});
 
     if (!response) {
       return res

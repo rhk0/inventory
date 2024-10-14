@@ -152,8 +152,8 @@ const OrderPurchaseInvoice = () => {
     }
   };
   useEffect(() => {
-    if (_id && salesEstimates.length > 0) {
-      const match = salesEstimates.find((item) => item._id === _id);
+    if (_id && salesEstimates?.length > 0) {
+      const match = salesEstimates?.find((item) => item._id === _id);
       if (match) {
         setFilteredInvoiceData(match); // Set the matching data to the new state
       }
@@ -622,6 +622,7 @@ const OrderPurchaseInvoice = () => {
         GstAmount: GstAmount,
         otherCharges: otherCharges,
         netAmount: netAmount,
+        userId:userId,
       };
 
       // Append all fields to formData

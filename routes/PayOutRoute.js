@@ -12,8 +12,8 @@ import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/PayOutRoute",requireSignIn,isAdmin, createPayOutController);
-router.get("/getAllpayout",requireSignIn,isAdmin, getAllPayOutController);
-router.get("/getAllpayoutById/:_id",requireSignIn,isAdmin, getPayOutByIdController);
+router.get("/getAllpayout/:_id",requireSignIn, getAllPayOutController);
+router.get("/getAllpayoutById/:_id",requireSignIn, getPayOutByIdController);
 router.put("/updatepayout/:_id",requireSignIn,isAdmin, updatePayOutByIdController);
 router.delete("/deletepayout/:_id",requireSignIn,isAdmin, deletePayOutByIdController);
 

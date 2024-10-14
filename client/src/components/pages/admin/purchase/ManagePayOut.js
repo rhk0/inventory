@@ -6,7 +6,7 @@ import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
-
+import { useAuth } from "../../../context/Auth";
 const ManagePayIn = () => {
   const [payIns, setPayIns] = useState([]);
   const [selectedPayIn, setSelectedPayIn] = useState(null);
@@ -26,7 +26,8 @@ const ManagePayIn = () => {
   const [selctedsupplierInvoiceData, setSelctedsupplierInvoiceData] = useState(
     []
   );
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -43,6 +44,15 @@ const ManagePayIn = () => {
   useEffect(() => {
     fetchsupplier();
   }, []);
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+
+  }, [auth, userId]);
 
   const fetchsupplier = async () => {
     try {
@@ -120,18 +130,26 @@ const ManagePayIn = () => {
   };
 
   // Fetch all payIn records
-  useEffect(() => {
+
     const fetchPayIns = async () => {
       try {
-        const response = await axios.get("/api/v1/payOutRoute/getAllpayOut");
+        const response = await axios.get(`/api/v1/PayOutRoute/getAllpayout/${userId}`);
         setPayIns(response.data.payOutList);
       } catch (error) {
         console.error("Error fetching PayIns:", error);
         toast.error("Error fetching records");
       }
     };
-    fetchPayIns();
-  }, []);
+
+    useEffect(() => {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      }
+      if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+      fetchPayIns();
+  }, [auth,userId]);
 
   // Open view modal
   const openViewModal = (payIn) => {

@@ -6,7 +6,7 @@ import Modal from "react-modal";
 import { useAuth } from "../../../context/Auth.js";
 
 const EditPurchaseReturn = ({ closeModal, estimate }) => {
-  console.log(estimate, "slakfldklkafsdlkf");
+
 
   const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");
@@ -48,7 +48,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
   useEffect(() => {
     if (estimate) {
-      console.log(estimate, "sdkjfk");
+    
       setSupplierName(estimate.supplierName || "");
 
       setDate(estimate.date || "");
@@ -575,7 +575,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       }
 
       const response = await axios.put(
-        `/api/v1/purchaseInvoiceRoute/updatepurchaseinvoice/${estimate._id}`,
+        `/api/v1/purchesReturnRoute/updatepurchasereturn/${estimate._id}`,
         submissionData
       );
 

@@ -569,7 +569,7 @@ import { useAuth } from "../../../context/Auth.js";
         supplierType,
         reverseCharge,
         gstType,
-
+        userId: userId,
         netAmount: netAmount,
       };
       const response = await axios.post(
