@@ -7,6 +7,7 @@ import { useAuth } from "../../../../context/Auth.js";
 const AddExpense = () => {
   const [formData, setFormData] = useState({
     date: "",
+    paymentType: "",
     expenseNo: "",
     expenseType: "",
     gstType: "",
@@ -126,18 +127,6 @@ const AddExpense = () => {
     setFormData(updatedData);
   };
 
-  const handleGstTypeChange = (e) => {
-    const gstType = e.target.value;
-    setFormData({
-      ...formData,
-      gstType,
-      cgstAmount: 0,
-      sgstAmount: 0,
-      igstAmount: 0,
-      total: parseFloat(formData.amount), // Reset total to amount without GST
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -153,6 +142,7 @@ const AddExpense = () => {
       setFormData({
         date: "",
         expenseNo: "",
+        paymentType: "",
         expenseType: "",
         gstType: "",
         vendor: "",
@@ -217,38 +207,38 @@ const AddExpense = () => {
                 <option value="Non GST">Non GST</option>
               </select>
             </div>
-            {formData.expenseType === "GST" && (
-              <div>
-                <label className="block font-semibold mb-1">GST Type</label>
-                <select
-                  name="gstType"
-                  value={formData.gstType}
-                  onChange={handleGstTypeChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                  required
-                >
-                  <option value="">Select GST Type</option>
-                  <option value="cgst-sgst">CGST + SGST</option>
-                  <option value="igst">IGST</option>
-                </select>
-              </div>
-            )}
 
             <div>
-              <label className="block font-semibold mb-1">Select Vendor</label>
+              <label className="block font-semibold mb-1">Payment Type</label>
               <select
+                name="paymentType"
+                value={formData.paymentType}
+                onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded"
-                value={selectedVendor}
-                onChange={handleVendorChange}
+                required
               >
-                <option value="">Select Vendor</option>
-                {vendor?.map((vendor) => (
-                  <option key={vendor._id} value={vendor._id}>
-                    {vendor.name}
-                  </option>
-                ))}
+                <option value=""> Payment Type</option>
+                <option value="cash">cash</option>
+                <option value="bank">bank</option>
               </select>
             </div>
+              <div>
+                <label className="block font-semibold mb-1">
+                  Select Vendor
+                </label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={selectedVendor}
+                  onChange={handleVendorChange}
+                >
+                  <option value="">Select Vendor</option>
+                  {vendor?.map((vendor) => (
+                    <option key={vendor._id} value={vendor._id}>
+                      {vendor.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
             <div>
               <label className="block font-semibold mb-1">Expense</label>
@@ -284,6 +274,8 @@ const AddExpense = () => {
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded"
                   >
+                    <option>Select Gst Rate</option>
+
                     <option value="5">5%</option>
                     <option value="12">12%</option>
                     <option value="18">18%</option>
