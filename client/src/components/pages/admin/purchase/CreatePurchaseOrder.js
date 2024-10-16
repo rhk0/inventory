@@ -1,66 +1,66 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
-import Select from "react-select";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer, toast } from 'react-toastify'
+import Select from 'react-select'
 
-import { useAuth } from "../../../context/Auth.js";
-  const CreatePurchaseOrder = () => {
-  const [date, setDate] = useState("");
-  const [orderNo, setorderNo] = useState("");
-  const [customerType, setCustomerType] = useState("Retailer");
-  const [qty, setQty] = useState(0);
-  const [purchaseType, setpurchaseType] = useState("GST Invoice");
-  const [supplierType, setsupplierType] = useState("Retailer");
-  const [placeOfSupply, setPlaceOfSupply] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [userId, setUserId] = useState("");
-  const [company, setCompanyData] = useState([]);
-  const [chooseUser, setChooseUser] = useState([]);
-  const [auth] = useAuth();
+import { useAuth } from '../../../context/Auth.js'
+const CreatePurchaseOrder = () => {
+  const [date, setDate] = useState('')
+  const [orderNo, setorderNo] = useState('')
+  const [customerType, setCustomerType] = useState('Retailer')
+  const [qty, setQty] = useState(0)
+  const [purchaseType, setpurchaseType] = useState('GST Invoice')
+  const [supplierType, setsupplierType] = useState('Retailer')
+  const [placeOfSupply, setPlaceOfSupply] = useState('')
+  const [dueDate, setDueDate] = useState('')
+  const [userId, setUserId] = useState('')
+  const [company, setCompanyData] = useState([])
+  const [chooseUser, setChooseUser] = useState([])
+  const [auth] = useAuth()
   const [transportDetails, setTransportDetails] = useState({
-    receiptDocNo: "",
-    dispatchedThrough: "",
-    destination: "",
-    carrierNameAgent: "",
-    billOfLading: "",
-    motorVehicleNo: "",
-  });
-  const [billingAddress, setBillingAddress] = useState("");
-  const [reverseCharge, setReverseCharge] = useState("No");
-  const [gstType, setGstType] = useState("CGST/SGST");
-  const [rows, setRows] = useState([]);
-  const [paymentTerm, setPaymentTerm] = useState(0);
-  const [otherCharges, setOtherCharges] = useState(0);
+    receiptDocNo: '',
+    dispatchedThrough: '',
+    destination: '',
+    carrierNameAgent: '',
+    billOfLading: '',
+    motorVehicleNo: '',
+  })
+  const [billingAddress, setBillingAddress] = useState('')
+  const [reverseCharge, setReverseCharge] = useState('No')
+  const [gstType, setGstType] = useState('CGST/SGST')
+  const [rows, setRows] = useState([])
+  const [paymentTerm, setPaymentTerm] = useState(0)
+  const [otherCharges, setOtherCharges] = useState(0)
 
-  const [supplier, setsupplier] = useState([]);
-  const [selectedsupplier, setSelectedsupplier] = useState("");
-  const [selectedAddress, setAddress] = useState("");
+  const [supplier, setsupplier] = useState([])
+  const [selectedsupplier, setSelectedsupplier] = useState('')
+  const [selectedAddress, setAddress] = useState('')
 
   const [formData, setFormData] = useState({
-    date: "",
-    orderNo: "",
-    purchaseType: "",
-    supplierType: "",
-    supplierName: "",
-    placeOfSupply: "",
-    paymentTerm: "",
-    dueDate: "",
-    receiptDocNo: "",
-    dispatchedThrough: "",
-    destination: "",
-    carrierNameAgent: "",
-    billOfLading: "",
-    motorVehicleNo: "",
-    billingAddress: "",
-    reverseCharge: "",
-    gstType: "",
+    date: '',
+    orderNo: '',
+    purchaseType: '',
+    supplierType: '',
+    supplierName: '',
+    placeOfSupply: '',
+    paymentTerm: '',
+    dueDate: '',
+    receiptDocNo: '',
+    dispatchedThrough: '',
+    destination: '',
+    carrierNameAgent: '',
+    billOfLading: '',
+    motorVehicleNo: '',
+    billingAddress: '',
+    reverseCharge: '',
+    gstType: '',
 
     rows: [
       {
-        itemCode: "",
-        productName: "",
-        hsnCode: "",
+        itemCode: '',
+        productName: '',
+        hsnCode: '',
         qty: null,
         units: null,
         mrp: null,
@@ -72,191 +72,182 @@ import { useAuth } from "../../../context/Auth.js";
       },
     ],
 
-    narration: "",
-    otherChargesDescriptions: "",
-    grossAmount: "",
-    GstAmount: "",
-    otherCharges: "",
-    netAmount: "",
-  });
+    narration: '',
+    otherChargesDescriptions: '',
+    grossAmount: '',
+    GstAmount: '',
+    otherCharges: '',
+    netAmount: '',
+  })
 
-  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState('')
 
   const fetchsupplier = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
-      setsupplier(response.data.data);
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`)
+      setsupplier(response.data.data)
     } catch (error) {
-      console.error("Error fetching suppliers:", error);
+      console.error('Error fetching suppliers:', error)
     }
-  };
+  }
 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
-        setUserId(auth.user._id);
+        setUserId(auth.user._id)
       } else if (auth.user.role === 0) {
-        setUserId(auth.user.admin);
+        setUserId(auth.user.admin)
       }
     }
-    fetchsupplier();
-  }, [auth, userId]);
+    fetchsupplier()
+  }, [auth, userId])
 
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userId}`);
-        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
+        const response = await axios.get(`/api/v1/company/get/${userId}`)
+        setCompanyData(response.data.data) // Assuming setCompanyData updates the company state
       } catch (error) {
-        console.error("Error fetching company data:", error);
+        console.error('Error fetching company data:', error)
       }
-    };
+    }
 
-    companyData(); // Fetch company data on component mount
-  }, [userId]); // Empty dependency array ensures this only runs once, on mount
+    companyData() // Fetch company data on component mount
+  }, [userId]) // Empty dependency array ensures this only runs once, on mount
 
   const handlesupplierChange = (e) => {
-    const value = e.target.value;
-    setSelectedsupplier(value);
+    const value = e.target.value
+    setSelectedsupplier(value)
 
-    const selectedsupplierData = supplier.find((cust) => cust._id === value);
-    setChooseUser(selectedsupplierData);
+    const selectedsupplierData = supplier.find((cust) => cust._id === value)
+    setChooseUser(selectedsupplierData)
     setFormData((prev) => ({
       ...prev,
-      supplierName: selectedsupplierData ? selectedsupplierData.name : "",
-      billingAddress: selectedsupplierData ? selectedsupplierData.address : "",
-      placeOfSupply: selectedsupplierData ? selectedsupplierData.state : "",
-    }));
+      supplierName: selectedsupplierData ? selectedsupplierData.name : '',
+      billingAddress: selectedsupplierData ? selectedsupplierData.address : '',
+      placeOfSupply: selectedsupplierData ? selectedsupplierData.state : '',
+    }))
 
-    setPlaceOfSupply(selectedsupplierData ? selectedsupplierData.state : "");
-    setBillingAddress(selectedsupplierData ? selectedsupplierData.address : "");
+    setPlaceOfSupply(selectedsupplierData ? selectedsupplierData.state : '')
+    setBillingAddress(selectedsupplierData ? selectedsupplierData.address : '')
     if (
       selectedsupplierData.state.trim().toLowerCase() ===
       company.state.trim().toLowerCase()
     ) {
-      setGstType("CGST/SGST");
+      setGstType('CGST/SGST')
     } else {
-      setGstType("IGST");
+      setGstType('IGST')
     }
-  };
+  }
 
   const handleOtherChargesChange = (event) => {
-    const newCharges = parseFloat(event.target.value) || 0;
-    setOtherCharges(newCharges);
+    const newCharges = parseFloat(event.target.value) || 0
+    setOtherCharges(newCharges)
 
     setFormData((prev) => ({
       ...prev,
       otherCharges: newCharges,
-    }));
-  };
+    }))
+  }
   const handleOtherChargesSave = () => {
     setFormData((prev) => ({
       ...prev,
       otherCharges: otherCharges.toFixed(2),
       otherChargesDescriptions: otherChargesDescriptions,
-    }));
-    setIsModalOtherChargesOpen(false);
-  };
+    }))
+    setIsModalOtherChargesOpen(false)
+  }
 
   useEffect(() => {
     if (date && paymentTerm) {
-      const selectedDate = new Date(date);
-      selectedDate.setDate(selectedDate.getDate() + parseInt(paymentTerm));
+      const selectedDate = new Date(date)
+      selectedDate.setDate(selectedDate.getDate() + parseInt(paymentTerm))
 
-      const day = String(selectedDate.getDate()).padStart(2, "0");
-      const month = selectedDate.toLocaleString("en-US", { month: "short" });
-      const year = selectedDate.getFullYear();
-      const formattedDueDate = `${day}-${month}-${year}`;
+      const day = String(selectedDate.getDate()).padStart(2, '0')
+      const month = selectedDate.toLocaleString('en-US', { month: 'short' })
+      const year = selectedDate.getFullYear()
+      const formattedDueDate = `${day}-${month}-${year}`
 
-      setDueDate(formattedDueDate);
+      setDueDate(formattedDueDate)
       setFormData((prev) => ({
         ...prev,
         dueDate: formattedDueDate,
-      }));
+      }))
     }
-  }, [date, paymentTerm]);
+  }, [date, paymentTerm])
 
   const handlePaymentTermChange = (e) => {
-    const value = e.target.value;
-    setPaymentTerm(value);
+    const value = e.target.value
+    setPaymentTerm(value)
     setFormData((prev) => ({
       ...prev,
       paymentTerm: value,
-    }));
-  };
+    }))
+  }
 
-  // const handleGstTypeChange = (e) => {
-  //   const value = e.target.value;
-  //   setGstType(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gstType: value,
-  //   }));
-  // };
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
 
   const handleorderNoChange = (e) => {
-    const value = e.target.value;
-    setorderNo(value);
+    const value = e.target.value
+    setorderNo(value)
     setFormData((prev) => ({
       ...prev,
       orderNo: value,
-    }));
-  };
+    }))
+  }
   const handlepurchaseTypeChange = (e) => {
-    const value = e.target.value;
-    setpurchaseType(value);
+    const value = e.target.value
+    setpurchaseType(value)
     setFormData((prev) => ({
       ...prev,
       purchaseType: value,
-    }));
-  };
+    }))
+  }
   const handlePlaceOfSupplyChange = (e) => {
-    const value = e.target.value;
-    setPlaceOfSupply(value);
+    const value = e.target.value
+    setPlaceOfSupply(value)
     setFormData((prev) => ({
       ...prev,
       placeOfSupply: value,
-    }));
-  };
+    }))
+  }
 
   const handleBillingAddressChange = (e) => {
-    const value = e.target.value;
-    setBillingAddress(selectedAddress);
+    const value = e.target.value
+    setBillingAddress(selectedAddress)
     setFormData((prev) => ({
       ...prev,
       billingAddress: value,
-    }));
-  };
+    }))
+  }
   const handleReverseChargeChange = (e) => {
-    const value = e.target.value;
-    setReverseCharge(value);
+    const value = e.target.value
+    setReverseCharge(value)
     setFormData((prev) => ({
       ...prev,
       reverseCharge: value,
-    }));
-  };
+    }))
+  }
 
   // Function to handle transport detail change
   const handleTransportDetailChange = (field, value) => {
-    setTransportDetails((prev) => ({ ...prev, [field]: value }));
+    setTransportDetails((prev) => ({ ...prev, [field]: value }))
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }));
-  };
+    }))
+  }
 
   const addRow = () => {
     setRows([
       ...rows,
       {
-        itemCode: "",
-        productName: "",
-        hsnCode: "",
+        itemCode: '',
+        productName: '',
+        hsnCode: '',
         qty: 0,
-        units: "",
+        units: '',
         mrp: 0,
         discount: 0,
         taxableValue: 0,
@@ -265,40 +256,40 @@ import { useAuth } from "../../../context/Auth.js";
         igst: 0,
         totalValue: 0,
       },
-    ]);
-  };
+    ])
+  }
   const removeRow = (index) => {
     if (rows.length > 1) {
-      setRows(rows.filter((_, i) => i !== index));
+      setRows(rows.filter((_, i) => i !== index))
     }
-  };
+  }
 
   const calculateTotals = (rowsData = rows) => {
-    let grossAmount = 0;
-    let GstAmount = 0;
+    let grossAmount = 0
+    let GstAmount = 0
 
     rowsData.forEach((row) => {
-      const taxableValue = parseFloat(row.taxableValue) || 0;
-      const cgst = parseFloat(row.cgstrs) || 0;
-      const sgst = parseFloat(row.sgstrs) || 0;
-      const igst = parseFloat(row.igstrs) || 0;
+      const taxableValue = parseFloat(row.taxableValue) || 0
+      const cgst = parseFloat(row.cgstrs) || 0
+      const sgst = parseFloat(row.sgstrs) || 0
+      const igst = parseFloat(row.igstrs) || 0
 
-      grossAmount += taxableValue;
-      GstAmount += cgst + sgst + igst;
-    });
+      grossAmount += taxableValue
+      GstAmount += cgst + sgst + igst
+    })
 
-    let netAmount = 0;
-    if (purchaseType === "Bill of Supply") {
-      if (otherChargesDescriptions.includes("discount")) {
-        netAmount = grossAmount - otherCharges; // No GST in Bill of Supply
+    let netAmount = 0
+    if (purchaseType === 'Bill of Supply') {
+      if (otherChargesDescriptions.includes('discount')) {
+        netAmount = grossAmount - otherCharges // No GST in Bill of Supply
       } else {
-        netAmount = grossAmount + otherCharges; // No GST in Bill of Supply
+        netAmount = grossAmount + otherCharges // No GST in Bill of Supply
       }
     } else {
-      if (otherChargesDescriptions.includes("discount")) {
-        netAmount = grossAmount + GstAmount - otherCharges;
+      if (otherChargesDescriptions.includes('discount')) {
+        netAmount = grossAmount + GstAmount - otherCharges
       } else {
-        netAmount = grossAmount + GstAmount + otherCharges;
+        netAmount = grossAmount + GstAmount + otherCharges
       }
     }
 
@@ -308,55 +299,55 @@ import { useAuth } from "../../../context/Auth.js";
       grossAmount: grossAmount.toFixed(2),
       GstAmount: GstAmount.toFixed(2),
       netAmount: netAmount.toFixed(2),
-    }));
-  };
+    }))
+  }
 
   useEffect(() => {
     // Call calculateTotals after rows are updated or on mount
-    calculateTotals();
-  }, [rows, purchaseType, otherCharges, otherChargesDescriptions]);
+    calculateTotals()
+  }, [rows, purchaseType, otherCharges, otherChargesDescriptions])
 
   // Access grossAmount, GstAmount, and netAmount from formData state
-  const { grossAmount, GstAmount, netAmount } = formData;
+  const { grossAmount, GstAmount, netAmount } = formData
 
   // Function to handle Save and Print
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([])
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
       if (response.data && Array.isArray(response.data.data)) {
-        setProducts(response.data.data);
+        setProducts(response.data.data)
       } else {
-        console.error("Unexpected response structure:", response.data);
+        console.error('Unexpected response structure:', response.data)
       }
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error('Error fetching products:', error)
       // toast.error("Failed to fetch products. Please try again.");
     }
-  };
+  }
   useEffect(() => {
-    fetchProducts();
-  }, [auth, userId]);
+    fetchProducts()
+  }, [auth, userId])
   const handlQtyChange = (rowIndex, qty) => {
     // Parse the new quantity to ensure it's a number
-    const newQty = parseFloat(qty) || 0;
+    const newQty = parseFloat(qty) || 0
 
     // Call handleRowChange to update the row with the new quantity
-    handleRowChange(rowIndex, "qty", newQty);
-  };
+    handleRowChange(rowIndex, 'qty', newQty)
+  }
   const handleRowChange = (index, field, value) => {
     // Create a copy of rows
-    const newRows = [...rows];
+    const newRows = [...rows]
 
     // Update the changed field with the new value
-    newRows[index] = { ...newRows[index], [field]: value };
+    newRows[index] = { ...newRows[index], [field]: value }
 
     // Check if the product is selected
     const selectedProduct = products.find(
-      (product) => product.productName === newRows[index].productName
-    );
+      (product) => product.productName === newRows[index].productName,
+    )
 
     if (selectedProduct) {
       // Calculate retail price and apply the discount if applicable
@@ -365,65 +356,66 @@ import { useAuth } from "../../../context/Auth.js";
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.retailDiscount) /
             100
-        : 0;
+        : 0
 
       // Get sales tax and GST rate
-      const salesTaxInclude = selectedProduct.salesTaxInclude;
-      const gstRate = selectedProduct.gstRate;
+      const salesTaxInclude = selectedProduct.salesTaxInclude
+      const gstRate = selectedProduct.gstRate
 
       // Extract the quantity from the updated row
-      const { qty } = newRows[index];
+      const { qty } = newRows[index]
 
       // Calculate taxable value
-      const taxableValue = selectedProduct.purchasePriceExGst * qty;
+      const taxableValue = selectedProduct.purchasePriceExGst * qty
 
       // Calculate GST amounts
       const cgstrs =
-        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
+        gstType === 'CGST/SGST' ? (taxableValue * gstRate) / 2 / 100 : 0
       const sgstrs =
-        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
-      const igstrs = gstType === "IGST" ? (taxableValue * gstRate) / 100 : 0;
+        gstType === 'CGST/SGST' ? (taxableValue * gstRate) / 2 / 100 : 0
+      const igstrs = gstType === 'IGST' ? (taxableValue * gstRate) / 100 : 0
 
       // Calculate total value
-      const totalValue = taxableValue + (taxableValue * gstRate) / 100;
+      const totalValue = taxableValue + (taxableValue * gstRate) / 100
 
       // Update the row with the calculated values
       newRows[index] = {
         ...newRows[index],
         taxableValue: taxableValue.toFixed(2),
-        quantity:qty,
+        quantity: qty,
         cgstrs: cgstrs.toFixed(2),
         sgstrs: sgstrs.toFixed(2),
         igstrs: igstrs.toFixed(2),
         totalvalue: totalValue.toFixed(2),
-      };
+      }
 
       // Set the updated rows state
-      setRows(newRows);
+      setRows(newRows)
       // Trigger total calculation
-      calculateTotals(newRows);
+      calculateTotals(newRows)
     }
-  };
+  }
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
-      (product) => product.productName === selectedProductName
-    );
+      (product) => product.productName === selectedProductName,
+    )
 
     if (selectedProduct) {
-      const updatedRows = [...rows];
+      const updatedRows = [...rows]
 
       // Calculate retail price
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100;
+          100
 
       // Determine if sales tax is included from the fetched product data
-      const salesTaxInclude = selectedProduct.salesTaxInclude;
+      const salesTaxInclude = selectedProduct.salesTaxInclude
 
       // Calculate taxable value based on salesTaxInclude
 
-      const taxableValue = selectedProduct.purchasePriceExGst * selectedProduct.quantity;
+      const taxableValue =
+        selectedProduct.purchasePriceExGst * selectedProduct.quantity
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -433,7 +425,7 @@ import { useAuth } from "../../../context/Auth.js";
         productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-          : "0.00",
+          : '0.00',
         quantity: selectedProduct.quantity,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
         wholeselerDiscountRS:
@@ -449,42 +441,42 @@ import { useAuth } from "../../../context/Auth.js";
         igstp: selectedProduct.gstRate,
 
         cgstrs: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2),
         ),
         sgstrs: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2),
         ),
         igstrs: parseFloat(
-          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2),
         ),
 
         totalvalue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
-      };
+      }
 
-      setRows(updatedRows);
+      setRows(updatedRows)
     }
-  };
+  }
   const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
     const selectedProduct = products.find(
-      (product) => product.itemCode === selectedItemCode
-    );
+      (product) => product.itemCode === selectedItemCode,
+    )
 
     if (selectedProduct) {
-      const updatedRows = [...rows];
+      const updatedRows = [...rows]
 
       // Calculate retail price and taxable value based on the product details
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100;
+          100
 
       const taxableValue = selectedProduct.salesTaxInclude
         ? (retailPrice * selectedProduct.quantity * 100) /
           (100 + selectedProduct.gstRate)
-        : retailPrice * selectedProduct.quantity;
+        : retailPrice * selectedProduct.quantity
 
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -494,7 +486,7 @@ import { useAuth } from "../../../context/Auth.js";
         units: selectedProduct.units,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-          : "0.00",
+          : '0.00',
         quantity: selectedProduct.quantity,
         wholesalerDiscount: selectedProduct.wholesalerDiscount,
         wholeselerDiscountRS: (
@@ -509,33 +501,33 @@ import { useAuth } from "../../../context/Auth.js";
         igstp: selectedProduct.gstRate,
 
         cgstrs: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2),
         ),
         sgstrs: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2),
         ),
         igstrs: parseFloat(
-          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2),
         ),
 
         totalvalue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
-      };
+      }
 
-      setRows(updatedRows);
+      setRows(updatedRows)
     }
-  };
+  }
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData({
       ...formData,
       [name]: value,
-    });
-  };
+    })
+  }
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
       const updatedFormData = {
@@ -571,38 +563,38 @@ import { useAuth } from "../../../context/Auth.js";
         gstType,
 
         netAmount: netAmount,
-      };
+      }
       const response = await axios.post(
-        "/api/v1/purchesOrderRoute/createpurchesorder",
-        updatedFormData
-      );
+        '/api/v1/purchesOrderRoute/createpurchesorder',
+        updatedFormData,
+      )
 
       if (response) {
-        toast.success("purchase order created successfully...");
+        toast.success('purchase order created successfully...')
       }
       setFormData({
-        date: "",
-        orderNo: "",
-        purchaseType: "",
-        supplierType: "",
-        supplierName: "",
-        placeOfSupply: "",
-        paymentTerm: "",
-        dueDate: "",
-        receiptDocNo: "",
-        dispatchedThrough: "",
-        destination: "",
-        carrierNameAgent: "",
-        billOfLading: "",
-        motorVehicleNo: "",
-        billingAddress: "",
-        reverseCharge: "",
-        gstType: "",
+        date: '',
+        orderNo: '',
+        purchaseType: '',
+        supplierType: '',
+        supplierName: '',
+        placeOfSupply: '',
+        paymentTerm: '',
+        dueDate: '',
+        receiptDocNo: '',
+        dispatchedThrough: '',
+        destination: '',
+        carrierNameAgent: '',
+        billOfLading: '',
+        motorVehicleNo: '',
+        billingAddress: '',
+        reverseCharge: '',
+        gstType: '',
         rows: [
           {
-            itemCode: "",
-            productName: "",
-            hsnCode: "",
+            itemCode: '',
+            productName: '',
+            hsnCode: '',
             qty: null,
             uom: null,
             mrp: null,
@@ -613,46 +605,46 @@ import { useAuth } from "../../../context/Auth.js";
             totalValue: null,
           },
         ],
-        narration: "",
-        otherChargesDescriptions: "",
-        grossAmount: "",
-        GstAmount: "",
-        otherCharges: "",
-        netAmount: "",
-      });
+        narration: '',
+        otherChargesDescriptions: '',
+        grossAmount: '',
+        GstAmount: '',
+        otherCharges: '',
+        netAmount: '',
+      })
 
       // Clear other independent states
-      setDate("");
-      setorderNo("");
+      setDate('')
+      setorderNo('')
 
-      setpurchaseType("GST Invoice");
-      setsupplierType("Retailer");
-      setPlaceOfSupply("");
-      setDueDate("");
+      setpurchaseType('GST Invoice')
+      setsupplierType('Retailer')
+      setPlaceOfSupply('')
+      setDueDate('')
       setTransportDetails({
-        receiptDocNo: "",
-        dispatchedThrough: "",
-        destination: "",
-        carrierNameAgent: "",
-        billOfLading: "",
-        motorVehicleNo: "",
-      });
-      setBillingAddress("");
-      setReverseCharge("No");
-      setGstType("CGST/SGST");
-      setRows([]);
-      setPaymentTerm(0);
-      setOtherCharges(0);
-      setOtherChargesDescriptions("");
+        receiptDocNo: '',
+        dispatchedThrough: '',
+        destination: '',
+        carrierNameAgent: '',
+        billOfLading: '',
+        motorVehicleNo: '',
+      })
+      setBillingAddress('')
+      setReverseCharge('No')
+      setGstType('CGST/SGST')
+      setRows([])
+      setPaymentTerm(0)
+      setOtherCharges(0)
+      setOtherChargesDescriptions('')
 
-      setSelectedsupplier("");
+      setSelectedsupplier('')
     } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Failed to create sales Purchase. Please try again.");
+      console.error('Error submitting form:', error)
+      toast.error('Failed to create sales Purchase. Please try again.')
     }
-  };
+  }
   const handlePrintOnly = () => {
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open('', '_blank')
 
     const updatedFormData = {
       ...formData,
@@ -664,11 +656,11 @@ import { useAuth } from "../../../context/Auth.js";
         units: row.units,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
-          customerType === "Wholesaler"
+          customerType === 'Wholesaler'
             ? row.wholesalerDiscount
             : row.retailDiscount,
         discountRS:
-          customerType === "Wholesaler"
+          customerType === 'Wholesaler'
             ? row.wholeselerDiscountRS
             : row.retailDiscountRS,
         taxable: row.taxableValue,
@@ -689,85 +681,85 @@ import { useAuth } from "../../../context/Auth.js";
       reverseCharge,
       gstType,
       netAmount: netAmount,
-    };
+    }
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {
       const ones = [
-        "",
-        "One",
-        "Two",
-        "Three",
-        "Four",
-        "Five",
-        "Six",
-        "Seven",
-        "Eight",
-        "Nine",
-        "Ten",
-        "Eleven",
-        "Twelve",
-        "Thirteen",
-        "Fourteen",
-        "Fifteen",
-        "Sixteen",
-        "Seventeen",
-        "Eighteen",
-        "Nineteen",
-      ];
+        '',
+        'One',
+        'Two',
+        'Three',
+        'Four',
+        'Five',
+        'Six',
+        'Seven',
+        'Eight',
+        'Nine',
+        'Ten',
+        'Eleven',
+        'Twelve',
+        'Thirteen',
+        'Fourteen',
+        'Fifteen',
+        'Sixteen',
+        'Seventeen',
+        'Eighteen',
+        'Nineteen',
+      ]
       const tens = [
-        "",
-        "",
-        "Twenty",
-        "Thirty",
-        "Forty",
-        "Fifty",
-        "Sixty",
-        "Seventy",
-        "Eighty",
-        "Ninety",
-      ];
+        '',
+        '',
+        'Twenty',
+        'Thirty',
+        'Forty',
+        'Fifty',
+        'Sixty',
+        'Seventy',
+        'Eighty',
+        'Ninety',
+      ]
 
       function convertToWords(n) {
-        if (n < 20) return ones[n];
+        if (n < 20) return ones[n]
         if (n < 100)
-          return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+          return tens[Math.floor(n / 10)] + (n % 10 ? ' ' + ones[n % 10] : '')
         if (n < 1000)
           return (
             ones[Math.floor(n / 100)] +
-            " Hundred" +
-            (n % 100 ? " " + convertToWords(n % 100) : "")
-          );
+            ' Hundred' +
+            (n % 100 ? ' ' + convertToWords(n % 100) : '')
+          )
         if (n < 100000)
           return (
             convertToWords(Math.floor(n / 1000)) +
-            " Thousand" +
-            (n % 1000 ? " " + convertToWords(n % 1000) : "")
-          );
-        return "";
+            ' Thousand' +
+            (n % 1000 ? ' ' + convertToWords(n % 1000) : '')
+          )
+        return ''
       }
 
       // Split the number into integer and decimal parts
-      const parts = num.toString().split(".");
+      const parts = num.toString().split('.')
 
-      const integerPart = parseInt(parts[0], 10);
-      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0;
+      const integerPart = parseInt(parts[0], 10)
+      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0
 
-      let words = convertToWords(integerPart) + " Rupees";
+      let words = convertToWords(integerPart) + ' Rupees'
 
       // Handle the decimal part (paise)
       if (decimalPart > 0) {
-        words += " and " + convertToWords(decimalPart) + " Paise";
+        words += ' and ' + convertToWords(decimalPart) + ' Paise'
       }
 
-      return words;
+      return words
     }
     const gstHeaders =
-      updatedFormData.gstType === "CGST/SGST"
+      updatedFormData.gstType === 'CGST/SGST'
         ? `<th>CGST</th><th>SGST</th>`
-        : `<th>IGST</th>`;
-    const logoBase64 = "https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png";
+        : `<th>IGST</th>`
+    const logoBase64 = 'https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png'
     const gstRows =
-      updatedFormData.gstType === "CGST/SGST"
+      updatedFormData.gstType === 'CGST/SGST'
         ? updatedFormData.rows
             .map(
               (row, index) => `
@@ -784,9 +776,9 @@ import { useAuth } from "../../../context/Auth.js";
             <td>${row.cgstpercent}% ${row.cgstRS}</td>
             <td >${row.sgstpercent}% ${row.sgstRS}</td>
             <td>${row.totalValue}</td>
-          </tr>`
+          </tr>`,
             )
-            .join("")
+            .join('')
         : updatedFormData.rows
             .map(
               (row, index) => `
@@ -802,9 +794,9 @@ import { useAuth } from "../../../context/Auth.js";
             <td>${row.taxable}</td>
             <td>${row.igstpercent}% ${row.igstRS}</td>
             <td>${row.totalValue}</td>
-          </tr>`
+          </tr>`,
             )
-            .join("");
+            .join('')
 
     printWindow.document.write(`
       <html>
@@ -849,10 +841,10 @@ import { useAuth } from "../../../context/Auth.js";
            <div class="header">
           
             <div class="business-name"> ${
-              company?.businessName || "---------"
+              company?.businessName || '---------'
             } </div>
-              <div> ${company?.address || "---------"} </div>
-              <div>GSTIN: ${company?.gstIn || "---------"}</div>
+              <div> ${company?.address || '---------'} </div>
+              <div>GSTIN: ${company?.gstIn || '---------'}</div>
             </div>
   
         
@@ -953,18 +945,18 @@ import { useAuth } from "../../../context/Auth.js";
                   <div class="banking-details">
                     <div class="section-header">Banking Details</div>
                       <div class="details">Bank Name: ${
-                        company?.bank_name || "-"
+                        company?.bank_name || '-'
                       }</div>
                     <div class="details">IFSC Code: ${
-                      company?.ifce_code || "-"
+                      company?.ifce_code || '-'
                     }</div>
                     <div class="details">Account No:${
-                      company?.accountNumber || "-"
+                      company?.accountNumber || '-'
                     }</div>
                     <div class="details">Account Holder Name: ${
-                      company?.account_holder_name || "-"
+                      company?.account_holder_name || '-'
                     }</div>
-                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                    <div class="details">UPI ID: ${company?.upiId || '-'}</div>
                 </div>
                   </div>
                 </td>
@@ -985,7 +977,7 @@ import { useAuth } from "../../../context/Auth.js";
                       updatedFormData.netAmount
                     }</div>
                     <div class="details">Amount in Words:${numberToWords(
-                      updatedFormData.netAmount
+                      updatedFormData.netAmount,
                     )}</div>
                   </div>
                 </td>
@@ -1005,28 +997,28 @@ import { useAuth } from "../../../context/Auth.js";
           </div>
         </body>
       </html>
-    `);
+    `)
 
-    printWindow.document.close();
-    printWindow.focus();
+    printWindow.document.close()
+    printWindow.focus()
 
     printWindow.onafterprint = () => {
-      printWindow.close(); // Close the print window after printing
+      printWindow.close() // Close the print window after printing
 
       // Create a fake event object (optional)
       const dummyEvent = {
         preventDefault: () => {},
-      };
+      }
 
-      handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
-    };
+      handleSubmit(dummyEvent) // Call handleSubmit with the dummy event
+    }
 
     // Trigger the print dialog
-    printWindow.print();
-  };
+    printWindow.print()
+  }
 
   const handlePrintOnlyWithoutGST = () => {
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open('', '_blank')
 
     const updatedFormData = {
       ...formData,
@@ -1038,11 +1030,11 @@ import { useAuth } from "../../../context/Auth.js";
         units: row.units,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
-          customerType === "Wholesaler"
+          customerType === 'Wholesaler'
             ? row.wholesalerDiscount
             : row.retailDiscount,
         discountRS:
-          customerType === "Wholesaler"
+          customerType === 'Wholesaler'
             ? row.wholeselerDiscountRS
             : row.retailDiscountRS,
         taxable: row.taxableValue,
@@ -1055,76 +1047,76 @@ import { useAuth } from "../../../context/Auth.js";
       customerType,
       reverseCharge,
       netAmount: netAmount.toFixed(2),
-    };
+    }
     function numberToWords(num) {
       const ones = [
-        "",
-        "One",
-        "Two",
-        "Three",
-        "Four",
-        "Five",
-        "Six",
-        "Seven",
-        "Eight",
-        "Nine",
-        "Ten",
-        "Eleven",
-        "Twelve",
-        "Thirteen",
-        "Fourteen",
-        "Fifteen",
-        "Sixteen",
-        "Seventeen",
-        "Eighteen",
-        "Nineteen",
-      ];
+        '',
+        'One',
+        'Two',
+        'Three',
+        'Four',
+        'Five',
+        'Six',
+        'Seven',
+        'Eight',
+        'Nine',
+        'Ten',
+        'Eleven',
+        'Twelve',
+        'Thirteen',
+        'Fourteen',
+        'Fifteen',
+        'Sixteen',
+        'Seventeen',
+        'Eighteen',
+        'Nineteen',
+      ]
       const tens = [
-        "",
-        "",
-        "Twenty",
-        "Thirty",
-        "Forty",
-        "Fifty",
-        "Sixty",
-        "Seventy",
-        "Eighty",
-        "Ninety",
-      ];
+        '',
+        '',
+        'Twenty',
+        'Thirty',
+        'Forty',
+        'Fifty',
+        'Sixty',
+        'Seventy',
+        'Eighty',
+        'Ninety',
+      ]
 
       function convertToWords(n) {
-        if (n < 20) return ones[n];
+        if (n < 20) return ones[n]
         if (n < 100)
-          return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+          return tens[Math.floor(n / 10)] + (n % 10 ? ' ' + ones[n % 10] : '')
         if (n < 1000)
           return (
             ones[Math.floor(n / 100)] +
-            " Hundred" +
-            (n % 100 ? " " + convertToWords(n % 100) : "")
-          );
+            ' Hundred' +
+            (n % 100 ? ' ' + convertToWords(n % 100) : '')
+          )
         if (n < 100000)
           return (
             convertToWords(Math.floor(n / 1000)) +
-            " Thousand" +
-            (n % 1000 ? " " + convertToWords(n % 1000) : "")
-          );
-        return "";
+            ' Thousand' +
+            (n % 1000 ? ' ' + convertToWords(n % 1000) : '')
+          )
+        return ''
       }
 
       // Split the number into integer and decimal parts
-      const parts = num.toString().split(".");
+      const parts = num.toString().split('.')
 
-      const integerPart = parseInt(parts[0], 10);
-      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0;
+      const integerPart = parseInt(parts[0], 10)
+      const decimalPart = parts[1] ? parseInt(parts[1], 10) : 0
 
-      let words = convertToWords(integerPart) + " Rupees";
+      let words = convertToWords(integerPart) + ' Rupees'
 
       // Handle the decimal part (paise)
       if (decimalPart > 0) {
-        words += " and " + convertToWords(decimalPart) + " Paise";
+        words += ' and ' + convertToWords(decimalPart) + ' Paise'
       }
 
-      return words;
+      return words
     }
 
     const gstRows = updatedFormData.rows
@@ -1141,9 +1133,9 @@ import { useAuth } from "../../../context/Auth.js";
          
           <td>${row.taxable}</td>
           <td>${row.totalValue}</td> <!-- Removed GST related fields -->
-        </tr>`
+        </tr>`,
       )
-      .join("");
+      .join('')
 
     printWindow.document.write(`
       <html>
@@ -1190,10 +1182,10 @@ import { useAuth } from "../../../context/Auth.js";
            <div class="header">
           
             <div class="business-name"> ${
-              company?.businessName || "---------"
+              company?.businessName || '---------'
             } </div>
-            <div> ${company?.address || "---------"} </div>
-            <div>GSTIN: ${company?.gstIn || "---------"}</div>
+            <div> ${company?.address || '---------'} </div>
+            <div>GSTIN: ${company?.gstIn || '---------'}</div>
           </div>
   
           <table class="table">
@@ -1287,18 +1279,18 @@ import { useAuth } from "../../../context/Auth.js";
                 <div class="banking-details">
                   <div class="section-header">Banking Details</div>
                 <div class="details">Bank Name: ${
-                  company?.bank_name || "-"
+                  company?.bank_name || '-'
                 }</div>
                     <div class="details">IFSC Code: ${
-                      company?.ifce_code || "-"
+                      company?.ifce_code || '-'
                     }</div>
                     <div class="details">Account No:${
-                      company?.accountNumber || "-"
+                      company?.accountNumber || '-'
                     }</div>
                     <div class="details">Account Holder Name: ${
-                      company?.account_holder_name || "-"
+                      company?.account_holder_name || '-'
                     }</div>
-                    <div class="details">UPI ID: ${company?.upiId || "-"}</div>
+                    <div class="details">UPI ID: ${company?.upiId || '-'}</div>
                 </div>
                 </div>
               </td>
@@ -1316,7 +1308,7 @@ import { useAuth } from "../../../context/Auth.js";
                     updatedFormData.netAmount
                   }</div>
                   <div class="details">Amount in Words: ${numberToWords(
-                    updatedFormData.netAmount
+                    updatedFormData.netAmount,
                   )}</div>
                 </div>
               </td>
@@ -1334,31 +1326,31 @@ import { useAuth } from "../../../context/Auth.js";
           </div>
         </body>
       </html>
-    `);
+    `)
 
-    printWindow.document.close();
-    printWindow.focus();
+    printWindow.document.close()
+    printWindow.focus()
 
     // Set the onafterprint event before calling print()
     printWindow.onafterprint = () => {
-      printWindow.close(); // Close the print window after printing
+      printWindow.close() // Close the print window after printing
 
       // Create a fake event object (optional)
       const dummyEvent = {
         preventDefault: () => {},
-      };
+      }
 
-      handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
-    };
+      handleSubmit(dummyEvent) // Call handleSubmit with the dummy event
+    }
 
     // Trigger the print dialog
-    printWindow.print();
-  };
+    printWindow.print()
+  }
 
   return (
     <>
       <div
-        style={{ backgroundColor: "##FFFFFF" }}
+        style={{ backgroundColor: '##FFFFFF' }}
         className="p-4 responsive-container"
       >
         {/* Top Section */}
@@ -1385,8 +1377,8 @@ import { useAuth } from "../../../context/Auth.js";
                 name="date"
                 value={formData.date}
                 onChange={(e) => {
-                  setDate(e.target.value);
-                  handleChange(e);
+                  setDate(e.target.value)
+                  handleChange(e)
                 }}
                 className="border p-2 w-full   rounded"
               />
@@ -1421,10 +1413,10 @@ import { useAuth } from "../../../context/Auth.js";
               className="w-full p-2 border border-gray-300 rounded"
               value={selectedsupplier}
               onChange={(e) => {
-                if (e.target.value === "add-new-Supplier") {
-                  window.location.href = "/admin/CreateSupplier";
+                if (e.target.value === 'add-new-Supplier') {
+                  window.location.href = '/admin/CreateSupplier'
                 } else {
-                  handlesupplierChange(e);
+                  handlesupplierChange(e)
                 }
               }}
             >
@@ -1499,8 +1491,8 @@ import { useAuth } from "../../../context/Auth.js";
                     value={transportDetails.receiptDocNo}
                     onChange={(e) =>
                       handleTransportDetailChange(
-                        "receiptDocNo",
-                        e.target.value
+                        'receiptDocNo',
+                        e.target.value,
                       )
                     }
                     className="border p-2 w-full  rounded"
@@ -1513,8 +1505,8 @@ import { useAuth } from "../../../context/Auth.js";
                     value={transportDetails.dispatchedThrough}
                     onChange={(e) =>
                       handleTransportDetailChange(
-                        "dispatchedThrough",
-                        e.target.value
+                        'dispatchedThrough',
+                        e.target.value,
                       )
                     }
                     className="border p-2 w-full  rounded"
@@ -1526,7 +1518,7 @@ import { useAuth } from "../../../context/Auth.js";
                     type="text"
                     value={transportDetails.destination}
                     onChange={(e) =>
-                      handleTransportDetailChange("destination", e.target.value)
+                      handleTransportDetailChange('destination', e.target.value)
                     }
                     className="border p-2 w-full  rounded"
                   />
@@ -1538,8 +1530,8 @@ import { useAuth } from "../../../context/Auth.js";
                     value={transportDetails.carrierNameAgent}
                     onChange={(e) =>
                       handleTransportDetailChange(
-                        "carrierNameAgent",
-                        e.target.value
+                        'carrierNameAgent',
+                        e.target.value,
                       )
                     }
                     className="border p-2 w-full  rounded"
@@ -1552,8 +1544,8 @@ import { useAuth } from "../../../context/Auth.js";
                     value={transportDetails.billOfLading}
                     onChange={(e) =>
                       handleTransportDetailChange(
-                        "billOfLading",
-                        e.target.value
+                        'billOfLading',
+                        e.target.value,
                       )
                     }
                     className="border p-2 w-full  rounded"
@@ -1566,8 +1558,8 @@ import { useAuth } from "../../../context/Auth.js";
                     value={transportDetails.motorVehicleNo}
                     onChange={(e) =>
                       handleTransportDetailChange(
-                        "motorVehicleNo",
-                        e.target.value
+                        'motorVehicleNo',
+                        e.target.value,
                       )
                     }
                     className="border p-2 w-full  rounded"
@@ -1650,28 +1642,28 @@ import { useAuth } from "../../../context/Auth.js";
                   </div>
                 </th> */}
 
-                {purchaseType === "GST Invoice" && (
+                {purchaseType === 'GST Invoice' && (
                   <>
                     <th className="border p-2">Taxable Value</th>
-                    {gstType === "CGST/SGST" && (
+                    {gstType === 'CGST/SGST' && (
                       <>
                         <th className="border p-2">
-                          CGST{" "}
+                          CGST{' '}
                           <div className="flex justify-between">
                             <span className="">%</span> <span>RS</span>
                           </div>
                         </th>
                         <th className="border p-2">
-                          SGST{" "}
+                          SGST{' '}
                           <div className="flex justify-between">
                             <span className="">%</span> <span>RS</span>
                           </div>
                         </th>
                       </>
                     )}
-                    {gstType === "IGST" && (
+                    {gstType === 'IGST' && (
                       <th className="border p-2">
-                        IGST{" "}
+                        IGST{' '}
                         <div className="flex justify-between">
                           <span className="">%</span> <span>RS</span>
                         </div>
@@ -1709,11 +1701,11 @@ import { useAuth } from "../../../context/Auth.js";
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: "120px",
-                          maxWidth: "300px",
-                          fontSize: "14px",
-                          minHeight: "34px",
-                          height: "34px",
+                          minWidth: '120px',
+                          maxWidth: '300px',
+                          fontSize: '14px',
+                          minHeight: '34px',
+                          height: '34px',
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -1745,11 +1737,11 @@ import { useAuth } from "../../../context/Auth.js";
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: "200px",
-                          maxWidth: "500px",
-                          fontSize: "14px",
-                          minHeight: "34px",
-                          height: "34px",
+                          minWidth: '200px',
+                          maxWidth: '500px',
+                          fontSize: '14px',
+                          minHeight: '34px',
+                          height: '34px',
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -1763,7 +1755,7 @@ import { useAuth } from "../../../context/Auth.js";
                       type="text"
                       value={row.hsnCode}
                       onChange={(e) =>
-                        handleRowChange(index, "hsnCode", e.target.value)
+                        handleRowChange(index, 'hsnCode', e.target.value)
                       }
                       className="w-full"
                     />
@@ -1771,7 +1763,7 @@ import { useAuth } from "../../../context/Auth.js";
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={rows[index]?.qty || ""}
+                      value={rows[index]?.qty || ''}
                       onChange={(e) => handlQtyChange(index, e.target.value)}
                       className="w-full"
                     />
@@ -1782,7 +1774,7 @@ import { useAuth } from "../../../context/Auth.js";
                       type="text"
                       value={row.units}
                       onChange={(e) =>
-                        handleRowChange(index, "units", e.target.value)
+                        handleRowChange(index, 'units', e.target.value)
                       }
                       className="w-full"
                     />
@@ -1794,14 +1786,14 @@ import { useAuth } from "../../../context/Auth.js";
                       onChange={(e) =>
                         handleRowChange(
                           index,
-                          "maxmimunRetailPrice",
-                          e.target.value
+                          'maxmimunRetailPrice',
+                          e.target.value,
                         )
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px", // Set a small minimum width to ensure visibility
-                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        minWidth: '70px', // Set a small minimum width to ensure visibility
+                        flexBasis: '70px', // Allow it to shrink, but still have a base width
                         flexShrink: 1, // Allow it to shrink on mobile
                       }}
                     />
@@ -1836,9 +1828,9 @@ import { useAuth } from "../../../context/Auth.js";
                       />
                     </div>
                   </td> */}
-                  {purchaseType === "GST Invoice" && (
+                  {purchaseType === 'GST Invoice' && (
                     <>
-                      {gstType === "CGST/SGST" && (
+                      {gstType === 'CGST/SGST' && (
                         <>
                           <td className="border p-1">
                             <input
@@ -1847,14 +1839,14 @@ import { useAuth } from "../../../context/Auth.js";
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  "taxableValue",
-                                  e.target.value
+                                  'taxableValue',
+                                  e.target.value,
                                 )
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px",
-                                flexBasis: "70px",
+                                minWidth: '70px',
+                                flexBasis: '70px',
                                 flexShrink: 1,
                               }}
                             />
@@ -1867,14 +1859,14 @@ import { useAuth } from "../../../context/Auth.js";
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "cgstpercent",
-                                    e.target.value
+                                    'cgstpercent',
+                                    e.target.value,
                                   )
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "20px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  minWidth: '20px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '20px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1884,14 +1876,14 @@ import { useAuth } from "../../../context/Auth.js";
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "cgstRS",
-                                    e.target.value
+                                    'cgstRS',
+                                    e.target.value,
                                   )
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: '60px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '60px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1905,14 +1897,14 @@ import { useAuth } from "../../../context/Auth.js";
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "sgstpercent",
-                                    e.target.value
+                                    'sgstpercent',
+                                    e.target.value,
                                   )
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "20px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  minWidth: '20px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '20px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1922,14 +1914,14 @@ import { useAuth } from "../../../context/Auth.js";
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "sgstRS",
-                                    e.target.value
+                                    'sgstRS',
+                                    e.target.value,
                                   )
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: '60px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '60px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1937,7 +1929,7 @@ import { useAuth } from "../../../context/Auth.js";
                           </td>
                         </>
                       )}
-                      {gstType === "IGST" && (
+                      {gstType === 'IGST' && (
                         <>
                           <td className="border p-1">
                             <input
@@ -1946,8 +1938,8 @@ import { useAuth } from "../../../context/Auth.js";
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  "taxableValue",
-                                  e.target.value
+                                  'taxableValue',
+                                  e.target.value,
                                 )
                               }
                               className="w-full"
@@ -1961,14 +1953,14 @@ import { useAuth } from "../../../context/Auth.js";
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "igstpercent",
-                                    e.target.value
+                                    'igstpercent',
+                                    e.target.value,
                                   )
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "20px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "20px", // Allow it to shrink, but still have a base width
+                                  minWidth: '20px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '20px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1978,14 +1970,14 @@ import { useAuth } from "../../../context/Auth.js";
                                 onChange={(e) =>
                                   handleRowChange(
                                     index,
-                                    "igstRS",
-                                    e.target.value
+                                    'igstRS',
+                                    e.target.value,
                                   )
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: '60px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '60px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2000,12 +1992,12 @@ import { useAuth } from "../../../context/Auth.js";
                       type="text"
                       value={row.totalvalue}
                       onChange={(e) =>
-                        handleRowChange(index, "totalValue", e.target.value)
+                        handleRowChange(index, 'totalValue', e.target.value)
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
+                        minWidth: '70px',
+                        flexBasis: '70px',
                         flexShrink: 1,
                       }}
                     />
@@ -2143,7 +2135,7 @@ import { useAuth } from "../../../context/Auth.js";
                 setFormData((prevData) => ({
                   ...prevData,
                   narration: e.target.value,
-                }));
+                }))
               }}
               className="bg-white text-black border p-1 w-full  rounded"
             />
@@ -2159,7 +2151,7 @@ import { useAuth } from "../../../context/Auth.js";
                 className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
-            {purchaseType === "GST Invoice" && (
+            {purchaseType === 'GST Invoice' && (
               <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
                 <label className="font-bold lg:w-1/2 text-nowrap">
                   GST Amount
@@ -2174,7 +2166,7 @@ import { useAuth } from "../../../context/Auth.js";
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-              {otherChargesDescriptions || "Other Charge"}  
+                {otherChargesDescriptions || 'Other Charge'}
               </label>
               <input
                 value={otherCharges.toFixed(2)}
@@ -2205,7 +2197,7 @@ import { useAuth } from "../../../context/Auth.js";
           >
             Save
           </button>
-          {purchaseType === "GST Invoice" && (
+          {purchaseType === 'GST Invoice' && (
             <button
               onClick={handlePrintOnly}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
@@ -2213,7 +2205,7 @@ import { useAuth } from "../../../context/Auth.js";
               Save and Print
             </button>
           )}
-          {purchaseType !== "GST Invoice" && (
+          {purchaseType !== 'GST Invoice' && (
             <button
               onClick={handlePrintOnlyWithoutGST}
               className="bg-blue-700 pl-4 pr-4 hover:bg-sky-700 text-black p-2"
@@ -2225,7 +2217,7 @@ import { useAuth } from "../../../context/Auth.js";
       </div>
       <ToastContainer />
     </>
-  );
-};
+  )
+}
 
-export default CreatePurchaseOrder;
+export default CreatePurchaseOrder

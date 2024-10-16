@@ -1,158 +1,177 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { FaTimes } from "react-icons/fa";
-import Select from "react-select";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { FaTimes } from 'react-icons/fa'
+import Select from 'react-select'
+import { useAuth } from '../../../context/Auth.js'
 
-const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
-  const [date, setDate] = useState("");
-  const [orderNo, setorderNo] = useState("");
-  const [purchaseType, setpurchaseType] = useState("");
-  const [customerType, setCustomerType] = useState("");
-  const [supplierName, setsupplierName] = useState("");
-  const [placeOfSupply, setPlaceOfSupply] = useState("");
-  const [paymentTerm, setPaymentTerm] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [receiptDocNo, setReceiptDocNo] = useState("");
-  const [dispatchedThrough, setDispatchedThrough] = useState("");
-  const [destination, setDestination] = useState("");
-  const [carrierNameAgent, setCarrierNameAgent] = useState("");
-  const [billOfLading, setBillOfLading] = useState("");
-  const [motorVehicleNo, setMotorVehicleNo] = useState("");
-  const [billingAddress, setBillingAddress] = useState("");
-  const [reverseCharge, setReverseCharge] = useState("");
-  const [gstType, setGstType] = useState("");
-  const [rows, setRows] = useState([]);
-  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
-  const [otherCharges, setOtherCharges] = useState("");
-  const [narration, setNarration] = useState("");
-  const [grossAmount, setGrossAmount] = useState("");
-  const [GstAmount, setGstAmount] = useState("");
-  const [netAmount, setNetAmount] = useState("");
+const EditPurchaseOrder = ({ closeModal, estimate }) => {
+  const [documentPath, setdocumentPath] = useState(null)
+  const [date, setDate] = useState('')
+  const [orderNo, setorderNo] = useState('')
+  const [salesType, setSalesType] = useState('')
+  const [customerType, setCustomerType] = useState('')
+  const [SupplierName, setSupplierName] = useState('')
+  const [placeOfSupply, setPlaceOfSupply] = useState('')
+  const [paymentTerm, setPaymentTerm] = useState('')
+  const [dueDate, setDueDate] = useState('')
+  const [receiptDocNo, setReceiptDocNo] = useState('')
+  const [dispatchedThrough, setDispatchedThrough] = useState('')
+  const [destination, setDestination] = useState('')
+  const [carrierNameAgent, setCarrierNameAgent] = useState('')
+  const [billOfLading, setBillOfLading] = useState('')
+  const [motorVehicleNo, setMotorVehicleNo] = useState('')
+  const [billingAddress, setBillingAddress] = useState('')
+  const [reverseCharge, setReverseCharge] = useState('')
+  const [gstType, setGstType] = useState()
+  const [rows, setRows] = useState([])
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState('')
+  const [otherCharges, setOtherCharges] = useState('')
+  const [narration, setNarration] = useState('')
+  const [grossAmount, setGrossAmount] = useState('')
+  const [GstAmount, setGstAmount] = useState('')
+  const [netAmount, setNetAmount] = useState('')
+  const [qty, setQty] = useState(0)
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
+  const [purchaseType, setpurchaseType] = useState('')
+  const [gstRatev, setgstRatev] = useState()
+
+  const [viewModal, setViewModal] = useState(false)
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
 
   useEffect(() => {
     if (estimate) {
-      setDate(estimate.date || "");
-      setorderNo(estimate.orderNo || "");
-      setpurchaseType(estimate.purchaseType || "");
-      setCustomerType(estimate.customerType || "");
-      setsupplierName(estimate.supplierName || "");
-      setPlaceOfSupply(estimate.placeOfSupply || "");
-      setPaymentTerm(estimate.paymentTerm || "");
-      setDueDate(estimate.dueDate || "");
-      setReceiptDocNo(estimate.receiptDocNo || "");
-      setDispatchedThrough(estimate.dispatchedThrough || "");
-      setDestination(estimate.destination || "");
-      setCarrierNameAgent(estimate.carrierNameAgent || "");
-      setBillOfLading(estimate.billOfLading || "");
-      setMotorVehicleNo(estimate.motorVehicleNo || "");
-      setBillingAddress(estimate.billingAddress || "");
-      setReverseCharge(estimate.reverseCharge || "");
-      setGstType(estimate.gstType || "");
-      setRows(estimate.rows || []);
-      setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
-      setOtherCharges(estimate.otherCharges || "");
-      setNarration(estimate.narration || "");
-      setGrossAmount(estimate.grossAmount || "");
-      setGstAmount(estimate.GstAmount || "");
-      setNetAmount(estimate.netAmount || "");
+  
+      setpurchaseType(estimate.purchaseType)
+      setDate(estimate.date || '')
+      setorderNo(estimate.orderNo || '')
+      setSupplierName(estimate.supplierName || '')
+      setPlaceOfSupply(estimate.placeOfSupply || '')
+      setPaymentTerm(estimate.paymentTerm || '')
+      setDueDate(estimate.dueDate || '')
+
+      setReceiptDocNo(estimate.receiptDocNo || '')
+      setDispatchedThrough(estimate.dispatchedThrough || '')
+      setDestination(estimate.destination || '')
+      setCarrierNameAgent(estimate.carrierNameAgent || '')
+      setBillOfLading(estimate.billOfLading || '')
+      setMotorVehicleNo(estimate.motorVehicleNo || '')
+      setBillingAddress(estimate.billingAddress || '')
+      setReverseCharge(estimate.reverseCharge || '')
+      setGstType(estimate.gstType || '')
+      setRows(estimate.rows || [])
+      setOtherChargesDescriptions(estimate.otherChargesDescriptions || '')
+      setOtherCharges(estimate.otherCharges || '')
+      setNarration(estimate.narration || '')
+      setGrossAmount(estimate.grossAmount || '')
+      setGstAmount(estimate.GstAmount || '')
+      setNetAmount(estimate.netAmount || '')
+
+      const updatedRows = estimate.rows.map((row) => {
+        const { igstpercent, ...rest } = row
+        setgstRatev(igstpercent)
+      })
     }
-  }, [estimate, getSupplierName]);
+  }, [estimate])
+
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "otherCharges") {
-      setOtherCharges(value);
-      calculateTotalAmounts();
+    const { name, value } = e.target
+    if (name === 'otherCharges') {
+      setOtherCharges(value)
+      calculateTotalAmounts()
     }
     switch (name) {
-      // Handle transport details fields separately
-      case "receiptDocNo":
-        setReceiptDocNo(value);
-        break;
-      case "dispatchedThrough":
-        setDispatchedThrough(value);
-        break;
-      case "destination":
-        setDestination(value);
-        break;
-      case "carrierNameAgent":
-        setCarrierNameAgent(value);
-        break;
-      case "billOfLading":
-        setBillOfLading(value);
-        break;
-      case "motorVehicleNo":
-        setMotorVehicleNo(value);
-        break;
-      case "date":
-        setDate(value);
-        break;
-      case "orderNo":
-        setorderNo(value);
-        break;
-      case "purchaseType":
-        setpurchaseType(value);
-        break;
-      case "customerType":
-        setCustomerType(value);
-        break;
-      case "supplierName":
-        setsupplierName(value);
-        break;
-      case "placeOfSupply":
-        setPlaceOfSupply(value);
-        break;
-      case "paymentTerm":
-        setPaymentTerm(value);
-        break;
-      case "dueDate":
-        setDueDate(value);
-        break;
-      case "billingAddress":
-        setBillingAddress(value);
-        break;
-      case "reverseCharge":
-        setReverseCharge(value);
-        break;
-      case "gstType":
-        setGstType(value);
-        break;
-      case "otherChargesDescriptions":
-        setOtherChargesDescriptions(value);
-        break;
-      case "otherCharges":
-        setOtherCharges(value);
-        break;
-      case "narration":
-        setNarration(value);
-        break;
-      case "grossAmount":
-        setGrossAmount(value);
-        break;
-      case "GstAmount":
-        setGstAmount(value);
-        break;
-      case "netAmount":
-        setNetAmount(value);
-        break;
+      case 'receiptDocNo':
+        setReceiptDocNo(value)
+        break
+      case 'dispatchedThrough':
+        setDispatchedThrough(value)
+        break
+      case 'destination':
+        setDestination(value)
+        break
+      case 'carrierNameAgent':
+        setCarrierNameAgent(value)
+        break
+      case 'billOfLading':
+        setBillOfLading(value)
+        break
+      case 'motorVehicleNo':
+        setMotorVehicleNo(value)
+        break
+      case 'date':
+        setDate(value)
+        break
+      case 'orderNo':
+        setorderNo(value)
+        break
+      case 'salesType':
+        setSalesType(value)
+        break
+      case 'customerType':
+        setCustomerType(value)
+        break
+      case 'SupplierName':
+        setSupplierName(value)
+        break
+      case 'placeOfSupply':
+        setPlaceOfSupply(value)
+        break
+      case 'paymentTerm':
+        setPaymentTerm(value)
+        break
+      case 'dueDate':
+        setDueDate(value)
+        break
+      case 'billingAddress':
+        setBillingAddress(value)
+        break
+      case 'reverseCharge':
+        setReverseCharge(value)
+        break
+      case 'gstType':
+        setGstType(value)
+        break
+      case 'otherChargesDescriptions':
+        setOtherChargesDescriptions(value)
+        break
+      case 'otherCharges':
+        setOtherCharges(value)
+        break
+      case 'narration':
+        setNarration(value)
+        break
+      case 'grossAmount':
+        setGrossAmount(value)
+        break
+      case 'GstAmount':
+        setGstAmount(value)
+        break
+      case 'netAmount':
+        setNetAmount(value)
+        break
       default:
-        break;
+        break
     }
-  };
+  }
 
   const addRow = () => {
     setRows([
       ...rows,
       {
-        itemCode: "",
-        productName: "",
-        hsnCode: "",
+        itemCode: '',
+        productName: '',
+        hsnCode: '',
         qty: 0,
-        units: "",
+        units: '',
+        freeQty: '',
         mrp: 0,
+        unitCost: 0,
+        schemeMargin: 0,
         discountpercent: 0,
         discountRS: 0,
         taxable: 0,
@@ -164,282 +183,331 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
         igstRS: 0,
         totalValue: 0,
       },
-    ]);
-  };
+    ])
+    calculateTotalAmounts() // Recalculate amounts after adding a row
+  }
 
   const removeRow = (index) => {
     if (rows.length > 1) {
-      setRows(rows.filter((_, i) => i !== index));
+      setRows(rows.filter((_, i) => i !== index))
     }
-  };
+  }
 
-  const calculateTotalAmounts = () => {
-    let grossAmount = 0;
-    let totalGST = 0;
+  const handleRowChange = (rowIndex, field, value) => {
+    const updatedRows = [...rows]
+    const currentRow = updatedRows[rowIndex]
 
-    rows.forEach((row) => {
-      grossAmount += parseFloat(row.taxable) || 0;
-      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0);
-    });
+    // Update the relevant field in the current row
+    currentRow[field] = value
+    const qt = Number(currentRow.qty)
 
-    const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0);
+    // Extract quantity and unit cost from the current row
+    const unitCost = currentRow.unitCost || 0
 
-    setGrossAmount(grossAmount.toFixed(2));
-    setGstAmount(totalGST.toFixed(2));
-    setNetAmount(netAmount.toFixed(2));
-  };
+    // Calculate taxable value
+    const taxable = qt * unitCost
 
-  const calculateRowValues = (index) => {
-    const row = rows[index];
-    let discountAmount = 0;
+    // Calculate GST amounts based on the GST type
+    const gstRate = gstType ? parseFloat(gstType) : 0
+    const cgstRS = gstType === 'CGST/SGST' ? (taxable * (gstRate / 2)) / 100 : 0
+    const sgstRS = gstType === 'CGST/SGST' ? (taxable * (gstRate / 2)) / 100 : 0
+    const igstRS = gstType === 'IGST' ? (taxable * gstRate) / 100 : 0
 
-    if (row.discountpercent) {
-      discountAmount = (row.mrp * row.discountpercent) / 100;
-    } else if (row.discountRS) {
-      discountAmount = parseFloat(row.discountRS) || 0;
-    }
+    // Calculate total value
+    const totalValue = taxable + gstRate
 
-    const taxableValue = row.mrp - discountAmount;
-
-    let cgstRS = 0,
-      sgstRS = 0,
-      igstRS = 0;
-
-    if (purchaseType === "GST Invoice") {
-      if (gstType === "CGST/SGST") {
-        cgstRS = (taxableValue * row.cgstpercent) / 100;
-        sgstRS = (taxableValue * row.sgstpercent) / 100;
-      } else if (gstType === "IGST") {
-        igstRS = (taxableValue * row.igstpercent) / 100;
-      }
+    // Update the current row with calculated values
+    updatedRows[rowIndex] = {
+      ...currentRow,
+      taxable: taxable.toFixed(2),
+      cgstRS,
+      sgstRS,
+      igstRS,
+      totalValue: totalValue.toFixed(2),
     }
 
-    const totalValue = taxableValue + cgstRS + sgstRS + igstRS;
+    // Update the rows state and recalculate totals
+    setRows(updatedRows)
+    calculateTotalAmounts()
+  }
 
-    const updatedRow = {
-      ...row,
-      taxable: taxableValue.toFixed(2),
+  const handlQtyChange = (rowIndex, qty) => {
+    const updatedRows = [...rows]
+    const selectedRow = updatedRows[rowIndex]
+
+    // Update the quantity in the selected row
+    updatedRows[rowIndex] = {
+      ...selectedRow,
+      qty: qty,
+    }
+
+
+    // Recalculate taxable value, GST amounts, and total value based on the new quantity
+    const unitCost = parseFloat(selectedRow.unitCost) || 0
+    const taxable = qty * unitCost
+    const gstRate = gstType === 'CGST/SGST' ? (gstType) : 0
+   
+    const cgstRS = gstType === 'CGST/SGST' ? (taxable * (Number(gstRatev) / 2)) / 100 : 0
+    const sgstRS = gstType === 'CGST/SGST' ? (taxable * (Number(gstRatev) / 2)) / 100 : 0
+   
+    const igstRS = gstType === 'IGST' ? (Number(taxable) * Number(gstRatev)) / 100 : 0
+
+    const totalValue = taxable + cgstRS + sgstRS + igstRS
+    updatedRows[rowIndex] = {
+      ...updatedRows[rowIndex],
+      taxable: taxable.toFixed(2),
       cgstRS: cgstRS.toFixed(2),
       sgstRS: sgstRS.toFixed(2),
       igstRS: igstRS.toFixed(2),
       totalValue: totalValue.toFixed(2),
-    };
-
-    const updatedRows = [...rows];
-    updatedRows[index] = updatedRow;
-    setRows(updatedRows);
-  };
-
-  const handleRowChange = (index, field, value) => {
-    const updatedRows = [...rows];
-
-    // If we're handling discount changes, ensure we set the right type
-    if (field === "discountpercent") {
-      if (customerType === "Retailer") {
-        updatedRows[index].retailDiscount = value;
-      } else if (customerType === "Wholesaler") {
-        updatedRows[index].wholesalerDiscount = value;
-      }
-    } else if (field === "discountRS") {
-      if (customerType === "Retailer") {
-        updatedRows[index].retailDiscountRS = value;
-      } else if (customerType === "Wholesaler") {
-        updatedRows[index].wholesalerDiscountRS = value;
-      }
-    } else {
-      // For any other field, update it directly
-      updatedRows[index] = {
-        ...updatedRows[index],
-        [field]: value,
-      };
     }
 
-    setRows(updatedRows);
-    calculateRowValues(index);
-    calculateTotalAmounts();
-  };
+    setRows(updatedRows)
+    calculateTotalAmounts() // Recalculate totals after the update
+  }
+
+  const calculateTotalAmounts = () => {
+    let grossAmount = 0
+    let GstAmount = 0
+    let totalOtherCharges = parseFloat(otherCharges) || 0
+
+    rows.forEach((row) => {
+      const taxable = parseFloat(row.taxable) || 0
+      const cgstRS = parseFloat(row.cgstRS) || 0
+      const sgstRS = parseFloat(row.sgstRS) || 0
+      const igstRS = parseFloat(row.igstRS) || 0
+
+      grossAmount += taxable
+      GstAmount += gstType === 'CGST/SGST' 
+      ? (Number(cgstRS) + Number(sgstRS))  // If CGST/SGST, sum these
+      : Number(igstRS);  // Otherwise, use IGST
+    })
+
+    let netAmount
+    // Check if otherChargesDescriptions includes "discount" to decide calculation
+    if (otherChargesDescriptions.toLowerCase().includes('discount')) {
+      netAmount = grossAmount + GstAmount - totalOtherCharges
+    } else {
+      netAmount = grossAmount + GstAmount + totalOtherCharges
+    }
+    setGrossAmount(grossAmount.toFixed(2))
+    setGstAmount(GstAmount.toFixed(2))
+    setNetAmount(netAmount)
+  }
 
   useEffect(() => {
-    calculateTotalAmounts();
-  }, [rows, otherCharges]);
+    calculateTotalAmounts()
+  }, [rows, otherCharges, gstType])
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([])
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        // toast.error("Failed to fetch products. Please try again.");
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data)
+      } else {
+        console.error('Unexpected response structure:', response.data)
       }
-    };
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      // toast.error("Failed to fetch products. Please try again.");
+    }
+  }
 
-    fetchProducts();
-  }, []);
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id)
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin)
+    }
+    fetchProducts()
+  }, [auth, userId])
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
-      (product) => product.productName === selectedProductName
-    );
+      (product) => product.productName === selectedProductName,
+    )
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex);
+      updateRowValues(selectedProduct, rowIndex)
     }
-  };
+  }
 
   const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
     const selectedProduct = products.find(
-      (product) => product.itemCode === selectedItemCode
-    );
+      (product) => product.itemCode === selectedItemCode,
+    )
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex);
+      updateRowValues(selectedProduct, rowIndex)
     }
-  };
+  }
 
   const updateRowValues = (selectedProduct, rowIndex) => {
-    const updatedRows = [...rows]; // Clone the current rows
+    const updatedRows = [...rows] // Clone the current rows
 
-    // Calculate retail price and taxable value based on product details
-    const retailPrice =
-      selectedProduct.maxmimunRetailPrice -
-      (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100;
+    if (selectedProduct) {
+      const qty = selectedProduct.quantity || 0 // Set a default if quantity is not defined
+      const unitCost = selectedProduct.purchasePriceExGst || 0 // Use purchasePriceExGst for unit cost
 
-    const taxableValue = selectedProduct.salesTaxInclude
-      ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-        (100 + Number(selectedProduct.gstRate))
-      : retailPrice * selectedProduct.quantity;
+      const taxable = qty * unitCost // Calculate taxable amount based on the product
 
-    // Update all relevant fields in the selected row
-    updatedRows[rowIndex] = {
-      ...updatedRows[rowIndex], // Keep any existing row data
-      itemCode: selectedProduct.itemCode || "", // Map itemCode
-      productName: selectedProduct.productName || "", // Map productName
-      hsnCode: selectedProduct.hsnCode || "", // Map HSN code
-      units: selectedProduct.units || "", // Map units
-      mrp: selectedProduct.maxmimunRetailPrice
-        ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-        : "0.00", // Map maximum retail price
+      // Calculate GST amounts
+      const gstRate = selectedProduct.gstRate || 0 // Get GST rate from the selected product
+      const cgstRS = (taxable * (gstRate / 2)) / 100
+      const sgstRS = (taxable * (gstRate / 2)) / 100
+      const igstRS = (taxable * gstRate) / 100
+      updatedRows[rowIndex] = {
+        ...updatedRows[rowIndex],
+        itemCode: selectedProduct.itemCode,
+        hsnCode: selectedProduct.hsnCode,
+        units: selectedProduct.units,
+        productName: selectedProduct.productName,
+        mrp: parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2),
+        qty: qty,
+        unitCost: unitCost, // Set the unit cost from the product
+        taxable: taxable.toFixed(2), // Set taxable amount
+        cgstpercent: gstRate / 2,
+        sgstpercent: gstRate / 2,
+        igstpercent: gstRate,
+        cgstRS,
+        sgstRS,
+        igstRS,
+        totalValue: taxable + (taxable * gstRate) / 100,
+      }
 
-      qty: selectedProduct.quantity || 0, // Map quantity
-      wholesalerDiscount: selectedProduct.wholesalerDiscount || 0, // Map wholesaler discount
-      wholesalerDiscountRS: (
-        (selectedProduct.maxmimunRetailPrice *
-          selectedProduct.wholesalerDiscount) /
-        100
-      ).toFixed(2), // Calculate wholesaler discount in ₹
-      retailDiscount: selectedProduct.retailDiscount || 0, // Map retail discount
-      retailDiscountRS: (
-        (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100
-      ).toFixed(2), // Calculate retail discount in ₹
-      taxable: taxableValue.toFixed(2), // Map taxable value
-
-      // GST rates
-      cgstpercent: selectedProduct.gstRate / 2 || 0,
-      sgstpercent: selectedProduct.gstRate / 2 || 0,
-      igstpercent: selectedProduct.gstRate || 0,
-      // GST amounts
-      cgstRS: ((taxableValue * selectedProduct.gstRate) / 2 / 100).toFixed(2),
-      sgstRS: ((taxableValue * selectedProduct.gstRate) / 2 / 100).toFixed(2),
-      igstRS: ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2),
-
-      // Total value (taxable value + GST)
-      totalValue: (
-        taxableValue +
-        (taxableValue * selectedProduct.gstRate) / 100
-      ).toFixed(2),
-    };
-
-    // Set updated rows back to the state
-    setRows(updatedRows);
-
-    // Recalculate total amounts after updating the row
-    calculateTotalAmounts();
-  };
+      setRows(updatedRows) // Update state
+      calculateTotalAmounts() // Recalculate totals after updating
+    }
+  }
 
   const handleUpdate = async () => {
     try {
-      const updatedEstimate = {
+      const submissionData = new FormData()
+
+      // Append non-file form data to formData
+      const transportDetails = estimate.transportDetails || {}
+
+      // Append non-file form data to formData
+      const fields = {
         date,
-        orderNo,
-        purchaseType,
+        orderNo: orderNo, // Fix: Correct casing
         customerType,
-        supplierName,
+        supplierName: SupplierName, // Fix: Correct casing
         placeOfSupply,
         paymentTerm,
         dueDate,
-        receiptDocNo,
-        dispatchedThrough,
-        destination,
-        carrierNameAgent,
-        billOfLading,
-        motorVehicleNo,
+        receiptDocNo: transportDetails.receiptDocNo || '',
+        dispatchedThrough: transportDetails.dispatchedThrough || '',
+        destination: transportDetails.destination || '',
+        carrierNameAgent: transportDetails.carrierNameAgent || '',
+        billOfLading: transportDetails.billOfLading || '',
+        motorVehicleNo: transportDetails.motorVehicleNo || '',
         billingAddress,
         reverseCharge,
         gstType,
-
-        rows: rows.map((row) => ({
-          itemCode: row.itemCode,
-          productName: row.productName,
-          hsnCode: row.hsnCode,
-          qty: row.qty,
-          units: row.units,
-          mrp: row.mrp,
-
-          discountpercent:
-            customerType === "Wholesaler"
-              ? row.wholesalerDiscount
-              : row.retailDiscount,
-          discountRS:
-            customerType === "Wholesaler"
-              ? row.wholesalerDiscountRS
-              : row.retailDiscountRS,
-
-          taxable: row.taxable,
-          cgstpercent: row.cgstpercent,
-          cgstRS: row.cgstRS,
-          sgstpercent: row.sgstpercent,
-          sgstRS: row.sgstRS,
-          igstpercent: row.igstpercent,
-          igstRS: row.igstRS,
-          totalValue: row.totalValue,
-        })),
         otherChargesDescriptions,
-        otherCharges,
         narration,
-        grossAmount,
-        GstAmount,
-        netAmount,
-      };
+        grossAmount: parseFloat(grossAmount).toFixed(2),
+        GstAmount: parseFloat(GstAmount).toFixed(2),
+        otherCharges: parseFloat(otherCharges).toFixed(2),
+        netAmount: parseFloat(netAmount).toFixed(2),
+      }
+      // Append all fields to formData
+      Object.keys(fields).forEach((key) => {
+        if (fields[key]) {
+          submissionData.append(key, fields[key])
+        }
+      })
+
+      // Append each row individually
+      rows.forEach((row, index) => {
+        Object.keys(row).forEach((key) => {
+          submissionData.append(`rows[${index}][${key}]`, row[key])
+        })
+      })
 
       const response = await axios.put(
         `/api/v1/purchesOrderRoute/updatepurchesorder/${estimate._id}`,
-        updatedEstimate
-      );
-      console.log(response, "skdfj");
-
+        submissionData,
+      )
       if (response.data.success) {
-        alert("order updated successfully");
+        alert('Estimate updated successfully')
         // closeModal();
       } else {
-        alert("Failed to update order: " + response.data.message);
+        alert('Failed to update estimate: ' + response.data.message)
       }
     } catch (error) {
-      console.error("Error updating order:", error);
-      alert("Error updating order: " + error.message);
+      console.error('Error updating estimate:', error)
+      alert('Error updating estimate: ' + error.message)
     }
-  };
+  }
+
+
+
+  useEffect(() => {
+    const applyProductDetailsToRows = async (rows) => {
+      const updatedRows = await Promise.all(
+        rows.map(async (row) => {
+          // Find the product based on itemCode or productName
+          const selectedProduct = products.find(
+            (product) => product.itemCode === row.itemCode || product.productName === row.productName
+          );
+  
+          if (selectedProduct) {
+            // Get unitCost from the selected product
+            const unitCost = selectedProduct.purchasePriceExGst || 0;
+            const qty = row.qty || 0;
+            const taxable = qty * unitCost;
+  
+            // GST Calculations
+            const gstRate = selectedProduct.gstRate || 0; // Use product GST rate if available
+  
+            // Calculate CGST, SGST, and IGST based on gstType
+            let cgstRS = 0, sgstRS = 0, igstRS = 0;
+            if (gstType === 'CGST/SGST') {
+              cgstRS = (taxable * (gstRate / 2)) / 100;
+              sgstRS = (taxable * (gstRate / 2)) / 100;
+            } else if (gstType === 'IGST') {
+              igstRS = (taxable * gstRate) / 100;
+            }
+  
+            const totalValue = taxable + cgstRS + sgstRS + igstRS;
+  
+            // Return the updated row with calculated values
+            return {
+              ...row,
+              unitCost: unitCost, // Set the fetched unit cost
+              taxable: taxable.toFixed(2),
+              cgstRS: cgstRS.toFixed(2),
+              sgstRS: sgstRS.toFixed(2),
+              igstRS: igstRS.toFixed(2),
+              totalValue: totalValue.toFixed(2), // Total value after GST
+            };
+          } else {
+            // If no product match is found, return the row as-is
+            return row;
+          }
+        })
+      );
+  
+      // Set the updated rows to the state
+      setRows(updatedRows);
+      calculateTotalAmounts(); // Recalculate total amounts after updating rows
+    };
+  
+    if (estimate && products.length > 0) {
+      // If there are products and estimate data, apply product details to rows
+      applyProductDetailsToRows(estimate.rows);
+    }
+  }, [estimate, products, gstType]);
+  
+  
 
   return (
-    <div style={{ backgroundColor: "#82ac73" }} className="p-4 ">
+    <div style={{ backgroundColor: '#82ac73' }} className="p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
           Edit Purchase Order
@@ -454,6 +522,14 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
         <div>
+          <label className="font-bold">Purchase Type</label>
+          <input
+            value={purchaseType}
+            onChange={handleChange}
+            className="border p-2 w-full  rounded"
+          ></input>
+        </div>
+        <div>
           <label className="font-bold">
             Date:
             <input
@@ -466,18 +542,6 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
           </label>
         </div>
         <div>
-          <label className="font-bold">Purchase Type</label>
-          <select
-            value={purchaseType}
-            name="purchaseType"
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          >
-            <option value="GST Invoice">GST Invoice</option>
-            <option value="Bill of Supply">Bill of Supply</option>
-          </select>
-        </div>
-        <div>
           <label className="font-bold">Order No.</label>
           <input
             type="text"
@@ -488,24 +552,12 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
           />
         </div>
 
-        {/* <div>
-          <label className="font-bold">Customer Type</label>
-          <select
-            value={customerType}
-            name="customerType"
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          >
-            <option value="Retailer">Retailer</option>
-            <option value="Wholesaler">Wholesaler</option>
-          </select>
-        </div> */}
         <div>
           <label className="font-bold">Supplier Name</label>
           <input
             type="text"
-            name="supplierName"
-            value={supplierName}
+            name="SupplierName"
+            value={SupplierName}
             onChange={handleChange}
             className="border p-2 w-full rounded"
           />
@@ -561,16 +613,6 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
             <h4 className="font-bold mb-4">Transport Details</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <label>Receipt Doc No.</label>
-                <input
-                  type="text"
-                  name="receiptDocNo"
-                  value={receiptDocNo}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded"
-                />
-              </div>
-              <div>
                 <label>Dispatched Through</label>
                 <input
                   type="text"
@@ -610,16 +652,6 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                   className="border p-2 w-full rounded"
                 />
               </div>
-              <div>
-                <label>Motor Vehicle No.</label>
-                <input
-                  type="text"
-                  name="motorVehicleNo"
-                  value={motorVehicleNo}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded"
-                />
-              </div>
             </div>
             <div className="flex justify-end">
               <button
@@ -655,7 +687,7 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
           </select>
         </div>
 
-        {purchaseType === "GST Invoice" && (
+        {salesType === 'GST Invoice' && (
           <div className="mb-4 w-full">
             <label className="font-bold">GST Type:</label>
             <select
@@ -680,43 +712,37 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
               <th className="border p-2">Qty</th>
-              <th className="border p-2">Units</th>
+              <th className="border p-2 ">Units</th>
+
               <th className="border p-2">MRP</th>
-              {/* <th className="border p-2">
-                Discount
-                <div className="flex justify-between">
-                  <span className="mr-16">%</span> <span>₹</span>
-                </div>
-              </th> */}
-              {purchaseType === "GST Invoice" && (
-                <>
-                  <th className="border p-2">Taxable Value</th>
-                  {gstType === "CGST/SGST" && (
-                    <>
-                      <th className="border p-2">
-                        CGST
-                        <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>₹</span>
-                        </div>
-                      </th>
-                      <th className="border p-2">
-                        SGST
-                        <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>₹</span>
-                        </div>
-                      </th>
-                    </>
-                  )}
-                  {gstType === "IGST" && (
+              <th className="border p-2">taxable Value</th>
+
+              <>
+                {gstType === 'CGST/SGST' && (
+                  <>
                     <th className="border p-2">
-                      IGST
+                      CGST
                       <div className="flex justify-between">
                         <span className="mr-16">%</span> <span>₹</span>
                       </div>
                     </th>
-                  )}
-                </>
-              )}
+                    <th className="border p-2">
+                      SGST
+                      <div className="flex justify-between">
+                        <span className="mr-16">%</span> <span>₹</span>
+                      </div>
+                    </th>
+                  </>
+                )}
+                {gstType === 'IGST' && (
+                  <th className="border p-2">
+                    IGST
+                    <div className="flex justify-between">
+                      <span className="mr-16">%</span> <span>₹</span>
+                    </div>
+                  </th>
+                )}
+              </>
               <th className="border p-2">Total Value</th>
             </tr>
           </thead>
@@ -748,11 +774,11 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: "120px",
-                          maxWidth: "300px",
-                          fontSize: "14px",
-                          minHeight: "34px",
-                          height: "34px",
+                          minWidth: '120px',
+                          maxWidth: '300px',
+                          fontSize: '14px',
+                          minHeight: '34px',
+                          height: '34px',
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -785,11 +811,11 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: "200px",
-                          maxWidth: "500px",
-                          fontSize: "14px",
-                          minHeight: "34px",
-                          height: "34px",
+                          minWidth: '200px',
+                          maxWidth: '500px',
+                          fontSize: '14px',
+                          minHeight: '34px',
+                          height: '34px',
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -803,19 +829,28 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                     type="text"
                     value={row.hsnCode}
                     onChange={(e) =>
-                      handleRowChange(index, "hsnCode", e.target.value)
+                      handleRowChange(index, 'hsnCode', e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: '80px',
+                      flexBasis: '80px',
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
                 <td className="border p-2">
                   <input
                     type="number"
+                    name="qty"
                     value={row.qty}
-                    onChange={(e) =>
-                      handleRowChange(index, "qty", e.target.value)
-                    }
-                    className="w-full"
+                    onChange={(e) => handlQtyChange(index, e.target.value)}
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: '40px',
+                      flexBasis: '40px',
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
 
@@ -824,216 +859,157 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                     type="text"
                     value={row.units}
                     onChange={(e) =>
-                      handleRowChange(index, "units", e.target.value)
+                      handleRowChange(index, 'units', e.target.value)
                     }
                     className="w-full"
                   />
                 </td>
+
                 <td className="border p-2">
                   <input
                     type="number"
                     value={row.mrp}
                     onChange={(e) =>
-                      handleRowChange(index, "mrp", e.target.value)
+                      handleRowChange(index, 'mrp', e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: '60px',
+                      flexBasis: '60px',
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
-                {/* <td className="border">
-                  {row.discountpercent && row.discountRS ? (
-                    // If discountpercent and discountRS exist, show these fields
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        value={row.discountpercent}
-                        readOnly
-                        className="w-full flex-grow"
-                        style={{
-                          minWidth: "20px",
-                          flexBasis: "20px",
-                          flexShrink: 1,
-                        }}
-                      />
-                      <input
-                        type="text"
-                        value={row.discountRS}
-                        readOnly
-                        className="w-full"
-                      />
-                    </div>
-                  ) : (
-                    // If discountpercent and discountRS do not exist, show these input boxes
-                    <>
-                      {customerType === "Wholesaler" && (
-                        <div className="p-1 flex gap-1">
-                          <input
-                            type="text"
-                            value={row.wholesalerDiscount}
-                            onChange={(e) =>
-                              handleRowChange(
-                                index,
-                                "discountpercent",
-                                e.target.value
-                              )
-                            }
-                            className="w-full flex-grow"
-                            style={{
-                              minWidth: "20px",
-                              flexBasis: "20px",
-                              flexShrink: 1,
-                            }}
-                          />
 
-                          <input
-                            type="text"
-                            value={row.wholesalerDiscountRS}
-                            onChange={(e) =>
-                              handleRowChange(
-                                index,
-                                "discountRS",
-                                e.target.value
-                              )
-                            }
-                            className="w-full"
-                          />
-                        </div>
-                      )}
-                      {customerType === "Retailer" && (
-                        <div className="p-1 flex gap-1">
-                          <input
-                            type="text"
-                            value={row.retailDiscount}
-                            onChange={(e) =>
-                              handleRowChange(
-                                index,
-                                "discountpercent",
-                                e.target.value
-                              )
-                            }
-                            className="w-full flex-grow"
-                            style={{
-                              minWidth: "20px",
-                              flexBasis: "20px",
-                              flexShrink: 1,
-                            }}
-                          />
-                          <input
-                            type="text"
-                            value={row.retailDiscountRS}
-                            onChange={(e) =>
-                              handleRowChange(
-                                index,
-                                "discountRS",
-                                e.target.value
-                              )
-                            }
-                            className="w-full"
-                          />
-                        </div>
-                      )}
-                    </>
-                  )}
-                </td> */}
-                {purchaseType === "GST Invoice" && (
-                  <>
-                    <td className="border p-2">
-                      <input
-                        type="number"
-                        value={row.taxable}
-                        onChange={(e) =>
-                          handleRowChange(index, "taxable", e.target.value)
-                        }
-                        className="w-full"
-                      />
-                    </td>
-                    {gstType === "CGST/SGST" && (
-                      <>
-                        <td className="border p-2">
-                          <div className="flex gap-1">
-                            <input
-                              type="number"
-                              value={row.cgstpercent}
-                              onChange={(e) =>
-                                handleRowChange(
-                                  index,
-                                  "cgstpercent",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full"
-                            />
-                            <input
-                              type="number"
-                              value={row.cgstRS}
-                              onChange={(e) =>
-                                handleRowChange(index, "cgstRS", e.target.value)
-                              }
-                              className="w-full"
-                            />
-                          </div>
-                        </td>
-                        <td className="border p-2">
-                          <div className="flex gap-1">
-                            <input
-                              type="number"
-                              value={row.sgstpercent}
-                              onChange={(e) =>
-                                handleRowChange(
-                                  index,
-                                  "sgstpercent",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full"
-                            />
-                            <input
-                              type="number"
-                              value={row.sgstRS}
-                              onChange={(e) =>
-                                handleRowChange(index, "sgstRS", e.target.value)
-                              }
-                              className="w-full"
-                            />
-                          </div>
-                        </td>
-                      </>
-                    )}
-                    {gstType === "IGST" && (
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={row.taxable}
+                    onChange={(e) =>
+                      handleRowChange(index, 'taxable', e.target.value)
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: '50px',
+                      flexBasis: '50px',
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+
+                <>
+                  {gstType === 'CGST/SGST' && (
+                    <>
                       <td className="border p-2">
                         <div className="flex gap-1">
                           <input
                             type="number"
-                            value={row.igstpercent}
+                            value={row.cgstpercent}
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                "igstpercent",
-                                e.target.value
+                                'cgstpercent',
+                                e.target.value,
                               )
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: '50px',
+                              flexBasis: '50px',
+                              flexShrink: 1,
+                            }}
                           />
                           <input
                             type="number"
-                            value={row.igstRS}
+                            value={row.cgstRS}
                             onChange={(e) =>
-                              handleRowChange(index, "igstRS", e.target.value)
+                              handleRowChange(index, 'cgstRS', e.target.value)
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: '50px',
+                              flexBasis: '50px',
+                              flexShrink: 1,
+                            }}
                           />
                         </div>
                       </td>
-                    )}
-                  </>
-                )}
+                      <td className="border p-2">
+                        <div className="flex gap-1">
+                          <input
+                            type="number"
+                            value={row.sgstpercent}
+                            onChange={(e) =>
+                              handleRowChange(
+                                index,
+                                'sgstpercent',
+                                e.target.value,
+                              )
+                            }
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: '50px',
+                              flexBasis: '50px',
+                              flexShrink: 1,
+                            }}
+                          />
+                          <input
+                            type="number"
+                            value={row.sgstRS}
+                            onChange={(e) =>
+                              handleRowChange(index, 'sgstRS', e.target.value)
+                            }
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: '50px',
+                              flexBasis: '50px',
+                              flexShrink: 1,
+                            }}
+                          />
+                        </div>
+                      </td>
+                    </>
+                  )}
+                  {gstType === 'IGST' && (
+                    <td className="border p-2">
+                      <div className="flex gap-1">
+                        <input
+                          type="number"
+                          value={row.igstpercent}
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              'igstpercent',
+                              e.target.value,
+                            )
+                          }
+                          className="w-full"
+                        />
+                        <input
+                          type="number"
+                          value={row.igstRS}
+                          onChange={(e) =>
+                            handleRowChange(index, 'igstRS', e.target.value)
+                          }
+                          className="w-full"
+                        />
+                      </div>
+                    </td>
+                  )}
+                </>
                 <td className="border p-2">
                   <input
                     type="number"
                     value={row.totalValue}
                     onChange={(e) =>
-                      handleRowChange(index, "totalValue", e.target.value)
+                      handleRowChange(index, 'totalValue', e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: '70px',
+                      flexBasis: '70px',
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
                 <td className="p-1 gap-2 flex">
@@ -1102,9 +1078,10 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
               d="M12 4v16m8-8H4"
             />
           </svg>
-          View Other Charges
+          Edit Other Charges
         </button>
       </div>
+
       {isModalOtherChargesOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
@@ -1142,6 +1119,7 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
           </div>
         </div>
       )}
+
       {/* Narration and Amounts */}
       <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
         <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
@@ -1167,20 +1145,16 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {purchaseType === "GST Invoice" && (
-            <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
-              <label className="font-bold lg:w-1/2 text-nowrap">
-                GST Amount
-              </label>
-              <input
-                type="text"
-                name="GstAmount"
-                value={GstAmount}
-                onChange={handleChange}
-                className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
-              />
-            </div>
-          )}
+          <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
+            <label className="font-bold lg:w-1/2 text-nowrap">GST Amount</label>
+            <input
+              type="text"
+              name="GstAmount"
+              value={GstAmount}
+              // onChange={handleChange}
+              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+            />
+          </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
             <label className="font-bold lg:w-1/2 text-nowrap">
               Other Charges
@@ -1221,7 +1195,7 @@ const EditPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default EditPurchaseOrder;
+export default EditPurchaseOrder
