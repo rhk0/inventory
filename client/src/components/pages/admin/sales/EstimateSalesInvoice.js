@@ -608,9 +608,7 @@ const EstimateSalesInvoice = () => {
     handleCustomerChange(filteredData.customerName)
   }
 
-  {
-    console.log(netAmount, 'lkldskflksdklfkl')
-  }
+  
   const [cashDetails, setCashDetails] = useState({
     Amount: '',
     Advance: '',

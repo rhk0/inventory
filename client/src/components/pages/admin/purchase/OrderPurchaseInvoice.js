@@ -51,7 +51,9 @@ const OrderPurchaseInvoice = () => {
   const [selectedCustomer, setSelectedCustomer] = useState('')
   const [selectedAddress, setAddress] = useState('')
   const [viewModal, setViewModal] = useState(false)
-
+  const [selectedBanks, setSelectedBanks] = useState([])
+  const [selctedcash, setSelectedCash] = useState('')
+  const [banks, setBanks] = useState([])
   const [filteredInvoiceData, setFilteredInvoiceData] = useState(null)
   const [formData, setFormData] = useState({
     date: '',
@@ -59,6 +61,8 @@ const OrderPurchaseInvoice = () => {
     salesType: '',
     customerType: '',
     supplierName: '',
+    selectedcash: '',
+    selectedBank: [],
     placeOfSupply: '',
     paymentTerm: '',
     dueDate: '',
@@ -134,6 +138,55 @@ const OrderPurchaseInvoice = () => {
       [name]: value, // Update the corresponding field in bankDetails
     }))
   }
+  useEffect(() => {
+    if (selectedCustomer) {
+      handleCustomerChange(selectedCustomer)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setuserId(auth.user._id)
+    }
+    if (auth.user.role === 0) {
+      setuserId(auth.user.admin)
+    }
+    fetchBanks()
+  }, [auth, userId])
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
+
+      setBanks(response.data.data)
+    } catch (error) {
+      console.error('Error fetching Bank data', error)
+      toast.error(error.response.data.message)
+    }
+  }
+  useEffect(() => {
+    if (selctedcash) {
+      handleCashPayment(selctedcash)
+    }
+  }, [selctedcash])
+
+  useEffect(() => {
+    if (selectedCustomer) {
+      handleCustomerChange(selectedCustomer)
+    }
+  }, [])
+  
+  useEffect(() => {
+    // Check if selectedBanks has data before running the effect
+    if (selectedBanks) {
+      const timer = setTimeout(() => {
+        handleBankChange(selectedBanks)
+      }, 3000) // 2-second delay
+
+      // Clean up the timeout if the component unmounts
+      return () => clearTimeout(timer)
+    }
+  }, [selectedBanks]) // Empty dependency array ensures this runs only once after initial render
+
 
   const [paymentMethod, setPaymentMethod] = useState("");
   useEffect(() => {
@@ -249,7 +302,43 @@ const OrderPurchaseInvoice = () => {
     //   setGstType("IGST");
     // }
   };
+  const handleBankChange = (bank) => {
+  
+    console.log(bank,"bannnnnnk")
+    const _id = bank[0]?._id
+    // Assuming you have a way to find the bank by its name
+    const selectedBank = banks?.find((bank) => bank._id === _id)
+    console.log(selectedBank,"rahul")
+    if (selectedBank) {
+      // Update the selected bank in the state
+      setSelectedBanks([selectedBank]) // Store as an array if needed
 
+      // Update formData with selected bank details
+      setFormData((prev) => ({
+        ...prev,
+        selectedBank: [selectedBank], // Store as an array if needed
+      }))
+    } else {
+      // Handle case where bank is not found
+      setSelectedBanks([]) // Clear selected banks if not found
+    }
+
+    // Additional logic for handling bank data
+    setGstType('CGST/SGST')
+  }
+
+  const handleCashPayment = (selctedcash) => {
+    setGstType('CGST/SGST')
+    // Update formData with the cash value
+    console.log(selctedcash,"rahul selctedcash")
+    setSelectedCash(selctedcash)
+    console.log("cash")
+    setFormData((prev) => ({
+      ...prev,
+      selectedcash: selctedcash,
+    }))
+    console.log(formData,"dharma hhh")
+  }
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0
     setOtherCharges(newCharges)
@@ -539,6 +628,10 @@ const OrderPurchaseInvoice = () => {
     setSelectedCustomer(filteredData.supplierName);
     setPlaceOfSupply(filteredData.placeOfSupply);
     setBillingAddress(filteredData.billingAddress);
+    console.log(filteredData.cash,"dheeru filteredData")
+    console.log(filteredData.selectedBank ,"dheeru selectedBank filteredData")
+    setSelectedCash(filteredData.cash);
+    setSelectedBanks(filteredData.selectedBank || [])
     setTransportDetails({
       dispatchedThrough: filteredData.dispatchedThrough,
       destination: filteredData.destination,
@@ -613,6 +706,7 @@ const OrderPurchaseInvoice = () => {
         supplierInvoiceNo,
         customerType,
         supplierName: formData.supplierName,
+        selectedcash:formData.selectedcash,
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -1225,19 +1319,51 @@ const OrderPurchaseInvoice = () => {
               className="border p-2 w-full  rounded"
             />
           </div>
+        {selectedCustomer&&(
+           <div>
+           <label className="font-bold">Supplier Name</label>
+           <input
+             type="text"
+             className="w-full p-2 border border-gray-300 rounded"
+             value={selectedCustomer}
+             onChange={(e) => {
+               handleCustomerChange(selectedCustomer)
+             }}
+             placeholder="Select Supplier or type to add"
+           />
+         </div>
+        )}
+          
+          {selctedcash && (
+            <div>
+              <label className="font-bold"> cash</label>
 
-          <div>
-            <label className="font-bold">Supplier Name</label>
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded"
-              value={selectedCustomer}
-              onChange={(e) => {
-                handleCustomerChange(selectedCustomer)
-              }}
-              placeholder="Select Supplier or type to add"
-            />
-          </div>
+              <input
+                type="text"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selctedcash}
+                onChange={(e) => {
+                  // handleCashPayment(selctedcash);
+                  handleCashPayment(e.target.value)
+                }}
+                placeholder="Select Supplier or type to add"
+              />
+            </div>
+          )}
+
+          {selectedBanks[0]?.name && (
+            <div>
+              <label className="font-bold">Bank</label>
+              <input
+                type="text"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selectedBanks[0]?.name}
+                onChange={(e) => handleBankChange(selectedBanks[0]?._id)} // Pass the value instead
+                placeholder="Select Supplier or type to add"
+              />
+            </div>
+          )}
+
           <div>
             <label className="font-bold">Place of Supply</label>
             <input
