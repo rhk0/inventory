@@ -100,49 +100,16 @@ const PurchesInvoice = () => {
     netAmount: "",
   });
 
-  const [cashDetails, setCashDetails] = useState({
-    Amount: "",
-    Advance: "",
-    Received: "",
-    Balance: "",
-  });
-  const [bankDetails, setBankDetails] = useState({
-    bank: "",
-    selectBankType: "",
-    transactionDate: "",
-    chequeNo: "",
-    transactionNo: "",
-    Amount: "",
-    Advance: "",
-    Received: "",
-    Balance: "",
-  });
 
-  const handleCashDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setCashDetails((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleBankDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setBankDetails((prev) => ({
-      ...prev,
-      [name]: value, // Update the corresponding field in bankDetails
-    }));
-  };
 
   const [paymentMethod, setPaymentMethod] = useState("");
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
   };
-  const [paymentType, setPaymentType] = useState("");
   const [subPaymentType, setSubPaymentType] = useState("");
 
-  const handlePaymentTypeChange = (e) => {
-    setPaymentType(e.target.value);
-    setSubPaymentType(""); // Reset subPaymentType when paymentType changes
-  };
+
 
   const handleSubPaymentTypeChange = (e) => {
     const { value } = e.target;
@@ -300,15 +267,6 @@ const PurchesInvoice = () => {
     }));
   };
 
-  // const handleGstTypeChange = (e) => {
-  //   const value = e.target.value;
-  //   setGstType(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gstType: value,
-  //   }));
-  // };
-
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
@@ -330,8 +288,6 @@ const PurchesInvoice = () => {
       supplierInvoiceNo: value,
     }));
   };
-
-
 
   const handlePlaceOfSupplyChange = (e) => {
     const value = e.target.value;
@@ -691,13 +647,78 @@ const PurchesInvoice = () => {
     });
   };
 
+
+
+  const [cashDetails, setCashDetails] = useState(
+    {
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+  cashDetails.Amount=netAmount;
+
+  const [bankDetails, setBankDetails] = useState({
+    Amount: "",
+    selectBankType: "",
+    transactionDate: "",
+    chequeNo: "",
+    transactionNo: "",
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+  bankDetails.Amount=netAmount
+
+  const calculateBalance = (advance, received, Amount) => {
+    const totalAdvanceReceived = parseFloat(advance) + parseFloat(received);
+    return (Amount) - totalAdvanceReceived || 0;
+  };
+
+  const handleCashDetailsChange = (e) => {
+    const { name, value } = e.target;
+    const updatedCashDetails = { ...cashDetails, [name]: value };
+  
+    // If Advance or Received is updated, calculate the Balance
+    if (name === "Advance" || name === "Received") {
+      updatedCashDetails.Balance = calculateBalance(
+        updatedCashDetails.Advance,
+        updatedCashDetails.Received,
+        updatedCashDetails.Amount
+      );
+    }
+  
+    setCashDetails(updatedCashDetails);
+  };
+
+
+  const handleBankDetailsChange = (e) => {
+    const { name, value } = e.target;
+    const updatedBankDetails = { ...bankDetails, [name]: value };
+  
+    // If Advance or Received is updated, calculate the Balance
+    if (name === "Advance" || name === "Received") {
+      updatedBankDetails.Balance = calculateBalance(
+        updatedBankDetails.Advance,
+        updatedBankDetails.Received,
+        updatedBankDetails.Amount
+      );
+    }
+  
+    setBankDetails(updatedBankDetails);
+  };
+
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       // Create a FormData instance
       const submissionData = new FormData();
-
+  
       // Append non-file form data to formData
       const fields = {
         date,
@@ -705,16 +726,7 @@ const PurchesInvoice = () => {
         supplierInvoiceNo,
         customerType,
         supplierName: formData.supplierName,
-        selectedcash:formData.selectedcash,
-        // selectedBank:formData.selectedBank. _id,
-        // selectedBank:formData.selectedBank. openingBalance,
-        // selectedBank:formData.selectedBank. name,
-        // selectedBank:formData.selectedBank. ifscCode,
-        // selectedBank:formData.selectedBank. drCr,
-        // selectedBank:formData.selectedBank. admin,
-        // selectedBank:formData.selectedBank. accountNumber,
-   
-        
+        selectedcash: formData.selectedcash,
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -735,57 +747,65 @@ const PurchesInvoice = () => {
         userId: userId,
         netAmount: netAmount.toFixed(2),
       };
-     
-      // Append all fields to formData
+  
+      // Append all fields to FormData
       Object.keys(fields).forEach((key) => {
         if (fields[key]) {
           submissionData.append(key, fields[key]);
         }
       });
-
+  
       // Append each row individually
       rows.forEach((row, index) => {
         Object.keys(row).forEach((key) => {
           submissionData.append(`rows[${index}][${key}]`, row[key]);
         });
       });
-      formData.selectedBank.forEach((selectedBank, index) => {
-        Object.keys(selectedBank).forEach((key) => {
-          submissionData.append(`rows[${index}][${key}]`, selectedBank[key]);
+  
+      // Check if selectedBank exists and append it
+      if (formData.selectedBank && formData.selectedBank.length > 0) {
+        formData.selectedBank.forEach((selectedBank, index) => {
+          Object.keys(selectedBank).forEach((key) => {
+            submissionData.append(`selectedBank[${index}][${key}]`, selectedBank[key]);
+          });
         });
-      });
-
+      }
+  
+      // Append payment details based on the method
       if (paymentMethod === "Cash") {
         submissionData.append("cash", JSON.stringify(cashDetails));
       } else if (paymentMethod === "Bank") {
         submissionData.append("bank", JSON.stringify(bankDetails));
       }
-
-      // If a document file has been selected, append it to the FormData
+  
+      // If a document file has been selected, append it to FormData
       if (documentPath) {
         submissionData.append("documentPath", documentPath);
       }
-    // Check if selectedBank exists and append it
-   
-
+  
+      // Log the form data for debugging
+      for (let pair of submissionData.entries()) {
+        console.log(pair[0], pair[1]); // Logs each field in FormData
+      }
+  
       // Send the formData using axios
-      console.log(submissionData,"submissionData")
       const response = await axios.post(
         "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
         submissionData
       );
-
+  
       if (response) {
         toast.success("Purchase invoice created successfully...");
       }
-
+  
       // Reset your form data and state
       resetForm();
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Failed to create sales estimate. Please try again.");
+      toast.error("Failed to create purchase invoice. Please try again.");
     }
   };
+  
 
   const resetForm = () => {
     setFormData({
