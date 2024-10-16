@@ -15,6 +15,6 @@ router.post("/PayOutRoute",requireSignIn,isAdmin, createPayOutController);
 router.get("/getAllpayout/:_id",requireSignIn, getAllPayOutController);
 router.get("/getAllpayoutById/:_id",requireSignIn, getPayOutByIdController);
 router.put("/updatepayout/:_id",requireSignIn,isAdmin, updatePayOutByIdController);
-router.delete("/deletepayout/:_id",requireSignIn,isAdmin, deletePayOutByIdController);
+router.delete("/deletepayout/:_id",requireSignIn, deletePayOutByIdController);
 
 export default router;

@@ -68,7 +68,7 @@ const ManagePayIn = () => {
       const response = await axios.get(
         `/api/v1/purchaseInvoiceRoute/purchaseinvoicesByName/${selctedsupplierInvoiceData}`
       );
-      console.log(response, "dslkflksd");
+     
       setSelctedsupplierInvoiceData(response.data.response);
     } catch (error) {
       console.error("Error fetching supplier invoices:", error);
@@ -230,7 +230,7 @@ const ManagePayIn = () => {
       );
 
       toast.success("Record updated successfully");
-      console.log(res, "sdkjfk");
+    
 
       // Close the modal
       closeModals();
@@ -264,12 +264,13 @@ const ManagePayIn = () => {
   };
 
   // Delete a PayIn
-  const handleDelete = async (id) => {
+  const handleDelete = async (_id) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
       try {
-        await axios.delete(`/api/v1/payInRoute/deletePayIn/${id}`);
+       
+        await axios.delete(`/api/v1/PayOutRoute/deletepayout/${_id}`);
         toast.success("Record deleted successfully");
-        setPayIns(payIns.filter((payIn) => payIn._id !== id));
+        setPayIns(payIns.filter((payIn) => payIn._id !== _id));
       } catch (error) {
         toast.error("Error deleting record");
         console.error("Error deleting record:", error);
@@ -326,6 +327,7 @@ const ManagePayIn = () => {
                   >
                     <FiEdit className="text-xl" />
                   </button>
+         
                   <button
                     onClick={() => handleDelete(payIn._id)}
                     className="text-red-500 ml-2 hover:underline focus:outline-none"

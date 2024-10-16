@@ -8,6 +8,8 @@ export const createSalesInvoiceController = async (req, res) => {
       salesType,
       customerType,
       customerName,
+      selctedcash,
+      selectedBank, // Include selected bank data
       placeOfSupply,
       paymentTerm,
       dueDate,
@@ -41,6 +43,8 @@ export const createSalesInvoiceController = async (req, res) => {
         salesType,
         customerType,
         customerName,
+        selctedcash, // Include cash in the model
+        selectedBank, // Include selected bank data
         placeOfSupply,
         paymentTerm,
         dueDate,

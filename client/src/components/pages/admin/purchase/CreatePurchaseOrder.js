@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
 
 import { useAuth } from "../../../context/Auth.js";
-  const CreatePurchaseOrder = () => {
+const CreatePurchaseOrder = () => {
   const [date, setDate] = useState("");
   const [orderNo, setorderNo] = useState("");
   const [customerType, setCustomerType] = useState("Retailer");
@@ -36,7 +36,10 @@ import { useAuth } from "../../../context/Auth.js";
   const [supplier, setsupplier] = useState([]);
   const [selectedsupplier, setSelectedsupplier] = useState("");
   const [selectedAddress, setAddress] = useState("");
-
+  const [banks, setBanks] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
+  const [cash,setCash]=useState("");
   const [formData, setFormData] = useState({
     date: "",
     orderNo: "",
@@ -139,6 +142,34 @@ import { useAuth } from "../../../context/Auth.js";
       setGstType("IGST");
     }
   };
+  const handleCashPayment = (value) => {
+    console.log(value, "cash");
+    setCash(value);
+    setGstType("CGST/SGST");
+  
+    // Update formData with the cash value
+    setFormData((prev) => ({
+      ...prev,
+      cash: value,
+    }));
+  };
+  const handleBankChange = (bankId) => {
+    const selectedBank = banks.find((bank) => bank._id === bankId);
+    console.log(selectedBank, "selectedBank");
+    
+    // Update the selected banks
+    setSelectedBanks(selectedBank);
+  
+    // Update formData with selected bank details
+    setFormData((prev) => ({
+      ...prev,
+      selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
+    }));
+  
+    // Additional logic for handling bank data
+    setGstType("CGST/SGST");
+  };
+
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
@@ -157,7 +188,25 @@ import { useAuth } from "../../../context/Auth.js";
     }));
     setIsModalOtherChargesOpen(false);
   };
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchBanks();
+  }, [auth, userId]);
 
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
+      setBanks(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Bank data", error);
+      toast.error(error.response.data.message);
+    }
+  };
   useEffect(() => {
     if (date && paymentTerm) {
       const selectedDate = new Date(date);
@@ -391,7 +440,7 @@ import { useAuth } from "../../../context/Auth.js";
       newRows[index] = {
         ...newRows[index],
         taxableValue: taxableValue.toFixed(2),
-        quantity:qty,
+        quantity: qty,
         cgstrs: cgstrs.toFixed(2),
         sgstrs: sgstrs.toFixed(2),
         igstrs: igstrs.toFixed(2),
@@ -423,7 +472,8 @@ import { useAuth } from "../../../context/Auth.js";
 
       // Calculate taxable value based on salesTaxInclude
 
-      const taxableValue = selectedProduct.purchasePriceExGst * selectedProduct.quantity;
+      const taxableValue =
+        selectedProduct.purchasePriceExGst * selectedProduct.quantity;
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -1416,28 +1466,54 @@ import { useAuth } from "../../../context/Auth.js";
           </div> */}
 
           <div>
-            <label className="font-bold">Supplier Name</label>
+            <label className="font-bold ">Select Supplier,Bank Name,or Cash</label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedsupplier}
+              value={selectedValue}
               onChange={(e) => {
-                if (e.target.value === "add-new-Supplier") {
+                const selectedValue = e.target.value;
+
+                if (selectedValue === "add-new-supplier") {
                   window.location.href = "/admin/CreateSupplier";
-                } else {
-                  handlesupplierChange(e);
+                } else if (selectedValue === "add-new-bank") {
+                  window.location.href = "/admin/addbank";
+                } else if (selectedValue === "cash") {
+                  handleCashPayment(selectedValue); // Handle cash payment
+                } else if (selectedValue.startsWith("bank-")) {
+                  handleBankChange(selectedValue.replace("bank-", "")); // Handle bank change
+                }else {
+                  handlesupplierChange(e); // Handle supplier change
                 }
               }}
             >
-              <option value="">Select Supplier</option>
-              <option value="add-new-supplier" className="text-blue-500">
-                + Add New Supplier
-              </option>
-              {supplier?.map((supplier) => (
-                <option key={supplier._id} value={supplier._id}>
-                  {supplier.name}
+              <option value="">Select Supplier, Bank, or Cash</option>
+
+              {/* Supplier options */}
+              <optgroup label="Suppliers">
+                {supplier?.map((supplier) => (
+                  <option key={supplier._id} value={supplier._id}>
+                    {supplier.name}
+                  </option>
+                ))}
+                <option value="add-new-supplier" className="text-blue-500">
+                  + Add New Supplier
                 </option>
-              ))}
-              {/* Add supplier option at the end of the list */}
+              </optgroup>
+
+              {/* Bank options */}
+              <optgroup label="Banks">
+                {banks?.map((bank) => (
+                  <option key={bank._id} value={`bank-${bank._id}`}>
+                    {bank.name}
+                  </option>
+                ))}
+                <option value="cash" className="text-green-500">
+                  Cash
+                </option>
+                <option value="add-new-bank" className="text-blue-500">
+                  + Add New Bank
+                </option>
+              </optgroup>
             </select>
           </div>
 
@@ -2174,7 +2250,7 @@ import { useAuth } from "../../../context/Auth.js";
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-              {otherChargesDescriptions || "Other Charge"}  
+                {otherChargesDescriptions || "Other Charge"}
               </label>
               <input
                 value={otherCharges.toFixed(2)}

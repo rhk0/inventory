@@ -16,10 +16,12 @@ const EstimateSalesInvoice = () => {
   const [dueDate, setDueDate] = useState("");
   const [chooseUser, setChooseUser] = useState([]);
   const [company, setCompanyData] = useState([]);
+  const [banks, setBanks] = useState([]);
   const [userId, setUserId] = useState("");
   const [salesEstimatesInvoiceData, setSalesEstimatesInvoiceData] = useState(
     []
   );
+  
   const [filteredInvoiceData, setFilteredInvoiceData] = useState(null);
   const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
@@ -38,6 +40,8 @@ const EstimateSalesInvoice = () => {
   const [otherCharges, setOtherCharges] = useState(0);
   const [customer, setCustomer] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [selectedBanks, setSelectedBanks] = useState([]);
+  const [selctedcash, setSelectedCash] = useState("");
   const [selectedAddress, setAddress] = useState("");
   const [viewModal, setViewModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -46,6 +50,8 @@ const EstimateSalesInvoice = () => {
     salesType: "",
     customerType: "",
     customerName: "",
+    selctedcash: "",
+    selectedBanks: [],
     placeOfSupply: "",
     paymentTerm: "",
     dueDate: "",
@@ -100,6 +106,22 @@ const EstimateSalesInvoice = () => {
     Received: "",
     Balance: "",
   });
+  useEffect(() => {
+   
+    if (selctedcash) {
+      handleCashPayment(selctedcash);
+    }
+  }, [selctedcash]);
+
+  
+
+  useEffect(() => {
+   
+    if (selectedCustomer) {
+      handleCustomerChange(selectedCustomer);
+    }
+  }, []);
+
 
   const handleCashDetailsChange = (e) => {
     const { name, value } = e.target;
@@ -112,6 +134,26 @@ const EstimateSalesInvoice = () => {
       ...prev,
       [name]: value, // Update the corresponding field in bankDetails
     }));
+  };
+ 
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchBanks();
+  }, [auth, userId]);
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
+      
+      setBanks(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Bank data", error);
+      toast.error(error.response.data.message);
+    }
   };
 
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -372,7 +414,8 @@ const EstimateSalesInvoice = () => {
         customerType === "Wholesaler"
           ? selectedProduct.wholesalerDiscount || 0
           : selectedProduct.retailDiscount || 0;
-          const discountRS = (selectedProduct.maxmimunRetailPrice * discountPercent) / 100; // Correct discount calculation
+      const discountRS =
+        (selectedProduct.maxmimunRetailPrice * discountPercent) / 100; // Correct discount calculation
       const salesTaxInclude = selectedProduct.salesTaxInclude;
       const gstRate = selectedProduct.gstRate;
 
@@ -396,7 +439,6 @@ const EstimateSalesInvoice = () => {
       const totalValue = taxableValue + (cgstrs + sgstrs + igstrs);
 
       // Calculate discount values (if applicable)
-     
 
       // Update the row with the calculated values
       newRows[index] = {
@@ -460,7 +502,6 @@ const EstimateSalesInvoice = () => {
     }
   }, [filteredInvoiceData]);
   const calculateRowValues = (product, qty, gstType) => {
-
     const retailPrice = product.maxmimunRetailPrice
       ? product.maxmimunRetailPrice -
         (product.maxmimunRetailPrice * product.retailDiscount) / 100
@@ -498,6 +539,42 @@ const EstimateSalesInvoice = () => {
       discountRS: discountRS.toFixed(2), // Include discount in rupees
     };
   };
+
+
+  const handleBankChange = (bank) => {
+   
+    const _id=bank[0]?._id;
+    // Assuming you have a way to find the bank by its name
+    const selectedBank = banks?.find((bank) => bank._id === _id);
+ 
+    if (selectedBank) {
+      // Update the selected bank in the state
+      setSelectedBanks([selectedBank]); // Store as an array if needed
+      
+      // Update formData with selected bank details
+      setFormData((prev) => ({
+        ...prev,
+        selectedBank: [selectedBank], // Store as an array if needed
+      }));
+    } else {
+      // Handle case where bank is not found
+      setSelectedBanks([]); // Clear selected banks if not found
+    }
+  
+    // Additional logic for handling bank data
+    setGstType("CGST/SGST");
+  };
+  
+  const handleCashPayment = (selctedcash) => {
+
+  
+    setGstType("CGST/SGST");
+    // Update formData with the cash value
+    setFormData((prev) => ({
+      ...prev,
+      selctedcash: selctedcash,
+    }));
+  };
   const generateRowsFromFilteredData = (filteredData) => {
     // Populate customer-related fields
     setSelectedCustomer(filteredData.customerName);
@@ -505,6 +582,9 @@ const EstimateSalesInvoice = () => {
     setBillingAddress(filteredData.billingAddress);
     setPaymentTerm(filteredData.paymentTerm);
     setDueDate(filteredData.dueDate);
+    setSelectedCash(filteredData.cash);
+    setSelectedBanks(filteredData.selectedBank || []); 
+ 
     setTransportDetails({
       dispatchedThrough: filteredData.dispatchedThrough,
       destination: filteredData.destination,
@@ -584,8 +664,8 @@ const EstimateSalesInvoice = () => {
           qty: row.quantity,
           units: row.units,
           mrp: row.maxmimunRetailPrice,
-          discountpercent:row.discountpercent,
-          discountRS:row.discountRS,
+          discountpercent: row.discountpercent,
+          discountRS: row.discountRS,
           taxable: row.taxableValue,
           cgstpercent: row.cgstp,
           cgstRS: row.cgstrs,
@@ -712,15 +792,14 @@ const EstimateSalesInvoice = () => {
       ...formData,
 
       rows: rows?.map((row) => ({
-      
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
         units: row.units,
         mrp: row.maxmimunRetailPrice,
-        discountpercent:row.discountpercent,
-        discountRS:row.discountRS,
+        discountpercent: row.discountpercent,
+        discountRS: row.discountRS,
         taxable: row.taxableValue,
         cgstpercent: row.cgstp,
         cgstRS: row.cgstrs,
@@ -1132,8 +1211,8 @@ const EstimateSalesInvoice = () => {
         qty: row.quantity,
         units: row.units,
         mrp: row.maxmimunRetailPrice,
-        discountpercent:row.discountpercent,
-        discountRS:row.discountRS,
+        discountpercent: row.discountpercent,
+        discountRS: row.discountRS,
         taxable: row.taxableValue,
         totalValue: row.totalValue, // GST details removed
       })),
@@ -1486,7 +1565,18 @@ const EstimateSalesInvoice = () => {
     // Trigger the print dialog
     printWindow.print();
   };
-
+  useEffect(() => {
+    // Check if selectedBanks has data before running the effect
+    if (selectedBanks) {
+      const timer = setTimeout(() => {
+        handleBankChange(selectedBanks);
+      }, 3000); // 2-second delay
+  
+      // Clean up the timeout if the component unmounts
+      return () => clearTimeout(timer);
+    }
+  }, [selectedBanks]); // Empty dependency array ensures this runs only once after initial render
+  
   return (
     <>
       <div
@@ -1535,30 +1625,55 @@ const EstimateSalesInvoice = () => {
             />
           </div>
 
-          {/* <div>
-            <label className="font-bold">Customer Type</label>
-            <select
-              value={customerType}
-              onChange={handleCustomerTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Retailer">Retailer</option>
-              <option value="Wholesaler">Wholesaler</option>
-            </select>
-          </div> */}
+        
 
-          <div>
-            <label className="font-bold">Customer Name</label>
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded"
-              value={selectedCustomer}
-              onChange={(e) => {
-                handleCustomerChange(selectedCustomer);
-              }}
-              placeholder="Select Supplier or type to add"
-            />
-          </div>
+          {selectedCustomer && (
+            <div>
+              <label className="font-bold">Customer Name </label>
+              <input
+                type="text"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selectedCustomer}
+                onChange={(e) => {
+                  handleCustomerChange(selectedCustomer);
+                }}
+                placeholder="Select Supplier or type to add"
+              />
+            </div>
+          )}
+          {selctedcash && (
+            <div>
+              <label className="font-bold"> cash</label>
+            
+
+              <input
+                type="text"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={selctedcash}
+                onChange={(e) => {
+                  // handleCashPayment(selctedcash);
+                  handleCashPayment(e.target.value);
+                }}
+                placeholder="Select Supplier or type to add"
+              />
+            </div>
+          )}
+
+{selectedBanks[0]?.name && (
+
+  <div>
+     
+    <label className="font-bold">Bank</label>
+    <input
+      type="text"
+      className="w-full p-2 border border-gray-300 rounded"
+      value={selectedBanks[0]?.name}
+      onChange={(e) => handleBankChange(selectedBanks[0]?._id)} // Pass the value instead
+      placeholder="Select Supplier or type to add"
+    />
+  </div>
+)}
+
 
           <div>
             <label className="font-bold">Place of Supply</label>
@@ -1854,36 +1969,33 @@ const EstimateSalesInvoice = () => {
                   </td>
 
                   <td className="border">
-                 
-                      <div className="p-1 flex gap-1">
-                        <input
-                          type="text"
-                          value={row.discountpercent || ""} // Ensure a default value
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountPercent",
-                              e.target.value
-                            )
-                          }
-                          className="w-full flex-grow"
-                          style={{
-                            minWidth: "20px",
-                            flexBasis: "20px",
-                            flexShrink: 1,
-                          }}
-                        />
-                        <input
-                          type="text"
-                          value={row.discountRS || ""} // Ensure a default value
-                          onChange={(e) =>
-                            handleRowChange(index, "discountRS", e.target.value)
-                          }
-                          className="w-full"
-                        />
-                      </div>
-             
-                  
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={row.discountpercent || ""} // Ensure a default value
+                        onChange={(e) =>
+                          handleRowChange(
+                            index,
+                            "discountPercent",
+                            e.target.value
+                          )
+                        }
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: "20px",
+                          flexBasis: "20px",
+                          flexShrink: 1,
+                        }}
+                      />
+                      <input
+                        type="text"
+                        value={row.discountRS || ""} // Ensure a default value
+                        onChange={(e) =>
+                          handleRowChange(index, "discountRS", e.target.value)
+                        }
+                        className="w-full"
+                      />
+                    </div>
                   </td>
                   {salesType === "GST Invoice" && (
                     <>
