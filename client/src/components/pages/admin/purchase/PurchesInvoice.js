@@ -24,6 +24,25 @@ const PurchesInvoice = () => {
   const [auth] = useAuth()
   const [userId, setuserId] = useState('')
 
+  const [documentPath, setdocumentPath] = useState(null);
+  const [date, setDate] = useState("");
+  const [invoiceNo, setinvoiceNo] = useState("");
+  const [salesType, setSalesType] = useState("GST Invoice");
+  const [customerType, setCustomerType] = useState("Retailer");
+  const [placeOfSupply, setPlaceOfSupply] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [company, setCompanyData] = useState([]);
+  const [chooseUser, setChooseUser] = useState([]);
+  const [freeQty, setFreeQty] = useState(0);
+  const [qty, setQty] = useState(0);
+  const [margin, setMargin] = useState(0);
+  const [gstRatev, setgstRatev] = useState(0);
+  const [auth] = useAuth();
+  const [userId, setuserId] = useState("");
+  const [banks, setBanks] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
+  const [cash, setCash] = useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: '',
     dispatchedThrough: '',
@@ -62,6 +81,25 @@ const PurchesInvoice = () => {
     billingAddress: '',
     reverseCharge: '',
     gstType: '',
+    date: "",
+    invoiceNo: "",
+    salesType: "",
+    customerType: "",
+    supplierName: "",
+    selectedcash:"",
+    selectedBank:[],
+    placeOfSupply: "",
+    paymentTerm: "",
+    dueDate: "",
+    receiptDocNo: "",
+    dispatchedThrough: "",
+    destination: "",
+    carrierNameAgent: "",
+    billOfLading: "",
+    motorVehicleNo: "",
+    billingAddress: "",
+    reverseCharge: "",
+    gstType: "",
 
     rows: [
       {
@@ -155,7 +193,26 @@ const PurchesInvoice = () => {
       console.error('Error fetching suppliers:', error)
     }
   }
+  };
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setuserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setuserId(auth.user.admin);
+    }
+    fetchBanks();
+  }, [auth, userId]);
 
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
+      setBanks(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Bank data", error);
+      toast.error(error.response.data.message);
+    }
+  };
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
@@ -204,7 +261,33 @@ const PurchesInvoice = () => {
     } else {
       setGstType('IGST')
     }
-  }
+  };
+  const handleCashPayment = (value) => {
+    setCash(value);
+    setGstType("CGST/SGST");
+   console.log(value,"value")
+    // Update formData with the cash value
+    setFormData((prev) => ({
+      ...prev,
+      selectedcash: value,
+    }));
+  };
+  const handleBankChange = (bankId) => {
+    const selectedBank = banks.find((bank) => bank._id === bankId);
+
+    // Update the selected banks
+    setSelectedBanks(selectedBank);
+   console.log(selectedBank,"selectedBank")
+    // Update formData with selected bank details
+    setFormData((prev) => ({
+      ...prev,
+      selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
+    }));
+    console.log( formData,"dheeru")
+
+    // Additional logic for handling bank data
+    setGstType("CGST/SGST");
+  };
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0
@@ -279,24 +362,10 @@ const PurchesInvoice = () => {
     setFormData((prev) => ({
       ...prev,
       supplierInvoiceNo: value,
-    }))
-  }
-  const handleSalesTypeChange = (e) => {
-    const value = e.target.value
-    setSalesType(value)
-    setFormData((prev) => ({
-      ...prev,
-      salesType: value,
-    }))
-  }
-  const handleCustomerTypeChange = (e) => {
-    const value = e.target.value
-    setCustomerType(value)
-    setFormData((prev) => ({
-      ...prev,
-      customerType: value,
-    }))
-  }
+    }));
+  };
+
+
 
   const handlePlaceOfSupplyChange = (e) => {
     const value = e.target.value
@@ -665,6 +734,16 @@ const PurchesInvoice = () => {
         supplierInvoiceNo,
         customerType,
         supplierName: formData.supplierName,
+        selectedcash:formData.selectedcash,
+        // selectedBank:formData.selectedBank. _id,
+        // selectedBank:formData.selectedBank. openingBalance,
+        // selectedBank:formData.selectedBank. name,
+        // selectedBank:formData.selectedBank. ifscCode,
+        // selectedBank:formData.selectedBank. drCr,
+        // selectedBank:formData.selectedBank. admin,
+        // selectedBank:formData.selectedBank. accountNumber,
+   
+        
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -696,9 +775,14 @@ const PurchesInvoice = () => {
       // Append each row individually
       rows.forEach((row, index) => {
         Object.keys(row).forEach((key) => {
-          submissionData.append(`rows[${index}][${key}]`, row[key])
-        })
-      })
+          submissionData.append(`rows[${index}][${key}]`, row[key]);
+        });
+      });
+      formData.selectedBank.forEach((selectedBank, index) => {
+        Object.keys(selectedBank).forEach((key) => {
+          submissionData.append(`rows[${index}][${key}]`, selectedBank[key]);
+        });
+      });
 
       if (paymentMethod === 'Cash') {
         submissionData.append('cash', JSON.stringify(cashDetails))
@@ -710,6 +794,8 @@ const PurchesInvoice = () => {
       if (documentPath) {
         submissionData.append('documentPath', documentPath)
       }
+    // Check if selectedBank exists and append it
+   
 
       // Send the formData using axios
       console.log(submissionData, 'submissionData')
@@ -732,24 +818,26 @@ const PurchesInvoice = () => {
 
   const resetForm = () => {
     setFormData({
-      date: '',
-      invoiceNo: '',
-      supplierInvoiceNo: '',
-      salesType: 'GST Invoice',
-      customerType: 'Retailer',
-      supplierName: '',
-      placeOfSupply: '',
-      paymentTerm: '',
-      dueDate: '',
-      receiptDocNo: '',
-      dispatchedThrough: '',
-      destination: '',
-      carrierNameAgent: '',
-      billOfLading: '',
-      motorVehicleNo: '',
-      billingAddress: '',
-      reverseCharge: 'No',
-      gstType: 'CGST/SGST',
+      date: "",
+      invoiceNo: "",
+      supplierInvoiceNo: "",
+      salesType: "GST Invoice",
+      customerType: "Retailer",
+      supplierName: "",
+      selectedcash:"",
+      selectedBank:[],
+      placeOfSupply: "",
+      paymentTerm: "",
+      dueDate: "",
+      receiptDocNo: "",
+      dispatchedThrough: "",
+      destination: "",
+      carrierNameAgent: "",
+      billOfLading: "",
+      motorVehicleNo: "",
+      billingAddress: "",
+      reverseCharge: "No",
+      gstType: "CGST/SGST",
       rows: [
         {
           itemCode: '',
@@ -1294,25 +1382,50 @@ const PurchesInvoice = () => {
             <label className="font-bold">Supplier Name</label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedCustomer}
+              value={selectedValue} // Ensure the selected value is shown in the dropdown
               onChange={(e) => {
-                if (e.target.value === 'add-new-customer') {
-                  window.location.href = '/admin/CreateSupplier'
+                const selectedValue = e.target.value;
+                setSelectedValue(selectedValue); // Update the state to reflect the selected value
+
+                if (selectedValue === "add-new-supplier") {
+                  window.location.href = "/admin/CreateSupplier";
+                } else if (selectedValue === "add-new-bank") {
+                  window.location.href = "/admin/addbank";
+                } else if (selectedValue === "cash") {
+                  handleCashPayment(selectedValue); // Handle cash payment
+                } else if (selectedValue.startsWith("bank-")) {
+                  handleBankChange(selectedValue.replace("bank-", "")); // Handle bank change
                 } else {
-                  handleCustomerChange(e)
+                  handleCustomerChange(e); // Handle supplier change
                 }
               }}
             >
-              <option value="">Select Supplier</option>
-              <option value="add-new-customer" className="text-blue-500">
-                + Add New Supplier
-              </option>
-              {customer?.map((customer) => (
-                <option key={customer._id} value={customer._id}>
-                  {customer.name}
+              {/* Supplier options */}
+              <optgroup label="Suppliers">
+                {customer?.map((customer) => (
+                  <option key={customer._id} value={customer._id}>
+                    {customer.name}
+                  </option>
+                ))}
+                <option value="add-new-supplier" className="text-blue-500">
+                  + Add New Supplier
                 </option>
-              ))}
-              {/* Add Customer option at the end of the list */}
+              </optgroup>
+
+              {/* Bank options */}
+              <optgroup label="Banks">
+                {banks?.map((bank) => (
+                  <option key={bank._id} value={`bank-${bank._id}`}>
+                    {bank.name}
+                  </option>
+                ))}
+                <option value="cash" className="text-green-500">
+                  Cash
+                </option>
+                {/* <option value="add-new-bank" className="text-blue-500">
+                  + Add New Bank
+                </option> */}
+              </optgroup>
             </select>
           </div>
 

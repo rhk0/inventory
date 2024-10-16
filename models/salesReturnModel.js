@@ -7,6 +7,17 @@ const salesReturnSchema = new mongoose.Schema(
     salesType: { type: String },
     creditNoteNo: { type: String },
     customerName: { type: String },
+    cash:{type:String},
+    selectedBank: [
+      {
+        bankId: { type: mongoose.Schema.Types.ObjectId, ref: "Bank" }, // Reference to the bank
+        name: { type: String }, // e.g. "SBI"
+        ifscCode: { type: String },
+        accountNumber: { type: String },
+        openingBalance: { type: String },
+        drCr: { type: String }, // Debit or Credit
+      },
+    ],
     customerType: { type: String },
     placeOfSupply: { type: String },
     paymentTerm: { type: String },

@@ -15,6 +15,10 @@ const CreateDeliveryChallan = () => {
   const [chooseUser, setChooseUser] = useState([]);
   const [auth] = useAuth();
   const [company, setCompanyData] = useState([]);
+  const [banks, setBanks] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
+  const [cash,setCash]=useState("");
   const [reasonForReturn, setReasonForReturn] = useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
@@ -40,6 +44,8 @@ const CreateDeliveryChallan = () => {
     salesType: "",
     customerType: "",
     customerName: "",
+    cash:"",
+    selectedBanks:[],
     placeOfSupply: "",
     paymentTerm: "",
     dueDate: "",
@@ -115,7 +121,25 @@ const CreateDeliveryChallan = () => {
     fetchCustomer();
     companyData();
   }, [auth, userId]);
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchBanks();
+  }, [auth, userId]);
 
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
+      setBanks(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Bank data", error);
+      toast.error(error.response.data.message);
+    }
+  };
   const companyData = async () => {
     try {
       const response = await axios.get(`/api/v1/company/get/${userId}`);
@@ -146,6 +170,33 @@ const CreateDeliveryChallan = () => {
     } else {
       setGstType("IGST");
     }
+  };
+  const handleCashPayment = (value) => {
+    console.log(value, "cash");
+    setCash(value);
+    setGstType("CGST/SGST");
+  
+    // Update formData with the cash value
+    setFormData((prev) => ({
+      ...prev,
+      cash: value,
+    }));
+  };
+  const handleBankChange = (bankId) => {
+    const selectedBank = banks.find((bank) => bank._id === bankId);
+    console.log(selectedBank, "selectedBank");
+    
+    // Update the selected banks
+    setSelectedBanks(selectedBank);
+  
+    // Update formData with selected bank details
+    setFormData((prev) => ({
+      ...prev,
+      selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
+    }));
+  
+    // Additional logic for handling bank data
+    setGstType("CGST/SGST");
   };
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
@@ -1409,25 +1460,50 @@ const CreateDeliveryChallan = () => {
             <label className="font-bold">Customer Name</label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedCustomer}
+              value={selectedValue} // This ensures the selected value is shown in the dropdown
               onChange={(e) => {
-                if (e.target.value === "add-new-customer") {
+                const selectedValue = e.target.value;
+                setSelectedValue(selectedValue); // Update the state to reflect the selected value
+
+                if (selectedValue === "add-new-customer") {
                   window.location.href = "/admin/CreateCustomer";
+                } else if (selectedValue === "add-new-bank") {
+                  window.location.href = "/admin/addbank";
+                } else if (selectedValue === "cash") {
+                  handleCashPayment(selectedValue); // Handle cash payment
+                } else if (selectedValue.startsWith("bank-")) {
+                  handleBankChange(selectedValue.replace("bank-", "")); // Handle bank change
                 } else {
-                  handleCustomerChange(e);
+                  handleCustomerChange(e); // Handle customer change
                 }
               }}
             >
-              <option value="">Select Customer</option>
-              <option value="add-new-customer" className="text-blue-500">
-                + Add New Customer
-              </option>
-              {customer?.map((customer) => (
-                <option key={customer._id} value={customer._id}>
-                  {customer.name}
+              {/* Customer Options */}
+              <optgroup label="Customers">
+                {customer?.map((customer) => (
+                  <option key={customer._id} value={customer._id}>
+                    {customer.name}
+                  </option>
+                ))}
+                <option value="add-new-customer" className="text-blue-500">
+                  + Add New Customer
                 </option>
-              ))}
-              {/* Add Customer option at the end of the list */}
+              </optgroup>
+              {/* Bank Options */}
+              <optgroup label="Banks">
+                {banks?.map((bank) => (
+                  <option key={bank._id} value={`bank-${bank._id}`}>
+                    {bank.name}
+                  </option>
+                ))}
+                <option value="cash" className="text-green-500">
+                  Cash
+                </option>
+                {/* Uncomment if you need the Add New Bank option */}
+                {/* <option value="add-new-bank" className="text-blue-500">
+      + Add New Bank
+    </option> */}
+              </optgroup>
             </select>
           </div>
           <div>

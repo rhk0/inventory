@@ -8,6 +8,8 @@ export const createChallanController = async (req, res) => {
       salesType,
       challanNo,
       customerName,
+      cash, // Include cash in the model
+      selectedBank, // Include selected bank data
       placeOfSupply,
       customerType,
       paymentTerm,
@@ -36,6 +38,8 @@ export const createChallanController = async (req, res) => {
         salesType,
         challanNo,
         customerName,
+        cash, // Include cash in the model
+        selectedBank, // Include selected bank data
         placeOfSupply,
         customerType,
         paymentTerm,

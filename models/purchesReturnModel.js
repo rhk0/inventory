@@ -7,6 +7,17 @@ const purchesReturnSchema = new mongoose.Schema(
       required:true,
     },
     supplierName: { type: String },
+    cash:{type:String},
+    selectedBank: [
+      {
+        bankId: { type: mongoose.Schema.Types.ObjectId, ref: "Bank" }, // Reference to the bank
+        name: { type: String }, // e.g. "SBI"
+        ifscCode: { type: String },
+        accountNumber: { type: String },
+        openingBalance: { type: String },
+        drCr: { type: String }, // Debit or Credit
+      },
+    ],
     date: { type: String },
     debitNoteNo:{type:String},  
     paymentTerm: { type: String },

@@ -135,33 +135,44 @@ const OrderPurchaseInvoice = () => {
     }))
   }
 
-  const [paymentMethod, setPaymentMethod] = useState('')
-
+  const [paymentMethod, setPaymentMethod] = useState("");
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setuserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setuserId(auth.user.admin);
+    }
+    fetchInvoiceData();
+  }, [auth,userId]);
   const fetchInvoiceData = async () => {
     setLoading(true)
     setError(null)
     try {
+      console.log(`/api/v1/purchesOrderRoute/getAllpurchesorder/${userId}`)
       const response = await axios.get(
-        '/api/v1/purchesOrderRoute/getAllpurchesorder',
-      )
-      setSalesEstimates(response.data.invoices)
+        `/api/v1/purchesOrderRoute/getAllpurchesorder/${userId}`
+      );
+  console.log(response,"res")
+      setSalesEstimates(response.data.invoices);
     } catch (error) {
       setError('Error fetching sales order.')
     } finally {
       setLoading(false)
     }
-  }
+  };
+
+
   useEffect(() => {
     if (_id && salesEstimates?.length > 0) {
       const match = salesEstimates?.find((item) => item._id === _id)
       if (match) {
-        setFilteredInvoiceData(match) // Set the matching data to the new state
+        console.log(match, "match");
+        setFilteredInvoiceData(match); // Set the matching data to the new state
       }
     }
-  }, [_id, salesEstimates])
-  useEffect(() => {
-    fetchInvoiceData()
-  }, [])
+  }, [_id, salesEstimates]);
+
   // Call this function when filteredInvoiceData changes
   useEffect(() => {
     if (filteredInvoiceData) {
@@ -222,11 +233,22 @@ const OrderPurchaseInvoice = () => {
     setChooseUser(selectedCustomerData)
     setFormData((prev) => ({
       ...prev,
-      supplierName: selectedCustomerData ? selectedCustomerData.name : '',
-      billingAddress: selectedCustomerData ? selectedCustomerData.address : '',
-      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : '',
-    }))
-  }
+      supplierName: selectedCustomerData ? selectedCustomerData.name : "",
+      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
+      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
+    }));
+
+    // setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+    // setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+    // if (
+    //   selectedCustomerData.state.trim().toLowerCase() ===
+    //   company.state.trim().toLowerCase()
+    // ) {
+    //   setGstType("CGST/SGST");
+    // } else {
+    //   setGstType("IGST");
+    // }
+  };
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0
@@ -513,10 +535,10 @@ const OrderPurchaseInvoice = () => {
   }
 
   const generateRowsFromFilteredData = (filteredData) => {
-    setGstType(filteredData.gstType)
-    setSelectedCustomer(filteredData.supplierName)
-    setPlaceOfSupply(filteredData.placeOfSupply)
-    setBillingAddress(filteredData.billingAddress)
+    setGstType(filteredData.gstType);
+    setSelectedCustomer(filteredData.supplierName);
+    setPlaceOfSupply(filteredData.placeOfSupply);
+    setBillingAddress(filteredData.billingAddress);
     setTransportDetails({
       dispatchedThrough: filteredData.dispatchedThrough,
       destination: filteredData.destination,
@@ -573,9 +595,9 @@ const OrderPurchaseInvoice = () => {
     setOtherCharges(totalOtherCharges) // Update state for otherCharges
 
     // Call calculateTotals to update totals after rows and otherCharges are set
-    const totals = calculateTotals()
-    handleCustomerChange(filteredData.supplierName)
-  }
+    const totals = calculateTotals();
+    handleCustomerChange(filteredData.supplierName);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -610,7 +632,7 @@ const OrderPurchaseInvoice = () => {
         otherCharges: otherCharges,
         netAmount: netAmount,
         userId: userId,
-      }
+      };
 
       // Append all fields to formData
       Object.keys(fields).forEach((key) => {

@@ -5,6 +5,45 @@ import Select from 'react-select'
 import { useAuth } from '../../../context/Auth.js'
 
 const EditPurchaseReturn = ({ closeModal, estimate }) => {
+<<<<<<< HEAD
+  const [documentPath, setdocumentPath] = useState(null);
+  const [date, setDate] = useState("");
+  const [debitNoteNo, setdebitNoteNo] = useState("");
+  const [salesType, setSalesType] = useState("");
+  const [customerType, setCustomerType] = useState("");
+  const [SupplierName, setSupplierName] = useState("");
+  const [placeOfSupply, setPlaceOfSupply] = useState("");
+  const [paymentTerm, setPaymentTerm] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [receiptDocNo, setReceiptDocNo] = useState("");
+  const [dispatchedThrough, setDispatchedThrough] = useState("");
+  const [destination, setDestination] = useState("");
+  const [carrierNameAgent, setCarrierNameAgent] = useState("");
+  const [billOfLading, setBillOfLading] = useState("");
+  const [motorVehicleNo, setMotorVehicleNo] = useState("");
+  const [billingAddress, setBillingAddress] = useState("");
+  const [reasonForReturn, setreasonForReturn] = useState("");
+  const [gstType, setGstType] = useState();
+  const [rows, setRows] = useState([]);
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+  const [otherCharges, setOtherCharges] = useState("");
+  const [narration, setNarration] = useState("");
+  const [grossAmount, setGrossAmount] = useState("");
+  const [GstAmount, setGstAmount] = useState("");
+  const [netAmount, setNetAmount] = useState("");
+  const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState("");
+  const [quantity, setQty] = useState(0);
+  const [gstRatev, setgstRatev] = useState();
+  const [selectPurchase, setSelectPurchase] = useState();
+  const [viewModal, setViewModal] = useState(false);
+  const [bank, setBank] = useState([]);
+  const [cash, setCash] = useState([]);
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
+=======
   const [documentPath, setdocumentPath] = useState(null)
   const [date, setDate] = useState('')
   const [debitNoteNo, setdebitNoteNo] = useState('')
@@ -42,12 +81,21 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
+>>>>>>> cf8b65e07a30d7635e217a666f685ad5e07b2797
 
   useEffect(() => {
     if (estimate) {
-    
       setSupplierName(estimate.supplierName || "");
 
+<<<<<<< HEAD
+      setDate(estimate.date || "");
+      setdebitNoteNo(estimate.debitNoteNo || "");
+      setsupplierdebitNoteNo(estimate.supplierdebitNoteNo || "");
+      setPlaceOfSupply(estimate.placeOfSupply || "");
+      setPaymentTerm(estimate.paymentTerm || "");
+      setDueDate(estimate.dueDate || "");
+      setSelectPurchase(estimate.selectPurchase || "");
+=======
       setDate(estimate.date || '')
       setdebitNoteNo(estimate.debitNoteNo || '')
       setsupplierdebitNoteNo(estimate.supplierdebitNoteNo || '')
@@ -56,6 +104,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       setDueDate(estimate.dueDate || '')
       setSelectPurchase(estimate.selectPurchase || '')
 
+>>>>>>> cf8b65e07a30d7635e217a666f685ad5e07b2797
       if (estimate.bank) {
         setBank({
           bank: estimate.bank.bank || '',

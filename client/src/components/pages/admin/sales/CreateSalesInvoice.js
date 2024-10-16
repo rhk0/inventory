@@ -38,15 +38,15 @@ const CreateSalesInvoice = () => {
   const [banks, setBanks] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
-  const [cash,setCash]=useState("");
+  const [cash, setCash] = useState("");
   const [formData, setFormData] = useState({
     date: "",
     InvoiceNo: "",
     salesType: "",
     customerType: "",
     customerName: "",
-    selctedcash:"",
-    selectedBanks:[],
+    selctedcash: "",
+    selectedBanks: [],
     placeOfSupply: "",
     paymentTerm: "",
     dueDate: "",
@@ -182,7 +182,7 @@ const CreateSalesInvoice = () => {
     console.log(value, "cash");
     setCash(value);
     setGstType("CGST/SGST");
-  
+
     // Update formData with the cash value
     setFormData((prev) => ({
       ...prev,
@@ -192,16 +192,16 @@ const CreateSalesInvoice = () => {
   const handleBankChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
     console.log(selectedBank, "selectedBank");
-    
+
     // Update the selected banks
     setSelectedBanks(selectedBank);
-  
+
     // Update formData with selected bank details
     setFormData((prev) => ({
       ...prev,
       selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
     }));
-  
+
     // Additional logic for handling bank data
     setGstType("CGST/SGST");
   };
@@ -468,7 +468,7 @@ const CreateSalesInvoice = () => {
       calculateTotals(newRows);
     }
   };
-  
+
   const handlQtyChange = (rowIndex, qty) => {
     // Parse the new quantity to ensure it's a number
     const newQty = parseFloat(qty) || 0;
@@ -1687,13 +1687,14 @@ const [cashDetails, setCashDetails] = useState(
             </select>
           </div> */}
 
-<div>
-            <label className="font-bold">Customer or Bank </label>
+          <div>
+            <label className="font-bold">Customer Name </label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedValue}
+              value={selectedValue} // This ensures the selected value is shown in the dropdown
               onChange={(e) => {
                 const selectedValue = e.target.value;
+                setSelectedValue(selectedValue); // Update the state to reflect the selected value
 
                 if (selectedValue === "add-new-customer") {
                   window.location.href = "/admin/CreateCustomer";
@@ -1708,7 +1709,6 @@ const [cashDetails, setCashDetails] = useState(
                 }
               }}
             >
-              <option value="">Select Customer or Bank</option>
               {/* Customer Options */}
               <optgroup label="Customers">
                 {customer?.map((customer) => (
@@ -1730,9 +1730,10 @@ const [cashDetails, setCashDetails] = useState(
                 <option value="cash" className="text-green-500">
                   Cash
                 </option>
-                <option value="add-new-bank" className="text-blue-500">
-                  + Add New Bank
-                </option>
+                {/* Uncomment if you need the Add New Bank option */}
+                {/* <option value="add-new-bank" className="text-blue-500">
+      + Add New Bank
+    </option> */}
               </optgroup>
             </select>
           </div>

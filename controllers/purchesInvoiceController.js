@@ -326,6 +326,8 @@ export const createPurchaseInvoiceController = async (req, res) => {
         supplierInvoiceNo,
         purchaseType,
         supplierName,
+        selectedcash, // Include cash in the model
+        selectedBank, // Include selected bank data
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -376,6 +378,8 @@ export const createPurchaseInvoiceController = async (req, res) => {
         supplierInvoiceNo,
         purchaseType,
         supplierName,
+        selectedcash, // Include cash in the model
+        selectedBank, // Include selected bank data
         placeOfSupply,
         paymentTerm,
         dueDate,

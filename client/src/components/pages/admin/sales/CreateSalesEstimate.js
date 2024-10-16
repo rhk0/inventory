@@ -18,7 +18,7 @@ const CreateSalesEstimate = () => {
   const [banks, setBanks] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
-  const [cash,setCash]=useState("");
+  const [cash, setCash] = useState("");
 
   const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
@@ -45,8 +45,8 @@ const CreateSalesEstimate = () => {
     estimateNo: "",
     salesType: "",
     customerType: "",
-    cash:"",
-    selectedBanks:[],
+    cash: "",
+    selectedBanks: [],
     customerName: "",
     placeOfSupply: "",
     paymentTerm: "",
@@ -148,7 +148,7 @@ const CreateSalesEstimate = () => {
     console.log(value, "cash");
     setCash(value);
     setGstType("CGST/SGST");
-  
+
     // Update formData with the cash value
     setFormData((prev) => ({
       ...prev,
@@ -158,16 +158,16 @@ const CreateSalesEstimate = () => {
   const handleBankChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
     console.log(selectedBank, "selectedBank");
-    
+
     // Update the selected banks
     setSelectedBanks(selectedBank);
-  
+
     // Update formData with selected bank details
     setFormData((prev) => ({
       ...prev,
       selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
     }));
-  
+
     // Additional logic for handling bank data
     setGstType("CGST/SGST");
   };
@@ -611,9 +611,8 @@ const CreateSalesEstimate = () => {
     e.preventDefault();
 
     try {
-      console.log(formData,"formData")
+      console.log(formData, "formData");
       const updatedFormData = {
-        
         ...formData,
         rows: rows?.map((row) => ({
           itemCode: row.itemCode,
@@ -652,7 +651,6 @@ const CreateSalesEstimate = () => {
 
         netAmount: netAmount,
         userId: userId,
-
       };
 
       const response = await axios.post(
@@ -669,8 +667,8 @@ const CreateSalesEstimate = () => {
         salesType: "",
         customerType: "",
         customerName: "",
-        cash:"",
-        selectedBanks:[],
+        cash: "",
+        selectedBanks: [],
         placeOfSupply: "",
         paymentTerm: "",
         dueDate: "",
@@ -1520,12 +1518,13 @@ const CreateSalesEstimate = () => {
             </select>
           </div>
           <div>
-            <label className="font-bold">Customer or Bank </label>
+            <label className="font-bold">Customer Name </label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedValue}
+              value={selectedValue} // This ensures the selected value is shown in the dropdown
               onChange={(e) => {
                 const selectedValue = e.target.value;
+                setSelectedValue(selectedValue); // Update the state to reflect the selected value
 
                 if (selectedValue === "add-new-customer") {
                   window.location.href = "/admin/CreateCustomer";
@@ -1540,7 +1539,6 @@ const CreateSalesEstimate = () => {
                 }
               }}
             >
-              <option value="">Select Customer or Bank</option>
               {/* Customer Options */}
               <optgroup label="Customers">
                 {customer?.map((customer) => (
@@ -1562,9 +1560,10 @@ const CreateSalesEstimate = () => {
                 <option value="cash" className="text-green-500">
                   Cash
                 </option>
-                <option value="add-new-bank" className="text-blue-500">
-                  + Add New Bank
-                </option>
+                {/* Uncomment if you need the Add New Bank option */}
+                {/* <option value="add-new-bank" className="text-blue-500">
+                   + Add New Bank
+                 </option> */}
               </optgroup>
             </select>
           </div>
