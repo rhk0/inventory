@@ -5,4 +5,3 @@
 // EMAIL_USER = manasvistaff.dharma@gmail.com
 // EMAIL_PASS = pbqu tgfp ojyu uzcv
 
-mcdonald
