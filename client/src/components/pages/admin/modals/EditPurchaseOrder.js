@@ -5,7 +5,6 @@ import Select from 'react-select'
 import { useAuth } from '../../../context/Auth.js'
 
 const EditPurchaseOrder = ({ closeModal, estimate }) => {
-  const [documentPath, setdocumentPath] = useState(null)
   const [date, setDate] = useState('')
   const [orderNo, setorderNo] = useState('')
   const [salesType, setSalesType] = useState('')
@@ -233,13 +232,11 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
     const updatedRows = [...rows]
     const selectedRow = updatedRows[rowIndex]
 
-    // Update the quantity in the selected row
     updatedRows[rowIndex] = {
       ...selectedRow,
       qty: qty,
     }
 
-    // Recalculate taxable value, GST amounts, and total value based on the new quantity
     const unitCost = parseFloat(selectedRow.unitCost) || 0
     const taxable = qty * unitCost
     const gstRate = gstType === 'CGST/SGST' ? gstType : 0
@@ -263,7 +260,7 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
     }
 
     setRows(updatedRows)
-    calculateTotalAmounts() // Recalculate totals after the update
+    calculateTotalAmounts()
   }
 
   const calculateTotalAmounts = () => {
@@ -280,12 +277,11 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
       grossAmount += taxable
       GstAmount +=
         gstType === 'CGST/SGST'
-          ? Number(cgstRS) + Number(sgstRS) // If CGST/SGST, sum these
-          : Number(igstRS) // Otherwise, use IGST
+          ? Number(cgstRS) + Number(sgstRS)
+          : Number(igstRS)
     })
 
     let netAmount
-    // Check if otherChargesDescriptions includes "discount" to decide calculation
     if (otherChargesDescriptions.toLowerCase().includes('discount')) {
       netAmount = grossAmount + GstAmount - totalOtherCharges
     } else {
@@ -312,7 +308,6 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
       }
     } catch (error) {
       console.error('Error fetching products:', error)
-      // toast.error("Failed to fetch products. Please try again.");
     }
   }
 

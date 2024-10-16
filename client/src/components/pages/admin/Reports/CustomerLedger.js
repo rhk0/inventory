@@ -106,7 +106,7 @@ const CustomerLedger = () => {
       console.log("Filtered Invoices:", filteredInvoices); // Debugging line
       console.log("Filtered PayIns:", filteredPayIns); // Debugging line
 
-      const debitTotal = filteredInvoices.reduce(
+      const debitTotal = filteredInvoices?.reduce(
         (sum, invoice) => sum + (Number(invoice.netAmount) || 0),
         openingBalance || 0
       );

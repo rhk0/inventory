@@ -14,6 +14,7 @@ const CreateSalesInvoice = () => {
   const [dueDate, setDueDate] = useState("");
   const [chooseUser, setChooseUser] = useState([]);
   const [company, setCompanyData] = useState([]);
+  const [rAmount,setRAmount] =useState(0);
   const [userId, setUserId] = useState("");
   const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
@@ -80,38 +81,22 @@ const CreateSalesInvoice = () => {
     grossAmount: "",
     GstAmount: "",
     otherCharges: "",
-    netAmount: "",
-  });
-  const [cashDetails, setCashDetails] = useState({
-    Amount: "",
-    Advance: "",
-    Received: "",
-    Balance: "",
-  });
-  const [bankDetails, setBankDetails] = useState({
-    bank: "",
-    selectBankType: "",
-    transactionDate: "",
-    chequeNo: "",
-    transactionNo: "",
-    Amount: "",
-    Advance: "",
-    Received: "",
-    Balance: "",
   });
 
-  const handleCashDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setCashDetails((prev) => ({ ...prev, [name]: value }));
-  };
+  
 
-  const handleBankDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setBankDetails((prev) => ({
-      ...prev,
-      [name]: value, // Update the corresponding field in bankDetails
-    }));
-  };
+  // const handleCashDetailsChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setCashDetails((prev) => ({ ...prev, [name]: value }));
+  // };
+
+  // const handleBankDetailsChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setBankDetails((prev) => ({
+  //     ...prev,
+  //     [name]: value, // Update the corresponding field in bankDetails
+  //   }));
+  // };
 
   const [paymentMethod, setPaymentMethod] = useState("");
 
@@ -285,16 +270,6 @@ const CreateSalesInvoice = () => {
     }));
   };
 
-  // const handleGstTypeChange = (e) => {
-  //   const value = e.target.value;
-  //   setGstType(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gstType: value,
-  //   }));
-  // };
-
-  // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
@@ -410,6 +385,11 @@ const CreateSalesInvoice = () => {
   // Function to handle Save and Print
 
   const [products, setProducts] = useState([]);
+
+
+ 
+  
+
 
   const fetchProducts = async () => {
     try {
@@ -646,6 +626,70 @@ const CreateSalesInvoice = () => {
       [name]: value,
     });
   };
+
+
+const [cashDetails, setCashDetails] = useState(
+    {
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+  cashDetails.Amount=netAmount;
+
+  const [bankDetails, setBankDetails] = useState({
+    Amount: "",
+    selectBankType: "",
+    transactionDate: "",
+    chequeNo: "",
+    transactionNo: "",
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+  bankDetails.Amount=netAmount
+
+  const calculateBalance = (advance, received, Amount) => {
+    const totalAdvanceReceived = parseFloat(advance) + parseFloat(received);
+    return (Amount) - totalAdvanceReceived || 0;
+  };
+
+  const handleCashDetailsChange = (e) => {
+    const { name, value } = e.target;
+    const updatedCashDetails = { ...cashDetails, [name]: value };
+  
+    // If Advance or Received is updated, calculate the Balance
+    if (name === "Advance" || name === "Received") {
+      updatedCashDetails.Balance = calculateBalance(
+        updatedCashDetails.Advance,
+        updatedCashDetails.Received,
+        updatedCashDetails.Amount
+      );
+    }
+  
+    setCashDetails(updatedCashDetails);
+  };
+
+
+  const handleBankDetailsChange = (e) => {
+    const { name, value } = e.target;
+    const updatedBankDetails = { ...bankDetails, [name]: value };
+  
+    // If Advance or Received is updated, calculate the Balance
+    if (name === "Advance" || name === "Received") {
+      updatedBankDetails.Balance = calculateBalance(
+        updatedBankDetails.Advance,
+        updatedBankDetails.Received,
+        updatedBankDetails.Amount
+      );
+    }
+  
+    setBankDetails(updatedBankDetails);
+  };
+
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
