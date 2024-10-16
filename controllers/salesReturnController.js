@@ -7,6 +7,8 @@ export const createReturnController = async (req, res) => {
       salesType,
       creditNoteNo,
       customerName,
+      cash, // Include cash in the model
+      selectedBank, // Include selected bank data
       placeOfSupply,
       customerType,
       paymentTerm,
@@ -35,6 +37,8 @@ export const createReturnController = async (req, res) => {
         salesType,
         creditNoteNo,
         customerName,
+        cash, // Include cash in the model
+        selectedBank, // Include selected bank data
         placeOfSupply,
         customerType,
         paymentTerm,

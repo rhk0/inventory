@@ -136,14 +136,24 @@ const OrderPurchaseInvoice = () => {
   };
 
   const [paymentMethod, setPaymentMethod] = useState("");
-
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setuserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setuserId(auth.user.admin);
+    }
+    fetchInvoiceData();
+  }, [auth,userId]);
   const fetchInvoiceData = async () => {
     setLoading(true);
     setError(null);
     try {
+      console.log(`/api/v1/purchesOrderRoute/getAllpurchesorder/${userId}`)
       const response = await axios.get(
-        "/api/v1/purchesOrderRoute/getAllpurchesorder"
+        `/api/v1/purchesOrderRoute/getAllpurchesorder/${userId}`
       );
+  console.log(response,"res")
       setSalesEstimates(response.data.invoices);
     } catch (error) {
       setError("Error fetching sales order.");
@@ -151,17 +161,18 @@ const OrderPurchaseInvoice = () => {
       setLoading(false);
     }
   };
+
+
   useEffect(() => {
     if (_id && salesEstimates?.length > 0) {
       const match = salesEstimates?.find((item) => item._id === _id);
       if (match) {
+        console.log(match, "match");
         setFilteredInvoiceData(match); // Set the matching data to the new state
       }
     }
   }, [_id, salesEstimates]);
-  useEffect(() => {
-    fetchInvoiceData();
-  }, []);
+
   // Call this function when filteredInvoiceData changes
   useEffect(() => {
     if (filteredInvoiceData) {
@@ -226,7 +237,6 @@ const OrderPurchaseInvoice = () => {
       billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
       placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));
-  
 
     // setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
     // setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
@@ -525,7 +535,6 @@ const OrderPurchaseInvoice = () => {
   };
 
   const generateRowsFromFilteredData = (filteredData) => {
-
     setGstType(filteredData.gstType);
     setSelectedCustomer(filteredData.supplierName);
     setPlaceOfSupply(filteredData.placeOfSupply);
@@ -587,7 +596,7 @@ const OrderPurchaseInvoice = () => {
 
     // Call calculateTotals to update totals after rows and otherCharges are set
     const totals = calculateTotals();
-    handleCustomerChange(filteredData.supplierName)
+    handleCustomerChange(filteredData.supplierName);
   };
 
   const handleSubmit = async (e) => {
@@ -622,7 +631,7 @@ const OrderPurchaseInvoice = () => {
         GstAmount: GstAmount,
         otherCharges: otherCharges,
         netAmount: netAmount,
-        userId:userId,
+        userId: userId,
       };
 
       // Append all fields to formData

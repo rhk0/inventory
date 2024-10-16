@@ -6,8 +6,6 @@ import Modal from "react-modal";
 import { useAuth } from "../../../context/Auth.js";
 
 const EditPurchaseReturn = ({ closeModal, estimate }) => {
-
-
   const [documentPath, setdocumentPath] = useState(null);
   const [date, setDate] = useState("");
   const [debitNoteNo, setdebitNoteNo] = useState("");
@@ -48,7 +46,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
   useEffect(() => {
     if (estimate) {
-    
       setSupplierName(estimate.supplierName || "");
 
       setDate(estimate.date || "");
@@ -58,7 +55,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       setPaymentTerm(estimate.paymentTerm || "");
       setDueDate(estimate.dueDate || "");
       setSelectPurchase(estimate.selectPurchase || "");
-
       if (estimate.bank) {
         setBank({
           bank: estimate.bank.bank || "",

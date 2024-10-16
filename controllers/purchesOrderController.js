@@ -8,6 +8,8 @@ export const createPurchesOrderController = async (req, res) => {
       orderNo, // Make sure you're receiving this
       purchaseType, // Make sure you're receiving this
       supplierName, // Make sure you're receiving this
+      cash, // Include cash in the model
+      selectedBank, // Include selected bank data
       placeOfSupply,
       paymentTerm,
       dueDate,
@@ -38,6 +40,8 @@ export const createPurchesOrderController = async (req, res) => {
       orderNo, // Assign this correctly
       purchaseType, // Assign this correctly
       supplierName, // Assign this correctly
+      cash, // Include cash in the model
+      selectedBank, // Include selected bank data
       placeOfSupply,
       paymentTerm,
       dueDate,

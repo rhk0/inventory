@@ -39,13 +39,15 @@ const CreatePurchaseOrder = () => {
   const [banks, setBanks] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
-  const [cash,setCash]=useState("");
+  const [cash, setCash] = useState("");
   const [formData, setFormData] = useState({
     date: "",
     orderNo: "",
     purchaseType: "",
     supplierType: "",
     supplierName: "",
+    cash: "",
+    selectedBanks: [],
     placeOfSupply: "",
     paymentTerm: "",
     dueDate: "",
@@ -82,9 +84,7 @@ const CreatePurchaseOrder = () => {
     otherCharges: "",
     netAmount: "",
   });
-
   const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
-
   const fetchsupplier = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
@@ -143,10 +143,9 @@ const CreatePurchaseOrder = () => {
     }
   };
   const handleCashPayment = (value) => {
-    console.log(value, "cash");
     setCash(value);
     setGstType("CGST/SGST");
-  
+
     // Update formData with the cash value
     setFormData((prev) => ({
       ...prev,
@@ -155,21 +154,19 @@ const CreatePurchaseOrder = () => {
   };
   const handleBankChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
-    console.log(selectedBank, "selectedBank");
-    
+
     // Update the selected banks
     setSelectedBanks(selectedBank);
-  
+
     // Update formData with selected bank details
     setFormData((prev) => ({
       ...prev,
       selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
     }));
-  
+
     // Additional logic for handling bank data
     setGstType("CGST/SGST");
   };
-
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
@@ -586,7 +583,6 @@ const CreatePurchaseOrder = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const updatedFormData = {
         ...formData,
@@ -1466,12 +1462,15 @@ const CreatePurchaseOrder = () => {
           </div> */}
 
           <div>
-            <label className="font-bold ">Select Supplier,Bank Name,or Cash</label>
+            <label className="font-bold ">
+              Select Supplier
+            </label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedValue}
+              value={selectedValue} // Ensure the selected value is shown in the dropdown
               onChange={(e) => {
                 const selectedValue = e.target.value;
+                setSelectedValue(selectedValue); // Update the state to reflect the selected value
 
                 if (selectedValue === "add-new-supplier") {
                   window.location.href = "/admin/CreateSupplier";
@@ -1481,13 +1480,11 @@ const CreatePurchaseOrder = () => {
                   handleCashPayment(selectedValue); // Handle cash payment
                 } else if (selectedValue.startsWith("bank-")) {
                   handleBankChange(selectedValue.replace("bank-", "")); // Handle bank change
-                }else {
+                } else {
                   handlesupplierChange(e); // Handle supplier change
                 }
               }}
             >
-              <option value="">Select Supplier, Bank, or Cash</option>
-
               {/* Supplier options */}
               <optgroup label="Suppliers">
                 {supplier?.map((supplier) => (
@@ -1510,9 +1507,9 @@ const CreatePurchaseOrder = () => {
                 <option value="cash" className="text-green-500">
                   Cash
                 </option>
-                <option value="add-new-bank" className="text-blue-500">
+                {/* <option value="add-new-bank" className="text-blue-500">
                   + Add New Bank
-                </option>
+                </option> */}
               </optgroup>
             </select>
           </div>
