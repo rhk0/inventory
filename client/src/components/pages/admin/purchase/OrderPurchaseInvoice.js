@@ -114,30 +114,10 @@ const OrderPurchaseInvoice = () => {
     Received: '',
     Balance: '',
   })
-  const [bankDetails, setBankDetails] = useState({
-    bank: '',
-    selectBankType: '',
-    transactionDate: '',
-    chequeNo: '',
-    transactionNo: '',
-    Amount: '',
-    Advance: '',
-    Received: '',
-    Balance: '',
-  })
+ 
 
-  const handleCashDetailsChange = (e) => {
-    const { name, value } = e.target
-    setCashDetails((prev) => ({ ...prev, [name]: value }))
-  }
 
-  const handleBankDetailsChange = (e) => {
-    const { name, value } = e.target
-    setBankDetails((prev) => ({
-      ...prev,
-      [name]: value, // Update the corresponding field in bankDetails
-    }))
-  }
+
   useEffect(() => {
     if (selectedCustomer) {
       handleCustomerChange(selectedCustomer)
@@ -202,11 +182,11 @@ const OrderPurchaseInvoice = () => {
     setLoading(true)
     setError(null)
     try {
-      console.log(`/api/v1/purchesOrderRoute/getAllpurchesorder/${userId}`)
+ 
       const response = await axios.get(
         `/api/v1/purchesOrderRoute/getAllpurchesorder/${userId}`
       );
-  console.log(response,"res")
+
       setSalesEstimates(response.data.invoices);
     } catch (error) {
       setError('Error fetching sales order.')
@@ -220,7 +200,6 @@ const OrderPurchaseInvoice = () => {
     if (_id && salesEstimates?.length > 0) {
       const match = salesEstimates?.find((item) => item._id === _id)
       if (match) {
-        console.log(match, "match");
         setFilteredInvoiceData(match); // Set the matching data to the new state
       }
     }
@@ -303,12 +282,10 @@ const OrderPurchaseInvoice = () => {
     // }
   };
   const handleBankChange = (bank) => {
-  
-    console.log(bank,"bannnnnnk")
+
     const _id = bank[0]?._id
     // Assuming you have a way to find the bank by its name
     const selectedBank = banks?.find((bank) => bank._id === _id)
-    console.log(selectedBank,"rahul")
     if (selectedBank) {
       // Update the selected bank in the state
       setSelectedBanks([selectedBank]) // Store as an array if needed
@@ -329,15 +306,11 @@ const OrderPurchaseInvoice = () => {
 
   const handleCashPayment = (selctedcash) => {
     setGstType('CGST/SGST')
-    // Update formData with the cash value
-    console.log(selctedcash,"rahul selctedcash")
     setSelectedCash(selctedcash)
-    console.log("cash")
     setFormData((prev) => ({
       ...prev,
       selectedcash: selctedcash,
     }))
-    console.log(formData,"dharma hhh")
   }
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0
@@ -628,8 +601,6 @@ const OrderPurchaseInvoice = () => {
     setSelectedCustomer(filteredData.supplierName);
     setPlaceOfSupply(filteredData.placeOfSupply);
     setBillingAddress(filteredData.billingAddress);
-    console.log(filteredData.cash,"dheeru filteredData")
-    console.log(filteredData.selectedBank ,"dheeru selectedBank filteredData")
     setSelectedCash(filteredData.cash);
     setSelectedBanks(filteredData.selectedBank || [])
     setTransportDetails({
@@ -692,6 +663,66 @@ const OrderPurchaseInvoice = () => {
     handleCustomerChange(filteredData.supplierName);
   };
 
+
+
+
+
+  cashDetails.Amount=netAmount;
+
+  const [bankDetails, setBankDetails] = useState({
+    Amount: "",
+    selectBankType: "",
+    transactionDate: "",
+    chequeNo: "",
+    transactionNo: "",
+    Amount: "",
+    Advance: "",
+    Received: "",
+    Balance: "",
+  });
+  bankDetails.Amount=netAmount
+
+  const calculateBalance = (advance, received, Amount) => {
+    const totalAdvanceReceived = parseFloat(advance) + parseFloat(received);
+    return (Amount) - totalAdvanceReceived || 0;
+  };
+
+  const handleCashDetailsChange = (e) => {
+    const { name, value } = e.target;
+    const updatedCashDetails = { ...cashDetails, [name]: value };
+  
+    // If Advance or Received is updated, calculate the Balance
+    if (name === "Advance" || name === "Received") {
+      updatedCashDetails.Balance = calculateBalance(
+        updatedCashDetails.Advance,
+        updatedCashDetails.Received,
+        updatedCashDetails.Amount
+      );
+    }
+  
+    setCashDetails(updatedCashDetails);
+  };
+
+
+  const handleBankDetailsChange = (e) => {
+    const { name, value } = e.target;
+    const updatedBankDetails = { ...bankDetails, [name]: value };
+  
+    // If Advance or Received is updated, calculate the Balance
+    if (name === "Advance" || name === "Received") {
+      updatedBankDetails.Balance = calculateBalance(
+        updatedBankDetails.Advance,
+        updatedBankDetails.Received,
+        updatedBankDetails.Amount
+      );
+    }
+  
+    setBankDetails(updatedBankDetails);
+  };
+
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -741,6 +772,14 @@ const OrderPurchaseInvoice = () => {
           submissionData.append(`rows[${index}][${key}]`, row[key])
         })
       })
+         // Check if selectedBank exists and append it
+         if (formData.selectedBank && formData.selectedBank.length > 0) {
+          formData.selectedBank.forEach((selectedBank, index) => {
+            Object.keys(selectedBank).forEach((key) => {
+              submissionData.append(`selectedBank[${index}][${key}]`, selectedBank[key]);
+            });
+          });
+        }
 
       if (paymentMethod === 'Cash') {
         submissionData.append('cash', JSON.stringify(cashDetails))
