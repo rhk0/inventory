@@ -320,6 +320,7 @@ export const createPurchaseInvoiceController = async (req, res) => {
     }
     try {
       const {
+        userId,
         date,
         invoiceNo,
         supplierInvoiceNo,
@@ -366,10 +367,10 @@ export const createPurchaseInvoiceController = async (req, res) => {
         cash = req.body.cash;
       }
 
-      const { _id } = req.user;
+      // const { _id } = req.user;
 
       const newInvoice = new purchesInvoiceModel({
-        admin: _id,
+        admin:userId,
         date,
         invoiceNo,
         supplierInvoiceNo,
@@ -418,7 +419,8 @@ export const createPurchaseInvoiceController = async (req, res) => {
 // Get All Purchase Invoices Controller
 export const getAllPurchaseInvoiceController = async (req, res) => {
   try {
-    const invoices = await purchesInvoiceModel.find();
+    const _id = req.params._id;
+    const invoices = await purchesInvoiceModel.find({admin:_id});
 
     if (!invoices.length) {
       return res.status(404).json({

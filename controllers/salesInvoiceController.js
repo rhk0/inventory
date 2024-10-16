@@ -8,6 +8,8 @@ export const createSalesInvoiceController = async (req, res) => {
       salesType,
       customerType,
       customerName,
+      selctedcash,
+      selectedBank, // Include selected bank data
       placeOfSupply,
       paymentTerm,
       dueDate,
@@ -41,6 +43,8 @@ export const createSalesInvoiceController = async (req, res) => {
         salesType,
         customerType,
         customerName,
+        selctedcash, // Include cash in the model
+        selectedBank, // Include selected bank data
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -78,7 +82,8 @@ export const createSalesInvoiceController = async (req, res) => {
 
 export const getAllSalesInvoiceCOntroller = async (req, res) => {
   try {
-    const response = await salesInvoiceModel.find();
+    const _id = req.params._id;
+    const response = await salesInvoiceModel.find({admin:_id});
 
     if (!response) {
       return res

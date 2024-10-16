@@ -34,7 +34,7 @@ const ManageSalesInvoice = () => {
     setError(null);
     try {
       const response = await axios.get(
-        "/api/v1/salesInvoiceRoute/getAllsalesinvoice"
+        `/api/v1/salesInvoiceRoute/getAllsalesinvoice/${userId}`
       );
       setSalesEstimates(response.data.response);
 

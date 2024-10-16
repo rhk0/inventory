@@ -4,20 +4,20 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from 'react-toastify'
 import Select from 'react-select'
 
-import { useAuth } from '../../../context/Auth.js'
+import { useAuth } from "../../../context/Auth.js";
 const CreatePurchaseOrder = () => {
-  const [date, setDate] = useState('')
-  const [orderNo, setorderNo] = useState('')
-  const [customerType, setCustomerType] = useState('Retailer')
-  const [qty, setQty] = useState(0)
-  const [purchaseType, setpurchaseType] = useState('GST Invoice')
-  const [supplierType, setsupplierType] = useState('Retailer')
-  const [placeOfSupply, setPlaceOfSupply] = useState('')
-  const [dueDate, setDueDate] = useState('')
-  const [userId, setUserId] = useState('')
-  const [company, setCompanyData] = useState([])
-  const [chooseUser, setChooseUser] = useState([])
-  const [auth] = useAuth()
+  const [date, setDate] = useState("");
+  const [orderNo, setorderNo] = useState("");
+  const [customerType, setCustomerType] = useState("Retailer");
+  const [qty, setQty] = useState(0);
+  const [purchaseType, setpurchaseType] = useState("GST Invoice");
+  const [supplierType, setsupplierType] = useState("Retailer");
+  const [placeOfSupply, setPlaceOfSupply] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [userId, setUserId] = useState("");
+  const [company, setCompanyData] = useState([]);
+  const [chooseUser, setChooseUser] = useState([]);
+  const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: '',
     dispatchedThrough: '',
@@ -33,10 +33,13 @@ const CreatePurchaseOrder = () => {
   const [paymentTerm, setPaymentTerm] = useState(0)
   const [otherCharges, setOtherCharges] = useState(0)
 
-  const [supplier, setsupplier] = useState([])
-  const [selectedsupplier, setSelectedsupplier] = useState('')
-  const [selectedAddress, setAddress] = useState('')
-
+  const [supplier, setsupplier] = useState([]);
+  const [selectedsupplier, setSelectedsupplier] = useState("");
+  const [selectedAddress, setAddress] = useState("");
+  const [banks, setBanks] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
+  const [cash,setCash]=useState("");
   const [formData, setFormData] = useState({
     date: '',
     orderNo: '',
@@ -138,7 +141,35 @@ const CreatePurchaseOrder = () => {
     } else {
       setGstType('IGST')
     }
-  }
+  };
+  const handleCashPayment = (value) => {
+    console.log(value, "cash");
+    setCash(value);
+    setGstType("CGST/SGST");
+  
+    // Update formData with the cash value
+    setFormData((prev) => ({
+      ...prev,
+      cash: value,
+    }));
+  };
+  const handleBankChange = (bankId) => {
+    const selectedBank = banks.find((bank) => bank._id === bankId);
+    console.log(selectedBank, "selectedBank");
+    
+    // Update the selected banks
+    setSelectedBanks(selectedBank);
+  
+    // Update formData with selected bank details
+    setFormData((prev) => ({
+      ...prev,
+      selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
+    }));
+  
+    // Additional logic for handling bank data
+    setGstType("CGST/SGST");
+  };
+
 
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0
@@ -154,10 +185,28 @@ const CreatePurchaseOrder = () => {
       ...prev,
       otherCharges: otherCharges.toFixed(2),
       otherChargesDescriptions: otherChargesDescriptions,
-    }))
-    setIsModalOtherChargesOpen(false)
-  }
+    }));
+    setIsModalOtherChargesOpen(false);
+  };
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchBanks();
+  }, [auth, userId]);
 
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
+      setBanks(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Bank data", error);
+      toast.error(error.response.data.message);
+    }
+  };
   useEffect(() => {
     if (date && paymentTerm) {
       const selectedDate = new Date(date)
@@ -415,7 +464,7 @@ const CreatePurchaseOrder = () => {
       // Calculate taxable value based on salesTaxInclude
 
       const taxableValue =
-        selectedProduct.purchasePriceExGst * selectedProduct.quantity
+        selectedProduct.purchasePriceExGst * selectedProduct.quantity;
       // Update the row with the new values
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
@@ -561,7 +610,7 @@ const CreatePurchaseOrder = () => {
         supplierType,
         reverseCharge,
         gstType,
-
+        userId: userId,
         netAmount: netAmount,
       }
       const response = await axios.post(
@@ -854,7 +903,6 @@ const CreatePurchaseOrder = () => {
                   Purchase Order
                   </th>
               </tr>
-
 
          
             <tr>
@@ -1408,28 +1456,54 @@ const CreatePurchaseOrder = () => {
           </div> */}
 
           <div>
-            <label className="font-bold">Supplier Name</label>
+            <label className="font-bold ">Select Supplier,Bank Name,or Cash</label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedsupplier}
+              value={selectedValue}
               onChange={(e) => {
-                if (e.target.value === 'add-new-Supplier') {
-                  window.location.href = '/admin/CreateSupplier'
-                } else {
-                  handlesupplierChange(e)
+                const selectedValue = e.target.value;
+
+                if (selectedValue === "add-new-supplier") {
+                  window.location.href = "/admin/CreateSupplier";
+                } else if (selectedValue === "add-new-bank") {
+                  window.location.href = "/admin/addbank";
+                } else if (selectedValue === "cash") {
+                  handleCashPayment(selectedValue); // Handle cash payment
+                } else if (selectedValue.startsWith("bank-")) {
+                  handleBankChange(selectedValue.replace("bank-", "")); // Handle bank change
+                }else {
+                  handlesupplierChange(e); // Handle supplier change
                 }
               }}
             >
-              <option value="">Select Supplier</option>
-              <option value="add-new-supplier" className="text-blue-500">
-                + Add New Supplier
-              </option>
-              {supplier?.map((supplier) => (
-                <option key={supplier._id} value={supplier._id}>
-                  {supplier.name}
+              <option value="">Select Supplier, Bank, or Cash</option>
+
+              {/* Supplier options */}
+              <optgroup label="Suppliers">
+                {supplier?.map((supplier) => (
+                  <option key={supplier._id} value={supplier._id}>
+                    {supplier.name}
+                  </option>
+                ))}
+                <option value="add-new-supplier" className="text-blue-500">
+                  + Add New Supplier
                 </option>
-              ))}
-              {/* Add supplier option at the end of the list */}
+              </optgroup>
+
+              {/* Bank options */}
+              <optgroup label="Banks">
+                {banks?.map((bank) => (
+                  <option key={bank._id} value={`bank-${bank._id}`}>
+                    {bank.name}
+                  </option>
+                ))}
+                <option value="cash" className="text-green-500">
+                  Cash
+                </option>
+                <option value="add-new-bank" className="text-blue-500">
+                  + Add New Bank
+                </option>
+              </optgroup>
             </select>
           </div>
 
@@ -2166,7 +2240,7 @@ const CreatePurchaseOrder = () => {
 
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
-                {otherChargesDescriptions || 'Other Charge'}
+                {otherChargesDescriptions || "Other Charge"}
               </label>
               <input
                 value={otherCharges.toFixed(2)}

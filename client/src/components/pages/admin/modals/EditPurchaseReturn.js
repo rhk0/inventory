@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { FaTimes } from 'react-icons/fa'
 import Select from 'react-select'
-import Modal from 'react-modal'
 import { useAuth } from '../../../context/Auth.js'
 
 const EditPurchaseReturn = ({ closeModal, estimate }) => {
@@ -46,8 +45,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
   useEffect(() => {
     if (estimate) {
-      console.log(estimate, 'sdkjfk')
-      setSupplierName(estimate.supplierName || '')
+    
+      setSupplierName(estimate.supplierName || "");
 
       setDate(estimate.date || '')
       setdebitNoteNo(estimate.debitNoteNo || '')
@@ -573,9 +572,9 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       }
 
       const response = await axios.put(
-        `/api/v1/purchaseInvoiceRoute/updatepurchaseinvoice/${estimate._id}`,
-        submissionData,
-      )
+        `/api/v1/purchesReturnRoute/updatepurchasereturn/${estimate._id}`,
+        submissionData
+      );
 
       console.log(response, 'kdsjfk')
 

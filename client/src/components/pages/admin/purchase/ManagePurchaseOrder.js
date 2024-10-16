@@ -22,17 +22,19 @@ const ManagePurchaseOrder = () => {
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    fetchEstimate();
+ 
     fetchCustomers();
   }, []);
+
 
   const fetchEstimate = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        "/api/v1/purchesOrderRoute/getAllpurchesorder"
+        `/api/v1/purchesOrderRoute/getAllpurchesorder/${userId}`
       );
+     
       setSalesEstimates(response.data.invoices);
     } catch (error) {
       setError("Error fetching sales order.");
@@ -40,6 +42,15 @@ const ManagePurchaseOrder = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchEstimate();
+  }, [auth,userId]);
 
   const handleView = (estimate) => {
     setSelectedEstimate(estimate);
@@ -89,7 +100,7 @@ const ManagePurchaseOrder = () => {
   };
 
   // Filter sales estimates based on search term
-  const filteredEstimates = salesEstimates.filter(
+  const filteredEstimates = salesEstimates?.filter(
     (estimate) =>
       estimate.orderNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       estimate.supplierName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -143,7 +154,7 @@ const ManagePurchaseOrder = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEstimates.length > 0 ? (
+              {filteredEstimates?.length > 0 ? (
                 filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}

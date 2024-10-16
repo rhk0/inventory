@@ -45,7 +45,8 @@ export const createPayOutController = async (req, res) => {
 
 export const getAllPayOutController = async (req, res) => {
   try {
-    const response = await payOutModel.find();
+    const _id = req.params._id;
+    const response = await payOutModel.find({admin:_id});
 
     if (!response || response.length === 0) {
       return res.status(404).send({

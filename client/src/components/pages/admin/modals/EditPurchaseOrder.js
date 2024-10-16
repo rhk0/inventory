@@ -44,7 +44,6 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
 
   useEffect(() => {
     if (estimate) {
-  
       setpurchaseType(estimate.purchaseType)
       setDate(estimate.date || '')
       setorderNo(estimate.orderNo || '')
@@ -76,7 +75,6 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
       })
     }
   }, [estimate])
-
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -241,16 +239,18 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
       qty: qty,
     }
 
-
     // Recalculate taxable value, GST amounts, and total value based on the new quantity
     const unitCost = parseFloat(selectedRow.unitCost) || 0
     const taxable = qty * unitCost
-    const gstRate = gstType === 'CGST/SGST' ? (gstType) : 0
-   
-    const cgstRS = gstType === 'CGST/SGST' ? (taxable * (Number(gstRatev) / 2)) / 100 : 0
-    const sgstRS = gstType === 'CGST/SGST' ? (taxable * (Number(gstRatev) / 2)) / 100 : 0
-   
-    const igstRS = gstType === 'IGST' ? (Number(taxable) * Number(gstRatev)) / 100 : 0
+    const gstRate = gstType === 'CGST/SGST' ? gstType : 0
+
+    const cgstRS =
+      gstType === 'CGST/SGST' ? (taxable * (Number(gstRatev) / 2)) / 100 : 0
+    const sgstRS =
+      gstType === 'CGST/SGST' ? (taxable * (Number(gstRatev) / 2)) / 100 : 0
+
+    const igstRS =
+      gstType === 'IGST' ? (Number(taxable) * Number(gstRatev)) / 100 : 0
 
     const totalValue = taxable + cgstRS + sgstRS + igstRS
     updatedRows[rowIndex] = {
@@ -278,9 +278,10 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
       const igstRS = parseFloat(row.igstRS) || 0
 
       grossAmount += taxable
-      GstAmount += gstType === 'CGST/SGST' 
-      ? (Number(cgstRS) + Number(sgstRS))  // If CGST/SGST, sum these
-      : Number(igstRS);  // Otherwise, use IGST
+      GstAmount +=
+        gstType === 'CGST/SGST'
+          ? Number(cgstRS) + Number(sgstRS) // If CGST/SGST, sum these
+          : Number(igstRS) // Otherwise, use IGST
     })
 
     let netAmount
@@ -445,37 +446,39 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
     }
   }
 
-
-
   useEffect(() => {
     const applyProductDetailsToRows = async (rows) => {
       const updatedRows = await Promise.all(
         rows.map(async (row) => {
           // Find the product based on itemCode or productName
           const selectedProduct = products.find(
-            (product) => product.itemCode === row.itemCode || product.productName === row.productName
-          );
-  
+            (product) =>
+              product.itemCode === row.itemCode ||
+              product.productName === row.productName,
+          )
+
           if (selectedProduct) {
             // Get unitCost from the selected product
-            const unitCost = selectedProduct.purchasePriceExGst || 0;
-            const qty = row.qty || 0;
-            const taxable = qty * unitCost;
-  
+            const unitCost = selectedProduct.purchasePriceExGst || 0
+            const qty = row.qty || 0
+            const taxable = qty * unitCost
+
             // GST Calculations
-            const gstRate = selectedProduct.gstRate || 0; // Use product GST rate if available
-  
+            const gstRate = selectedProduct.gstRate || 0 // Use product GST rate if available
+
             // Calculate CGST, SGST, and IGST based on gstType
-            let cgstRS = 0, sgstRS = 0, igstRS = 0;
+            let cgstRS = 0,
+              sgstRS = 0,
+              igstRS = 0
             if (gstType === 'CGST/SGST') {
-              cgstRS = (taxable * (gstRate / 2)) / 100;
-              sgstRS = (taxable * (gstRate / 2)) / 100;
+              cgstRS = (taxable * (gstRate / 2)) / 100
+              sgstRS = (taxable * (gstRate / 2)) / 100
             } else if (gstType === 'IGST') {
-              igstRS = (taxable * gstRate) / 100;
+              igstRS = (taxable * gstRate) / 100
             }
-  
-            const totalValue = taxable + cgstRS + sgstRS + igstRS;
-  
+
+            const totalValue = taxable + cgstRS + sgstRS + igstRS
+
             // Return the updated row with calculated values
             return {
               ...row,
@@ -485,26 +488,24 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
               sgstRS: sgstRS.toFixed(2),
               igstRS: igstRS.toFixed(2),
               totalValue: totalValue.toFixed(2), // Total value after GST
-            };
+            }
           } else {
             // If no product match is found, return the row as-is
-            return row;
+            return row
           }
-        })
-      );
-  
+        }),
+      )
+
       // Set the updated rows to the state
-      setRows(updatedRows);
-      calculateTotalAmounts(); // Recalculate total amounts after updating rows
-    };
-  
+      setRows(updatedRows)
+      calculateTotalAmounts() // Recalculate total amounts after updating rows
+    }
+
     if (estimate && products.length > 0) {
       // If there are products and estimate data, apply product details to rows
-      applyProductDetailsToRows(estimate.rows);
+      applyProductDetailsToRows(estimate.rows)
     }
-  }, [estimate, products, gstType]);
-  
-  
+  }, [estimate, products, gstType])
 
   return (
     <div style={{ backgroundColor: '#82ac73' }} className="p-4 ">

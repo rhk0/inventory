@@ -9,14 +9,12 @@ import Modal from "react-modal";
 
 const PurchesInvoice = () => {
   const [documentPath, setdocumentPath] = useState(null);
-
   const [date, setDate] = useState("");
   const [invoiceNo, setinvoiceNo] = useState("");
   const [salesType, setSalesType] = useState("GST Invoice");
   const [customerType, setCustomerType] = useState("Retailer");
   const [placeOfSupply, setPlaceOfSupply] = useState("");
   const [dueDate, setDueDate] = useState("");
-
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
   const [freeQty, setFreeQty] = useState(0);
@@ -689,9 +687,10 @@ const PurchesInvoice = () => {
         grossAmount: grossAmount.toFixed(2),
         GstAmount: GstAmount.toFixed(2),
         otherCharges: otherCharges.toFixed(2),
+        userId: userId,
         netAmount: netAmount.toFixed(2),
       };
-
+     
       // Append all fields to formData
       Object.keys(fields).forEach((key) => {
         if (fields[key]) {
@@ -718,6 +717,7 @@ const PurchesInvoice = () => {
       }
 
       // Send the formData using axios
+      console.log(submissionData,"submissionData")
       const response = await axios.post(
         "/api/v1/purchaseInvoiceRoute/createpurchaseinvoice",
         submissionData

@@ -19,18 +19,17 @@ const ManagePurchaseInvoice = () => {
   const [auth] = useAuth();
   const [userid, setUserId] = useState("");
 
-  useEffect(() => {
-    fetchEstimate();
-  }, []);
+
 
   const fetchEstimate = async () => {
     setLoading(true);
     setError(null);
     try {
+      console.log(userid,"userid")
       const response = await axios.get(
-        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice"
+        `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userid}`
       );
-      console.log(response.data.invoices, "purchase invoice");
+      console.log(response, "purchase invoice");
       setSalesEstimates(response.data.invoices);
     } catch (error) {
       setError(error.response.data.message);
@@ -38,7 +37,15 @@ const ManagePurchaseInvoice = () => {
       setLoading(false);
     }
   };
-
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchEstimate();
+  }, [auth,userid]);
   const handleView = (estimate) => {
     setSelectedEstimate(estimate);
     setViewModalOpen(true);
@@ -154,8 +161,8 @@ const ManagePurchaseInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEstimates.length > 0 ? (
-                filteredEstimates.map((estimate, index) => (
+              {filteredEstimates?.length > 0 ? (
+                filteredEstimates?.map((estimate, index) => (
                   <tr
                     key={estimate._id}
                     className="hover:bg-gray-200 transition-all"

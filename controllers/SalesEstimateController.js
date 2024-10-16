@@ -9,6 +9,8 @@ export const createSalesEstimateController = async (req, res) => {
       salesType,
       customerType,
       customerName,
+      cash, // Include cash in the model
+      selectedBank, // Include selected bank data
       placeOfSupply,
       paymentTerm,
       dueDate,
@@ -46,6 +48,8 @@ export const createSalesEstimateController = async (req, res) => {
       salesType,
       customerType,
       customerName,
+      cash, // Include cash in the model
+      selectedBank, // Include selected bank data
       placeOfSupply,
       paymentTerm,
       dueDate,

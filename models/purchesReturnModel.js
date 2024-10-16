@@ -2,7 +2,10 @@ import mongoose from "mongoose";
 
 const purchesReturnSchema = new mongoose.Schema(
   {
-    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    admin :{type:mongoose.Schema.Types.ObjectId,
+      ref:"user",
+      required:true,
+    },
     supplierName: { type: String },
     date: { type: String },
     debitNoteNo:{type:String},  

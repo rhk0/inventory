@@ -10,10 +10,10 @@ import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/createpurchesorder",requireSignIn,isAdmin, createPurchesOrderController);
-router.get("/getAllpurchesorder",requireSignIn,isAdmin, getAllPurchesOrderController);
-router.get("/getAllpurchesorderById/:_id",requireSignIn,isAdmin, getAllPurchesOrderByIdController);
-router.put("/updatepurchesorder/:_id", requireSignIn,isAdmin,updatePurchesOrderByIdController);
-router.delete("/deletepurchesorder/:_id", requireSignIn,isAdmin,deletePurchesOrderByIdController);
+router.post("/createpurchesorder",requireSignIn, createPurchesOrderController);
+router.get("/getAllpurchesorder/:_id",requireSignIn, getAllPurchesOrderController);
+router.get("/getAllpurchesorderById/:_id",requireSignIn, getAllPurchesOrderByIdController);
+router.put("/updatepurchesorder/:_id", requireSignIn,updatePurchesOrderByIdController);
+router.delete("/deletepurchesorder/:_id", requireSignIn,deletePurchesOrderByIdController);
 
 export default router;
