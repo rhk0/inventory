@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 const banktransctionSchecma = new mongoose.Schema(
   {
+    admin: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     date: {
       type: Date,
     },

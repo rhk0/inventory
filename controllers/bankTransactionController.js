@@ -8,7 +8,7 @@ export const bankToBankTransferController = async (req, res) => {
   try {
     const { date, contraNo, fromAccount, amount, toAccount } = req.body;
 
-    
+    const { _id } = req.user;
     const requiredFields = [
       "date",
       "contraNo",
@@ -58,6 +58,7 @@ export const bankToBankTransferController = async (req, res) => {
      }
 
     const response = await bankTransactionModel.create({
+      admin: _id,
       date,
       contraNo,
       fromAccount,
@@ -84,14 +85,7 @@ export const bankToBankTransferController = async (req, res) => {
 export const CashDepositeIntoBankController = async (req, res) => {
   try {
     const { date, contraNo, fromAccount, amount, toAccount } = req.body;
-    const response = await bankDepositIntoModel.create({
-      date,
-      contraNo,
-      fromAccount,
-      amount,
-      toAccount,
-    });
-
+    const { _id } = req.user;
     const requiredFields = [
       "date",
       "contraNo",
@@ -108,6 +102,16 @@ export const CashDepositeIntoBankController = async (req, res) => {
         missingFields: missingFields,
       });
     }
+    const response = await bankDepositIntoModel.create({
+      admin: _id,
+      date,
+      contraNo,
+      fromAccount,
+      amount,
+      toAccount,
+    });
+
+  
 
     if (response) {
       return res.status(201).send({
@@ -126,14 +130,7 @@ export const CashDepositeIntoBankController = async (req, res) => {
 export const CashWithdrawfromBankController = async (req, res) => {
   try {
     const { date, contraNo, fromAccount, amount, toAccount } = req.body;
-    const response = await CashWithdrawfromBankModel.create({
-      date,
-      contraNo,
-      fromAccount,
-      amount,
-      toAccount,
-    });
-
+    
     const requiredFields = [
       "date",
       "contraNo",
@@ -150,6 +147,17 @@ export const CashWithdrawfromBankController = async (req, res) => {
         missingFields: missingFields,
       });
     }
+    const { _id } = req.user;
+    
+    const response = await CashWithdrawfromBankModel.create({
+      admin: _id,
+      date,
+      contraNo,
+      fromAccount,
+      amount,
+      toAccount,
+    });
+
 
     if (response) {
       return res.status(201).send({
@@ -163,5 +171,53 @@ export const CashWithdrawfromBankController = async (req, res) => {
     return res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });
+  }
+};
+export const getBankToBankTransferById = async (req, res) => {
+  try {
+    const { _id } = req.params;
+    // Use findById to fetch by _id
+    const bankTransaction = await bankTransactionModel.find({admin:_id});
+
+    if (!bankTransaction) {
+      return res.status(404).json({ success: false, message: "Bank transaction not found" });
+    }
+
+    res.status(200).json({message:"Bank transaction found succesfully", success: true, data: bankTransaction });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+// Get Cash Deposit Into Bank by ID
+export const getCashDepositIntoBankById = async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const cashDeposit = await bankDepositIntoModel.find({admin:_id});
+    if (!cashDeposit) {
+      return res.status(404).json({ success: false, message: "Cash deposit not found" });
+    }
+    res.status(200).json({message:"Cash deposit found successfully", success: true, data: cashDeposit });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
+};
+// Get Cash Withdraw from Bank by ID
+export const getCashWithdrawFromBankById = async (req, res) => {
+  try {
+    const { _id } = req.params;
+
+    const cashWithdraw = await CashWithdrawfromBankModel.find({admin:_id});
+
+    if (!cashWithdraw) {
+      return res.status(404).json({ success: false, message: "Cash withdraw not found" });
+    }
+
+    res.status(200).json({message:"Cash withdraw found succesfully", success: true, data: cashWithdraw });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
