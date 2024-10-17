@@ -25,11 +25,9 @@ const ManagePurchaseInvoice = () => {
     setLoading(true);
     setError(null);
     try {
-      console.log(userid,"userid")
       const response = await axios.get(
         `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userid}`
       );
-      console.log(response, "purchase invoice");
       setSalesEstimates(response.data.invoices);
     } catch (error) {
       setError(error.response.data.message);
@@ -76,7 +74,6 @@ const ManagePurchaseInvoice = () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
       setCustomers(response.data.data);
-      console.log(response, "dskfkj");
     } catch (error) {
       console.error("Error fetching suppliers:", error);
     }

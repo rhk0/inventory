@@ -63,6 +63,8 @@ export const createPurchaseReturnController = async (req, res) => {
         paymentTerm,
         dueDate,
         supplierName,
+        cash, // Include cash in the model
+        selectedBank, // Include selected bank data
         billingAddress,
         selectPurchase,
         reasonForReturn,
@@ -90,6 +92,8 @@ export const createPurchaseReturnController = async (req, res) => {
         paymentTerm,
         dueDate,
         supplierName,
+        cash, // Include cash in the model
+        selectedBank, // Include selected bank data
         billingAddress,
         selectPurchase,
         reasonForReturn,
