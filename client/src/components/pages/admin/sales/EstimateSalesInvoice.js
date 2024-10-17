@@ -167,16 +167,19 @@ const EstimateSalesInvoice = () => {
   }, [userId]) // Empty dependency array ensures this only runs once, on mount
 
   const handleCustomerChange = (supplierName) => {
+    console.log(supplierName,"supplierName")
     const value = supplierName
     setSelectedCustomer(value)
     const selectedCustomerData = customer?.find((cust) => cust?.name === value)
     setChooseUser(selectedCustomerData)
+   
     setFormData((prev) => ({
       ...prev,
-      supplierName: selectedCustomerData ? selectedCustomerData.name : '',
+      customerName: selectedCustomerData ? selectedCustomerData.name : '',
       billingAddress: selectedCustomerData ? selectedCustomerData.address : '',
       placeOfSupply: selectedCustomerData ? selectedCustomerData.state : '',
     }))
+    console.log(formData,"form data")
   }
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0
@@ -608,9 +611,7 @@ const EstimateSalesInvoice = () => {
     handleCustomerChange(filteredData.customerName)
   }
 
-  {
-    console.log(netAmount, 'lkldskflksdklfkl')
-  }
+  
   const [cashDetails, setCashDetails] = useState({
     Amount: '',
     Advance: '',

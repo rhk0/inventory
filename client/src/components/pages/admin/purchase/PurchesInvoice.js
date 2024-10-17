@@ -192,9 +192,8 @@ const PurchesInvoice = () => {
     }
   }
   const handleCashPayment = (value) => {
-    setCash(value)
-    setGstType('CGST/SGST')
-    console.log(value, 'value')
+    setCash(value);
+    setGstType("CGST/SGST");
     // Update formData with the cash value
     setFormData((prev) => ({
       ...prev,
@@ -205,15 +204,12 @@ const PurchesInvoice = () => {
     const selectedBank = banks.find((bank) => bank._id === bankId)
 
     // Update the selected banks
-    setSelectedBanks(selectedBank)
-    console.log(selectedBank, 'selectedBank')
-    // Update formData with selected bank details
+    setSelectedBanks(selectedBank);
+        // Update formData with selected bank details
     setFormData((prev) => ({
       ...prev,
       selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
-    }))
-    console.log(formData, 'dheeru')
-
+    }));
     // Additional logic for handling bank data
     setGstType('CGST/SGST')
   }
@@ -769,12 +765,9 @@ const PurchesInvoice = () => {
       if (documentPath) {
         submissionData.append('documentPath', documentPath)
       }
-
-      // Log the form data for debugging
-      for (let pair of submissionData.entries()) {
-        console.log(pair[0], pair[1]) // Logs each field in FormData
-      }
-
+  
+    
+  
       // Send the formData using axios
       const response = await axios.post(
         '/api/v1/purchaseInvoiceRoute/createpurchaseinvoice',

@@ -36,12 +36,18 @@ const PurchesReturn = () => {
   const [chooseUser, setChooseUser] = useState([]);
   const [company, setCompanyData] = useState([]);
   const [auth] = useAuth();
+  const [banks, setBanks] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
+  const [cash, setCash] = useState("");
   const [userid, setUserId] = useState("");
 
   const [formData, setFormData] = useState({
     date: "",
     debitNoteNo: "",
     supplierName: "",
+    cash: "",
+    selectedBank: [],
     paymentTerm: "",
     dueDate: "",
 
@@ -104,7 +110,25 @@ const PurchesReturn = () => {
     const { name, value } = e.target;
     setCashDetails((prev) => ({ ...prev, [name]: value }));
   };
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchBanks();
+  }, [auth, userid]);
 
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userid}`);
+      setBanks(response.data.data);
+    } catch (error) {
+      console.error("Error fetching Bank data", error);
+      toast.error(error.response.data.message);
+    }
+  };
   const handleBankDetailsChange = (e) => {
     const { name, value } = e.target;
     setBankDetails((prev) => ({
@@ -138,7 +162,6 @@ const PurchesReturn = () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
       setCustomer(response.data.data);
-      console.log(response, "dskfkj");
     } catch (error) {
       console.error("Error fetching suppliers:", error);
     }
@@ -192,11 +215,30 @@ const PurchesReturn = () => {
       setGstType("IGST");
     }
   };
-
+  const handleCashPayment = (value) => {
+    setCash(value);
+    setGstType("CGST/SGST");
+    // Update formData with the cash value
+    setFormData((prev) => ({
+      ...prev,
+      cash: value,
+    }));
+  };
+  const handleBankChange = (bankId) => {
+    const selectedBank = banks.find((bank) => bank._id === bankId);
+    // Update the selected banks
+    setSelectedBanks(selectedBank);
+    // Update formData with selected bank details
+    setFormData((prev) => ({
+      ...prev,
+      selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
+    }));
+    // Additional logic for handling bank data
+    setGstType("CGST/SGST");
+  };
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0;
     setOtherCharges(newCharges);
-
     setFormData((prev) => ({
       ...prev,
       otherCharges: newCharges,
@@ -460,7 +502,6 @@ const PurchesReturn = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageproduct/${userid}`);
-      console.log(response, "dkfjk");
       if (response.data && Array.isArray(response.data.data)) {
         setProducts(response.data.data);
       } else {
@@ -614,6 +655,8 @@ const PurchesReturn = () => {
         debitNoteNo,
         supplierdebitNoteNo,
         supplierName: formData.supplierName,
+        cash:formData.cash,
+        
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -643,24 +686,26 @@ const PurchesReturn = () => {
           submissionData.append(`rows[${index}][${key}]`, row[key]);
         });
       });
+      if (formData.selectedBank && formData.selectedBank.length > 0) {
+        formData.selectedBank.forEach((selectedBank, index) => {
+          Object.keys(selectedBank).forEach((key) => {
+            submissionData.append(`selectedBank[${index}][${key}]`, selectedBank[key]);
+          });
+        });
+      }
 
       // If a document file has been selected, append it to the FormData
       if (documentPath) {
         submissionData.append("documentPath", documentPath);
       }
 
-      for (var pair of submissionData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
+    
 
       // Send the formData using axios
       const response = await axios.post(
         "/api/v1/purchesReturnRoute/createpurchasereturn",
         submissionData
       );
-
-      console.log(response);
-
       if (response) {
         toast.success("Purchase invoice created successfully...");
       }
@@ -736,12 +781,6 @@ const PurchesReturn = () => {
     // Add any other state resets...
   };
 
-  const openViewModal = (suppliers) => {
-    setViewModal(true);
-  };
-  const closeModal = () => {
-    setViewModal(false);
-  };
   const handlePrintOnly = () => {
     const printWindow = window.open("", "_blank");
 
@@ -1097,26 +1136,64 @@ const PurchesReturn = () => {
             <label className="font-bold">Supplier Name</label>
             <select
               className="w-full p-2 border border-gray-300 rounded"
-              value={selectedCustomer}
+              value={selectedValue} // Ensure the selected value is shown in the dropdown
               onChange={(e) => {
-                if (e.target.value === "add-new-customer") {
+                const selectedValue = e.target.value;
+                setSelectedValue(selectedValue); // Update the state to reflect the selected value
+
+                if (selectedValue === "add-new-supplier") {
                   window.location.href = "/admin/CreateSupplier";
+                } else if (selectedValue === "add-new-bank") {
+                  window.location.href = "/admin/addbank";
+                } else if (selectedValue === "cash") {
+                  handleCashPayment(selectedValue); // Handle cash payment
+                } else if (selectedValue.startsWith("bank-")) {
+                  handleBankChange(selectedValue.replace("bank-", "")); // Handle bank change
                 } else {
-                  handleCustomerChange(e);
+                  handleCustomerChange(e); // Handle supplier change
                 }
               }}
             >
-              <option value="">Select Supplier</option>
-              <option value="add-new-customer" className="text-blue-500">
-                + Add New Supplier
-              </option>
-              {customer?.map((customer) => (
-                <option key={customer._id} value={customer._id}>
-                  {customer.name}
+              {/* Supplier options */}
+              <optgroup label="Suppliers">
+                {customer?.map((supplier) => (
+                  <option key={supplier._id} value={supplier._id}>
+                    {supplier.name}
+                  </option>
+                ))}
+                <option value="add-new-supplier" className="text-blue-500">
+                  + Add New Supplier
                 </option>
-              ))}
-              {/* Add Customer option at the end of the list */}
+              </optgroup>
+
+              {/* Bank options */}
+              <optgroup label="Banks">
+                {banks?.map((bank) => (
+                  <option key={bank._id} value={`bank-${bank._id}`}>
+                    {bank.name}
+                  </option>
+                ))}
+                <option value="cash" className="text-green-500">
+                  Cash
+                </option>
+                {/* <option value="add-new-bank" className="text-blue-500">
+                  + Add New Bank
+                </option> */}
+              </optgroup>
             </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
           </div>
 
           <div>
@@ -1315,7 +1392,6 @@ const PurchesReturn = () => {
                     />
                   </td>
                   <td className="border ">
-                    {console.log(rows, "dheeru")}
                     <Select
                       id="product-select"
                       value={
