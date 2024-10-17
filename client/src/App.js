@@ -34,7 +34,7 @@ function App() {
           <Route path="/otpverification" element={<Otpverification />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/CompanyRegistration" element={<CompanyRegistration />} />
-           <Route path ="/checkOut" element={<SubscriptionCheckout/>}/>
+          <Route path ="/checkOut" element={<SubscriptionCheckout/>}/>
          
           <Route path="/admin/*" element={<AdminProtectedRoute />}>
             <Route path="*" element={<AdminRoutes />} />

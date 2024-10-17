@@ -64,7 +64,7 @@ const Home = () => {
               textStyle={{
                 fontFamily: 'Oswald, sans-serif',
                 color: '#6a1b9a',
-              }}
+              }}  
               cursorColor="#6a1b9a"
               multiText={[
                 'Inventory Management System',

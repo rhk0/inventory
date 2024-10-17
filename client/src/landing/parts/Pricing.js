@@ -11,15 +11,18 @@ const Pricing = () => {
   useEffect(() => {
     fetchPlans();
   }, []);
-
+  
+  
   const fetchPlans = async () => {
     try {
       const response = await axios.get('/api/v1/subscription/all');
       setPlans(response.data.plan);
+      
     } catch (error) {
       console.error('Error fetching plans:', error);
     }
   };
+  console.log(plans);
 
  
 
