@@ -67,6 +67,7 @@ export const bankToBankTransferController = async (req, res) => {
       { new: true, session }
     );
 
+    
     const tr2 = await bankModel.findByIdAndUpdate(
       toAccount, 
       { openingBalance: newToBalance }, 
