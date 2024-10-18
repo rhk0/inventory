@@ -40,7 +40,12 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
       setEstimateNo(estimate.estimateNo || '')
       setSalesType(estimate.salesType || '')
       setCustomerType(estimate.customerType || '')
-      setCustomerName(estimate.customerName || '')
+      setCustomerName(
+        estimate?.customerName ||
+          estimate?.cash ||
+          ` ${estimate.selectedBank[0]?.name} ` ||
+          '',
+      )
       setPlaceOfSupply(estimate.placeOfSupply || '')
       setPaymentTerm(estimate.paymentTerm || '')
       setDueDate(estimate.dueDate || '')

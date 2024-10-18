@@ -144,6 +144,8 @@ const CreateSalesEstimate = () => {
       setGstType("IGST");
     }
   };
+
+  
   const handleCashPayment = (value) => {
     setCash(value);
     setGstType("CGST/SGST");

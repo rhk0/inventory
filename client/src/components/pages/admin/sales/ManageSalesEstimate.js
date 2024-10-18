@@ -128,10 +128,8 @@ const ManageSalesEstimate = () => {
                   "Sales Type",
                   "Customer Name",
                   "Place of Supply",
-              
                   "GST Type",
                   "Product Code",
-
                   "UOM",
                   "MRP",
                   "QTY",

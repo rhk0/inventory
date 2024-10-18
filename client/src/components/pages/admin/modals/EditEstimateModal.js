@@ -41,7 +41,12 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       setEstimateNo(estimate.estimateNo || '')
       setSalesType(estimate.salesType || '')
       setCustomerType(estimate.customerType || '')
-      setCustomerName(getCustomerName(estimate.customerId) || '')
+      setCustomerName(
+        estimate?.customerName ||
+          estimate?.cash ||
+          ` ${estimate.selectedBank[0]?.name} ` ||
+          '',
+      )
       setPlaceOfSupply(estimate.placeOfSupply || '')
       setPaymentTerm(estimate.paymentTerm || '')
       setDueDate(estimate.dueDate || '')
@@ -893,7 +898,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       minWidth: '60px',
                       flexBasis: '60px',
                       flexShrink: 1,
-                    }}                   />
+                    }}
+                  />
                 </td>
                 <td className="border p-2">
                   <input
@@ -926,7 +932,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       minWidth: '60px',
                       flexBasis: '60px',
                       flexShrink: 1,
-                    }}                  />
+                    }}
+                  />
                 </td>
                 <td className="border">
                   {row.discountpercent && row.discountRS ? (
@@ -952,7 +959,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                           minWidth: '40px',
                           flexBasis: '40px',
                           flexShrink: 1,
-                        }}                      />
+                        }}
+                      />
                     </div>
                   ) : (
                     // If discountpercent and discountRS do not exist, show these input boxes
@@ -1041,7 +1049,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                           minWidth: '60px',
                           flexBasis: '60px',
                           flexShrink: 1,
-                        }}                       />
+                        }}
+                      />
                     </td>
                     {gstType === 'CGST/SGST' && (
                       <>
@@ -1113,7 +1122,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                               minWidth: '10px',
                               flexBasis: '20px',
                               flexShrink: 1,
-                            }}                           />
+                            }}
+                          />
                           <input
                             type="number"
                             value={row.igstRS}
@@ -1125,7 +1135,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                               minWidth: '60px',
                               flexBasis: '60px',
                               flexShrink: 1,
-                            }}                           />
+                            }}
+                          />
                         </div>
                       </td>
                     )}
@@ -1143,7 +1154,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       minWidth: '70px',
                       flexBasis: '70px',
                       flexShrink: 1,
-                    }}                   />
+                    }}
+                  />
                 </td>
                 <td className="p-1 gap-2 flex">
                   <button
