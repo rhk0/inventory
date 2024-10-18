@@ -6,7 +6,7 @@ import bankModel from "../models/bankModel.js";
 import { isValidObjectId } from 'mongoose';
 export const bankToBankTransferController = async (req, res) => {
   try {
-    const { date, contraNo, fromAccount, amount, toAccount } = req.body;
+    const {userId, date, contraNo, fromAccount, amount, toAccount } = req.body;
 
     const { _id } = req.user;
     const requiredFields = [
@@ -58,7 +58,7 @@ export const bankToBankTransferController = async (req, res) => {
      }
 
     const response = await bankTransactionModel.create({
-      admin: _id,
+      admin: userId,
       date,
       contraNo,
       fromAccount,
@@ -84,8 +84,8 @@ export const bankToBankTransferController = async (req, res) => {
 
 export const CashDepositeIntoBankController = async (req, res) => {
   try {
-    const { date, contraNo, fromAccount, amount, toAccount } = req.body;
-    const { _id } = req.user;
+    const { userId,date, contraNo, fromAccount, amount, toAccount } = req.body;
+
     const requiredFields = [
       "date",
       "contraNo",
@@ -103,7 +103,7 @@ export const CashDepositeIntoBankController = async (req, res) => {
       });
     }
     const response = await bankDepositIntoModel.create({
-      admin: _id,
+      admin: userId,
       date,
       contraNo,
       fromAccount,
@@ -129,7 +129,7 @@ export const CashDepositeIntoBankController = async (req, res) => {
 };
 export const CashWithdrawfromBankController = async (req, res) => {
   try {
-    const { date, contraNo, fromAccount, amount, toAccount } = req.body;
+    const {userId, date, contraNo, fromAccount, amount, toAccount } = req.body;
     
     const requiredFields = [
       "date",
@@ -147,10 +147,10 @@ export const CashWithdrawfromBankController = async (req, res) => {
         missingFields: missingFields,
       });
     }
-    const { _id } = req.user;
+    
     
     const response = await CashWithdrawfromBankModel.create({
-      admin: _id,
+      admin: userId,
       date,
       contraNo,
       fromAccount,

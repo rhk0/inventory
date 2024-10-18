@@ -5,7 +5,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../../../context/Auth.js";
 
 const AddExpense = () => {
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const [formData, setFormData] = useState({
+   admin:userId,
     date: "",
     paymentType: "",
     expenseNo: "",
@@ -24,8 +27,7 @@ const AddExpense = () => {
 
   const [vendor, setVendor] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState("");
-  const [auth] = useAuth();
-  const [userId, setUserId] = useState("");
+
   const [company, setCompanyData] = useState([]);
   const [chooseUser, setChooseUser] = useState([]);
   const [gstType, setGstType] = useState("CGST/SGST");
@@ -132,11 +134,19 @@ const AddExpense = () => {
 
     try {
       // Mock API call to save expense data
-      console.log(formData, "response");
+      const updatedFormData = {
+        ...formData,
+       
+        userId: userId,
+      
+      }
+      console.log(updatedFormData,"updatedFormData deeru")
       const response = await axios.post(
         "/api/v1/expensesRoute/create",
-        formData
+        updatedFormData,
+      
       );
+      console.log(response,"res")
 
       // Reset form after submission
       setFormData({

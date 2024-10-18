@@ -835,7 +835,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setExpenses(!showExpenses)}
-                  className="w-full flex items-center nestedlist  justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center nestedlist innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Expenses</span>
                   {!showExpenses ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -866,7 +866,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setIncome(!showIncome)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center innerlist sidebar-list-item nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Income</span>
                   {!showIncome ? <IoIosArrowForward /> : <IoIosArrowDown />}

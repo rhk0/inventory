@@ -4,6 +4,7 @@ import ExpenseModel from "../models/expensesModel.js";
 export const createExpenseController = async (req, res) => {
   try {
     const {
+      userId,
       date,
       expenseNo,
       expenseType,
@@ -19,8 +20,9 @@ export const createExpenseController = async (req, res) => {
       total,
       narration,
     } = req.body;
-
+  
     const newExpense = await ExpenseModel.create({
+      admin:userId,
       date,
       expenseNo,
       expenseType,
@@ -36,7 +38,6 @@ export const createExpenseController = async (req, res) => {
       total,
       narration,
     });
-
     return res.status(201).send({
       success: true,
       message: "Expense Created Successfully",
@@ -55,7 +56,8 @@ export const createExpenseController = async (req, res) => {
 // Get all expenses
 export const manageExpenseController = async (req, res) => {
   try {
-    const expenses = await ExpenseModel.find();
+    const {_id}=req.params;
+    const expenses = await ExpenseModel.find({admin:_id});
     if (expenses.length > 0) {
       return res.status(200).send({
         success: true,

@@ -5,12 +5,14 @@ import { format, parseISO } from "date-fns";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../../context/Auth";
 const ManageIncome = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [incomes, setincomes] = useState([]);
   const [selectedincome, setSelectedincome] = useState(null);
+  const [auth] = useAuth();
+  const [userid, setUserId] = useState("");
   const [formData, setFormData] = useState({
     date: "",
     incomeNo: "",
@@ -28,12 +30,18 @@ const ManageIncome = () => {
   });
 
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchincomes();
-  }, []);
+  }, [auth,userid]);
 
   const fetchincomes = async () => {
     try {
-      const response = await axios.get("/api/v1/incomeRoute/manageallincome");
+      const response = await axios.get(`/api/v1/incomeRoute/manageallincome/${userid}`);
       console.log(response, "manage");
       setincomes(response.data.data);
     } catch (error) {
@@ -168,7 +176,7 @@ const ManageIncome = () => {
             </tr>
           </thead>
           <tbody className="text-black">
-            {incomes.map((income) => (
+            {incomes?.map((income) => (
               <tr key={income._id}>
                 <td className="py-2 px-4 border border-gray-300">
                   {format(new Date(income.date), "dd/MM/yyyy")}

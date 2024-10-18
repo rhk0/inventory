@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../../../context/Auth.js";
 import {
   Container,
   Typography,
@@ -16,6 +17,8 @@ import {
 } from "@mui/material";
 
 function CashDepositeIntoBank() {
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const [formData, setFormData] = useState({
     date: "",
     contraNo: "",
@@ -25,6 +28,17 @@ function CashDepositeIntoBank() {
     toAccount: "",
   });
 
+
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+  
+  }, []);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -50,8 +64,15 @@ function CashDepositeIntoBank() {
         return;
       }
     }
+    
 
     try {
+      const updatedFormData = {
+        ...formData,
+       
+        userId: userId,
+      
+      }
       const response = await axios.post(
         "/api/v1/auth/CashDepositeIntoBank",
         formData

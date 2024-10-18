@@ -31,6 +31,7 @@ const TotalSalesList = () => {
       const response = await axios.get(
         `/api/v1/salesInvoiceRoute/getAllsalesinvoice/${userId}`
       );
+      console.log(response,"getAllsalesinvoice")
       setSalesEstimates(response.data.response);
     } catch (error) {
       setError("Error fetching sales estimates.");
@@ -42,6 +43,7 @@ const TotalSalesList = () => {
   const fetchCustomers = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      console.log(response,"manageCustomer")
       setCustomers(response.data.data);
     } catch (error) {
       console.error("Error fetching customers", error);
@@ -75,11 +77,11 @@ const TotalSalesList = () => {
   });
 
   // Calculate total gross amount for filtered estimates
-  const totalGrossAmount = filteredEstimates.reduce(
+  const totalGrossAmount = filteredEstimates?.reduce(
     (sum, estimate) => sum + (Number(estimate.grossAmount) || 0),
     0
   );
-  const totalNetAmount = filteredEstimates.reduce(
+  const totalNetAmount = filteredEstimates?.reduce(
     (sum, estimate) => sum + (Number(estimate.netAmount) || 0),
     0
   );

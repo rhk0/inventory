@@ -4,12 +4,12 @@ import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
  
-router.post("/banktoBankTransfer",requireSignIn,isAdmin,bankToBankTransferController)
-router.post("/CashDepositeIntoBank",requireSignIn,isAdmin,CashDepositeIntoBankController)
-router.post("/CashWithdrawfromBank",requireSignIn,isAdmin,CashWithdrawfromBankController)
+router.post("/banktoBankTransfer",requireSignIn,bankToBankTransferController)
+router.post("/CashDepositeIntoBank",requireSignIn,CashDepositeIntoBankController)
+router.post("/CashWithdrawfromBank",requireSignIn,CashWithdrawfromBankController)
 
-router.get("/getbanktoBankTransfer/:_id",requireSignIn,isAdmin,getBankToBankTransferById)
-router.get("/getCashDepositeIntoBank/:_id",requireSignIn,isAdmin,getCashDepositIntoBankById)
-router.get("/getCashWithdrawfromBank/:_id",requireSignIn,isAdmin,getCashWithdrawFromBankById)
+router.get("/getbanktoBankTransfer/:_id",requireSignIn,getBankToBankTransferById)
+router.get("/getCashDepositeIntoBank/:_id",requireSignIn,getCashDepositIntoBankById)
+router.get("/getCashWithdrawfromBank/:_id",requireSignIn,getCashWithdrawFromBankById)
 
 export  default router;

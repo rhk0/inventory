@@ -4,6 +4,7 @@ import incomeModel from "../models/incomeModel.js";
 export const createincomeController = async (req, res) => {
   try {
     const {
+      userId,
       date,
       incomeNo,
       incomeType,
@@ -20,6 +21,7 @@ export const createincomeController = async (req, res) => {
     } = req.body;
 
     const newincome = await incomeModel.create({
+      admin:userId,
       date,
       incomeNo,
       incomeType,
@@ -53,7 +55,8 @@ export const createincomeController = async (req, res) => {
 // Get all incomes
 export const manageincomeController = async (req, res) => {
   try {
-    const incomes = await incomeModel.find();
+    const {_id} =req.params;
+    const incomes = await incomeModel.find({admin:_id});
     if (incomes.length > 0) {
       return res.status(200).send({
         success: true,

@@ -5,12 +5,14 @@ import { format, parseISO } from "date-fns";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../../context/Auth";
 const ManageExpense = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [selectedExpense, setSelectedExpense] = useState(null);
+  const [auth] = useAuth();
+  const [userid, setUserId] = useState("");
   const [formData, setFormData] = useState({
     date: "",
     expenseNo: "",
@@ -28,13 +30,19 @@ const ManageExpense = () => {
   });
 
   useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
     fetchExpenses();
-  }, []);
+  }, [auth,userid]);
 
   const fetchExpenses = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/expensesRoute/manageallexpenses"
+        `/api/v1/expensesRoute/manageallexpenses/${userid}`
       );
       setExpenses(response.data.data);
     } catch (error) {
@@ -169,7 +177,8 @@ const ManageExpense = () => {
             </tr>
           </thead>
           <tbody className="text-black">
-            {expenses.map((expense) => (
+
+            {expenses?.map((expense) => (
               <tr key={expense._id}>
                 <td className="py-2 px-4 border border-gray-300">
                   {format(new Date(expense.date), "dd/MM/yyyy")}

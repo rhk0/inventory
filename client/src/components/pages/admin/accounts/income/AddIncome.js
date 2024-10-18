@@ -2,8 +2,10 @@ import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useAuth } from "../../../../context/Auth.js";
 const AddIncome = () => {
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const [formData, setFormData] = useState({
     date: "",
     incomeNo: "",
@@ -25,6 +27,13 @@ const AddIncome = () => {
   const [selectedVendor, setSelectedVendor] = useState("");
 
   useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
     const fetchVendor = async () => {
       try {
         const response = await axios.get("/api/v1/auth/manageVendor");
@@ -107,8 +116,15 @@ const AddIncome = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/api/v1/incomeRoute/create", formData);
-      console.log(response, "kdf");
+
+      const updatedFormData = {
+        ...formData,
+       
+        userId: userId,
+      
+      }
+      const response = await axios.post("/api/v1/incomeRoute/create", updatedFormData);
+     
 
       // Reset form after submission
       setFormData({
@@ -204,7 +220,7 @@ const AddIncome = () => {
               onChange={handleVendorChange}
             >
               <option value="">Select Vendor</option>
-              {vendor.map((vendor) => (
+              {vendor?.map((vendor) => (
                 <option key={vendor._id} value={vendor._id}>
                   {vendor.name}
                 </option>
