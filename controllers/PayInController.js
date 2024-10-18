@@ -6,8 +6,7 @@ export const createPayInController = async (req, res) => {
       date,
       receiptNo,
       selectCustomer,
-      cash, // Include cash in the model
-      selectedBank, // Include selected bank data
+
       receiptMode,
       rows,
       grandtotal,
@@ -26,8 +25,7 @@ export const createPayInController = async (req, res) => {
         date,
         receiptNo,
         selectCustomer,
-        cash, // Include cash in the model
-        selectedBank, // Include selected bank data
+
         receiptMode,
         rows,
         grandtotal,

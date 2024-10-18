@@ -313,8 +313,7 @@ const BankBook = () => {
           })}
 
           {filterTransactions(payIns, false)?.map((payIn, index) => {
-            return payIn.receiptMode &&
-              payIn.receiptMode.trim().toLowerCase() === 'cash' ? (
+            return payIn.selectBank === selectedBank?.name ? (
               <tr key={index}>
                 <td className="p-2 border border-black">{payIn.date}</td>
                 <td className="p-2 border border-black">
@@ -374,8 +373,7 @@ const BankBook = () => {
           })}
 
           {filterTransactions(PayOut, false)?.map((payout, index) => {
-            return payout.paymentMode &&
-              payout.paymentMode.trim().toLowerCase() === 'cash' ? (
+            return payout.selectBank === selectedBank?.name ? (
               <tr key={index}>
                 <td className="p-2 border border-black">
                   {formatDate(payout.date)}

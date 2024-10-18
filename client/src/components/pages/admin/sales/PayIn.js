@@ -1,144 +1,158 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
-import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
-import { useAuth } from "../../../context/Auth.js";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css' // Import toastify CSS
+import { AiOutlinePlus, AiOutlineClose } from 'react-icons/ai'
+import { useAuth } from '../../../context/Auth.js'
 const PayIn = () => {
-  const [customer, setCustomer] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [date, setDate] = useState("");
-  const [receiptNo, setReceiptNo] = useState("");
-  const [Narration, setNarration] = useState(""); // Ensure narration is defined
-  const [receiptMode, setReceiptMode] = useState("Cash");
-  const [selectBank, setSelectBank] = useState("");
+  const [customer, setCustomer] = useState([])
+  const [selectedCustomer, setSelectedCustomer] = useState('')
+  const [date, setDate] = useState('')
+  const [receiptNo, setReceiptNo] = useState('')
+  const [Narration, setNarration] = useState('') // Ensure narration is defined
+  const [receiptMode, setReceiptMode] = useState('Cash')
+  const [selectBank, setSelectBank] = useState('')
   const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState(
-    []
-  );
-  const [auth] = useAuth();
-  const [userId, setUserId] = useState("");
+    [],
+  )
+
+  const [Banks, setBanks] = useState([])
+
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
   const [rows, setRows] = useState([
     {
       id: 1,
-      billNo: "",
-      billAmount: "",
-      paidAmount: "",
-      recievedAmount: "",
-      balanceAmount: "",
+      billNo: '',
+      billAmount: '',
+      paidAmount: '',
+      recievedAmount: '',
+      balanceAmount: '',
     },
-  ]);
+  ])
 
   // Add new states for method and transactionCheckNo
-  const [method, setMethod] = useState(""); // Added state for method
-  const [transactionCheckNo, setTransactionCheckNo] = useState(""); // Added state for transaction check number
+  const [method, setMethod] = useState('') // Added state for method
+  const [transactionCheckNo, setTransactionCheckNo] = useState('') // Added state for transaction check number
 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
-        setUserId(auth.user._id);
+        setUserId(auth.user._id)
       } else if (auth.user.role === 0) {
-        setUserId(auth.user.admin);
+        setUserId(auth.user.admin)
       }
     }
-    fetchCustomer();
-  }, [auth, userId]);
+    fetchCustomer()
+    fetchBanks()
+  }, [auth, userId])
+
+  const fetchBanks = async () => {
+    try {
+      // Assuming the API returns the bank data along with the opening balance
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
+      setBanks(response.data.data) // Response should include opening balance for each bank
+    } catch (error) {
+      console.error('Error fetching Bank data', error)
+    }
+  }
 
   const fetchCustomer = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
-      setCustomer(response.data.data);
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`)
+      setCustomer(response.data.data)
     } catch (error) {
-      console.error("Error fetching customer:", error);
+      console.error('Error fetching customer:', error)
     }
-  };
+  }
 
   const salesinvoicesCustomerByName = async (selectedCustomer) => {
     try {
       const response = await axios.get(
-        `/api/v1/salesInvoiceRoute/salesinvoicesByName/${selectedCustomer}`
-      );
-      setSelctedCustomerInvoiceData(response.data.response);
+        `/api/v1/salesInvoiceRoute/salesinvoicesByName/${selectedCustomer}`,
+      )
+      setSelctedCustomerInvoiceData(response.data.response)
     } catch (error) {
-      console.error("Error fetching customer invoices:", error);
+      console.error('Error fetching customer invoices:', error)
     }
-  };
+  }
 
   const handleCustomerChange = (e) => {
-    setSelectedCustomer(e.target.value);
-    salesinvoicesCustomerByName(e.target.value);
-  };
+    setSelectedCustomer(e.target.value)
+    salesinvoicesCustomerByName(e.target.value)
+  }
 
   const handleRowChange = (index, key, value) => {
-    const newRows = [...rows];
-    if (key === "billNo") {
+    const newRows = [...rows]
+    if (key === 'billNo') {
       const selectedInvoice = selctedCustomerInvoiceData.find(
-        (item) => item.InvoiceNo === value
-      );
+        (item) => item.InvoiceNo === value,
+      )
       if (selectedInvoice) {
         const paymentData = selectedInvoice.cash
           ? selectedInvoice.cash
-          : selectedInvoice.bank;
+          : selectedInvoice.bank
         newRows[index] = {
           ...newRows[index],
           billNo: selectedInvoice.InvoiceNo,
           billAmount: selectedInvoice.netAmount,
           paidAmount: paymentData ? paymentData.Received : 0,
-        };
+        }
       }
     } else {
-      newRows[index][key] = value;
+      newRows[index][key] = value
     }
-    setRows(newRows);
-  };
+    setRows(newRows)
+  }
 
   const addRow = () => {
     setRows([
       ...rows,
       {
         id: rows.length ? Math.max(...rows?.map((row) => row.id)) + 1 : 1,
-        billNo: "",
-        billAmount: "",
-        paidAmount: "",
-        recievedAmount: "",
-        balanceAmount: "",
+        billNo: '',
+        billAmount: '',
+        paidAmount: '',
+        recievedAmount: '',
+        balanceAmount: '',
       },
-    ]);
-  };
+    ])
+  }
 
   const removeRow = (id) => {
     if (rows.length > 1) {
-      setRows(rows.filter((row) => row.id !== id));
+      setRows(rows.filter((row) => row.id !== id))
     }
-  };
-  let grandtotal = 0;
+  }
+  let grandtotal = 0
   const calculateBalance = (billAmount, paidAmount, receivedAmount) => {
-    const bill = parseFloat(billAmount) || 0;
-    const credit = parseFloat(paidAmount) || 0;
-    const received = parseFloat(receivedAmount) || 0;
-    grandtotal += bill - credit - received;
-    return (bill - credit - received).toFixed(2);
-  };
+    const bill = parseFloat(billAmount) || 0
+    const credit = parseFloat(paidAmount) || 0
+    const received = parseFloat(receivedAmount) || 0
+    grandtotal += bill - credit - received
+    return (bill - credit - received).toFixed(2)
+  }
 
-  let alltotal = 0;
+  let alltotal = 0
   const GrandTotal = (billAmount, paidAmount, receivedAmount) => {
-    const bill = parseFloat(billAmount) || 0;
-    const credit = parseFloat(paidAmount) || 0;
-    const received = parseFloat(receivedAmount) || 0;
-    alltotal += bill - credit - received;
-    return alltotal;
-  };
+    const bill = parseFloat(billAmount) || 0
+    const credit = parseFloat(paidAmount) || 0
+    const received = parseFloat(receivedAmount) || 0
+    alltotal += bill - credit - received
+    return alltotal
+  }
   const calculateTotalReceived = () => {
     return rows
       .reduce((total, row) => {
-        return total + parseFloat(row.recievedAmount || 0);
+        return total + parseFloat(row.recievedAmount || 0)
       }, 0)
-      .toFixed(2);
-  };
+      .toFixed(2)
+  }
 
   const handleSave = async () => {
-    const totalAmount = calculateTotalReceived(); // This needs to be defined correctly
-    const grandTotal = GrandTotal();
-    grandtotal = grandTotal; // Ensure grandtotal is set correctly
+    const totalAmount = calculateTotalReceived() // This needs to be defined correctly
+    const grandTotal = GrandTotal()
+    grandtotal = grandTotal // Ensure grandtotal is set correctly
 
     const dataToSubmit = {
       userId: userId,
@@ -146,7 +160,7 @@ const PayIn = () => {
       receiptNo,
       selectCustomer: selectedCustomer,
       receiptMode,
-      selectBank,
+      selectBank: selectBank.name, // Sending bank name instead of ID
       method,
       transactionCheckNo,
       rows: rows?.map((row) => ({
@@ -157,48 +171,48 @@ const PayIn = () => {
         balanceAmount: calculateBalance(
           row.billAmount,
           row.paidAmount,
-          row.recievedAmount
+          row.recievedAmount,
         ),
       })),
       grandtotal, // Ensure grandtotal is set correctly
       Narration,
-    };
+    }
 
     try {
-      await axios.post("/api/v1/payInRoute/createsalespayin", dataToSubmit);
-      toast.success("Data saved successfully!", {
-        position: "top-right",
+      await axios.post('/api/v1/payInRoute/createsalespayin', dataToSubmit)
+      toast.success('Data saved successfully!', {
+        position: 'top-right',
         autoClose: 3000,
-      });
+      })
       // Reset form
-      setDate("");
-      setReceiptNo("");
-      setSelectedCustomer("");
-      setReceiptMode("Cash");
-      setMethod(""); // Reset method
-      setTransactionCheckNo(""); // Reset transaction check number
+      setDate('')
+      setReceiptNo('')
+      setSelectedCustomer('')
+      setReceiptMode('Cash')
+      setMethod('')
+      setTransactionCheckNo('')
       setRows([
         {
           id: 1,
-          billNo: "",
-          billAmount: "",
-          paidAmount: "",
-          recievedAmount: "",
-          balanceAmount: "",
+          billNo: '',
+          billAmount: '',
+          paidAmount: '',
+          recievedAmount: '',
+          balanceAmount: '',
         },
-      ]);
-      setNarration("");
+      ])
+      setNarration('')
     } catch (error) {
-      toast.error("Error saving data. Please try again!", {
-        position: "top-right",
+      toast.error('Error saving data. Please try again!', {
+        position: 'top-right',
         autoClose: 3000,
-      });
-      console.error("Error saving data:", error);
+      })
+      console.error('Error saving data:', error)
     }
-  };
+  }
   return (
     <div
-      style={{ backgroundColor: "#FFFFFF" }}
+      style={{ backgroundColor: '#FFFFFF' }}
       className="responsive-container bg-pink-200 p-4 rounded-md w-full mx-auto"
     >
       <h1 className="text-center text-3xl  text-black mb-5 cucolor">Pay In</h1>
@@ -251,22 +265,32 @@ const PayIn = () => {
           </select>
         </div>
 
-        {receiptMode === "Bank" && (
+        {receiptMode === 'Bank' && (
           <>
             <div className="flex flex-col">
               <label className="text-md font-bold text-black">
                 Select Bank
               </label>
               <select
-                value={selectBank}
-                onChange={(e) => setSelectBank(e.target.value)}
-                className="mt-1 p-1 border border-gray-500 rounded-md bg-gray-200"
+                id="bankSelect"
+                value={selectBank?.name || ''}
+                onChange={(e) => {
+                  const selected = Banks.find(
+                    (bank) => bank.name === e.target.value,
+                  )
+                  setSelectBank(selected)
+                }}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
               >
-                <option value="">Select Bank</option>
-                <option value="Bank1">Bank1</option>
-                <option value="Bank2">Bank2</option>
+                <option value="">-- Select Bank --</option>
+                {Banks.map((bank) => (
+                  <option key={bank._id} value={bank.name}>
+                    {bank.name}
+                  </option>
+                ))}
               </select>
             </div>
+
             <div className="flex flex-col">
               <label className="text-md font-bold text-black">Method</label>
               <select
@@ -316,30 +340,30 @@ const PayIn = () => {
                   <select
                     value={row.billNo}
                     onChange={(e) =>
-                      handleRowChange(index, "billNo", e.target.value)
+                      handleRowChange(index, 'billNo', e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option className="text-black">Select</option>
                     {selctedCustomerInvoiceData?.map((item, idx) => (
                       <option key={idx} value={item.InvoiceNo}>
-                        {item.InvoiceNo ? item.InvoiceNo : "NA"}
+                        {item.InvoiceNo ? item.InvoiceNo : 'NA'}
                       </option>
                     ))}
                   </select>
                 </td>
                 <td className="border border-gray-500 p-1">
-                  {row.billAmount || "NA"}
+                  {row.billAmount || 'NA'}
                 </td>
                 <td className="border border-gray-500 p-1">
-                  {row.paidAmount || "NA"}
+                  {row.paidAmount || 'NA'}
                 </td>
                 <td className="border border-gray-500 p-1">
                   <input
                     type="text"
-                    value={row.recievedAmount || ""}
+                    value={row.recievedAmount || ''}
                     onChange={(e) =>
-                      handleRowChange(index, "recievedAmount", e.target.value)
+                      handleRowChange(index, 'recievedAmount', e.target.value)
                     }
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -348,7 +372,7 @@ const PayIn = () => {
                   {calculateBalance(
                     row.billAmount,
                     row.paidAmount,
-                    row.recievedAmount
+                    row.recievedAmount,
                   )}
                 </td>
                 <td className="text-center flex gap-2 pl-1">
@@ -414,7 +438,7 @@ const PayIn = () => {
       </div>
       <ToastContainer />
     </div>
-  );
-};
+  )
+}
 
-export default PayIn;
+export default PayIn
