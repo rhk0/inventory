@@ -162,12 +162,7 @@ const CreateSalesInvoice = () => {
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
     setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
-    console.log(
-      selectedCustomerData.state,
-      " selectedCustomerData.state",
-      company.state,
-      "company.state"
-    );
+    
 
     if (
       selectedCustomerData.state.trim().toLowerCase() ===
@@ -179,7 +174,6 @@ const CreateSalesInvoice = () => {
     }
   };
   const handleCashPayment = (value) => {
-    console.log(value, "cash");
     setCash(value);
     setGstType("CGST/SGST");
 
@@ -191,7 +185,7 @@ const CreateSalesInvoice = () => {
   };
   const handleBankChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
-    console.log(selectedBank, "selectedBank");
+  
 
     // Update the selected banks
     setSelectedBanks(selectedBank);
@@ -385,11 +379,6 @@ const CreateSalesInvoice = () => {
   // Function to handle Save and Print
 
   const [products, setProducts] = useState([]);
-
-
- 
-  
-
 
   const fetchProducts = async () => {
     try {
@@ -688,9 +677,6 @@ const [cashDetails, setCashDetails] = useState(
     setBankDetails(updatedBankDetails);
   };
 
-
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -948,6 +934,37 @@ const [cashDetails, setCashDetails] = useState(
 
       return words;
     }
+ 
+    const renderDetails = () => {
+      if (formData.selctedcash) {
+        return `
+         <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+              <div class="details"> Cash</div>
+         </div>
+        `;
+      } else if (formData?.selectedBank?.length > 0) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Bank Details</div>
+            <div class="details">Bank Name: ${formData.selectedBank[0]?.name}</div>
+            <div class="details">IFSC Code: ${formData.selectedBank[0]?.ifscCode}</div>
+            <div class="details">Account No: ${formData.selectedBank[0]?.accountNumber}</div>
+          </div>
+        `;
+      } else if (chooseUser) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+            <div class="details">Name: ${chooseUser?.name}</div>
+            <div class="details">Address: ${chooseUser?.address}</div>
+            <div class="details">Contact: ${chooseUser?.contact}</div>
+            <div class="details">GSTIN: ${chooseUser?.gstin}</div>
+          </div>
+        `;
+      }
+      return '';
+    };
     const gstHeaders =
       updatedFormData.gstType === "CGST/SGST"
         ? `<th>CGST</th><th>SGST</th>`
@@ -1093,20 +1110,9 @@ const [cashDetails, setCashDetails] = useState(
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>${
-                    chooseUser.name
-                  }</span></div>
-                  <div class="details">Address: <span>${
-                    chooseUser.address
-                  }</span></div>
-                  <div class="details">Contact: <span>${
-                    chooseUser.contact
-                  }</span></div>
-                  <div class="details">GSTIN: <span>${
-                    chooseUser.gstin
-                  }</span></div>
-                </div>
+             
+                  ${renderDetails()}
+          
               </td>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="sales-estimate">
@@ -1118,7 +1124,7 @@ const [cashDetails, setCashDetails] = useState(
                     updatedFormData.date
                   }</span></div>
                   <div class="details">Place of Supply: <span>${
-                    updatedFormData.placeOfSupply
+                    updatedFormData.placeOfSupply || company.state
                   }</span></div>
                    <div class="details">Due Date: <span>${
                      updatedFormData.dueDate
@@ -1287,7 +1293,36 @@ const [cashDetails, setCashDetails] = useState(
       cash: paymentMethod === "Cash" ? cashDetails : {},
       bank: paymentMethod === "Bank" ? bankDetails : {},
     };
-
+    const renderDetails = () => {
+      if (formData.selctedcash) {
+        return `
+         <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+              <div class="details"> Cash</div>
+         </div>
+        `;
+      } else if (formData?.selectedBank?.length > 0) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Bank Details</div>
+            <div class="details">Bank Name: ${formData.selectedBank[0]?.name}</div>
+            <div class="details">IFSC Code: ${formData.selectedBank[0]?.ifscCode}</div>
+            <div class="details">Account No: ${formData.selectedBank[0]?.accountNumber}</div>
+          </div>
+        `;
+      } else if (chooseUser) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+            <div class="details">Name: ${chooseUser?.name}</div>
+            <div class="details">Address: ${chooseUser?.address}</div>
+            <div class="details">Contact: ${chooseUser?.contact}</div>
+            <div class="details">GSTIN: ${chooseUser?.gstin}</div>
+          </div>
+        `;
+      }
+      return '';
+    };
     function numberToWords(num) {
       const ones = [
         "",
@@ -1473,21 +1508,8 @@ const [cashDetails, setCashDetails] = useState(
             </tr>
             <tr>
               <td style="width: 30%;">
-                <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>${
-                    chooseUser.name
-                  }</span></div>
-                  <div class="details">Address: <span>${
-                    chooseUser.address
-                  }</span></div>
-                  <div class="details">Contact: <span>${
-                    chooseUser.contact
-                  }</span></div>
-                  <div class="details">GSTIN: <span>${
-                    chooseUser.gstin
-                  }</span></div>
-                </div>
+                <div style="text-align:left;" class="customer-details">         
+                  ${renderDetails()}
               </td>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="sales-estimate">
@@ -1499,7 +1521,7 @@ const [cashDetails, setCashDetails] = useState(
                     updatedFormData.date
                   }</span></div>
                   <div class="details">Place of Supply: <span>${
-                    updatedFormData.placeOfSupply
+                    updatedFormData.placeOfSupply || company.state
                   }</span></div>
                    <div class="details">Due Date: <span>${
                      updatedFormData.dueDate

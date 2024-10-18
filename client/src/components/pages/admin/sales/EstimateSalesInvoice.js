@@ -167,7 +167,7 @@ const EstimateSalesInvoice = () => {
   }, [userId]) // Empty dependency array ensures this only runs once, on mount
 
   const handleCustomerChange = (supplierName) => {
-    console.log(supplierName,"supplierName")
+   
     const value = supplierName
     setSelectedCustomer(value)
     const selectedCustomerData = customer?.find((cust) => cust?.name === value)
@@ -179,7 +179,6 @@ const EstimateSalesInvoice = () => {
       billingAddress: selectedCustomerData ? selectedCustomerData.address : '',
       placeOfSupply: selectedCustomerData ? selectedCustomerData.state : '',
     }))
-    console.log(formData,"form data")
   }
   const handleOtherChargesChange = (event) => {
     const newCharges = parseFloat(event.target.value) || 0
@@ -645,7 +644,6 @@ const EstimateSalesInvoice = () => {
 
     // If Advance or Received is updated, calculate the Balance
     if (name === 'Advance' || name === 'Received') {
-      console.log(name,"name")
       updatedCashDetails.Balance = calculateBalance(
         updatedCashDetails.Advance,
         updatedCashDetails.Received,
@@ -842,7 +840,37 @@ const EstimateSalesInvoice = () => {
       cash: paymentMethod === 'Cash' ? cashDetails : {},
       bank: paymentMethod === 'Bank' ? bankDetails : {},
     }
-
+   
+    const renderDetails = () => {
+      if (formData.selctedcash) {
+        return `
+         <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+              <div class="details"> Cash</div>
+         </div>
+        `;
+      } else if (formData?.selectedBank?.length > 0) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Bank Details</div>
+            <div class="details">Bank Name: ${formData.selectedBank[0]?.name}</div>
+            <div class="details">IFSC Code: ${formData.selectedBank[0]?.ifscCode}</div>
+            <div class="details">Account No: ${formData.selectedBank[0]?.accountNumber}</div>
+          </div>
+        `;
+      } else if (chooseUser) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+            <div class="details">Name: ${chooseUser?.name}</div>
+            <div class="details">Address: ${chooseUser?.address}</div>
+            <div class="details">Contact: ${chooseUser?.contact}</div>
+            <div class="details">GSTIN: ${chooseUser?.gstin}</div>
+          </div>
+        `;
+      }
+      return '';
+    };
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {
       const ones = [
@@ -1059,19 +1087,7 @@ const EstimateSalesInvoice = () => {
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>${
-                    chooseUser?.name
-                  }</span></div>
-                  <div class="details">Address: <span>${
-                    chooseUser.address
-                  }</span></div>
-                  <div class="details">Contact: <span>${
-                    chooseUser.contact
-                  }</span></div>
-                  <div class="details">GSTIN: <span>${
-                    chooseUser.gstin
-                  }</span></div>
+                    ${renderDetails()}
                 </div>
               </td>
               <td style="width: 30%;">
@@ -1084,7 +1100,7 @@ const EstimateSalesInvoice = () => {
                     updatedFormData.date
                   }</span></div>
                   <div class="details">Place of Supply: <span>${
-                    updatedFormData.placeOfSupply
+                    updatedFormData.placeOfSupply || company.state
                   }</span></div>
                    <div class="details">Due Date: <span>${
                      updatedFormData.dueDate
@@ -1247,7 +1263,36 @@ const EstimateSalesInvoice = () => {
       cash: paymentMethod === 'Cash' ? cashDetails : {},
       bank: paymentMethod === 'Bank' ? bankDetails : {},
     }
-
+    const renderDetails = () => {
+      if (formData.selctedcash) {
+        return `
+         <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+              <div class="details"> Cash</div>
+         </div>
+        `;
+      } else if (formData?.selectedBank?.length > 0) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Bank Details</div>
+            <div class="details">Bank Name: ${formData.selectedBank[0]?.name}</div>
+            <div class="details">IFSC Code: ${formData.selectedBank[0]?.ifscCode}</div>
+            <div class="details">Account No: ${formData.selectedBank[0]?.accountNumber}</div>
+          </div>
+        `;
+      } else if (chooseUser) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+            <div class="details">Name: ${chooseUser?.name}</div>
+            <div class="details">Address: ${chooseUser?.address}</div>
+            <div class="details">Contact: ${chooseUser?.contact}</div>
+            <div class="details">GSTIN: ${chooseUser?.gstin}</div>
+          </div>
+        `;
+      }
+      return '';
+    };
     function numberToWords(num) {
       const ones = [
         '',
@@ -1434,19 +1479,7 @@ const EstimateSalesInvoice = () => {
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Customer Details</div>
-                  <div class="details">Name: <span>${
-                    chooseUser.name
-                  }</span></div>
-                  <div class="details">Address: <span>${
-                    chooseUser.address
-                  }</span></div>
-                  <div class="details">Contact: <span>${
-                    chooseUser.contact
-                  }</span></div>
-                  <div class="details">GSTIN: <span>${
-                    chooseUser.gstin
-                  }</span></div>
+                         ${renderDetails()}
                 </div>
               </td>
               <td style="width: 30%;">
@@ -1459,7 +1492,7 @@ const EstimateSalesInvoice = () => {
                     updatedFormData.date
                   }</span></div>
                   <div class="details">Place of Supply: <span>${
-                    updatedFormData.placeOfSupply
+                    updatedFormData.placeOfSupply || company.state
                   }</span></div>
                    <div class="details">Due Date: <span>${
                      updatedFormData.dueDate
