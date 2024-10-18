@@ -1046,18 +1046,18 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="nestedlist innerlist sidebar-list-item">
                 <Link
-                  to="/admin/cashledger"
+                  to="/admin/cashBook"
                   className="flex items-center text-white nestitemhover"
                 >
-                  Cash Ledger
+                  Cash Book
                 </Link>
               </li>
               <li className="nestedlist innerlist sidebar-list-item">
                 <Link
-                  to="/admin/bankledger"
+                  to="/admin/bankBook"
                   className="flex items-center text-white nestitemhover"
                 >
-                  Bank Ledger
+                  Bank Book
                 </Link>
               </li>
             </ul>

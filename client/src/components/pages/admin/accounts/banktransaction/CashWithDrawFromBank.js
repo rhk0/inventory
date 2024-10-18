@@ -56,6 +56,7 @@ function CashWithdrawFromBank() {
         "/api/v1/auth/CashWithdrawfromBank",
         formData
       );
+      console.log(response,'laskdlfklsdkaflksdla')
 
       if (response) {
         toast.success("Cash withdraw from bank created successfully.");
