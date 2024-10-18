@@ -6,6 +6,9 @@ const CashBook = () => {
   const [userId, setUserId] = useState('')
   const [salesInvoice, setSalesInvoice] = useState([])
   const [payIns, setPayIns] = useState([])
+  const [cashWithdrawals, setCashWithdrawals] = useState([])
+  const [cashDeposite, setCashDeposite] = useState([])
+  const [PayOut, setPayOut] = useState([])
   const [openingBalance, setOpeningBalance] = useState(0)
   const [totalDebit, setTotalDebit] = useState(0)
   const [totalCredit, setTotalCredit] = useState(0)
@@ -27,7 +30,6 @@ const CashBook = () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageCash/${userId}`)
       setOpeningBalance(response.data.data[0].openingBalance)
-      console.log(response.data.data, 'dsfklsj')
     } catch (error) {
       console.error('Error fetching cash data', error)
     }
@@ -58,19 +60,57 @@ const CashBook = () => {
     }
   }
 
+  const fetchCashWithdrawFromBank = async () => {
+    if (userId) {
+      try {
+        const response = await axios.get(
+          `/api/v1/auth/getCashWithdrawfromBank/${userId}`,
+        )
+        setCashWithdrawals(response.data.data || []) // Update to set withdrawals
+      } catch (error) {
+        console.error('Error fetching cash withdrawals:', error)
+      }
+    }
+  }
+
+  const fetchCashDepositeIntoBank = async () => {
+    if (userId) {
+      try {
+        const response = await axios.get(
+          `/api/v1/auth/getCashDepositeIntoBank/${userId}`,
+        )
+        setCashDeposite(response.data.data) // Update to set withdrawals
+      } catch (error) {
+        console.error('Error fetching cash withdrawals:', error)
+      }
+    }
+  }
+
+  const fetchPayOut = async () => {
+    try {
+      const response = await axios.get(
+        `/api/v1/PayOutRoute/getAllpayout/${userId}`,
+      )
+      setPayOut(response.data.payOutList)
+    } catch (error) {
+      console.error('Error fetching PayIns:', error)
+    }
+  }
+
   useEffect(() => {
     if (userId) {
       fetchPayIns()
       fetchInvoice()
       fetchCash()
+      fetchCashWithdrawFromBank()
+      fetchCashDepositeIntoBank()
+      fetchPayOut()
     }
   }, [userId])
 
   const filterTransactions = (transactions, isInvoice) => {
     return transactions.filter((transaction) => {
-      const transactionDate = new Date(
-        isInvoice ? transaction.date : transaction.date,
-      )
+      const transactionDate = new Date(transaction.date)
       const fromDate = startDate ? new Date(startDate) : null
       const toDate = endDate ? new Date(endDate) : null
 
@@ -82,33 +122,66 @@ const CashBook = () => {
   }
 
   useEffect(() => {
-    const filteredSales = filterTransactions(salesInvoice, true)
-    const filteredPayIns = filterTransactions(payIns, false)
-
-    const totalDebit = filteredSales.reduce(
-      (acc, invoice) => acc + Number(invoice.netAmount),
-      0,
+    const filteredSales = filterTransactions(
+      salesInvoice.filter((invoice) => invoice.selctedcash === 'cash'),
+      true
     )
-    const totalCredit = filteredPayIns.reduce(
-      (acc, payIn) => acc + Number(payIn.grandtotal),
-      0,
+  
+    const filteredPayIns = filterTransactions(
+      payIns.filter((payIn) => payIn.receiptMode === 'Cash'),
+      false
     )
-
-    const closingBalance =
-      openingBalance + Number(totalDebit) - Number(totalCredit)
-
+  
+    const filteredWithdrawals = filterTransactions(cashWithdrawals, false)
+    const filteredDeposits = filterTransactions(cashDeposite, false)
+    const filteredPayouts = filterTransactions(
+      PayOut.filter((PayOut) => PayOut.paymentMode === 'Cash'),
+      false
+    )
+  
+    // Total Debit calculation: filtered sales, payIns, withdrawals, and opening balance
+    const totalDebit =
+      Number(openingBalance) +
+      filteredSales.reduce((acc, invoice) => acc + Number(invoice.netAmount), 0) +
+      filteredPayIns.reduce((acc, payIn) => acc + Number(payIn.grandtotal), 0) +
+      filteredWithdrawals.reduce((acc, withdrawal) => acc + Number(withdrawal.amount), 0)
+  
+    // Total Credit calculation: filtered deposits and payouts
+    const totalCredit =
+      filteredDeposits.reduce((acc, deposit) => acc + Number(deposit.amount), 0) +
+      filteredPayouts.reduce((acc, payout) => acc + Number(payout.grandtotal), 0)
+  
+    // Closing balance calculation: Total Debit - Total Credit
+    const closingBalance = totalDebit - totalCredit
+  
     setTotalDebit(totalDebit)
     setTotalCredit(totalCredit)
     setClosingBalance(closingBalance)
-  }, [salesInvoice, payIns, startDate, endDate, openingBalance])
+  }, [
+    salesInvoice,
+    payIns,
+    cashWithdrawals,
+    cashDeposite,
+    PayOut,
+    startDate,
+    endDate,
+    openingBalance,
+  ])
+  
+  
 
   const handleReset = () => {
     setStartDate('')
     setEndDate('')
-    // setOpeningBalance(0)
-    // setTotalDebit(0)
-    // setTotalCredit(0)
-    // setClosingBalance(0)
+  }
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0')
+
+    return `${year}-${month}-${day}`
   }
 
   return (
@@ -203,18 +276,90 @@ const CashBook = () => {
               <tr key={index}>
                 <td className="p-2 border border-black">{payIn.date}</td>
                 <td className="p-2 border border-black">
-                   {payIn.selectCustomer}
+                  {payIn.selectCustomer}
                 </td>
                 <td className="p-2 border border-black">PayIn</td>
                 <td className="p-2 border border-black">{payIn.receiptNo}</td>
                 <td className="p-2 border border-black">{payIn.grandtotal}</td>
-
                 <td className="p-2 border border-black"></td>
               </tr>
             ) : null
           })}
 
-          <tr>
+          {/* Render cash withdrawals */}
+          {filterTransactions(cashWithdrawals, false)?.map(
+            (withdrawal, index) => {
+              return (
+                <tr key={index}>
+                  <td className="p-2 border border-black">
+                    {formatDate(withdrawal.date)}
+                  </td>{' '}
+                  {/* Format date here */}
+                  <td className="p-2 border border-black">By Bank</td>
+                  <td className="p-2 border border-black">Contra</td>
+                  <td className="p-2 border border-black">
+                    {withdrawal.contraNo || 'N/A'}
+                  </td>
+                  <td className="p-2 border border-black">
+                    {withdrawal.amount}
+                  </td>
+                  <td className="p-2 border border-black"></td>
+                </tr>
+              )
+            },
+          )}
+
+          {filterTransactions(cashDeposite, false)?.map((deposit, index) => {
+            return (
+              <tr key={index}>
+                <td className="p-2 border border-black">
+                  {formatDate(deposit.date)}
+                </td>{' '}
+                {/* Format date here */}
+                <td className="p-2 border border-black">By Cash</td>
+                <td className="p-2 border border-black">Contra</td>
+                <td className="p-2 border border-black">
+                  {deposit.contraNo || 'N/A'}
+                </td>
+                <td className="p-2 border border-black"></td>{' '}
+                {/* Debit will be empty */}
+                <td className="p-2 border border-black">
+                  {deposit.amount}
+                </td>{' '}
+                {/* Show deposit amount in Credit column */}
+              </tr>
+            )
+          })}
+
+          {filterTransactions(PayOut, false)?.map((payout, index) => {
+            return payout.paymentMode &&
+            payout.paymentMode.trim().toLowerCase() === 'cash' ? (
+              <tr key={index}>
+                <td className="p-2 border border-black">
+                  {formatDate(payout.date)}
+                </td>{' '}
+                {/* Format date */}
+                <td className="p-2 border border-black">
+                  {payout.supplierName}
+                </td>{' '}
+                {/* Supplier name */}
+                <td className="p-2 border border-black">PayOut</td>{' '}
+                {/* Voucher Type */}
+                <td className="p-2 border border-black">
+                  {payout.paymentNo || 'N/A'}
+                </td>{' '}
+                {/* Voucher No */}
+                <td className="p-2 border border-black"></td>{' '}
+                {/* Debit will be empty */}
+                <td className="p-2 border border-black">
+                  {payout.grandtotal}
+                </td>{' '}
+                {/* Credit side */}
+              </tr>
+            ) : null
+          })}
+
+          <tr className='border border-black'>
             <td></td>
             <td>
               <strong style={{ fontSize: '1em' }}>Closing Balance</strong>
@@ -222,11 +367,11 @@ const CashBook = () => {
             <td></td>
             <td></td>
             <td></td>
-            <td className="p-2">
-              <strong style={{ fontSize: '1em' }}>{closingBalance}</strong>
+            <td className="p-2 ">
+              <strong style={{ fontSize: '1em' }}>{closingBalance.toFixed(2)}</strong>
             </td>
           </tr>
-          <tr>
+          <tr className='border border-black'>
             <td colSpan="4">
               <strong style={{ fontSize: '1.2em' }}>TOTAL</strong>
             </td>
