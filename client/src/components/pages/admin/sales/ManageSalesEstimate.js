@@ -169,7 +169,7 @@ const ManageSalesEstimate = () => {
                     </td>
                   {  console.log(estimate,"estimate")}
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.customerName}
+                      {estimate?.customerName ||estimate?.cash || ` ${estimate.selectedBank[0]?.name} `}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
