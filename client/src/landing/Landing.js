@@ -75,7 +75,7 @@ const Landing = () => {
         <About />
       </Section>
 
-      <Section id="client" aos="flip-right">
+       <Section id="client" aos="flip-right">
         <Client />
       </Section>
 
