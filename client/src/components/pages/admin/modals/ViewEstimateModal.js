@@ -1,73 +1,73 @@
 // ViewEstimateModal.jsx
 
-import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
+import React, { useState, useEffect } from 'react'
+import { FaTimes } from 'react-icons/fa'
 
 const ViewEstimateModal = ({ closeModal, estimate }) => {
-  const [date, setDate] = useState("");
-  const [estimateNo, setEstimateNo] = useState("");
-  const [salesType, setSalesType] = useState("");
-  const [customerType, setCustomerType] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [placeOfSupply, setPlaceOfSupply] = useState("");
-  const [paymentTerm, setPaymentTerm] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [date, setDate] = useState('')
+  const [estimateNo, setEstimateNo] = useState('')
+  const [salesType, setSalesType] = useState('')
+  const [customerType, setCustomerType] = useState('')
+  const [customerName, setCustomerName] = useState('')
+  const [placeOfSupply, setPlaceOfSupply] = useState('')
+  const [paymentTerm, setPaymentTerm] = useState('')
+  const [dueDate, setDueDate] = useState('')
   const [transportDetails, setTransportDetails] = useState({
-    receiptDocNo: "",
-    dispatchedThrough: "",
-    destination: "",
-    carrierNameAgent: "",
-    billOfLading: "",
-    motorVehicleNo: "",
-  });
-  const [billingAddress, setBillingAddress] = useState("");
-  const [reverseCharge, setReverseCharge] = useState("");
-  const [gstType, setGstType] = useState("");
-  const [rows, setRows] = useState([]);
-  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
-  const [otherCharges, setOtherCharges] = useState("");
-  const [narration, setNarration] = useState("");
-  const [grossAmount, setGrossAmount] = useState("");
-  const [GstAmount, setGstAmount] = useState("");
-  const [netAmount, setNetAmount] = useState("");
+    receiptDocNo: '',
+    dispatchedThrough: '',
+    destination: '',
+    carrierNameAgent: '',
+    billOfLading: '',
+    motorVehicleNo: '',
+  })
+  const [billingAddress, setBillingAddress] = useState('')
+  const [reverseCharge, setReverseCharge] = useState('')
+  const [gstType, setGstType] = useState('')
+  const [rows, setRows] = useState([])
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState('')
+  const [otherCharges, setOtherCharges] = useState('')
+  const [narration, setNarration] = useState('')
+  const [grossAmount, setGrossAmount] = useState('')
+  const [GstAmount, setGstAmount] = useState('')
+  const [netAmount, setNetAmount] = useState('')
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
 
   useEffect(() => {
     if (estimate) {
-      setDate(estimate.date || "");
-      setEstimateNo(estimate.estimateNo || "");
-      setSalesType(estimate.salesType || "");
-      setCustomerType(estimate.customerType || "");
-      setCustomerName(estimate.customerName || "");
-      setPlaceOfSupply(estimate.placeOfSupply || "");
-      setPaymentTerm(estimate.paymentTerm || "");
-      setDueDate(estimate.dueDate || "");
+      setDate(estimate.date || '')
+      setEstimateNo(estimate.estimateNo || '')
+      setSalesType(estimate.salesType || '')
+      setCustomerType(estimate.customerType || '')
+      setCustomerName(estimate.customerName || '')
+      setPlaceOfSupply(estimate.placeOfSupply || '')
+      setPaymentTerm(estimate.paymentTerm || '')
+      setDueDate(estimate.dueDate || '')
       setTransportDetails({
-        receiptDocNo: estimate.receiptDocNo || "",
-        dispatchedThrough: estimate.dispatchedThrough || "",
-        destination: estimate.destination || "",
-        carrierNameAgent: estimate.carrierNameAgent || "",
-        billOfLading: estimate.billOfLading || "",
-        motorVehicleNo: estimate.motorVehicleNo || "",
-      });
-      setBillingAddress(estimate.billingAddress || "");
-      setReverseCharge(estimate.reverseCharge || "");
-      setGstType(estimate.gstType || "");
-      setRows(estimate.rows || []);
-      setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
-      setOtherCharges(estimate.otherCharges || "");
-      setNarration(estimate.narration || "");
-      setGrossAmount(estimate.grossAmount || "");
-      setGstAmount(estimate.GstAmount || "");
-      setNetAmount(estimate.netAmount || "");
+        receiptDocNo: estimate.receiptDocNo || '',
+        dispatchedThrough: estimate.dispatchedThrough || '',
+        destination: estimate.destination || '',
+        carrierNameAgent: estimate.carrierNameAgent || '',
+        billOfLading: estimate.billOfLading || '',
+        motorVehicleNo: estimate.motorVehicleNo || '',
+      })
+      setBillingAddress(estimate.billingAddress || '')
+      setReverseCharge(estimate.reverseCharge || '')
+      setGstType(estimate.gstType || '')
+      setRows(estimate.rows || [])
+      setOtherChargesDescriptions(estimate.otherChargesDescriptions || '')
+      setOtherCharges(estimate.otherCharges || '')
+      setNarration(estimate.narration || '')
+      setGrossAmount(estimate.grossAmount || '')
+      setGstAmount(estimate.GstAmount || '')
+      setNetAmount(estimate.netAmount || '')
     }
-  }, [estimate]);
+  }, [estimate])
 
   return (
     <div
-      style={{ backgroundColor: "#82ac73" }}
+      style={{ backgroundColor: '#82ac73' }}
       className="p-4 responsive-container"
     >
       <div className="flex justify-between items-center mb-4">
@@ -270,7 +270,7 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
           </select>
         </div>
 
-        {salesType === "GST Invoice" && (
+        {salesType === 'GST Invoice' && (
           <div className="mb-4 w-full">
             <label className="font-bold">GST Type:</label>
             <select
@@ -303,10 +303,10 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
                   <span className="mr-16">%</span> <span>₹</span>
                 </div>
               </th>
-              {salesType === "GST Invoice" && (
+              {salesType === 'GST Invoice' && (
                 <>
                   <th className="border p-2">Taxable Value</th>
-                  {gstType === "CGST/SGST" && (
+                  {gstType === 'CGST/SGST' && (
                     <>
                       <th className="border p-2">
                         CGST
@@ -322,7 +322,7 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
                       </th>
                     </>
                   )}
-                  {gstType === "IGST" && (
+                  {gstType === 'IGST' && (
                     <th className="border p-2">
                       IGST
                       <div className="flex justify-between">
@@ -403,7 +403,7 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
                     />
                   </div>
                 </td>
-                {salesType === "GST Invoice" && (
+                {salesType === 'GST Invoice' && (
                   <>
                     <td className="border p-2">
                       <input
@@ -413,7 +413,7 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
                         className="w-full"
                       />
                     </td>
-                    {gstType === "CGST/SGST" && (
+                    {gstType === 'CGST/SGST' && (
                       <>
                         <td className="border p-2">
                           <div className="flex gap-1">
@@ -449,7 +449,7 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
                         </td>
                       </>
                     )}
-                    {gstType === "IGST" && (
+                    {gstType === 'IGST' && (
                       <td className="border p-2">
                         <div className="flex gap-1">
                           <input
@@ -566,7 +566,7 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {salesType === "GST Invoice" && (
+          {salesType === 'GST Invoice' && (
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 GST Amount
@@ -602,7 +602,7 @@ const ViewEstimateModal = ({ closeModal, estimate }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ViewEstimateModal;
+export default ViewEstimateModal

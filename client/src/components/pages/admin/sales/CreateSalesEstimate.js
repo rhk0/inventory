@@ -217,15 +217,6 @@ const CreateSalesEstimate = () => {
     }));
   };
 
-  // const handleGstTypeChange = (e) => {
-  //   const value = e.target.value;
-  //   setGstType(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gstType: value,
-  //   }));
-  // };
-
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
@@ -336,29 +327,7 @@ const CreateSalesEstimate = () => {
     fetchProducts();
   }, [auth, userId]);
 
-  // const handleRowChange = (index, field, value) => {
-  //   const newRows = [...rows];
-  //   const newValue = parseFloat(value) || 0;
-  //   newRows[index] = { ...newRows[index], [field]: newValue };
 
-  //   // Calculate taxable value, GST, and total value
-  //   const { qty, mrp, discount } = newRows[index];
-  //   const taxableValue = qty * mrp - discount;
-  //   const cgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-  //   const sgst = gstType === "CGST/SGST" ? taxableValue * 0.09 : 0;
-  //   const igst = gstType === "IGST" ? taxableValue * 0.18 : 0;
-  //   const totalValue = taxableValue + cgst + sgst + igst;
-
-  //   newRows[index] = {
-  //     ...newRows[index],
-  //     taxableValue,
-  //     cgst,
-  //     sgst,
-  //     igst,
-  //     totalValue,
-  //   };
-  //   setRows(newRows);
-  // };
   const calculateTotals = () => {
     let grossAmount = 0;
     let GstAmount = 0;
