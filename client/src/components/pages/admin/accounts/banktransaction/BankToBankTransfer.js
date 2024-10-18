@@ -85,9 +85,15 @@ function BankToBankTransfer() {
         alert("Both amount shoud be equal")
         return ;
       }
+      const updatedFormData = {
+        ...formData,
+       
+        userId: userId,
+      
+      }
       const response = await axios.post(
         "/api/v1/auth/banktoBankTransfer",
-        formData
+        updatedFormData
       );
 
       if (response) {

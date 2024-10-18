@@ -10,7 +10,7 @@ export const bankToBankTransferController = async (req, res) => {
   session.startTransaction();
 
   try {
-    const { date, contraNo, fromAccount, amount, toAccount } = req.body;
+    const {userId, date, contraNo, fromAccount, amount, toAccount } = req.body;
 
     // Check for required fields
     const requiredFields = ["date", "contraNo", "fromAccount", "amount", "toAccount"];
@@ -79,20 +79,13 @@ export const bankToBankTransferController = async (req, res) => {
       return res.status(400).send({ success: false, message: "Transaction failed" });
     }
 
-    // Create the transaction record
-    const response = await bankTransactionModel.create(
-      [{ date, contraNo, fromAccount, amount: amountNum, toAccount }],
-      { session }
-    );
-
-    // Commit the transaction
-    await session.commitTransaction();
-    session.endSession();
-
-    return res.status(201).send({
-      success: true,
-      message: "Bank to Bank Transfer Successful",
-      response,
+    const response = await bankTransactionModel.create({
+      admin: userId,
+      date,
+      contraNo,
+      fromAccount,
+      amount,
+      toAccount,
     });
 
   } catch (error) {
@@ -106,8 +99,8 @@ export const bankToBankTransferController = async (req, res) => {
 
 export const CashDepositeIntoBankController = async (req, res) => {
   try {
-    const { date, contraNo, fromAccount, amount, toAccount } = req.body;
-    const { _id } = req.user;
+    const { userId,date, contraNo, fromAccount, amount, toAccount } = req.body;
+
     const requiredFields = [
       "date",
       "contraNo",
@@ -125,7 +118,7 @@ export const CashDepositeIntoBankController = async (req, res) => {
       });
     }
     const response = await bankDepositIntoModel.create({
-      admin: _id,
+      admin: userId,
       date,
       contraNo,
       fromAccount,
@@ -151,7 +144,7 @@ export const CashDepositeIntoBankController = async (req, res) => {
 };
 export const CashWithdrawfromBankController = async (req, res) => {
   try {
-    const { date, contraNo, fromAccount, amount, toAccount } = req.body;
+    const {userId, date, contraNo, fromAccount, amount, toAccount } = req.body;
     
     const requiredFields = [
       "date",
@@ -169,10 +162,10 @@ export const CashWithdrawfromBankController = async (req, res) => {
         missingFields: missingFields,
       });
     }
-    const { _id } = req.user;
+    
     
     const response = await CashWithdrawfromBankModel.create({
-      admin: _id,
+      admin: userId,
       date,
       contraNo,
       fromAccount,

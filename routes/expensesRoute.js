@@ -5,15 +5,15 @@ import {
   deleteExpenseController,
   updateExpenseController,
 } from "../controllers/expenseControlller.js";
+import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // Create a new expense
-router.post("/create", createExpenseController);
+router.post("/create",requireSignIn, createExpenseController);
 
 // Get all expenses
-router.get("/manageallexpenses", manageExpenseController);
-
+router.get("/manageallexpenses/:_id", manageExpenseController);
 // Delete an expense by ID
 router.delete("/delete/:_id", deleteExpenseController);
 

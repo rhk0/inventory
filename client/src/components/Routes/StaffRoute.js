@@ -11,10 +11,13 @@ import ManageSupplier from "../pages/admin/parties/ManageSupplier.js";
 import CreateTranspoter from "../pages/admin/parties/CreateTransporter.js";
 import ManageTranspoter from "../pages/admin/parties/ManageTransporter.js";
 import CreateCustomer from "../pages/admin/parties/CreateCustomer.js";
+import ManageDeliveryChallan from "../pages/admin/sales/ManageDeliveryChallan.js";
 import ManageCustomer from "../pages/admin/parties/ManageCustomer.js";
 import Cash from "../pages/admin/cash/Cash.js";
+import ManagePurchaseReturn from "../pages/admin/purchase/ManagePurchaseReturn.js";
 import CreateVendors from "../pages/admin/parties/CreateVendors.js";
 import ManageVendor from "../pages/admin/parties/ManageVendor.js";
+import ManagePurchaseOrder from "../pages/admin/purchase/ManagePurchaseOrder.js";
 import CreateStaff from "../pages/admin/settings/CreateStaff.js";
 import BankToBankTranfer from "../pages/admin/accounts/banktransaction/BankToBankTransfer.js";
 import AddBank from "../pages/admin/cash/AddBank.js";
@@ -33,6 +36,7 @@ import ManageBrand from "../pages/admin/inventory/ManageBrand.js";
 import ManageSubBrand from "../pages/admin/inventory/ManageSubBrand.js";
 import CreateBranches from "../pages/admin/CreateBranches.js";
 import ManageBranches from "../pages/admin/ManageBranches.js";
+import ManageSalesInvoice from "../pages/admin/sales/ManageSalesInvoice.js";
 import CreateProduct from "../pages/admin/inventory/CreateProduct.js";
 import CreateManufacturer from "../pages/admin/parties/CreateManufacturer.js";
 import ManageManufacturer from "../pages/admin/parties/ManageManufacturer.js";
@@ -42,6 +46,7 @@ import ManageSalesEstimate from "../pages/admin/sales/ManageSalesEstimate.js";
 import CreateSalesInvoice from "../pages/admin/sales/CreateSalesInvoice.js";
 import CreateDeliveryChallan from "../pages/admin/sales/CreateDeliveryChallan.js";
 import CreateSalesReturn from "../pages/admin/sales/CreateSalesReturn.js";
+import ManageSalesReturn from "../pages/admin/sales/ManageSalesReturn.js";
 import AddExpense from "../pages/admin/accounts/expenses/AddExpense.js";
 import ManageExpense from "../pages/admin/accounts/expenses/ManageExpense.js";
 import AddIncome from "../pages/admin/accounts/income/AddIncome.js";
@@ -62,6 +67,8 @@ import CurrentPlan from "../pages/admin/subscription/CurrentPlan.jsx"
 import PlanHistory from "../pages/admin/subscription/PlanHistory.jsx"
 import ViewStaff from "../pages/admin/settings/ViewStaff.jsx";
 import StaffSidebar from './../pages/staff/StaffSidebar';
+import ManagePurchaseInvoice from "../pages/admin/purchase/ManagePurchaseInvoice.js";
+import OnlineStore from "../pages/admin/sales/OnlineStore.js";
 const StaffRoute = () => {
   const [auth] = useAuth();
 
@@ -101,21 +108,27 @@ const StaffRoute = () => {
         <Route path="addsubcategory" element={<AddSubCategory />} />
         <Route path="addbrand" element={<AddBrand />} />
         <Route path="addstock" element={<StockUnit />} />
-
+        <Route
+          path="manageDeliveryChallan"
+          element={<ManageDeliveryChallan />}
+        />
+        <Route path="onlinestore" element={<OnlineStore />} />
+         <Route path="manageSalesReturn" element={<ManageSalesReturn />} />
         <Route path="AddSubBrand" element={<AddSubBrand />} />
         <Route path="ManageCategory" element={<ManageCategory />} />
         <Route path="managesubcategory" element={<ManageSubCategory />} />
         <Route path="createbranch" element={<CreateBranches />} />
         <Route path="managebranches" element={<ManageBranches />} />
+        <Route path="ManageSalesInvoice" element={<ManageSalesInvoice />} />
         <Route path="createproduct" element={<CreateProduct />} />
-
+        <Route path="managepurchasereturn" element={<ManagePurchaseReturn />} />
         {/* dheerendra routing */}
         <Route path="createtranspoter" element={<CreateTranspoter />} />
         <Route path="managetranspoter" element={<ManageTranspoter />} />
         <Route path="createvendors" element={<CreateVendors />} />
         <Route path="manageVendor" element={<ManageVendor />} />
-
-        {/* staff  */}
+        <Route path="ManagePurchaseInvoice" element={<ManagePurchaseInvoice />} />
+       
         <Route path="createstaff" element={<CreateStaff />} />
         <Route path ="manage-staff" element={<ViewStaff/>}/>
         <Route path="addbank" element={<AddBank />} />
@@ -150,7 +163,8 @@ const StaffRoute = () => {
         <Route path="PayOut" element={<PayOut />} />
         <Route path="ManagePayOut" element={<ManagePayOut />} />
         <Route path="profileupdate" element={<ProfileUpdate />} />
-
+        <Route path="ManagePurchaseOrder" element={<ManagePurchaseOrder />} />
+        
         <Route path="current-plan" element={<CurrentPlan/>}/>
         <Route path ="plan-history" element={<PlanHistory/>}/>
         <Route path="log-out" element={<Logout />} />

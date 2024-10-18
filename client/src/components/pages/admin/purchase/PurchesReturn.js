@@ -786,7 +786,7 @@ const PurchesReturn = () => {
 
     const updatedFormData = {
       ...formData,
-      rows: rows.map((row) => ({
+      rows: rows?.map((row) => ({
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
@@ -1353,7 +1353,7 @@ const PurchesReturn = () => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
+              {rows?.map((row, index) => (
                 <tr key={index}>
                   <td className="border p-1">{index + 1}</td>
                   <td className="border">
@@ -1370,7 +1370,7 @@ const PurchesReturn = () => {
                       onChange={(selectedOption) =>
                         handleItemCodeSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.itemCode,
                         value: product.itemCode,
                       }))}
@@ -1405,7 +1405,7 @@ const PurchesReturn = () => {
                       onChange={(selectedOption) =>
                         handleProductSelect(index, selectedOption.value)
                       }
-                      options={products.map((product) => ({
+                      options={products?.map((product) => ({
                         label: product.productName,
                         value: product.productName,
                       }))}

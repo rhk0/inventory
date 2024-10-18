@@ -5,14 +5,15 @@ import {
   deleteincomeController,
   updateincomeController,
 } from "../controllers/incomeController.js";
+import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // Create a new income
-router.post("/create", createincomeController);
+router.post("/create",requireSignIn, createincomeController);
 
 // Get all income
-router.get("/manageallincome", manageincomeController);
+router.get("/manageallincome/:_id",requireSignIn, manageincomeController);
 
 // Delete an income by ID
 router.delete("/delete/:_id", deleteincomeController);

@@ -533,7 +533,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to=""
+                  to="/staff/ManageSalesInvoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   Sales Invoice List
@@ -550,7 +550,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to=""
+                  to="/staff/manageDeliveryChallan"
                   className="flex items-center text-white nestitemhover"
                 >
                   Delivery Challan List
@@ -568,7 +568,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to=""
+                  to="/staff/manageSalesReturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Manage Sales Return
@@ -586,7 +586,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
 
               <li className="">
                 <Link
-                  to=""
+                  to="/staff/onlinestore"
                   className="flex items-center text-white nestitemhover"
                 >
                   Online Store
@@ -651,7 +651,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/staff/dashboard/manageperformance"
+                  to="/staff/ManagePurchaseOrder"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Order List
@@ -667,7 +667,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/staff/dashboard/manageperformance"
+                  to="/staff/ManagePurchaseInvoice"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Invoice List
@@ -683,7 +683,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
               </li>
               <li className="">
                 <Link
-                  to="/staff/dashboard/manageperformance"
+                  to="/staff/managepurchasereturn"
                   className="flex items-center text-white nestitemhover"
                 >
                   Purchase Return List
@@ -802,7 +802,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setExpenses(!showExpenses)}
-                  className="w-full flex items-center nestedlist  justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center nestedlist innerlist sidebar-list-item justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Expenses</span>
                   {!showExpenses ? <IoIosArrowForward /> : <IoIosArrowDown />}
@@ -833,7 +833,7 @@ function StaffSidebar({ openSidebarToggle, OpenSidebar }) {
               <li className="">
                 <button
                   onClick={() => setIncome(!showIncome)}
-                  className="w-full flex items-center nestedlist justify-between focus:outline-none text-white nesteditem"
+                  className="w-full flex items-center innerlist sidebar-list-item nestedlist justify-between focus:outline-none text-white nesteditem"
                 >
                   <span>Income</span>
                   {!showIncome ? <IoIosArrowForward /> : <IoIosArrowDown />}
