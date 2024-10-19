@@ -931,7 +931,7 @@ const OrderPurchaseInvoice = () => {
          </div>
         `;
       } else if (formData?.selectedBank?.length > 0) {
-        console.log("hiiiiiiiiiii")
+        console.log(formData?.selectedBank,"rahul")
         return `
           <div class="customer-details">
             <div class="section-header">Bank Details</div>

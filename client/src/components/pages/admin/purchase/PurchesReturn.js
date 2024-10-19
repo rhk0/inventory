@@ -819,7 +819,37 @@ const PurchesReturn = () => {
       gstType,
       netAmount: netAmount,
     };
+    const renderDetails = () => {
+      if (formData?.cash==="cash") {
+        return `
+         <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+              <div class="details"> Cash</div>
+         </div>
+        `;
+      } else if (formData?.selectedBank?.length > 0) {
 
+        return `
+          <div class="customer-details">
+            <div class="section-header">Bank Details</div>
+            <div class="details">Bank Name: ${formData.selectedBank[0]?.name}</div>
+            <div class="details">IFSC Code: ${formData.selectedBank[0]?.ifscCode}</div>
+            <div class="details">Account No: ${formData.selectedBank[0]?.accountNumber}</div>
+          </div>
+        `;
+      } else if (chooseUser) {
+        return `
+          <div class="customer-details">
+            <div class="section-header">Customer Details</div>
+            <div class="details">Name: ${chooseUser?.name}</div>
+            <div class="details">Address: ${chooseUser?.address}</div>
+            <div class="details">Contact: ${chooseUser?.contact}</div>
+            <div class="details">GSTIN: ${chooseUser?.gstin}</div>
+          </div>
+        `;
+      }
+      return '';
+    };
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {
       const ones = [
@@ -1000,19 +1030,7 @@ const PurchesReturn = () => {
             <tr>
               <td style="width: 30%;">
                 <div style="text-align:left;" class="customer-details">
-                  <div class="section-header">Supplier  Details</div>
-                  <div class="details">Name: <span>${
-                    chooseUser.name
-                  }</span></div>
-                  <div class="details">Address: <span>${
-                    chooseUser.address
-                  }</span></div>
-                  <div class="details">Contact: <span>${
-                    chooseUser.contact
-                  }</span></div>
-                  <div class="details">GSTIN: <span>${
-                    chooseUser.gstin
-                  }</span></div>
+                   ${renderDetails()}
                 </div>
               </td>
               <td style="width: 30%;">
@@ -1026,7 +1044,7 @@ const PurchesReturn = () => {
                   }</span></div>
                   
                   <div class="details">Place of Supply: <span>${
-                    updatedFormData.placeOfSupply
+                    updatedFormData?.placeOfSupply ||company?.state
                   }</span></div>
                    <div class="details">Reason For Return: <span>${
                      updatedFormData.reasonForReturn
