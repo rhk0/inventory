@@ -15,7 +15,7 @@ const CreateDeliveryChallan = () => {
   const [userId, setUserId] = useState("");
   const [banks, setBanks] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
-  const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
+  const [selectedBanks, setSelectedBanks] = useState([]);
   const [cash,setCash]=useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
@@ -213,15 +213,6 @@ const CreateDeliveryChallan = () => {
       paymentTerm: value,
     }));
   };
-
-  // const handleGstTypeChange = (e) => {
-  //   const value = e.target.value;
-  //   setGstType(value);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     gstType: value,
-  //   }));
-  // };
 
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);

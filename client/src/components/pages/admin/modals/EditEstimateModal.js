@@ -286,7 +286,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
   }
 
   const handleQtyChange = (index, value) => {
-    const qty = parseFloat(value)
+    const qty = parseFloat(value) || 0
 
     const updatedRows = [...rows]
 
@@ -305,7 +305,19 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
 
       const discountAmount = (mrp * qty * discountPercent) / 100
 
-      const taxableValue = mrp * qty - discountAmount
+      const salesTaxInclude = selectedProduct.salesTaxInclude
+
+      const retailPrice = selectedProduct.maxmimunRetailPrice
+        ? selectedProduct.maxmimunRetailPrice -
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+            100
+        : 0
+
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * qty * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * qty
 
       updatedRows[index] = {
         ...updatedRows[index],
