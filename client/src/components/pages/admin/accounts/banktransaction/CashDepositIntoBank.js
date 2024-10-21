@@ -84,9 +84,9 @@ function CashDepositeIntoBank() {
         userId: userId,
       }
       const response = await axios.post(
-        '/api/v1/auth/CashDepositeIntoBank',
-        formData,
-      )
+        "/api/v1/auth/CashDepositeIntoBank",
+        updatedFormData
+      );
 
       if (response) {
         toast.success('Cash deposit into bank created successfully.')

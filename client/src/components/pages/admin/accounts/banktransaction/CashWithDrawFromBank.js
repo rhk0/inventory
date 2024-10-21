@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { toast, ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import { useAuth } from '../../../../context/Auth'
-
+import React, { useState,useEffect } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import { useAuth } from "../../../../context/Auth.js";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Container,
   Typography,
@@ -22,47 +21,31 @@ function CashWithdrawFromBank() {
   const [bank, setBanks] = useState([])
 
   const [formData, setFormData] = useState({
-    date: '',
-    contraNo: '',
-    fromAccount: '',
-    amount: '',
-
-    toAccount: '',
-  })
-
+    date: "",
+    contraNo: "",
+    fromAccount: "",
+    amount: "",
+    toAccount: "",
+  });
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData({
       ...formData,
       [name]: value,
-    })
-  }
-
-  const [auth] = useAuth()
-  const [userId, setUserId] = useState('')
-
+    });
+  };
   useEffect(() => {
-    if (auth.user.role === 1) {
-      setUserId(auth.user._id)
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
     }
-    if (auth.user.role === 0) {
-      setUserId(auth.user.admin)
-    }
-    fetchBanks()
-  }, [auth, userId])
-
-
-  const fetchBanks = async () => {
-    try {
-      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
-      setBanks(response.data.data)
-    } catch (error) {
-      console.error('Error fetching Bank data', error)
-      toast.error(error.response.data.message)
-    }
-  }
-
-
+  
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -82,10 +65,16 @@ function CashWithdrawFromBank() {
     }
 
     try {
+      const updatedFormData = {
+        ...formData,
+       
+        userId: userId,
+      
+      }
       const response = await axios.post(
-        '/api/v1/auth/CashWithdrawfromBank',
-        formData,
-      )
+        "/api/v1/auth/CashWithdrawfromBank",
+        updatedFormData
+      );
 
       if (response) {
         toast.success('Cash withdraw from bank created successfully.')

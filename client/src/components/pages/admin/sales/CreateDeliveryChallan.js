@@ -383,6 +383,8 @@ const CreateDeliveryChallan = () => {
       const { qty } = newRows[index];
 
       // Calculate taxable value
+
+      console.log(salesTaxInclude,"salesTaxInclude", selectedProduct.retailPrice ,"rtailprice",selectedProduct.gstRate,"gstrate")
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
           (100 + Number(selectedProduct.gstRate))
@@ -1434,10 +1436,12 @@ const CreateDeliveryChallan = () => {
         style={{ backgroundColor: "#FFFFFF" }}
         className="p-4 responsive-container"
       >
+
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
           Create Delivery Challan
         </h1>
+
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg::grid-cols-4 gap-4 mb-4">
           <div>
             <label className="font-bold">
@@ -1559,7 +1563,6 @@ const CreateDeliveryChallan = () => {
               />
             </label>
           </div>
-
           <div>
             <label className="font-bold">
               Due Date

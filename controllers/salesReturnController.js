@@ -143,55 +143,24 @@ export const updateReturnByIDController = async (req, res) => {
     const { _id } = req.params;
     const updateData = req.body;
 
+    // Find the existing sales return document by ID
     const salesreturn = await returnModel.findById(_id);
+    
     if (!salesreturn) {
       return res
         .status(404)
-        .send({ success: false, message: "Data not found" });
+        .send({ success: false, message: "Sales return not found" });
     }
 
-    // Update fields
-    salesreturn.userId = updateData.userId || salesreturn.userId;
-    salesreturn.date = updateData.date || salesreturn.date;
-    salesreturn.salesType = updateData.salesType || salesreturn.salesType;
-    salesreturn.creditNoteNo =
-      updateData.creditNoteNo || salesreturn.creditNoteNo;
-    salesreturn.customerName =
-      updateData.customerName || salesreturn.customerName;
-    salesreturn.placeOfSupply =
-      updateData.placeOfSupply || salesreturn.placeOfSupply;
-    salesreturn.paymentTerm = updateData.paymentTerm || salesreturn.paymentTerm;
-    salesreturn.dueDate = updateData.dueDate || salesreturn.dueDate;
-    salesreturn.dispatchedThrough =
-      updateData.dispatchedThrough || salesreturn.dispatchedThrough;
-    salesreturn.destination = updateData.destination || salesreturn.destination;
-    salesreturn.carrierNameAgent =
-      updateData.carrierNameAgent || salesreturn.carrierNameAgent;
-    salesreturn.billOfLading =
-      updateData.billOfLading || salesreturn.billOfLading;
-    salesreturn.billingAddress =
-      updateData.billingAddress || salesreturn.billingAddress;
-    salesreturn.reverseCharge =
-      updateData.reverseCharge || salesreturn.reverseCharge;
-    salesreturn.gstType = updateData.gstType || salesreturn.gstType;
-    salesreturn.reasonForReturn =
-      updateData.reasonForReturn || salesreturn.reasonForReturn;
-    salesreturn.rows = updateData.rows || salesreturn.rows;
-    salesreturn.otherChargesDescriptions =
-      updateData.otherChargesDescriptions ||
-      salesreturn.otherChargesDescriptions;
-    salesreturn.othercharges =
-      updateData.othercharges || salesreturn.othercharges;
-    salesreturn.narration = updateData.narration || salesreturn.narration;
-    salesreturn.grossAmount = updateData.grossAmount || salesreturn.grossAmount;
-    salesreturn.GstAmount = updateData.GstAmount || salesreturn.GstAmount;
-    salesreturn.netAmount = updateData.netAmount || salesreturn.netAmount;
+    // Apply the updates from updateData to the sales return
+    Object.assign(salesreturn, updateData);
 
+    // Save the updated sales return
     const updatedSalesReturn = await salesreturn.save();
 
     return res.status(200).send({
       success: true,
-      message: "Sales SalesReturn updated successfully",
+      message: "Sales return updated successfully",
       updatedSalesReturn,
     });
   } catch (error) {

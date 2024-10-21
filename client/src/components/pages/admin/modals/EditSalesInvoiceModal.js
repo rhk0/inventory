@@ -8,6 +8,10 @@ import { useAuth } from '../../../context/Auth'
 const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   const [date, setDate] = useState('')
   const [InvoiceNo, setInvoiceNo] = useState('')
+  const [selectedCustomer, setSelectedCustomer] = useState('')
+  const [customer, setCustomer] = useState([])
+  const [chooseUser, setChooseUser] = useState([])
+  const [company, setCompanyData] = useState([])
   const [salesType, setSalesType] = useState('')
   const [customerType, setCustomerType] = useState('')
   const [customerName, setCustomerName] = useState('')
@@ -34,6 +38,11 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   const [viewModal, setViewModal] = useState(false)
   const [bank, setBank] = useState([])
   const [cash, setCash] = useState([])
+  const [selctedcash, setSelectedCash] = useState([])
+  const [banks, setBanks] = useState([])
+  const [selectedValue, setSelectedValue] = useState('')
+  const [selectedBank, setSelectedBank] = useState([]) // Array to hold bank data
+
 
   const [auth] = useAuth()
   const [userId, setUserId] = useState('')
@@ -77,7 +86,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           Balance: '',
         })
       }
-
+ 
       if (estimate.cash) {
         setCash({
           Amount: estimate.cash.Amount || '',
@@ -98,7 +107,6 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
       setInvoiceNo(estimate.InvoiceNo || '')
       setSalesType(estimate.salesType || '')
       setCustomerType(estimate.customerType || '')
-      setCustomerName(getCustomerName(estimate.customerId) || '')
       setPlaceOfSupply(estimate.placeOfSupply || '')
       setPaymentTerm(estimate.paymentTerm || '')
       setDueDate(estimate.dueDate || '')
@@ -124,9 +132,134 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   const openViewModal = (suppliers) => {
     setViewModal(true)
   }
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id)
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin)
+    }
+    fetchBanks()
+  }, [auth, userId])
+  useEffect(() => {
+    const companyData = async () => {
+      try {
+        const response = await axios.get(`/api/v1/company/get/${userId}`)
+        setCompanyData(response.data.data) // Assuming setCompanyData updates the company state
+      } catch (error) {
+        console.error('Error fetching company data:', error)
+      }
+    }
+
+    companyData() // Fetch company data on component mount
+  }, [userId]) // Empty dependency array ensures this only runs once, on mount
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id)
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin)
+      }
+    }
+
+    fetchCustomer()
+  }, [auth, userId])
+  const fetchCustomer = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`)
+      setCustomer(response.data.data)
+    } catch (error) {
+      console.error('Error fetching Customers:', error)
+    }
+  }
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
+      setBanks(response.data.data)
+    } catch (error) {
+      console.error('Error fetching Bank data', error)
+    }
+  }
+
+  useEffect(() => {
+    const companyData = async () => {
+      try {
+        const response = await axios.get(`/api/v1/company/get/${userId}`)
+        setCompanyData(response.data.data) // Assuming setCompanyData updates the company state
+      } catch (error) {
+        console.error('Error fetching company data:', error)
+      }
+    }
+
+    companyData() // Fetch company data on component mount
+  }, [userId]) // Empty dependency array ensures this only runs once, on mount
 
   const [paymentMethod, setPaymentMethod] = useState('')
+  const handleCashPayment = (value) => {
+    console.log(value); // Log the selected cash value
+    setGstType('CGST/SGST');
+    
+    // Clear customer-related fields
+    setSelectedCash(value);
+    setCustomerName('');   // Clear customerName
+    setSelectedCustomer(""); // Clear selectedCustomer
+    setPlaceOfSupply('');   // Clear placeOfSupply
+    setBillingAddress('');  // Clear billingAddress
+    setSelectedBank([]);    // Clear selectedBank
+    
+    console.log('After cash payment:', {
+      customerName,
+      selectedCustomer,
+      placeOfSupply,
+      billingAddress,
+    });  // This log might still show the old values due to asynchronous updates
+  };
+  
+  const handleBanksChange = (bankId) => {
+    const selectedBank = banks.find((bank) => bank._id === bankId);
+    
+    // Update the selected banks
+    setSelectedBank(selectedBank);
+    setSelectedCash('');   // Clear selectedCash
+    setCustomerName('');   // Clear customerName
+    setSelectedCustomer(""); // Clear selectedCustomer
+    setPlaceOfSupply('');   // Clear placeOfSupply
+    setBillingAddress('');  // Clear billingAddress
+    
+    // Additional logic for handling bank data
+    setGstType('CGST/SGST');
+    
+    console.log('After bank change:', {
+      customerName,
+      selectedCustomer,
+      placeOfSupply,
+      billingAddress,
+    });  // This log might still show old values due to async updates
+  };
+  
+  const handleCustomerChange = (e) => {
+    const value = e.target.value
+    setSelectedCustomer(value)
 
+    setSelectedBank([])
+    setSelectedCash('')
+    console.log(customer, 'customer')
+    const selectedCustomerData = customer.find((cust) => cust._id === value)
+    setChooseUser(selectedCustomerData)
+    setCustomerName(selectedCustomerData?.name)
+    console.log(selectedCustomerData, 'selectedCustomerData')
+
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : '')
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : '')
+    if (
+      selectedCustomerData.state.trim().toLowerCase() ===
+      company.state.trim().toLowerCase()
+    ) {
+      setGstType('CGST/SGST')
+    } else {
+      setGstType('IGST')
+    }
+  }
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value)
   }
@@ -539,12 +672,27 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
   const handleUpdate = async () => {
     try {
+      console.log(
+        selctedcash,
+     
+        'cash',
+        '    ',
+        selectedBank,
+       
+        'bank',
+        customerName,
+        'customer name',
+      )
+      console.log(customerName,"customerName")
       const updatedEstimate = {
+        
         date,
         InvoiceNo,
         salesType,
         customerType,
         customerName,
+        selctedcash,
+        selectedBank,
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -592,10 +740,11 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         `/api/v1/salesInvoiceRoute/updatesalesinvoice/${estimate._id}`,
         updatedEstimate,
       )
+      console.log(response,"dheeru update")
 
       if (response.data.success) {
         alert('Estimate updated successfully')
-        // closeModal();
+        closeModal();
       } else {
         alert('Failed to update estimate: ' + response.data.message)
       }
@@ -661,13 +810,54 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
         <div>
           <label className="font-bold">Customer Name</label>
-          <input
-            type="text"
-            name="customerName"
-            value={customerName}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
+          <select
+            className="w-full p-2 border border-gray-300 rounded"
+            value={selectedValue} // This ensures the selected value is shown in the dropdown
+            onChange={(e) => {
+              const selectedValue = e.target.value
+              setSelectedValue(selectedValue) // Update the state to reflect the selected value
+
+              if (selectedValue === 'add-new-customer') {
+                window.location.href = '/admin/CreateCustomer'
+              } else if (selectedValue === 'add-new-bank') {
+                window.location.href = '/admin/addbank'
+              } else if (selectedValue === 'cash') {
+                handleCashPayment(selectedValue) // Handle cash payment
+              } else if (selectedValue.startsWith('bank-')) {
+                handleBanksChange(selectedValue.replace('bank-', '')) // Handle bank change
+              } else {
+                handleCustomerChange(e) // Handle customer change
+              }
+            }}
+          >
+            {/* Customer Options */}
+            <optgroup label="Customers">
+            
+              {customer?.map((customer) => (
+                <option key={customer._id} value={customer._id}>
+                  {customer.name}
+                </option>
+              ))}
+              <option value="add-new-customer" className="text-blue-500">
+                + Add New Customer
+              </option>
+            </optgroup>
+            {/* Bank Options */}
+            <optgroup label="Banks">
+              {banks?.map((bank) => (
+                <option key={bank._id} value={`bank-${bank._id}`}>
+                  {bank.name}
+                </option>
+              ))}
+              <option value="cash" className="text-green-500">
+                Cash
+              </option>
+              {/* Uncomment if you need the Add New Bank option */}
+              {/* <option value="add-new-bank" className="text-blue-500">
+                   + Add New Bank
+                 </option> */}
+            </optgroup>
+          </select>
         </div>
         <div>
           <label className="font-bold">Place of Supply</label>

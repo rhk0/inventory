@@ -89,6 +89,7 @@ import { useAuth } from "../../../context/Auth";
   const closeModal = () => {
     setEditModalOpen(false);
     setViewModalOpen(false);
+    fetchChallan();
   };
 
   // Filter sales estimates based on search term
@@ -165,7 +166,6 @@ import { useAuth } from "../../../context/Auth";
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.salesType}
                     </td>
-                  {  console.log(estimate,"estimate")}
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate?.customerName ||estimate?.cash ||estimate?.selectedBank[0]?.name }                    </td>
                     <td className="border border-gray-300 p-2 text-center">
