@@ -31,6 +31,14 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
   const [GstAmount, setGstAmount] = useState('')
   const [netAmount, setNetAmount] = useState('')
   
+  const [banks, setBanks] = useState([])
+  const [selectedValue, setSelectedValue] = useState('')
+  const [selectedBank, setSelectedBank] = useState([]) // Array to hold bank data
+  const [cash, setCash] = useState('')
+  const [selectedCustomer, setSelectedCustomer] = useState('')
+  const [company, setCompanyData] = useState([])
+  const [chooseUser, setChooseUser] = useState([])
+  const [customer, setCustomer] = useState([])
   const [auth] = useAuth()
   const [userId, setUserId] = useState('')
 
@@ -177,6 +185,56 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
       setRows(rows.filter((_, i) => i !== index))
     }
   }
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id)
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin)
+      }
+    }
+
+    fetchCustomer()
+  }, [auth, userId])
+  const fetchCustomer = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`)
+      setCustomer(response.data.data)
+    } catch (error) {
+      console.error('Error fetching Customers:', error)
+    }
+  }
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id)
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin)
+    }
+    fetchBanks()
+  }, [auth, userId])
+
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
+      setBanks(response.data.data)
+    } catch (error) {
+      console.error('Error fetching Bank data', error)
+    }
+  }
+
+  useEffect(() => {
+    const companyData = async () => {
+      try {
+        const response = await axios.get(`/api/v1/company/get/${userId}`)
+        setCompanyData(response.data.data) // Assuming setCompanyData updates the company state
+      } catch (error) {
+        console.error('Error fetching company data:', error)
+      }
+    }
+
+    companyData() // Fetch company data on component mount
+  }, [userId]) // Empty dependency array ensures this only runs once, on mount
 
   const calculateTotalAmounts = () => {
     let grossAmount = 0
@@ -193,7 +251,55 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
     setGstAmount(totalGST.toFixed(2))
     setNetAmount(netAmount.toFixed(2))
   }
+  const handleCashPayment = (value) => {
+    setCash(value)
+    setGstType('CGST/SGST')
 
+    // Update formData with the cash value
+    // setFormData((prev) => ({
+    //   ...prev,
+    //   cash: value,
+    // }));
+    setCash(value)
+    setCustomerName('')
+    setPlaceOfSupply('')
+    setBillingAddress('')
+    setSelectedBank([])
+  } 
+  const handleCustomerChange = (e) => {
+    const value = e.target.value
+    setSelectedCustomer(value)
+
+    setSelectedBank([])
+    setCash('')
+    console.log(customer, 'customer')
+    const selectedCustomerData = customer.find((cust) => cust._id === value)
+    setChooseUser(selectedCustomerData)
+    setCustomerName(selectedCustomerData?.name)
+    console.log(selectedCustomerData, 'selectedCustomerData')
+
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : '')
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : '')
+    if (
+      selectedCustomerData.state.trim().toLowerCase() ===
+      company.state.trim().toLowerCase()
+    ) {
+      setGstType('CGST/SGST')
+    } else {
+      setGstType('IGST')
+    }
+  }
+  const handleBankChange = (bankId) => {
+    const selectedBank = banks.find((bank) => bank._id === bankId)
+    // Update the selected banks
+    setSelectedBank(selectedBank)
+    setCash('')
+    setCustomerName('')
+    setPlaceOfSupply('')
+    setBillingAddress('')
+    // Additional logic for handling bank data
+    setGstType('CGST/SGST')
+  }
   const calculateTotals = () => {
     let grossAmount = 0
     let GstAmount = 0
@@ -464,6 +570,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
   }
 
   const handleUpdate = async () => {
+    console.log(customerName,"customerNamecash" , cash ,"selectedBank" ,selectedBank)
     try {
       const updatedEstimate = {
         date,
@@ -471,6 +578,8 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
         salesType,
         customerType,
         customerName,
+        cash,
+        selectedBank,
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -519,13 +628,13 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
       }
 
       const response = await axios.put(
-        `/api/v1/salesEstimateRoute/updateSalesEstimatetByID/${estimate._id}`,
+        `/api/v1/salesReturnRoute/updatereturn/${estimate._id}`,
         updatedEstimate,
       )
 
       if (response.data.success) {
         alert('Estimate updated successfully')
-        // closeModal();
+        closeModal();
       } else {
         alert('Failed to update estimate: ' + response.data.message)
       }
@@ -598,13 +707,54 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
         </div>
         <div>
           <label className="font-bold">Customer Name</label>
-          <input
-            type="text"
-            name="customerName"
-            value={customerName}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
+          <select
+            className="w-full p-2 border border-gray-300 rounded"
+            value={selectedValue} // This ensures the selected value is shown in the dropdown
+            onChange={(e) => {
+              const selectedValue = e.target.value
+              setSelectedValue(selectedValue) // Update the state to reflect the selected value
+
+              if (selectedValue === 'add-new-customer') {
+                window.location.href = '/admin/CreateCustomer'
+              } else if (selectedValue === 'add-new-bank') {
+                window.location.href = '/admin/addbank'
+              } else if (selectedValue === 'cash') {
+                handleCashPayment(selectedValue) // Handle cash payment
+              } else if (selectedValue.startsWith('bank-')) {
+                handleBankChange(selectedValue.replace('bank-', '')) // Handle bank change
+              } else {
+                handleCustomerChange(e) // Handle customer change
+              }
+            }}
+          >
+            {/* Customer Options */}
+            <optgroup label="Customers">
+         
+              {customer?.map((customer) => (
+                <option key={customer._id} value={customer._id}>
+                  {customer.name}
+                </option>
+              ))}
+              <option value="add-new-customer" className="text-blue-500">
+                + Add New Customer
+              </option>
+            </optgroup>
+            {/* Bank Options */}
+            <optgroup label="Banks">
+              {banks?.map((bank) => (
+                <option key={bank._id} value={`bank-${bank._id}`}>
+                  {bank.name}
+                </option>
+              ))}
+              <option value="cash" className="text-green-500">
+                Cash
+              </option>
+              {/* Uncomment if you need the Add New Bank option */}
+              {/* <option value="add-new-bank" className="text-blue-500">
+                   + Add New Bank
+                 </option> */}
+            </optgroup>
+          </select>
         </div>
         <div>
           <label className="font-bold">Place of Supply</label>

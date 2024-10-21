@@ -33,51 +33,51 @@ export const bankToBankTransferController = async (req, res) => {
       return res.status(400).send({ success: false, message: "Both fromAccount and toAccount must be valid Object IDs" });
     }
 
-    // Fetch bank account details
-    const fromB = await bankModel.findById(fromAccount).session(session);
-    const toB = await bankModel.findById(toAccount).session(session);
+    // // Fetch bank account details
+    // const fromB = await bankModel.findById(fromAccount).session(session);
+    // const toB = await bankModel.findById(toAccount).session(session);
 
-    if (!fromB) {
-      return res.status(404).send({ success: false, message: "fromAccount not found" });
-    }
-    if (!toB) {
-      return res.status(404).send({ success: false, message: "toAccount not found" });
-    }
+    // if (!fromB) {
+    //   return res.status(404).send({ success: false, message: "fromAccount not found" });
+    // }
+    // if (!toB) {
+    //   return res.status(404).send({ success: false, message: "toAccount not found" });
+    // }
 
-    const amountNum = Number(amount);  // Ensure the amount is a number
+    // const amountNum = Number(amount);  // Ensure the amount is a number
 
-    // Check for valid and sufficient balance
-    if (amountNum <= 0) {
-      return res.status(400).send({ success: false, message: "Amount must be greater than zero" });
-    }
+    // // Check for valid and sufficient balance
+    // if (amountNum <= 0) {
+    //   return res.status(400).send({ success: false, message: "Amount must be greater than zero" });
+    // }
 
-    const fromBalanceNum = Number(fromB.openingBalance);
-    if (amountNum > fromBalanceNum) {
-      return res.status(400).send({ success: false, message: "Insufficient amount in Bank" });
-    }
+    // const fromBalanceNum = Number(fromB.openingBalance);
+    // if (amountNum > fromBalanceNum) {
+    //   return res.status(400).send({ success: false, message: "Insufficient amount in Bank" });
+    // }
 
     // Calculate new balances
-    const newFromBalance = fromBalanceNum - amountNum;
-    const newToBalance = Number(toB.openingBalance) + amountNum;
+    // const newFromBalance = fromBalanceNum - amountNum;
+    // const newToBalance = Number(toB.openingBalance) + amountNum;
 
     // Update balances atomically
-    const tr1 = await bankModel.findByIdAndUpdate(
-      fromAccount, 
-      { openingBalance: newFromBalance }, 
-      { new: true, session }
-    );
+    // const tr1 = await bankModel.findByIdAndUpdate(
+    //   fromAccount, 
+    //   { openingBalance: newFromBalance }, 
+    //   { new: true, session }
+    // );
 
     
-    const tr2 = await bankModel.findByIdAndUpdate(
-      toAccount, 
-      { openingBalance: newToBalance }, 
-      { new: true, session }
-    );
+    // const tr2 = await bankModel.findByIdAndUpdate(
+    //   toAccount, 
+    //   { openingBalance: newToBalance }, 
+    //   { new: true, session }
+    // );
 
-    if (!tr1 || !tr2) {
-      await session.abortTransaction();
-      return res.status(400).send({ success: false, message: "Transaction failed" });
-    }
+    // if (!tr1 || !tr2) {
+    //   await session.abortTransaction();
+    //   return res.status(400).send({ success: false, message: "Transaction failed" });
+    // }
 
     const response = await bankTransactionModel.create({
       admin: userId,

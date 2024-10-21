@@ -74,7 +74,6 @@ const ManageSalesInvoice = () => {
   const fetchCustomers = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
-     
       setCustomers(response.data.data);
     } catch (error) {
       console.error("Error fetching customers", error);
@@ -89,6 +88,7 @@ const ManageSalesInvoice = () => {
   const closeModal = () => {
     setEditModalOpen(false);
     setViewModalOpen(false);
+    fetchEstimate();
   };
 
   // Filter sales estimates based on search term
@@ -173,12 +173,12 @@ const ManageSalesInvoice = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.salesType}
                     </td>
-                   { console.log(estimate,"hhsduf")}
+                
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate?.customerName || estimate?.selctedcash || estimate.selectedBank[0]?.name}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate?.placeOfSupply}
+                      {estimate?.placeOfSupply || "N/A"}
                     </td>
                  
 

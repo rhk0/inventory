@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { useAuth } from "../../../../context/Auth.js";
 import "react-toastify/dist/ReactToastify.css";
 import {
   Container,
@@ -21,10 +22,10 @@ function CashWithdrawFromBank() {
     contraNo: "",
     fromAccount: "",
     amount: "",
-  
     toAccount: "",
   });
-
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -32,7 +33,16 @@ function CashWithdrawFromBank() {
       [name]: value,
     });
   };
-
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id);
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin);
+      }
+    }
+  
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -52,9 +62,15 @@ function CashWithdrawFromBank() {
     }
 
     try {
+      const updatedFormData = {
+        ...formData,
+       
+        userId: userId,
+      
+      }
       const response = await axios.post(
         "/api/v1/auth/CashWithdrawfromBank",
-        formData
+        updatedFormData
       );
 
       if (response) {

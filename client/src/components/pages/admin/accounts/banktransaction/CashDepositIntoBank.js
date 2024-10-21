@@ -75,7 +75,7 @@ function CashDepositeIntoBank() {
       }
       const response = await axios.post(
         "/api/v1/auth/CashDepositeIntoBank",
-        formData
+        updatedFormData
       );
 
       if (response) {

@@ -145,41 +145,19 @@ export const updateChallanByIDController = async (req, res) => {
     const { _id } = req.params;
     const updateData = req.body;
 
+    // Find the existing challan by ID
     const challan = await deliveryChallanModel.findById(_id);
+    
     if (!challan) {
       return res
         .status(404)
-        .send({ success: false, message: "Data not found" });
+        .send({ success: false, message: "Sales Challan not found" });
     }
 
-    // Update fields
-    challan.userId = updateData.userId || challan.userId;
-    challan.date = updateData.date || challan.date;
-    challan.salesType = updateData.salesType || challan.salesType;
-    challan.challanNo = updateData.ChallanNo || challan.ChallanNo;
-    challan.customerName = updateData.customerName || challan.customerName;
-    challan.placeOfSupply = updateData.placeOfSupply || challan.placeOfSupply;
-    challan.paymentTerm = updateData.paymentTerm || challan.paymentTerm;
-    challan.dueDate = updateData.dueDate || challan.dueDate;
-    challan.dispatchedThrough =
-      updateData.dispatchedThrough || challan.dispatchedThrough;
-    challan.destination = updateData.destination || challan.destination;
-    challan.carrierNameAgent =
-      updateData.carrierNameAgent || challan.carrierNameAgent;
-    challan.billOfLading = updateData.billOfLading || challan.billOfLading;
-    challan.billingAddress =
-      updateData.billingAddress || challan.billingAddress;
-    challan.reverseCharge = updateData.reverseCharge || challan.reverseCharge;
-    challan.gstType = updateData.gstType || challan.gstType;
-    challan.rows = updateData.rows || challan.rows;
-    challan.otherChargesDescription =
-      updateData.otherChargesDescription || challan.otherChargesDescription;
-    challan.othercharges = updateData.othercharges || challan.othercharges;
-    challan.narration = updateData.narration || challan.narration;
-    challan.grossAmount = updateData.grossAmount || challan.grossAmount;
-    challan.GstAmount = updateData.GstAmount || challan.GstAmount;
-    challan.netAmount = updateData.netAmount || challan.netAmount;
+    // Apply the updates from updateData to the challan
+    Object.assign(challan, updateData);
 
+    // Save the updated challan
     const updatedChallan = await challan.save();
 
     return res.status(200).send({
@@ -194,3 +172,4 @@ export const updateChallanByIDController = async (req, res) => {
       .send({ success: false, message: "Internal Server Issue" });
   }
 };
+
