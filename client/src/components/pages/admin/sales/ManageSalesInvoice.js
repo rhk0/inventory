@@ -173,7 +173,6 @@ const ManageSalesInvoice = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.salesType}
                     </td>
-                   { console.log(estimate,"hhsduf")}
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate?.customerName || estimate?.selctedcash || estimate.selectedBank[0]?.name}
                     </td>

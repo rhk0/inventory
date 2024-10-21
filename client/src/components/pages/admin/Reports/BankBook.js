@@ -16,7 +16,9 @@ const BankBook = () => {
   const [endDate, setEndDate] = useState('')
   const [auth] = useAuth()
   const [Banks, setBanks] = useState([])
-  const [selectedBank, setSelectedBank] = useState(null) // Store selected bank object with opening balance
+  const [selectedBank, setSelectedBank] = useState(null) // Store selected bank object with
+  const [bankTransfer, setBankTransfer] = useState('')
+  // opening balance
 
   useEffect(() => {
     if (auth.user.role === 1) {
@@ -29,9 +31,8 @@ const BankBook = () => {
 
   const fetchBanks = async () => {
     try {
-      // Assuming the API returns the bank data along with the opening balance
       const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
-      setBanks(response.data.data) // Response should include opening balance for each bank
+      setBanks(response.data.data)
     } catch (error) {
       console.error('Error fetching Bank data', error)
     }
@@ -68,7 +69,8 @@ const BankBook = () => {
         const response = await axios.get(
           `/api/v1/auth/getCashWithdrawfromBank/${userId}`,
         )
-        setCashWithdrawals(response.data.data || []) // Update to set withdrawals
+        setCashWithdrawals(response.data.data || [])
+        console.log(response, 'cashwithdraw')
       } catch (error) {
         console.error('Error fetching cash withdrawals:', error)
       }
@@ -81,9 +83,23 @@ const BankBook = () => {
         const response = await axios.get(
           `/api/v1/auth/getCashDepositeIntoBank/${userId}`,
         )
-        setCashDeposite(response.data.data) // Update to set withdrawals
+        setCashDeposite(response.data.data)
       } catch (error) {
         console.error('Error fetching cash withdrawals:', error)
+      }
+    }
+  }
+
+  const fetchBankToBankTransfer = async () => {
+    if (userId) {
+      try {
+        const response = await axios.get(
+          `/api/v1/auth/getbanktoBankTransfer/${userId}`,
+        )
+        console.log(response, 'asf')
+        setBankTransfer(response.data.data)
+      } catch (error) {
+        console.error('Error fetching bank to bank:', error)
       }
     }
   }
@@ -107,6 +123,7 @@ const BankBook = () => {
       fetchCashWithdrawFromBank()
       fetchCashDepositeIntoBank()
       fetchPayOut()
+      fetchBankToBankTransfer()
     }
   }, [userId])
 
