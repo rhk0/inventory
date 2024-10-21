@@ -1,157 +1,161 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { FaTimes } from "react-icons/fa";
-import Select from "react-select";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { FaTimes } from 'react-icons/fa'
+import Select from 'react-select'
+import { useAuth } from '../../../context/Auth'
 
 const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
-  const [date, setDate] = useState("");
-  const [challanNo, setchallanNo] = useState("");
-  const [salesType, setSalesType] = useState("");
-  const [customerType, setCustomerType] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [placeOfSupply, setPlaceOfSupply] = useState("");
-  const [paymentTerm, setPaymentTerm] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [receiptDocNo, setReceiptDocNo] = useState("");
-  const [dispatchedThrough, setDispatchedThrough] = useState("");
-  const [destination, setDestination] = useState("");
-  const [carrierNameAgent, setCarrierNameAgent] = useState("");
-  const [billOfLading, setBillOfLading] = useState("");
-  const [motorVehicleNo, setMotorVehicleNo] = useState("");
-  const [billingAddress, setBillingAddress] = useState("");
-  const [reverseCharge, setReverseCharge] = useState("");
-  const [gstType, setGstType] = useState("");
-  const [rows, setRows] = useState([]);
-  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
-  const [otherCharges, setOtherCharges] = useState("");
-  const [narration, setNarration] = useState("");
-  const [grossAmount, setGrossAmount] = useState("");
-  const [GstAmount, setGstAmount] = useState("");
-  const [netAmount, setNetAmount] = useState("");
+  const [date, setDate] = useState('')
+  const [challanNo, setchallanNo] = useState('')
+  const [salesType, setSalesType] = useState('')
+  const [customerType, setCustomerType] = useState('')
+  const [customerName, setCustomerName] = useState('')
+  const [placeOfSupply, setPlaceOfSupply] = useState('')
+  const [paymentTerm, setPaymentTerm] = useState('')
+  const [dueDate, setDueDate] = useState('')
+  const [receiptDocNo, setReceiptDocNo] = useState('')
+  const [dispatchedThrough, setDispatchedThrough] = useState('')
+  const [destination, setDestination] = useState('')
+  const [carrierNameAgent, setCarrierNameAgent] = useState('')
+  const [billOfLading, setBillOfLading] = useState('')
+  const [motorVehicleNo, setMotorVehicleNo] = useState('')
+  const [billingAddress, setBillingAddress] = useState('')
+  const [reverseCharge, setReverseCharge] = useState('')
+  const [gstType, setGstType] = useState('')
+  const [rows, setRows] = useState([])
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState('')
+  const [otherCharges, setOtherCharges] = useState('')
+  const [narration, setNarration] = useState('')
+  const [grossAmount, setGrossAmount] = useState('')
+  const [GstAmount, setGstAmount] = useState('')
+  const [netAmount, setNetAmount] = useState('')
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
 
   useEffect(() => {
     if (estimate) {
-      setDate(estimate.date || "");
-      setchallanNo(estimate.challanNo || "");
-      setSalesType(estimate.salesType || "");
-      setCustomerType(estimate.customerType || "");
-      setCustomerName(getCustomerName(estimate.customerId) || "");
-      setPlaceOfSupply(estimate.placeOfSupply || "");
-      setPaymentTerm(estimate.paymentTerm || "");
-      setDueDate(estimate.dueDate || "");
-      setReceiptDocNo(estimate.receiptDocNo || "");
-      setDispatchedThrough(estimate.dispatchedThrough || "");
-      setDestination(estimate.destination || "");
-      setCarrierNameAgent(estimate.carrierNameAgent || "");
-      setBillOfLading(estimate.billOfLading || "");
-      setMotorVehicleNo(estimate.motorVehicleNo || "");
-      setBillingAddress(estimate.billingAddress || "");
-      setReverseCharge(estimate.reverseCharge || "");
-      setGstType(estimate.gstType || "");
-      setRows(estimate.rows || []);
-      setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
-      setOtherCharges(estimate.otherCharges || "");
-      setNarration(estimate.narration || "");
-      setGrossAmount(estimate.grossAmount || "");
-      setGstAmount(estimate.GstAmount || "");
-      setNetAmount(estimate.netAmount || "");
+      setDate(estimate.date || '')
+      setchallanNo(estimate.challanNo || '')
+      setSalesType(estimate.salesType || '')
+      setCustomerType(estimate.customerType || '')
+      setCustomerName(getCustomerName(estimate.customerId) || '')
+      setPlaceOfSupply(estimate.placeOfSupply || '')
+      setPaymentTerm(estimate.paymentTerm || '')
+      setDueDate(estimate.dueDate || '')
+      setReceiptDocNo(estimate.receiptDocNo || '')
+      setDispatchedThrough(estimate.dispatchedThrough || '')
+      setDestination(estimate.destination || '')
+      setCarrierNameAgent(estimate.carrierNameAgent || '')
+      setBillOfLading(estimate.billOfLading || '')
+      setMotorVehicleNo(estimate.motorVehicleNo || '')
+      setBillingAddress(estimate.billingAddress || '')
+      setReverseCharge(estimate.reverseCharge || '')
+      setGstType(estimate.gstType || '')
+      setRows(estimate.rows || [])
+      setOtherChargesDescriptions(estimate.otherChargesDescriptions || '')
+      setOtherCharges(estimate.otherCharges || '')
+      setNarration(estimate.narration || '')
+      setGrossAmount(estimate.grossAmount || '')
+      setGstAmount(estimate.GstAmount || '')
+      setNetAmount(estimate.netAmount || '')
     }
-  }, [estimate, getCustomerName]);
+  }, [estimate, getCustomerName])
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "otherCharges") {
-      setOtherCharges(value);
-      calculateTotalAmounts();
+    const { name, value } = e.target
+    if (name === 'otherCharges') {
+      setOtherCharges(value)
+      calculateTotalAmounts()
     }
     switch (name) {
       // Handle transport details fields separately
-      case "receiptDocNo":
-        setReceiptDocNo(value);
-        break;
-      case "dispatchedThrough":
-        setDispatchedThrough(value);
-        break;
-      case "destination":
-        setDestination(value);
-        break;
-      case "carrierNameAgent":
-        setCarrierNameAgent(value);
-        break;
-      case "billOfLading":
-        setBillOfLading(value);
-        break;
-      case "motorVehicleNo":
-        setMotorVehicleNo(value);
-        break;
-      case "date":
-        setDate(value);
-        break;
-      case "challanNo":
-        setchallanNo(value);
-        break;
-      case "salesType":
-        setSalesType(value);
-        break;
-      case "customerType":
-        setCustomerType(value);
-        break;
-      case "customerName":
-        setCustomerName(value);
-        break;
-      case "placeOfSupply":
-        setPlaceOfSupply(value);
-        break;
-      case "paymentTerm":
-        setPaymentTerm(value);
-        break;
-      case "dueDate":
-        setDueDate(value);
-        break;
-      case "billingAddress":
-        setBillingAddress(value);
-        break;
-      case "reverseCharge":
-        setReverseCharge(value);
-        break;
-      case "gstType":
-        setGstType(value);
-        break;
-      case "otherChargesDescriptions":
-        setOtherChargesDescriptions(value);
-        break;
-      case "otherCharges":
-        setOtherCharges(value);
-        break;
-      case "narration":
-        setNarration(value);
-        break;
-      case "grossAmount":
-        setGrossAmount(value);
-        break;
-      case "GstAmount":
-        setGstAmount(value);
-        break;
-      case "netAmount":
-        setNetAmount(value);
-        break;
+      case 'receiptDocNo':
+        setReceiptDocNo(value)
+        break
+      case 'dispatchedThrough':
+        setDispatchedThrough(value)
+        break
+      case 'destination':
+        setDestination(value)
+        break
+      case 'carrierNameAgent':
+        setCarrierNameAgent(value)
+        break
+      case 'billOfLading':
+        setBillOfLading(value)
+        break
+      case 'motorVehicleNo':
+        setMotorVehicleNo(value)
+        break
+      case 'date':
+        setDate(value)
+        break
+      case 'challanNo':
+        setchallanNo(value)
+        break
+      case 'salesType':
+        setSalesType(value)
+        break
+      case 'customerType':
+        setCustomerType(value)
+        break
+      case 'customerName':
+        setCustomerName(value)
+        break
+      case 'placeOfSupply':
+        setPlaceOfSupply(value)
+        break
+      case 'paymentTerm':
+        setPaymentTerm(value)
+        break
+      case 'dueDate':
+        setDueDate(value)
+        break
+      case 'billingAddress':
+        setBillingAddress(value)
+        break
+      case 'reverseCharge':
+        setReverseCharge(value)
+        break
+      case 'gstType':
+        setGstType(value)
+        break
+      case 'otherChargesDescriptions':
+        setOtherChargesDescriptions(value)
+        break
+      case 'otherCharges':
+        setOtherCharges(value)
+        break
+      case 'narration':
+        setNarration(value)
+        break
+      case 'grossAmount':
+        setGrossAmount(value)
+        break
+      case 'GstAmount':
+        setGstAmount(value)
+        break
+      case 'netAmount':
+        setNetAmount(value)
+        break
       default:
-        break;
+        break
     }
-  };
+  }
 
   const addRow = () => {
     setRows([
       ...rows,
       {
-        itemCode: "",
-        productName: "",
-        hsnCode: "",
+        itemCode: '',
+        productName: '',
+        hsnCode: '',
         qty: 0,
-        units: "",
+        units: '',
         mrp: 0,
         discountpercent: 0,
         discountRS: 0,
@@ -164,169 +168,263 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
         igstRS: 0,
         totalValue: 0,
       },
-    ]);
-  };
+    ])
+  }
 
   const removeRow = (index) => {
     if (rows.length > 1) {
-      setRows(rows.filter((_, i) => i !== index));
+      setRows(rows.filter((_, i) => i !== index))
     }
-  };
+  }
 
+  
   const calculateTotalAmounts = () => {
-    let grossAmount = 0;
-    let totalGST = 0;
+    let grossAmount = 0
+    let totalGST = 0
 
     rows.forEach((row) => {
-      grossAmount += parseFloat(row.taxable) || 0;
-      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0);
-    });
+      grossAmount += parseFloat(row.taxable) || 0
+      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0)
+    })
 
-    const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0);
+    const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0)
 
-    setGrossAmount(grossAmount.toFixed(2));
-    setGstAmount(totalGST.toFixed(2));
-    setNetAmount(netAmount.toFixed(2));
-  };
+    setGrossAmount(grossAmount.toFixed(2))
+    setGstAmount(totalGST.toFixed(2))
+    setNetAmount(netAmount.toFixed(2))
+  }
 
-  const calculateRowValues = (index) => {
-    const row = rows[index];
-    let discountAmount = 0;
-
-    if (row.discountpercent) {
-      discountAmount = (row.mrp * row.discountpercent) / 100;
-    } else if (row.discountRS) {
-      discountAmount = parseFloat(row.discountRS) || 0;
-    }
-
-    const taxableValue = row.mrp - discountAmount;
-
-    let cgstRS = 0,
-      sgstRS = 0,
-      igstRS = 0;
-
-    if (salesType === "GST Invoice") {
-      if (gstType === "CGST/SGST") {
-        cgstRS = (taxableValue * row.cgstpercent) / 100;
-        sgstRS = (taxableValue * row.sgstpercent) / 100;
-      } else if (gstType === "IGST") {
-        igstRS = (taxableValue * row.igstpercent) / 100;
-      }
-    }
-
-    const totalValue = taxableValue + cgstRS + sgstRS + igstRS;
-
-    const updatedRow = {
-      ...row,
-      taxable: taxableValue.toFixed(2),
-      cgstRS: cgstRS.toFixed(2),
-      sgstRS: sgstRS.toFixed(2),
-      igstRS: igstRS.toFixed(2),
-      totalValue: totalValue.toFixed(2),
-    };
-
-    const updatedRows = [...rows];
-    updatedRows[index] = updatedRow;
-    setRows(updatedRows);
-  };
-
-  const handleRowChange = (index, field, value) => {
-    const updatedRows = [...rows];
-
-    // If we're handling discount changes, ensure we set the right type
-    if (field === "discountpercent") {
-      if (customerType === "Retailer") {
-        updatedRows[index].retailDiscount = value;
-      } else if (customerType === "Wholesaler") {
-        updatedRows[index].wholesalerDiscount = value;
-      }
-    } else if (field === "discountRS") {
-      if (customerType === "Retailer") {
-        updatedRows[index].retailDiscountRS = value;
-      } else if (customerType === "Wholesaler") {
-        updatedRows[index].wholesalerDiscountRS = value;
+  const calculateTotals = () => {
+    let grossAmount = 0
+    let GstAmount = 0
+    rows.forEach((rows) => {
+      grossAmount += Number(rows.taxableValue)
+      GstAmount +=
+        gstType === 'CGST/SGST'
+          ? Number(rows.cgstrs) + Number(rows.sgstrs)
+          : Number(rows.igstrs)
+    })
+    let netAmount
+    // Check if otherChargesDescriptions includes "discount"
+    if (salesType === 'Bill of Supply') {
+      if (otherChargesDescriptions.includes('discount')) {
+        netAmount = grossAmount - otherCharges // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges // Do not add GstAmount
       }
     } else {
-      // For any other field, update it directly
-      updatedRows[index] = {
-        ...updatedRows[index],
-        [field]: value,
-      };
+      if (otherChargesDescriptions.includes('discount')) {
+        netAmount = grossAmount + GstAmount - otherCharges
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges
+      }
     }
 
-    setRows(updatedRows);
-    calculateRowValues(index);
-    calculateTotalAmounts();
-  };
+    return { grossAmount, GstAmount, netAmount }
+  }
 
-  useEffect(() => {
-    calculateTotalAmounts();
-  }, [rows, otherCharges]);
+  const handleRowChange = (index, field, value) => {
+    // Create a copy of rows
+    const newRows = [...rows]
 
-  const [products, setProducts] = useState([]);
+    newRows[index] = { ...newRows[index], [field]: value }
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("/api/v1/auth/manageproduct");
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        // toast.error("Failed to fetch products. Please try again.");
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
-      (product) => product.productName === selectedProductName
-    );
+      (product) => product.productName === newRows[index].productName,
+    )
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex);
+      // Calculate retail price and apply the discount if applicable
+      const retailPrice = selectedProduct.maxmimunRetailPrice
+        ? selectedProduct.maxmimunRetailPrice -
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+            100
+        : 0
+
+      // Get sales tax and GST rate
+      const salesTaxInclude = selectedProduct.salesTaxInclude
+      const gstRate = selectedProduct.gstRate
+
+      // Extract the quantity from the updated row
+      const { qty } = newRows[index]
+
+      // Calculate taxable value
+     const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * qty * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * qty
+
+      // Calculate GST amounts
+      const cgstrs =
+        gstType === 'CGST/SGST' ? (taxableValue * gstRate) / 2 / 100 : 0
+      const sgstrs =
+        gstType === 'CGST/SGST' ? (taxableValue * gstRate) / 2 / 100 : 0
+      const igstrs = gstType === 'IGST' ? (taxableValue * gstRate) / 100 : 0
+
+      // Calculate total value
+      const totalValue = taxableValue + (taxableValue * gstRate) / 100
+
+      // Update the row with the calculated values
+      newRows[index] = {
+        ...newRows[index],
+        taxableValue: taxableValue.toFixed(2),
+        quantity: qty,
+        cgstrs: cgstrs.toFixed(2),
+        sgstrs: sgstrs.toFixed(2),
+        igstrs: igstrs.toFixed(2),
+        totalvalue: totalValue.toFixed(2),
+      }
+      // Set the updated rows state
+      setRows(newRows)
+      // Trigger total calculation
+      calculateTotals(newRows)
     }
-  };
+  }
+
+  const handleQtyChange = (index, value) => {
+    const qty = parseFloat(value) || 0
+
+    const updatedRows = [...rows]
+
+    // Fetch the selected product for this row
+    const selectedProduct = products.find(
+      (product) => product.itemCode === updatedRows[index].itemCode,
+    )
+
+    if (selectedProduct) {
+      const mrp = parseFloat(selectedProduct.maxmimunRetailPrice) || 0
+
+      const discountPercent =
+        customerType === 'Wholesaler'
+          ? selectedProduct.wholesalerDiscount || 0
+          : selectedProduct.retailDiscount || 0
+
+      const discountAmount = (mrp * qty * discountPercent) / 100
+
+      const salesTaxInclude = selectedProduct.salesTaxInclude
+
+      const retailPrice = selectedProduct.maxmimunRetailPrice
+        ? selectedProduct.maxmimunRetailPrice -
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+            100
+        : 0
+
+      const taxableValue = salesTaxInclude
+      ? (selectedProduct.retailPrice * qty * 100) /
+        (100 + Number(selectedProduct.gstRate))
+      : retailPrice * qty
+
+
+      updatedRows[index] = {
+        ...updatedRows[index],
+        qty: qty,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount || 0,
+        wholesalerDiscountRS: (
+          (mrp * selectedProduct.wholesalerDiscount) /
+          100
+        ).toFixed(2),
+        retailDiscount: selectedProduct.retailDiscount || 0,
+        retailDiscountRS: (
+          (mrp * selectedProduct.retailDiscount) /
+          100
+        ).toFixed(2),
+        taxable: taxableValue.toFixed(2),
+        cgstpercent: selectedProduct.gstRate / 2 || 0,
+        sgstpercent: selectedProduct.gstRate / 2 || 0,
+        igstpercent: selectedProduct.gstRate || 0,
+        cgstRS: ((taxableValue * selectedProduct.gstRate) / 2 / 100).toFixed(2),
+        sgstRS: ((taxableValue * selectedProduct.gstRate) / 2 / 100).toFixed(2),
+        igstRS: ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2),
+        totalValue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
+      }
+
+      // Set the updated rows back to state
+      setRows(updatedRows)
+
+      // Recalculate total amounts after updating the row
+      calculateTotalAmounts()
+    }
+  }
+
+  useEffect(() => {
+    calculateTotalAmounts()
+  }, [rows, otherCharges])
+
+  const [products, setProducts] = useState([])
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data)
+      } else {
+        console.error('Unexpected response structure:', response.data)
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      // toast.error("Failed to fetch products. Please try again.");
+    }
+  }
+
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id)
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin)
+      }
+    }
+    fetchProducts()
+  }, [auth, userId])
+  const handleProductSelect = (rowIndex, selectedProductName) => {
+    const selectedProduct = products.find(
+      (product) => product.productName === selectedProductName,
+    )
+
+    if (selectedProduct) {
+      updateRowValues(selectedProduct, rowIndex)
+    }
+  }
 
   const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
     const selectedProduct = products.find(
-      (product) => product.itemCode === selectedItemCode
-    );
+      (product) => product.itemCode === selectedItemCode,
+    )
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex);
+      updateRowValues(selectedProduct, rowIndex)
     }
-  };
+  }
 
   const updateRowValues = (selectedProduct, rowIndex) => {
-    const updatedRows = [...rows]; // Clone the current rows
+    const updatedRows = [...rows] // Clone the current rows
 
     // Calculate retail price and taxable value based on product details
     const retailPrice =
       selectedProduct.maxmimunRetailPrice -
       (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100;
+        100
 
     const taxableValue = selectedProduct.salesTaxInclude
       ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
         (100 + Number(selectedProduct.gstRate))
-      : retailPrice * selectedProduct.quantity;
+      : retailPrice * selectedProduct.quantity
 
     // Update all relevant fields in the selected row
     updatedRows[rowIndex] = {
       ...updatedRows[rowIndex], // Keep any existing row data
-      itemCode: selectedProduct.itemCode || "", // Map itemCode
-      productName: selectedProduct.productName || "", // Map productName
-      hsnCode: selectedProduct.hsnCode || "", // Map HSN code
-      units: selectedProduct.units || "", // Map units
+      itemCode: selectedProduct.itemCode || '', // Map itemCode
+      productName: selectedProduct.productName || '', // Map productName
+      hsnCode: selectedProduct.hsnCode || '', // Map HSN code
+      units: selectedProduct.units || '', // Map units
       mrp: selectedProduct.maxmimunRetailPrice
         ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-        : "0.00", // Map maximum retail price
+        : '0.00', // Map maximum retail price
 
       qty: selectedProduct.quantity || 0, // Map quantity
       wholesalerDiscount: selectedProduct.wholesalerDiscount || 0, // Map wholesaler discount
@@ -356,14 +454,14 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
         taxableValue +
         (taxableValue * selectedProduct.gstRate) / 100
       ).toFixed(2),
-    };
+    }
 
     // Set updated rows back to the state
-    setRows(updatedRows);
+    setRows(updatedRows)
 
     // Recalculate total amounts after updating the row
-    calculateTotalAmounts();
-  };
+    calculateTotalAmounts()
+  }
 
   const handleUpdate = async () => {
     try {
@@ -395,11 +493,11 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           mrp: row.mrp,
 
           discountpercent:
-            customerType === "Wholesaler"
+            customerType === 'Wholesaler'
               ? row.wholesalerDiscount
               : row.retailDiscount,
           discountRS:
-            customerType === "Wholesaler"
+            customerType === 'Wholesaler'
               ? row.wholesalerDiscountRS
               : row.retailDiscountRS,
 
@@ -418,30 +516,30 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
         grossAmount,
         GstAmount,
         netAmount,
-      };
+      }
 
       const response = await axios.put(
         `/api/v1/salesEstimateRoute/updateSalesEstimatetByID/${estimate._id}`,
-        updatedEstimate
-      );
+        updatedEstimate,
+      )
 
       if (response.data.success) {
-        alert("Estimate updated successfully");
+        alert('Estimate updated successfully')
         // closeModal();
       } else {
-        alert("Failed to update estimate: " + response.data.message);
+        alert('Failed to update estimate: ' + response.data.message)
       }
     } catch (error) {
-      console.error("Error updating estimate:", error);
-      alert("Error updating estimate: " + error.message);
+      console.error('Error updating estimate:', error)
+      alert('Error updating estimate: ' + error.message)
     }
-  };
+  }
 
   return (
-    <div style={{ backgroundColor: "#82ac73" }} className="p-4 ">
+    <div style={{ backgroundColor: '#82ac73' }} className="p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
-          Edit Delivery Challan 
+          Edit Delivery Challan
         </h1>
         <button
           type="button"
@@ -558,7 +656,6 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
             <h4 className="font-bold mb-4">Transport Details</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
-
               <div>
                 <label>Dispatched Through</label>
                 <input
@@ -599,7 +696,6 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                   className="border p-2 w-full rounded"
                 />
               </div>
-
             </div>
             <div className="flex justify-end">
               <button
@@ -635,7 +731,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
 
-        {salesType === "GST Invoice" && (
+        {salesType === 'GST Invoice' && (
           <div className="mb-4 w-full">
             <label className="font-bold">GST Type:</label>
             <select
@@ -668,10 +764,10 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                   <span className="mr-16">%</span> <span>₹</span>
                 </div>
               </th>
-              {salesType === "GST Invoice" && (
+              {salesType === 'GST Invoice' && (
                 <>
                   <th className="border p-2">Taxable Value</th>
-                  {gstType === "CGST/SGST" && (
+                  {gstType === 'CGST/SGST' && (
                     <>
                       <th className="border p-2">
                         CGST
@@ -687,7 +783,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       </th>
                     </>
                   )}
-                  {gstType === "IGST" && (
+                  {gstType === 'IGST' && (
                     <th className="border p-2">
                       IGST
                       <div className="flex justify-between">
@@ -728,11 +824,11 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: "120px",
-                          maxWidth: "300px",
-                          fontSize: "14px",
-                          minHeight: "34px",
-                          height: "34px",
+                          minWidth: '120px',
+                          maxWidth: '300px',
+                          fontSize: '14px',
+                          minHeight: '34px',
+                          height: '34px',
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -765,11 +861,11 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: "200px",
-                          maxWidth: "500px",
-                          fontSize: "14px",
-                          minHeight: "34px",
-                          height: "34px",
+                          minWidth: '200px',
+                          maxWidth: '500px',
+                          fontSize: '14px',
+                          minHeight: '34px',
+                          height: '34px',
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -783,7 +879,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="text"
                     value={row.hsnCode}
                     onChange={(e) =>
-                      handleRowChange(index, "hsnCode", e.target.value)
+                      handleRowChange(index, 'hsnCode', e.target.value)
                     }
                     className="w-full"
                   />
@@ -793,7 +889,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.qty}
                     onChange={(e) =>
-                      handleRowChange(index, "qty", e.target.value)
+                      handleQtyChange(index,e.target.value)
                     }
                     className="w-full"
                   />
@@ -804,7 +900,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="text"
                     value={row.units}
                     onChange={(e) =>
-                      handleRowChange(index, "units", e.target.value)
+                      handleRowChange(index, 'units', e.target.value)
                     }
                     className="w-full"
                   />
@@ -814,7 +910,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.mrp}
                     onChange={(e) =>
-                      handleRowChange(index, "mrp", e.target.value)
+                      handleRowChange(index, 'mrp', e.target.value)
                     }
                     className="w-full"
                   />
@@ -829,8 +925,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                         readOnly
                         className="w-full flex-grow"
                         style={{
-                          minWidth: "20px",
-                          flexBasis: "20px",
+                          minWidth: '20px',
+                          flexBasis: '20px',
                           flexShrink: 1,
                         }}
                       />
@@ -844,7 +940,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                   ) : (
                     // If discountpercent and discountRS do not exist, show these input boxes
                     <>
-                      {customerType === "Wholesaler" && (
+                      {customerType === 'Wholesaler' && (
                         <div className="p-1 flex gap-1">
                           <input
                             type="text"
@@ -852,14 +948,14 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                "discountpercent",
-                                e.target.value
+                                'discountpercent',
+                                e.target.value,
                               )
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: "20px",
-                              flexBasis: "20px",
+                              minWidth: '20px',
+                              flexBasis: '20px',
                               flexShrink: 1,
                             }}
                           />
@@ -870,15 +966,15 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                "discountRS",
-                                e.target.value
+                                'discountRS',
+                                e.target.value,
                               )
                             }
                             className="w-full"
                           />
                         </div>
                       )}
-                      {customerType === "Retailer" && (
+                      {customerType === 'Retailer' && (
                         <div className="p-1 flex gap-1">
                           <input
                             type="text"
@@ -886,14 +982,14 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                "discountpercent",
-                                e.target.value
+                                'discountpercent',
+                                e.target.value,
                               )
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: "20px",
-                              flexBasis: "20px",
+                              minWidth: '20px',
+                              flexBasis: '20px',
                               flexShrink: 1,
                             }}
                           />
@@ -903,8 +999,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                "discountRS",
-                                e.target.value
+                                'discountRS',
+                                e.target.value,
                               )
                             }
                             className="w-full"
@@ -914,19 +1010,19 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     </>
                   )}
                 </td>
-                {salesType === "GST Invoice" && (
+                {salesType === 'GST Invoice' && (
                   <>
                     <td className="border p-2">
                       <input
                         type="number"
                         value={row.taxable}
                         onChange={(e) =>
-                          handleRowChange(index, "taxable", e.target.value)
+                          handleRowChange(index, 'taxable', e.target.value)
                         }
                         className="w-full"
                       />
                     </td>
-                    {gstType === "CGST/SGST" && (
+                    {gstType === 'CGST/SGST' && (
                       <>
                         <td className="border p-2">
                           <div className="flex gap-1">
@@ -936,8 +1032,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  "cgstpercent",
-                                  e.target.value
+                                  'cgstpercent',
+                                  e.target.value,
                                 )
                               }
                               className="w-full"
@@ -946,7 +1042,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                               type="number"
                               value={row.cgstRS}
                               onChange={(e) =>
-                                handleRowChange(index, "cgstRS", e.target.value)
+                                handleRowChange(index, 'cgstRS', e.target.value)
                               }
                               className="w-full"
                             />
@@ -960,8 +1056,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  "sgstpercent",
-                                  e.target.value
+                                  'sgstpercent',
+                                  e.target.value,
                                 )
                               }
                               className="w-full"
@@ -970,7 +1066,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                               type="number"
                               value={row.sgstRS}
                               onChange={(e) =>
-                                handleRowChange(index, "sgstRS", e.target.value)
+                                handleRowChange(index, 'sgstRS', e.target.value)
                               }
                               className="w-full"
                             />
@@ -978,7 +1074,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                         </td>
                       </>
                     )}
-                    {gstType === "IGST" && (
+                    {gstType === 'IGST' && (
                       <td className="border p-2">
                         <div className="flex gap-1">
                           <input
@@ -987,8 +1083,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                "igstpercent",
-                                e.target.value
+                                'igstpercent',
+                                e.target.value,
                               )
                             }
                             className="w-full"
@@ -997,7 +1093,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                             type="number"
                             value={row.igstRS}
                             onChange={(e) =>
-                              handleRowChange(index, "igstRS", e.target.value)
+                              handleRowChange(index, 'igstRS', e.target.value)
                             }
                             className="w-full"
                           />
@@ -1011,7 +1107,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.totalValue}
                     onChange={(e) =>
-                      handleRowChange(index, "totalValue", e.target.value)
+                      handleRowChange(index, 'totalValue', e.target.value)
                     }
                     className="w-full"
                   />
@@ -1147,7 +1243,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {salesType === "GST Invoice" && (
+          {salesType === 'GST Invoice' && (
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 GST Amount
@@ -1201,7 +1297,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default EditEstimateModal;
+export default EditEstimateModal

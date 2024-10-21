@@ -3,6 +3,7 @@ import axios from 'axios'
 import { FaTimes } from 'react-icons/fa'
 import Select from 'react-select'
 import Modal from 'react-modal'
+import { useAuth } from '../../../context/Auth'
 
 const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   const [date, setDate] = useState('')
@@ -33,6 +34,9 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   const [viewModal, setViewModal] = useState(false)
   const [bank, setBank] = useState([])
   const [cash, setCash] = useState([])
+
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
@@ -122,7 +126,6 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   }
 
   const [paymentMethod, setPaymentMethod] = useState('')
-  const [subPaymentType, setSubPaymentType] = useState('')
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value)
@@ -269,67 +272,160 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
     setNetAmount(netAmount.toFixed(2))
   }
 
-  const calculateRowValues = (index) => {
-    const row = rows[index]
-    let discountAmount = 0
-
-    if (row.discountpercent) {
-      discountAmount = (row.mrp * row.discountpercent) / 100
-    } else if (row.discountRS) {
-      discountAmount = parseFloat(row.discountRS) || 0
-    }
-
-    const taxableValue = row.mrp - discountAmount
-
-    let cgstRS = 0,
-      sgstRS = 0,
-      igstRS = 0
-
-    if (salesType === 'GST Invoice') {
-      if (gstType === 'CGST/SGST') {
-        cgstRS = (taxableValue * row.cgstpercent) / 100
-        sgstRS = (taxableValue * row.sgstpercent) / 100
-      } else if (gstType === 'IGST') {
-        igstRS = (taxableValue * row.igstpercent) / 100
+  const calculateTotals = () => {
+    let grossAmount = 0
+    let GstAmount = 0
+    rows.forEach((rows) => {
+      grossAmount += Number(rows.taxableValue)
+      GstAmount +=
+        gstType === 'CGST/SGST'
+          ? Number(rows.cgstrs) + Number(rows.sgstrs)
+          : Number(rows.igstrs)
+    })
+    let netAmount
+    // Check if otherChargesDescriptions includes "discount"
+    if (salesType === 'Bill of Supply') {
+      if (otherChargesDescriptions.includes('discount')) {
+        netAmount = grossAmount - otherCharges // Do not add GstAmount
+      } else {
+        netAmount = grossAmount + otherCharges // Do not add GstAmount
+      }
+    } else {
+      if (otherChargesDescriptions.includes('discount')) {
+        netAmount = grossAmount + GstAmount - otherCharges
+      } else {
+        netAmount = grossAmount + GstAmount + otherCharges
       }
     }
 
-    const totalValue = taxableValue + cgstRS + sgstRS + igstRS
-
-    const updatedRow = {
-      ...row,
-      taxable: taxableValue.toFixed(2),
-      cgstRS: cgstRS.toFixed(2),
-      sgstRS: sgstRS.toFixed(2),
-      igstRS: igstRS.toFixed(2),
-      totalValue: totalValue.toFixed(2),
-    }
-
-    const updatedRows = [...rows]
-    updatedRows[index] = updatedRow
-    setRows(updatedRows)
+    return { grossAmount, GstAmount, netAmount }
   }
 
   const handleRowChange = (index, field, value) => {
+    // Create a copy of rows
+    const newRows = [...rows]
+
+    newRows[index] = { ...newRows[index], [field]: value }
+
+    const selectedProduct = products.find(
+      (product) => product.productName === newRows[index].productName,
+    )
+
+    if (selectedProduct) {
+      // Calculate retail price and apply the discount if applicable
+      const retailPrice = selectedProduct.maxmimunRetailPrice
+        ? selectedProduct.maxmimunRetailPrice -
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+            100
+        : 0
+
+      // Get sales tax and GST rate
+      const salesTaxInclude = selectedProduct.salesTaxInclude
+      const gstRate = selectedProduct.gstRate
+
+      // Extract the quantity from the updated row
+      const { qty } = newRows[index]
+
+      // Calculate taxable value
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * qty * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * qty
+
+      // Calculate GST amounts
+      const cgstrs =
+        gstType === 'CGST/SGST' ? (taxableValue * gstRate) / 2 / 100 : 0
+      const sgstrs =
+        gstType === 'CGST/SGST' ? (taxableValue * gstRate) / 2 / 100 : 0
+      const igstrs = gstType === 'IGST' ? (taxableValue * gstRate) / 100 : 0
+
+      // Calculate total value
+      const totalValue = taxableValue + (taxableValue * gstRate) / 100
+
+      // Update the row with the calculated values
+      newRows[index] = {
+        ...newRows[index],
+        taxableValue: taxableValue.toFixed(2),
+        quantity: qty,
+        cgstrs: cgstrs.toFixed(2),
+        sgstrs: sgstrs.toFixed(2),
+        igstrs: igstrs.toFixed(2),
+        totalvalue: totalValue.toFixed(2),
+      }
+      // Set the updated rows state
+      setRows(newRows)
+      // Trigger total calculation
+      calculateTotals(newRows)
+    }
+  }
+
+  const handleQtyChange = (index, value) => {
+    const qty = parseFloat(value) || 0
+
     const updatedRows = [...rows]
 
-    // If we're handling discount changes, ensure we set the right type
-    if (field === 'discountpercent') {
-      updatedRows[index].wholesalerDiscount = value
-    } else if (field === 'discountRS') {
-      updatedRows[index].retailDiscountRS = value
-      updatedRows[index].wholesalerDiscountRS = value
-    } else {
-      // For any other field, update it directly
+    // Fetch the selected product for this row
+    const selectedProduct = products.find(
+      (product) => product.itemCode === updatedRows[index].itemCode,
+    )
+
+    if (selectedProduct) {
+      const mrp = parseFloat(selectedProduct.maxmimunRetailPrice) || 0
+
+      const discountPercent =
+        customerType === 'Wholesaler'
+          ? selectedProduct.wholesalerDiscount || 0
+          : selectedProduct.retailDiscount || 0
+
+      const discountAmount = (mrp * qty * discountPercent) / 100
+
+      const salesTaxInclude = selectedProduct.salesTaxInclude
+
+      const retailPrice = selectedProduct.maxmimunRetailPrice
+        ? selectedProduct.maxmimunRetailPrice -
+          (selectedProduct.maxmimunRetailPrice *
+            selectedProduct.retailDiscount) /
+            100
+        : 0
+
+      const taxableValue = salesTaxInclude
+        ? (selectedProduct.retailPrice * qty * 100) /
+          (100 + Number(selectedProduct.gstRate))
+        : retailPrice * qty
+
       updatedRows[index] = {
         ...updatedRows[index],
-        [field]: value,
+        qty: qty,
+        wholesalerDiscount: selectedProduct.wholesalerDiscount || 0,
+        wholesalerDiscountRS: (
+          (mrp * selectedProduct.wholesalerDiscount) /
+          100
+        ).toFixed(2),
+        retailDiscount: selectedProduct.retailDiscount || 0,
+        retailDiscountRS: (
+          (mrp * selectedProduct.retailDiscount) /
+          100
+        ).toFixed(2),
+        taxable: taxableValue.toFixed(2),
+        cgstpercent: selectedProduct.gstRate / 2 || 0,
+        sgstpercent: selectedProduct.gstRate / 2 || 0,
+        igstpercent: selectedProduct.gstRate || 0,
+        cgstRS: ((taxableValue * selectedProduct.gstRate) / 2 / 100).toFixed(2),
+        sgstRS: ((taxableValue * selectedProduct.gstRate) / 2 / 100).toFixed(2),
+        igstRS: ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2),
+        totalValue: (
+          taxableValue +
+          (taxableValue * selectedProduct.gstRate) / 100
+        ).toFixed(2),
       }
-    }
 
-    setRows(updatedRows)
-    calculateRowValues(index)
-    calculateTotalAmounts()
+      // Set the updated rows back to state
+      setRows(updatedRows)
+
+      // Recalculate total amounts after updating the row
+      calculateTotalAmounts()
+    }
   }
 
   useEffect(() => {
@@ -338,23 +434,30 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
   const [products, setProducts] = useState([])
 
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data)
+      } else {
+        console.error('Unexpected response structure:', response.data)
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      // toast.error("Failed to fetch products. Please try again.");
+    }
+  }
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get('/api/v1/auth/manageproduct')
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data)
-        } else {
-          console.error('Unexpected response structure:', response.data)
-        }
-      } catch (error) {
-        console.error('Error fetching products:', error)
-        // toast.error("Failed to fetch products. Please try again.");
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id)
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin)
       }
     }
-
     fetchProducts()
-  }, [])
+  }, [auth, userId])
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
@@ -555,18 +658,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
             <option value="Bill of Supply">Bill of Supply</option>
           </select>
         </div>
-        {/* <div>
-          <label className="font-bold">Customer Type</label>
-          <select
-            value={customerType}
-            name="customerType"
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          >
-            <option value="Retailer">Retailer</option>
-            <option value="Wholesaler">Wholesaler</option>
-          </select>
-        </div> */}
+
         <div>
           <label className="font-bold">Customer Name</label>
           <input
@@ -852,17 +944,25 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) =>
                       handleRowChange(index, 'hsnCode', e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: '60px',
+                      flexBasis: '60px',
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.qty}
-                    onChange={(e) =>
-                      handleRowChange(index, 'qty', e.target.value)
-                    }
-                    className="w-full"
+                    value={rows[index].qty || ''} // Ensure this is directly tied to state
+                    onChange={(e) => handleQtyChange(index, e.target.value)}
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: '30px',
+                      flexBasis: '30px',
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
 
@@ -896,8 +996,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                         readOnly
                         className="w-full flex-grow"
                         style={{
-                          minWidth: '20px',
-                          flexBasis: '20px',
+                          minWidth: '2px',
+                          flexBasis: '2px',
                           flexShrink: 1,
                         }}
                       />
@@ -905,11 +1005,15 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                         type="text"
                         value={row.discountRS}
                         readOnly
-                        className="w-full"
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: '2px', // Reduced width for discountRS
+                          flexBasis: '2px',
+                          flexShrink: 1,
+                        }}
                       />
                     </div>
                   ) : (
-                    // If discountpercent and discountRS do not exist, show these input boxes
                     <>
                       <div className="p-1 flex gap-1">
                         <input
@@ -924,8 +1028,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                           }
                           className="w-full flex-grow"
                           style={{
-                            minWidth: '20px',
-                            flexBasis: '20px',
+                            minWidth: '2px',
+                            flexBasis: '2px',
                             flexShrink: 1,
                           }}
                         />
@@ -936,7 +1040,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                           onChange={(e) =>
                             handleRowChange(index, 'discountRS', e.target.value)
                           }
-                          className="w-full"
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: '10px',
+                            flexBasis: '10px',
+                            flexShrink: 1,
+                          }}
                         />
                       </div>
                     </>
@@ -951,7 +1060,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                         onChange={(e) =>
                           handleRowChange(index, 'taxable', e.target.value)
                         }
-                        className="w-full"
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: '70px',
+                          flexBasis: '70px',
+                          flexShrink: 1,
+                        }}
                       />
                     </td>
                     {gstType === 'CGST/SGST' && (
@@ -968,7 +1082,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                                   e.target.value,
                                 )
                               }
-                              className="w-full"
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: '20px', // Reduced width for discountRS
+                                flexBasis: '20px',
+                                flexShrink: 1,
+                              }}
                             />
                             <input
                               type="number"
@@ -976,7 +1095,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               onChange={(e) =>
                                 handleRowChange(index, 'cgstRS', e.target.value)
                               }
-                              className="w-full"
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: '50px', // Reduced width for discountRS
+                                flexBasis: '50px',
+                                flexShrink: 1,
+                              }}
                             />
                           </div>
                         </td>
@@ -992,7 +1116,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                                   e.target.value,
                                 )
                               }
-                              className="w-full"
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: '20px', // Reduced width for discountRS
+                                flexBasis: '20px',
+                                flexShrink: 1,
+                              }}
                             />
                             <input
                               type="number"
@@ -1000,7 +1129,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               onChange={(e) =>
                                 handleRowChange(index, 'sgstRS', e.target.value)
                               }
-                              className="w-full"
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: '50px', // Reduced width for discountRS
+                                flexBasis: '50px',
+                                flexShrink: 1,
+                              }}
                             />
                           </div>
                         </td>
@@ -1041,7 +1175,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) =>
                       handleRowChange(index, 'totalValue', e.target.value)
                     }
-                    className="w-full"
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: '60px',
+                      flexBasis: '60px',
+                      flexShrink: 1,
+                    }}
                   />
                 </td>
                 <td className="p-1 gap-2 flex">
