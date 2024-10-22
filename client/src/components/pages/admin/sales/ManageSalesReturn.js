@@ -169,9 +169,7 @@ const ManageSalesReturn = () => {
                       {estimate.salesType}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate?.customerName ||
-                        estimate?.cash ||
-                        ` ${estimate.selectedBank[0]?.name} `}
+                      {estimate?.customerName || estimate?.cash || estimate?.selectedBank[0]?.name || "N/A"}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}

@@ -97,6 +97,7 @@ const ManagePurchaseOrder = () => {
   const closeModal = () => {
     setEditModalOpen(false);
     setViewModalOpen(false);
+    fetchEstimate();
   };
 
   // Filter sales estimates based on search term

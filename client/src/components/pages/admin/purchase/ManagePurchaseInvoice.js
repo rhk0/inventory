@@ -98,6 +98,7 @@ const ManagePurchaseInvoice = () => {
   const closeModal = () => {
     setEditModalOpen(false);
     setViewModalOpen(false);
+    fetchEstimate();
   };
 
   const filteredEstimates = salesEstimates?.filter((estimate) => {

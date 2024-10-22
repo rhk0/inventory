@@ -30,49 +30,48 @@ export const createReturnController = async (req, res) => {
       netAmount,
       userId,
     } = req.body;
-      
-      const newSalesReturn = new returnModel({
-        admin: userId,
-        date,
-        salesType,
-        creditNoteNo,
-        customerName,
-        cash, // Include cash in the model
-        selectedBank, // Include selected bank data
-        placeOfSupply,
-        customerType,
-        paymentTerm,
-        dueDate,
-        dispatchedThrough,
-        destination,
-        carrierNameAgent,
-        billOfLading,
-        billingAddress,
-        reverseCharge,
-        gstType,
-        reasonForReturn,
-        rows,
-        otherChargesDescriptions,
-        otherCharges,
-        narration,
-        grossAmount,
-        GstAmount,
-        netAmount,
-      });
-      const savedSalesReturn = await newSalesReturn.save();
-      res.status(201).send({
-        message: "SalesReturn created successfully",
-        salesreturn: savedSalesReturn,
-      });
-   
+
+    const newSalesReturn = new returnModel({
+      admin: userId,
+      date,
+      salesType,
+      creditNoteNo,
+      customerName,
+      cash, // Include cash in the model
+      selectedBank, // Include selected bank data
+      placeOfSupply,
+      customerType,
+      paymentTerm,
+      dueDate,
+      dispatchedThrough,
+      destination,
+      carrierNameAgent,
+      billOfLading,
+      billingAddress,
+      reverseCharge,
+      gstType,
+      reasonForReturn,
+      rows,
+      otherChargesDescriptions,
+      otherCharges,
+      narration,
+      grossAmount,
+      GstAmount,
+      netAmount,
+    });
+    const savedSalesReturn = await newSalesReturn.save();
+    res.status(201).send({
+      message: "SalesReturn created successfully",
+      salesreturn: savedSalesReturn,
+    });
   } catch (error) {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
 export const getAllReturnCOntroller = async (req, res) => {
   try {
-    const _id=req.params._id;
-    const response = await returnModel.find({admin:_id});
+    const _id = req.params._id;
+    const response = await returnModel.find({ admin: _id });
 
     if (!response) {
       return res
@@ -142,19 +141,15 @@ export const updateReturnByIDController = async (req, res) => {
   try {
     const { _id } = req.params;
     const updateData = req.body;
-
     // Find the existing sales return document by ID
     const salesreturn = await returnModel.findById(_id);
-    
     if (!salesreturn) {
       return res
         .status(404)
         .send({ success: false, message: "Sales return not found" });
     }
-
     // Apply the updates from updateData to the sales return
     Object.assign(salesreturn, updateData);
-
     // Save the updated sales return
     const updatedSalesReturn = await salesreturn.save();
 

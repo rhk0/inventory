@@ -491,50 +491,62 @@ export const deletePurchaseInvoiceByIdController = async (req, res) => {
 
 // Update Purchase Invoice By ID Controller
 export const updatePurchaseInvoiceByIdController = async (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      return res.status(400).json({ message: err });
-    }
-    try {
-      const { _id } = req.params;
-      const updateData = req.body;
+  try {
+    const { _id } = req.params;
+    const updateData = req.body;
 
-      const invoice = await purchesInvoiceModel.findById(_id);
-      if (!invoice) {
-        return res.status(404).json({
-          success: false,
-          message: "Purchase invoice not found",
-        });
-      }
+    console.log("Updating Invoice ID:", _id);
+    console.log("Update Data Received:", updateData);
 
-      // Parse the rows array if it's sent as a string
-      if (typeof updateData.rows === "string") {
-        updateData.rows = JSON.parse(updateData.rows);
-      }
-
-      // Update fields in the invoice
-      Object.assign(invoice, updateData);
-
-      if (req.file) {
-        invoice.documentPath = path.basename(req.file.path); // Only save the file name
-      }
-
-      const updatedInvoice = await invoice.save();
-
-      res.status(200).json({
-        success: true,
-        message: "Purchase invoice updated successfully",
-        updatedInvoice,
-      });
-    } catch (error) {
-      console.error("Error updating purchase invoice:", error);
-      res.status(500).json({
-        error: "Server error",
-        message: error.message,
+    // Find the purchase invoice by ID
+    const invoice = await purchesInvoiceModel.findById(_id);
+    if (!invoice) {
+      return res.status(404).json({
+        success: false,
+        message: "Purchase invoice not found",
       });
     }
-  });
-};   
+
+    // Parse the rows array if it's sent as a string
+    if (typeof updateData.rows === "string") {
+      updateData.rows = JSON.parse(updateData.rows);
+    }
+
+    // Handle selectedcash and selectedBank if they are JSON strings
+    if (typeof updateData.selectedcash === "string") {
+      updateData.selectedcash = JSON.parse(updateData.selectedcash);
+    }
+    if (typeof updateData.selectedBank === "string") {
+      updateData.selectedBank = JSON.parse(updateData.selectedBank);
+    }
+
+    // Update fields in the invoice
+    console.log("Existing Invoice Data Before Update:", invoice);
+    Object.assign(invoice, updateData);
+    console.log("Updated Invoice Data:", invoice);
+
+    // If a file is uploaded, update the document path
+    if (req.file) {
+      invoice.documentPath = path.basename(req.file.path); // Save the file name only
+    }
+
+    // Save the updated invoice
+    const updatedInvoice = await invoice.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Purchase invoice updated successfully",
+      updatedInvoice,
+    });
+  } catch (error) {
+    console.error("Error updating purchase invoice:", error);
+    res.status(500).json({
+      error: "Server error",
+      message: error.message,
+    });
+  }
+};
+  
 
 // Get All Purchase Invoices by Supplier Name Controller
 export const getAllPurchaseByNameInvoiceController = async (req, res) => {
