@@ -1,184 +1,188 @@
-import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
-import Modal from "react-modal";
+import React, { useState, useEffect } from 'react'
+import { FaTimes } from 'react-icons/fa'
+import Modal from 'react-modal'
 
 const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
-  const [documentPath, setdocumentPath] = useState(null);
+  const [documentPath, setdocumentPath] = useState(null)
 
-  const [date, setDate] = useState("");
-  const [invoiceNo, setInvoiceNo] = useState("");
-  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
+  const [date, setDate] = useState('')
+  const [invoiceNo, setInvoiceNo] = useState('')
+  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState('')
 
-  const [customerType, setCustomerType] = useState("");
-  const [supplierName, setsupplierName] = useState("");
-  const [placeOfSupply, setPlaceOfSupply] = useState("");
-  const [paymentTerm, setPaymentTerm] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [customerType, setCustomerType] = useState('')
+  const [supplierName, setsupplierName] = useState('')
+  const [placeOfSupply, setPlaceOfSupply] = useState('')
+  const [paymentTerm, setPaymentTerm] = useState('')
+  const [dueDate, setDueDate] = useState('')
   const [transportDetails, setTransportDetails] = useState({
-    receiptDocNo: "",
-    dispatchedThrough: "",
-    destination: "",
-    carrierNameAgent: "",
-    billOfLading: "",
-    motorVehicleNo: "",
-  });
-  const [billingAddress, setBillingAddress] = useState("");
-  const [reverseCharge, setReverseCharge] = useState("");
-  const [gstType, setGstType] = useState("");
-  const [rows, setRows] = useState([]);
-  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
-  const [otherCharges, setOtherCharges] = useState("");
-  const [narration, setNarration] = useState("");
-  const [grossAmount, setGrossAmount] = useState("");
-  const [GstAmount, setGstAmount] = useState("");
-  const [netAmount, setNetAmount] = useState("");
-  const [viewModal, setViewModal] = useState(false);
-  const [bank, setBank] = useState([]);
-  const [cash, setCash] = useState([]);
+    receiptDocNo: '',
+    dispatchedThrough: '',
+    destination: '',
+    carrierNameAgent: '',
+    billOfLading: '',
+    motorVehicleNo: '',
+  })
+  const [billingAddress, setBillingAddress] = useState('')
+  const [reverseCharge, setReverseCharge] = useState('')
+  const [gstType, setGstType] = useState('')
+  const [rows, setRows] = useState([])
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState('')
+  const [otherCharges, setOtherCharges] = useState('')
+  const [narration, setNarration] = useState('')
+  const [grossAmount, setGrossAmount] = useState('')
+  const [GstAmount, setGstAmount] = useState('')
+  const [netAmount, setNetAmount] = useState('')
+  const [viewModal, setViewModal] = useState(false)
+  const [bank, setBank] = useState([])
+  const [cash, setCash] = useState([])
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
 
   useEffect(() => {
     if (estimate) {
-      setDate(estimate.date || "");
-      setInvoiceNo(estimate.invoiceNo || "");
-      setsupplierInvoiceNo(estimate.supplierInvoiceNo || "");
+      setDate(estimate.date || '')
+      setInvoiceNo(estimate.invoiceNo || '')
+      setsupplierInvoiceNo(estimate.supplierInvoiceNo || '')
 
-      setCustomerType(estimate.customerType || "");
-      setsupplierName(estimate.supplierName || "");
-      setPlaceOfSupply(estimate.placeOfSupply || "");
-      setPaymentTerm(estimate.paymentTerm || "");
-      setDueDate(estimate.dueDate || "");
+      setCustomerType(estimate.customerType || '')
+      setsupplierName(
+        estimate.supplierName ||
+          estimate?.selectedcash ||
+          ` ${estimate.selectedBank[0]?.name} ` ||
+          '',
+      )
+      setPlaceOfSupply(estimate.placeOfSupply || '')
+      setPaymentTerm(estimate.paymentTerm || '')
+      setDueDate(estimate.dueDate || '')
 
       if (estimate.bank) {
         setBank({
-          bank: estimate.bank.bank || "",
-          selectBankType: estimate.bank.selectBankType || "",
-          transactionDate: estimate.bank.transactionDate || "",
-          chequeNo: estimate.bank.chequeNo || "",
-          transactionNo: estimate.bank.transactionNo || "",
-          Amount: estimate.bank.Amount || "",
-          Advance: estimate.bank.Advance || "",
-          Received: estimate.bank.Received || "",
-          Balance: estimate.bank.Balance || "",
-        });
+          bank: estimate.bank.bank || '',
+          selectBankType: estimate.bank.selectBankType || '',
+          transactionDate: estimate.bank.transactionDate || '',
+          chequeNo: estimate.bank.chequeNo || '',
+          transactionNo: estimate.bank.transactionNo || '',
+          Amount: estimate.bank.Amount || '',
+          Advance: estimate.bank.Advance || '',
+          Received: estimate.bank.Received || '',
+          Balance: estimate.bank.Balance || '',
+        })
       } else {
         setBank({
-          bank: "",
-          selectBankType: "",
-          transactionDate: "",
-          chequeNo: "",
-          transactionNo: "",
-          Amount: "",
-          Advance: "",
-          Received: "",
-          Balance: "",
-        });
+          bank: '',
+          selectBankType: '',
+          transactionDate: '',
+          chequeNo: '',
+          transactionNo: '',
+          Amount: '',
+          Advance: '',
+          Received: '',
+          Balance: '',
+        })
       }
 
       if (estimate.cash) {
         setCash({
-          Amount: estimate.cash.Amount || "",
-          Advance: estimate.cash.Advance || "",
-          Received: estimate.cash.Received || "",
-          Balance: estimate.cash.Balance || "",
-        });
+          Amount: estimate.cash.Amount || '',
+          Advance: estimate.cash.Advance || '',
+          Received: estimate.cash.Received || '',
+          Balance: estimate.cash.Balance || '',
+        })
       } else {
         setCash({
-          Amount: "",
-          Advance: "",
-          Received: "",
-          Balance: "",
-        });
+          Amount: '',
+          Advance: '',
+          Received: '',
+          Balance: '',
+        })
       }
 
       setTransportDetails({
-        receiptDocNo: estimate.receiptDocNo || "",
-        dispatchedThrough: estimate.dispatchedThrough || "",
-        destination: estimate.destination || "",
-        carrierNameAgent: estimate.carrierNameAgent || "",
-        billOfLading: estimate.billOfLading || "",
-        motorVehicleNo: estimate.motorVehicleNo || "",
-      });
-      setBillingAddress(estimate.billingAddress || "");
-      setReverseCharge(estimate.reverseCharge || "");
-      setGstType(estimate.gstType || "");
-      setRows(estimate.rows || []);
-      setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
-      setOtherCharges(estimate.otherCharges || "");
-      setNarration(estimate.narration || "");
-      setGrossAmount(estimate.grossAmount || "");
-      setGstAmount(estimate.GstAmount || "");
-      setNetAmount(estimate.netAmount || "");
-      setdocumentPath(estimate.documentPath || "");
+        receiptDocNo: estimate.receiptDocNo || '',
+        dispatchedThrough: estimate.dispatchedThrough || '',
+        destination: estimate.destination || '',
+        carrierNameAgent: estimate.carrierNameAgent || '',
+        billOfLading: estimate.billOfLading || '',
+        motorVehicleNo: estimate.motorVehicleNo || '',
+      })
+      setBillingAddress(estimate.billingAddress || '')
+      setReverseCharge(estimate.reverseCharge || '')
+      setGstType(estimate.gstType || '')
+      setRows(estimate.rows || [])
+      setOtherChargesDescriptions(estimate.otherChargesDescriptions || '')
+      setOtherCharges(estimate.otherCharges || '')
+      setNarration(estimate.narration || '')
+      setGrossAmount(estimate.grossAmount || '')
+      setGstAmount(estimate.GstAmount || '')
+      setNetAmount(estimate.netAmount || '')
+      setdocumentPath(estimate.documentPath || '')
     }
-  }, [estimate]);
+  }, [estimate])
 
   const openViewModal = () => {
-    setViewModal(true);
-    setPaymentMethod("");
-    setSubPaymentType("");
-  };
+    setViewModal(true)
+    setPaymentMethod('')
+    setSubPaymentType('')
+  }
 
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [subPaymentType, setSubPaymentType] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState('')
+  const [subPaymentType, setSubPaymentType] = useState('')
 
   const handlePaymentMethodChange = (e) => {
-    setPaymentMethod(e.target.value);
-    setSubPaymentType(""); // Resetting subPaymentType when payment method changes
-  };
+    setPaymentMethod(e.target.value)
+    setSubPaymentType('') // Resetting subPaymentType when payment method changes
+  }
 
   const handleSubPaymentTypeChange = (e) => {
-    setSubPaymentType(e.target.value);
-  };
+    setSubPaymentType(e.target.value)
+  }
 
   const handleDownload = async () => {
-    if (!documentPath || typeof documentPath !== "string") {
-      console.error("Invalid document path.");
-      return;
+    if (!documentPath || typeof documentPath !== 'string') {
+      console.error('Invalid document path.')
+      return
     }
- 
-    console.log(documentPath, "Document path for download");
-    const ff = "documentPath-1728112826730.pdf"
-    // const fileUrl = documentPath ? documentPath : `/${documentPath}`;
-      //     const fileUrl = "/uploads/documentPath-1728112826730.pdf";
-                   
-//  const fileUrl = `http://localhost:5011/uploads/${documentPath}`;
 
-    
-    const link = document.createElement("a");
-    const fileUrl = `/${documentPath}`;
+    console.log(documentPath, 'Document path for download')
+    const ff = 'documentPath-1728112826730.pdf'
+    // const fileUrl = documentPath ? documentPath : `/${documentPath}`;
+    //     const fileUrl = "/uploads/documentPath-1728112826730.pdf";
+
+    //  const fileUrl = `http://localhost:5011/uploads/${documentPath}`;
+
+    const link = document.createElement('a')
+    const fileUrl = `/${documentPath}`
 
     try {
-      const response = await fetch(fileUrl);
+      const response = await fetch(fileUrl)
 
       if (!response.ok) {
-        throw new Error("Failed to download document");
+        throw new Error('Failed to download document')
       }
 
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
 
-      const link = document.createElement("a");
-      link.href = blobUrl;
+      const link = document.createElement('a')
+      link.href = blobUrl
 
-      link.download = "document.pdf";
+      link.download = 'document.pdf'
 
-      document.body.appendChild(link);
-      link.click();
+      document.body.appendChild(link)
+      link.click()
 
       // Clean up
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(blobUrl)
     } catch (error) {
-      console.error("Error while downloading document:", error);
+      console.error('Error while downloading document:', error)
     }
-  };
+  }
 
   return (
     <div
-      style={{ backgroundColor: "#82ac73" }}
+      style={{ backgroundColor: '#82ac73' }}
       className="p-4 responsive-container"
     >
       <div className="flex justify-between items-center mb-4">
@@ -390,7 +394,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
               </th>
               <>
                 <th className="border p-2">Taxable Value</th>
-                {gstType === "CGST/SGST" && (
+                {gstType === 'CGST/SGST' && (
                   <>
                     <th className="border p-2">
                       CGST
@@ -406,7 +410,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                     </th>
                   </>
                 )}
-                {gstType === "IGST" && (
+                {gstType === 'IGST' && (
                   <th className="border p-2">
                     IGST
                     <div className="flex justify-between">
@@ -522,7 +526,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                       className="w-full"
                     />
                   </td>
-                  {gstType === "CGST/SGST" && (
+                  {gstType === 'CGST/SGST' && (
                     <>
                       <td className="border p-2">
                         <div className="flex gap-1">
@@ -558,7 +562,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                       </td>
                     </>
                   )}
-                  {gstType === "IGST" && (
+                  {gstType === 'IGST' && (
                     <td className="border p-2">
                       <div className="flex gap-1">
                         <input
@@ -743,13 +747,13 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
           contentLabel="View Item Modal"
           style={{
             content: {
-              width: "80%",
-              height: "90%",
-              maxWidth: "800px",
-              margin: "auto",
-              padding: "5px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              borderRadius: "5px",
+              width: '80%',
+              height: '90%',
+              maxWidth: '800px',
+              margin: 'auto',
+              padding: '5px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              borderRadius: '5px',
             },
           }}
         >
@@ -770,7 +774,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                   name="paymentMethod"
                   value="Cash"
                   onChange={handlePaymentMethodChange}
-                  checked={paymentMethod === "Cash"}
+                  checked={paymentMethod === 'Cash'}
                 />
                 Cash
               </label>
@@ -780,7 +784,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                   name="paymentMethod"
                   value="Bank"
                   onChange={handlePaymentMethodChange}
-                  checked={paymentMethod === "Bank"}
+                  checked={paymentMethod === 'Bank'}
                 />
                 Bank
               </label>
@@ -788,7 +792,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
 
             {/* Conditional form rendering based on payment method */}
             <form>
-              {paymentMethod === "Cash" && (
+              {paymentMethod === 'Cash' && (
                 <>
                   <label className="font-bold">Amount</label>
                   <input
@@ -825,7 +829,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                 </>
               )}
 
-              {paymentMethod === "Bank" && (
+              {paymentMethod === 'Bank' && (
                 <>
                   <label className="font-bold">Select Bank</label>
                   <input
@@ -843,7 +847,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                     readOnly
                   ></input>
 
-                  {bank.selectBankType === "Online" && (
+                  {bank.selectBankType === 'Online' && (
                     <>
                       <label className="font-bold">Transaction Date</label>
                       <input
@@ -863,7 +867,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                       />
                     </>
                   )}
-                  {bank.selectBankType === "Cheque" && (
+                  {bank.selectBankType === 'Cheque' && (
                     <>
                       <label className="font-bold">Transaction Date</label>
                       <input
@@ -923,7 +927,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
         </Modal>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ViewPurchaseInvoice;
+export default ViewPurchaseInvoice

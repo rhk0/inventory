@@ -1,105 +1,105 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useAuth } from "../../../context/Auth";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useAuth } from '../../../context/Auth'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 const ProductQtyWise = () => {
-  const [productData, setProductData] = useState([]);
-  const [purchaseData, setPurchaseData] = useState([]);
-  const [salesData, setSalesData] = useState([]);
+  const [productData, setProductData] = useState([])
+  const [purchaseData, setPurchaseData] = useState([])
+  const [salesData, setSalesData] = useState([])
 
-  const [userId, setUserId] = useState(null);
-  const [auth] = useAuth();
+  const [userId, setUserId] = useState(null)
+  const [auth] = useAuth()
 
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id);
+      setUserId(auth.user._id)
     } else if (auth.user.role === 0) {
-      setUserId(auth.user.admin);
+      setUserId(auth.user.admin)
     }
-  }, [auth]);
+  }, [auth])
 
   useEffect(() => {
     if (userId) {
-      fetchProduct();
-      fetchPurchaseInvoice();
-      fetchSalesInvoice();
+      fetchProduct()
+      fetchPurchaseInvoice()
+      fetchSalesInvoice()
     }
-  }, [userId]);
+  }, [userId])
 
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
-      setProductData(response.data.data);
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
+      setProductData(response.data.data)
     } catch (error) {
-      console.error("Error fetching Product data", error);
+      console.error('Error fetching Product data', error)
     }
-  };
+  }
 
   const fetchPurchaseInvoice = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/"
-      );
-      setPurchaseData(response.data.invoices);
+        '/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/',
+      )
+      setPurchaseData(response.data.invoices)
     } catch (error) {
-      console.error("Error fetching purchase invoices", error);
+      console.error('Error fetching purchase invoices', error)
     }
-  };
+  }
 
   const fetchSalesInvoice = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/salesInvoiceRoute/getAllsalesinvoice/"
-      );
-      setSalesData(response.data.response);
+        '/api/v1/salesInvoiceRoute/getAllsalesinvoice/',
+      )
+      setSalesData(response.data.response)
     } catch (error) {
-      console.error("Error fetching sales invoices", error);
+      console.error('Error fetching sales invoices', error)
     }
-  };
+  }
 
   const mergedData = productData?.map((product) => {
     const productPurchaseRows = purchaseData
       .flatMap((purchase) => purchase.rows)
-      .filter((row) => row.itemCode === product.itemCode);
+      .filter((row) => row.itemCode === product.itemCode)
 
     const inwardQty = productPurchaseRows.reduce((sum, row) => {
-      return sum + (Number(row.qty) || 0);
-    }, 0);
+      return sum + (Number(row.qty) || 0)
+    }, 0)
 
     const productSalesRows = salesData
       .flatMap((sale) => sale.rows)
-      .filter((row) => row.itemCode === product.itemCode);
+      .filter((row) => row.itemCode === product.itemCode)
 
     const outwardQty = productSalesRows.reduce((sum, row) => {
-      return sum + (Number(row.qty) || 0);
-    }, 0);
+      return sum + (Number(row.qty) || 0)
+    }, 0)
 
-    const closingQty = Number(product.quantity) + inwardQty - outwardQty;
+    const closingQty = Number(product.quantity) + inwardQty - outwardQty
 
     return {
       ...product,
       inwardQty,
       outwardQty,
       closingQty,
-    };
-  });
+    }
+  })
 
   // Function to download the table data as PDF
   const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Product Qty Wise Report", 14, 16);
+    const doc = new jsPDF()
+    doc.text('Product Qty Wise Report', 14, 16)
 
     const tableColumn = [
-      "S.No.",
-      "Product Name",
-      "Opening Qty",
-      "Inward Qty",
-      "Outward Qty",
-      "Closing Qty",
-    ];
-    const tableRows = [];
+      'S.No.',
+      'Product Name',
+      'Opening Qty',
+      'Inward Qty',
+      'Outward Qty',
+      'Closing Qty',
+    ]
+    const tableRows = []
 
     mergedData.forEach((product, index) => {
       const productData = [
@@ -109,23 +109,23 @@ const ProductQtyWise = () => {
         product.inwardQty,
         product.outwardQty,
         product.closingQty,
-      ];
-      tableRows.push(productData);
-    });
+      ]
+      tableRows.push(productData)
+    })
 
     // Adding autoTable for formatted table
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20, // Start after title
-    });
+    })
 
-    doc.save("product_qty_report.pdf");
-  };
+    doc.save('product_qty_report.pdf')
+  }
 
   const printReport = () => {
-    window.print();
-  };
+    window.print()
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-5 responsive-container">
@@ -246,7 +246,7 @@ const ProductQtyWise = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProductQtyWise;
+export default ProductQtyWise

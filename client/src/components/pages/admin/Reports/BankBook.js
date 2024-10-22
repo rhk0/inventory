@@ -16,7 +16,9 @@ const BankBook = () => {
   const [endDate, setEndDate] = useState('')
   const [auth] = useAuth()
   const [Banks, setBanks] = useState([])
-  const [selectedBank, setSelectedBank] = useState(null) // Store selected bank object with opening balance
+  const [selectedBank, setSelectedBank] = useState(null) // Store selected bank object with
+  const [bankTransfer, setBankTransfer] = useState([])
+  // opening balance
 
   useEffect(() => {
     if (auth.user.role === 1) {
@@ -29,9 +31,8 @@ const BankBook = () => {
 
   const fetchBanks = async () => {
     try {
-      // Assuming the API returns the bank data along with the opening balance
       const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
-      setBanks(response.data.data) // Response should include opening balance for each bank
+      setBanks(response.data.data)
     } catch (error) {
       console.error('Error fetching Bank data', error)
     }
@@ -68,7 +69,8 @@ const BankBook = () => {
         const response = await axios.get(
           `/api/v1/auth/getCashWithdrawfromBank/${userId}`,
         )
-        setCashWithdrawals(response.data.data || []) // Update to set withdrawals
+        setCashWithdrawals(response.data.data || [])
+        console.log(response, 'cashwithdraw')
       } catch (error) {
         console.error('Error fetching cash withdrawals:', error)
       }
@@ -81,9 +83,23 @@ const BankBook = () => {
         const response = await axios.get(
           `/api/v1/auth/getCashDepositeIntoBank/${userId}`,
         )
-        setCashDeposite(response.data.data) // Update to set withdrawals
+        setCashDeposite(response.data.data)
       } catch (error) {
         console.error('Error fetching cash withdrawals:', error)
+      }
+    }
+  }
+
+  const fetchBankToBankTransfer = async () => {
+    if (userId) {
+      try {
+        const response = await axios.get(
+          `/api/v1/auth/getbanktoBankTransfer/${userId}`,
+        )
+        console.log(response, 'asf')
+        setBankTransfer(response.data.data)
+      } catch (error) {
+        console.error('Error fetching bank to bank:', error)
       }
     }
   }
@@ -107,41 +123,62 @@ const BankBook = () => {
       fetchCashWithdrawFromBank()
       fetchCashDepositeIntoBank()
       fetchPayOut()
+      fetchBankToBankTransfer()
     }
   }, [userId])
 
-  const filterTransactions = (transactions, isInvoice) => {
-    return transactions.filter((transaction) => {
-      const transactionDate = new Date(transaction.date)
-      const fromDate = startDate ? new Date(startDate) : null
-      const toDate = endDate ? new Date(endDate) : null
+  const filterTransactions = (transactions = [], isInvoice) => {
+    return Array.isArray(transactions)
+      ? transactions.filter((transaction) => {
+          const transactionDate = new Date(transaction.date)
+          const fromDate = startDate ? new Date(startDate) : null
+          const toDate = endDate ? new Date(endDate) : null
 
-      return (
-        (!fromDate || transactionDate >= fromDate) &&
-        (!toDate || transactionDate <= toDate)
-      )
-    })
+          return (
+            (!fromDate || transactionDate >= fromDate) &&
+            (!toDate || transactionDate <= toDate)
+          )
+        })
+      : []
   }
 
   useEffect(() => {
     const filteredSales = filterTransactions(
-      salesInvoice.filter((invoice) => invoice.selctedcash === 'cash'),
+      salesInvoice.filter(
+        (invoice) => invoice.selectedBank[0]?.name === selectedBank?.name,
+      ),
       true,
     )
 
     const filteredPayIns = filterTransactions(
-      payIns.filter((payIn) => payIn.receiptMode === 'Cash'),
+      payIns.filter((payIn) => payIn?.selectBank === selectedBank?.name),
+      false,
+    )
+    const filteredWithdrawals = filterTransactions(
+      cashWithdrawals?.filter(
+        (withdraw) => withdraw?.fromAccount === selectedBank?.name,
+      ),
       false,
     )
 
-    const filteredWithdrawals = filterTransactions(cashWithdrawals, false)
-    const filteredDeposits = filterTransactions(cashDeposite, false)
+    const filteredDeposits = filterTransactions(
+      cashDeposite?.filter(
+        (deposit) => deposit?.toAccount === selectedBank?.name,
+      ),
+      false,
+    )
+    const filteredTrasfer = filterTransactions(
+      bankTransfer?.filter(
+        (transfer) => transfer?.fromAccount === selectedBank?.name,
+      ),
+      false,
+    )
+
     const filteredPayouts = filterTransactions(
-      PayOut.filter((PayOut) => PayOut.paymentMode === 'Cash'),
+      PayOut.filter((PayOut) => PayOut?.selectBank === selectedBank?.name),
       false,
     )
 
-    // Total Debit calculation: filtered sales, payIns, withdrawals, and opening balance
     const totalDebit =
       Number(selectedBank?.openingBalance || 0) + // Use selected bank's opening balance
       filteredSales.reduce(
@@ -149,19 +186,20 @@ const BankBook = () => {
         0,
       ) +
       filteredPayIns.reduce((acc, payIn) => acc + Number(payIn.grandtotal), 0) +
-      filteredWithdrawals.reduce(
-        (acc, withdrawal) => acc + Number(withdrawal.amount),
-        0,
-      )
+      filteredDeposits.reduce((acc, deposit) => acc + Number(deposit.amount), 0)
 
     // Total Credit calculation: filtered deposits and payouts
     const totalCredit =
-      filteredDeposits.reduce(
-        (acc, deposit) => acc + Number(deposit.amount),
+      filteredTrasfer.reduce(
+        (acc, transfer) => acc + Number(transfer.amount),
         0,
       ) +
       filteredPayouts.reduce(
         (acc, payout) => acc + Number(payout.grandtotal),
+        0,
+      ) +
+      filteredWithdrawals.reduce(
+        (acc, withdrawal) => acc + Number(withdrawal.amount),
         0,
       )
 
@@ -327,49 +365,72 @@ const BankBook = () => {
             ) : null
           })}
 
-          {/* Render cash withdrawals */}
+          {filterTransactions(bankTransfer || [], false)?.map(
+            (transfer, index) => {
+              // Assuming transfer has selectBank or fromAccount to match selectedBank
+              return transfer.fromAccount === selectedBank?.name ? (
+                <tr key={index}>
+                  <td className="p-2 border border-black">
+                    {formatDate(transfer.date)}
+                  </td>
+                  <td className="p-2 border border-black">
+                    To {transfer.toAccount}
+                  </td>
+                  <td className="p-2 border border-black">Contra</td>
+                  <td className="p-2 border border-black">
+                    {transfer.contraNo || 'N/A'}
+                  </td>
+                  <td className="p-2 border border-black"></td>{' '}
+                  {/* Debit will be empty */}
+                  <td className="p-2 border border-black">
+                    {transfer.amount}
+                  </td>{' '}
+                  {/* Show deposit amount in Credit column */}
+                </tr>
+              ) : null
+            },
+          )}
+
           {filterTransactions(cashWithdrawals, false)?.map(
             (withdrawal, index) => {
-              return (
+              return withdrawal.fromAccount === selectedBank?.name ? (
                 <tr key={index}>
                   <td className="p-2 border border-black">
                     {formatDate(withdrawal.date)}
                   </td>{' '}
                   {/* Format date here */}
-                  <td className="p-2 border border-black">By Bank</td>
+                  <td className="p-2 border border-black">By Cash</td>
                   <td className="p-2 border border-black">Contra</td>
                   <td className="p-2 border border-black">
                     {withdrawal.contraNo || 'N/A'}
                   </td>
+                  <td className="p-2 border border-black"></td>
                   <td className="p-2 border border-black">
                     {withdrawal.amount}
                   </td>
-                  <td className="p-2 border border-black"></td>
                 </tr>
-              )
+              ) : null
             },
           )}
 
           {filterTransactions(cashDeposite, false)?.map((deposit, index) => {
-            return (
+            return deposit.toAccount === selectedBank?.name ? (
               <tr key={index}>
                 <td className="p-2 border border-black">
                   {formatDate(deposit.date)}
                 </td>{' '}
                 {/* Format date here */}
-                <td className="p-2 border border-black">By Cash</td>
+                <td className="p-2 border border-black">To Cash</td>
                 <td className="p-2 border border-black">Contra</td>
                 <td className="p-2 border border-black">
                   {deposit.contraNo || 'N/A'}
                 </td>
+                <td className="p-2 border border-black">{deposit.amount}</td>{' '}
                 <td className="p-2 border border-black"></td>{' '}
                 {/* Debit will be empty */}
-                <td className="p-2 border border-black">
-                  {deposit.amount}
-                </td>{' '}
                 {/* Show deposit amount in Credit column */}
               </tr>
-            )
+            ) : null
           })}
 
           {filterTransactions(PayOut, false)?.map((payout, index) => {

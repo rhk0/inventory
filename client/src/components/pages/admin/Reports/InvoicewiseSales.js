@@ -233,8 +233,8 @@ const InvoicewiseSales = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredInvoices.length > 0 ? (
-              filteredInvoices.map((inv, index) => (
+            {filteredInvoices?.length > 0 ? (
+              filteredInvoices?.map((inv, index) => (
                 <tr key={inv._id} className="text-center">
                   <td>{index + 1}</td>
                   <td className="border px-4 py-2 text-nowrap">{inv.date}</td>

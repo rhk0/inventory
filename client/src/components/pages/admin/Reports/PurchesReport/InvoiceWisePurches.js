@@ -1,73 +1,73 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Modal from "react-modal";
-import { FaEye, FaPrint } from "react-icons/fa";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import Modal from 'react-modal'
+import { FaEye, FaPrint } from 'react-icons/fa'
 // import ViewSalesInvoiceModal from "../modals/ViewSalesInvoiceModal";
-import ViewPurchaseInvoiceModal from "../../modals/ViewPurchaseInvoices";
-import { useAuth } from "../../../../context/Auth";
+import ViewPurchaseInvoiceModal from '../../modals/ViewPurchaseInvoices'
+import { useAuth } from '../../../../context/Auth'
 
 const InvoiceWisePurches = () => {
-  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false)
 
-  const [invoice, setInvoice] = useState([]);
-  const [filteredInvoices, setFilteredInvoices] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [searchInvoice, setSearchInvoice] = useState("");
-  const [totalValue, setTotalValue] = useState(0); // State for total value (initial load)
-  const [totalCount, setTotalCount] = useState(0); // State for total count (initial load)
-  const [customers, setCustomers] = useState([]);
-  const [auth] = useAuth();
-  const [userId, setUserId] = useState("");
+  const [invoice, setInvoice] = useState([])
+  const [filteredInvoices, setFilteredInvoices] = useState([])
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [searchInvoice, setSearchInvoice] = useState('')
+  const [totalValue, setTotalValue] = useState(0) // State for total value (initial load)
+  const [totalCount, setTotalCount] = useState(0) // State for total count (initial load)
+  const [customers, setCustomers] = useState([])
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
   const fetchEstimate = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice"
-      );
-      console.log(response, "response");
-      const allInvoices = response.data.invoices;
-      setInvoice(allInvoices);
-      setFilteredInvoices(allInvoices); // Set initial data for filtering
+        '/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice',
+      )
+      console.log(response, 'response')
+      const allInvoices = response.data.invoices
+      setInvoice(allInvoices)
+      setFilteredInvoices(allInvoices) // Set initial data for filtering
 
       // Calculate total value and total count for the initial data load
       const initialTotalValue = allInvoices.reduce(
         (sum, inv) => sum + parseFloat(inv.netAmount),
-        0
-      );
-      setTotalValue(initialTotalValue);
-      setTotalCount(allInvoices.length);
+        0,
+      )
+      setTotalValue(initialTotalValue)
+      setTotalCount(allInvoices.length)
     } catch (error) {
-      console.log("Error fetching sales estimates.");
+      console.log('Error fetching sales estimates.')
     }
-  };
+  }
 
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id);
+      setUserId(auth.user._id)
     }
     if (auth.user.role === 0) {
-      setUserId(auth.user.admin);
+      setUserId(auth.user.admin)
     }
-    fetchCustomers();
-    fetchEstimate();
-  }, [auth, userId]);
+    fetchCustomers()
+    fetchEstimate()
+  }, [auth, userId])
 
   const handleView = (inv) => {
-    setInvoice(inv); // Set the specific invoice being clicked
-    setViewModalOpen(true); // Open the modal
-  };
+    setInvoice(inv) // Set the specific invoice being clicked
+    setViewModalOpen(true) // Open the modal
+  }
 
   const filterInvoices = () => {
-    let filteredData = invoice;
+    let filteredData = invoice
 
     // Filter by date range if both startDate and endDate are provided
     if (startDate && endDate) {
-      filteredData = filteredData.filter((inv) => {
-        const invoiceDate = new Date(inv.date);
+      filteredData = filteredData?.filter((inv) => {
+        const invoiceDate = new Date(inv.date)
         return (
           invoiceDate >= new Date(startDate) && invoiceDate <= new Date(endDate)
-        );
-      });
+        )
+      })
     }
 
     // Filter by invoice number if searchInvoice is provided
@@ -78,58 +78,58 @@ const InvoiceWisePurches = () => {
               .toString()
               .toLowerCase()
               .includes(searchInvoice.toLowerCase())
-          : false
-      );
+          : false,
+      )
     }
 
-    setFilteredInvoices(filteredData);
+    setFilteredInvoices(filteredData)
 
     // Calculate total value and total count based on filtered data
     const totalVal = filteredData.reduce(
       (sum, inv) => sum + parseFloat(inv.netAmount),
-      0
-    );
-    setTotalValue(totalVal);
-    setTotalCount(filteredData.length);
-  };
+      0,
+    )
+    setTotalValue(totalVal)
+    setTotalCount(filteredData.length)
+  }
 
   // Use effect to trigger filtering whenever the startDate, endDate, or searchInvoice changes
   useEffect(() => {
-    filterInvoices();
-  }, [startDate, endDate, searchInvoice]);
+    filterInvoices()
+  }, [startDate, endDate, searchInvoice])
   const print = () => {
-    window.print();
-  };
+    window.print()
+  }
   const resetFilters = () => {
-    setStartDate("");
-    setEndDate("");
-    setSearchInvoice("");
+    setStartDate('')
+    setEndDate('')
+    setSearchInvoice('')
 
-    setFilteredInvoices(invoice);
+    setFilteredInvoices(invoice)
     setTotalValue(
-      invoice.reduce((sum, inv) => sum + parseFloat(inv.netAmount), 0)
-    );
-    setTotalCount(invoice.length);
-  };
+      invoice.reduce((sum, inv) => sum + parseFloat(inv.netAmount), 0),
+    )
+    setTotalCount(invoice.length)
+  }
 
   const closeModal = () => {
-    setViewModalOpen(false);
-  };
+    setViewModalOpen(false)
+  }
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
-      console.log(response, "ldsf");
-      setCustomers(response.data.data);
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`)
+      console.log(response, 'ldsf')
+      setCustomers(response.data.data)
     } catch (error) {
-      console.error("Error fetching customers", error);
+      console.error('Error fetching customers', error)
     }
-  };
+  }
 
   const getCustomerName = (customerId) => {
-    const customer = customers.find((c) => c.id === customerId);
-    return customer ? customer.supplierName : "Unknown Customer";
-  };
+    const customer = customers?.find((c) => c.id === customerId)
+    return customer ? customer?.supplierName : 'Unknown Customer'
+  }
 
   return (
     <div className="p-5 rounded-lg responsive-container">
@@ -238,8 +238,8 @@ const InvoiceWisePurches = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredInvoices.length > 0 ? (
-              filteredInvoices.map((inv, index) => (
+            {filteredInvoices?.length > 0 ? (
+              filteredInvoices?.map((inv, index) => (
                 <tr key={inv._id} className="text-center">
                   <td>{index + 1}</td>
                   <td className="border px-4 py-2 text-nowrap">{inv.date}</td>
@@ -271,7 +271,7 @@ const InvoiceWisePurches = () => {
               </tr>
             )}
             <tr className="border px-4 py-2">
-              {" "}
+              {' '}
               <td></td>
               <th colSpan="4" className="border px-4 py-2">
                 Total Value:
@@ -289,13 +289,13 @@ const InvoiceWisePurches = () => {
         contentLabel="View Estimate Modal"
         style={{
           content: {
-            width: "90%",
-            height: "100%",
-            maxWidth: "1400px",
-            margin: "auto",
-            padding: "5px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "5px",
+            width: '90%',
+            height: '100%',
+            maxWidth: '1400px',
+            margin: 'auto',
+            padding: '5px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '5px',
           },
         }}
       >
@@ -307,7 +307,7 @@ const InvoiceWisePurches = () => {
         />
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default InvoiceWisePurches;
+export default InvoiceWisePurches

@@ -1,102 +1,104 @@
-import React, { useState, useEffect } from "react";
-import ViewSalesReturnModal from "../modals/ViewSalesReturnModal";
-import Modal from "react-modal";
-import axios from "axios";
-import EditSalesReturnModal from "../modals/EditSalesReturnModal";
-import { useAuth } from "../../../context/Auth";
-import { FiEdit } from "react-icons/fi";
-import { MdRateReview, MdDelete } from "react-icons/md";
+import React, { useState, useEffect } from 'react'
+import ViewSalesReturnModal from '../modals/ViewSalesReturnModal'
+import Modal from 'react-modal'
+import axios from 'axios'
+import EditSalesReturnModal from '../modals/EditSalesReturnModal'
+import { useAuth } from '../../../context/Auth'
+import { FiEdit } from 'react-icons/fi'
+import { MdRateReview, MdDelete } from 'react-icons/md'
 const ManageSalesReturn = () => {
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedEstimate, setSelectedEstimate] = useState(null);
-  const [salesEstimates, setSalesEstimates] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [customers, setCustomers] = useState([]);
-  const [auth] = useAuth();
-  const [userId, setUserId] = useState("");
-  
+  const [viewModalOpen, setViewModalOpen] = useState(false)
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [selectedEstimate, setSelectedEstimate] = useState(null)
+  const [salesEstimates, setSalesEstimates] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [customers, setCustomers] = useState([])
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
+
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id);
+      setUserId(auth.user._id)
     }
     if (auth.user.role === 0) {
-      setUserId(auth.user.admin);
+      setUserId(auth.user.admin)
     }
-    
-    fetchSalesReturn();
-    fetchCustomers();
-  }, [auth,userId]);
+
+    fetchSalesReturn()
+    fetchCustomers()
+  }, [auth, userId])
 
   const fetchSalesReturn = async () => {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
     try {
-      const response = await axios.get(`/api/v1/salesReturnRoute/getAllreturn/${userId}`);
-      
-      setSalesEstimates(response.data.response);
+      const response = await axios.get(
+        `/api/v1/salesReturnRoute/getAllreturn/${userId}`,
+      )
+
+      setSalesEstimates(response.data.response)
     } catch (error) {
-      setError("Error fetching sales estimates.");
+      setError('Error fetching sales estimates.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleView = (estimate) => {
-    setSelectedEstimate(estimate);
-    setViewModalOpen(true);
-  };
+    setSelectedEstimate(estimate)
+    setViewModalOpen(true)
+  }
 
   const handleEdit = (estimate) => {
-    setSelectedEstimate(estimate);
-    setEditModalOpen(true);
-  };
+    setSelectedEstimate(estimate)
+    setEditModalOpen(true)
+  }
 
   const handleDelete = async (estimateId) => {
-    if (window.confirm("Are you sure you want to delete this sales?")) {
-      setLoading(true);
+    if (window.confirm('Are you sure you want to delete this sales?')) {
+      setLoading(true)
       try {
         await axios.delete(
-          `/api/v1/salesReturnRoute/deletereturn/${estimateId}`
-        );
-        fetchSalesReturn();
+          `/api/v1/salesReturnRoute/deletereturn/${estimateId}`,
+        )
+        fetchSalesReturn()
       } catch (error) {
-        setError("Error deleting the sales return.");
+        setError('Error deleting the sales return.')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
-  };
+  }
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
-     
-      setCustomers(response.data.data);
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`)
+
+      setCustomers(response.data.data)
     } catch (error) {
-      console.error("Error fetching customers", error);
+      console.error('Error fetching customers', error)
     }
-  };
+  }
 
   const getCustomerName = (customerId) => {
-    const customer = customers?.find((c) => c.id === customerId);
-    return customer ? customer.name : "Unknown Customer";
-  };
+    const customer = customers?.find((c) => c.id === customerId)
+    return customer ? customer.name : 'Unknown Customer'
+  }
 
   const closeModal = () => {
-    setEditModalOpen(false);
-    setViewModalOpen(false);
-    fetchSalesReturn();
-  };
+    setEditModalOpen(false)
+    setViewModalOpen(false)
+    fetchSalesReturn()
+  }
 
   // Filter sales estimates based on search term
   const filteredEstimates = salesEstimates?.filter(
     (estimate) =>
       estimate.creditNoteNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      estimate.customerName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      estimate.customerName.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
 
   return (
     <div className="responsive-container p-4">
@@ -121,22 +123,22 @@ const ManageSalesReturn = () => {
             <thead className="bg-blue-500 text-white">
               <tr>
                 {[
-                  "No.",
-                  "Date",
-                  "credit Note No.",
-                  "Sales Type",
-                  "Customer Name",
-                  "Place of Supply",
-                 
-                  "GST Type",
-                  "Product Code",
-                  "Product Name",
-                  "units",
-                  "MRP",
-                  "QTY",
+                  'No.',
+                  'Date',
+                  'credit Note No.',
+                  'Sales Type',
+                  'Customer Name',
+                  'Place of Supply',
+
+                  'GST Type',
+                  'Product Code',
+                  'Product Name',
+                  'units',
+                  'MRP',
+                  'QTY',
                   // "Rate",
-                  "Total Value",
-                  "Action",
+                  'Total Value',
+                  'Action',
                 ]?.map((header) => (
                   <th
                     key={header}
@@ -172,28 +174,28 @@ const ManageSalesReturn = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.placeOfSupply}
                     </td>
-                   
+
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.itemCode || "-"}
+                      {estimate.rows?.[0]?.itemCode || '-'}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.productName || "-"}
+                      {estimate.rows?.[0]?.productName || '-'}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.units || "-"}
+                      {estimate.rows?.[0]?.units || '-'}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.mrp || "-"}
+                      {estimate.rows?.[0]?.mrp || '-'}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.qty || "-"}
+                      {estimate.rows?.[0]?.qty || '-'}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.totalValue || "-"}
+                      {estimate.rows?.[0]?.totalValue || '-'}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
@@ -202,13 +204,13 @@ const ManageSalesReturn = () => {
                           className="text-blue-500 hover:underline focus:outline-none"
                           onClick={() => handleView(estimate)}
                         >
-                           <MdRateReview className="text-xl" />
+                          <MdRateReview className="text-xl" />
                         </button>
                         <button
                           className="text-yellow-500 hover:underline focus:outline-none "
                           onClick={() => handleEdit(estimate)}
                         >
-                           <FiEdit className="text-xl" />
+                          <FiEdit className="text-xl" />
                         </button>
                         <button
                           className="text-red-500 hover:underline focus:outline-none"
@@ -216,7 +218,6 @@ const ManageSalesReturn = () => {
                         >
                           <MdDelete className="text-xl" />
                         </button>
-                   
                       </div>
                     </td>
                   </tr>
@@ -242,13 +243,13 @@ const ManageSalesReturn = () => {
         contentLabel="View Estimate Modal"
         style={{
           content: {
-            width: "90%",
-            height: "100%",
-            maxWidth: "1400px",
-            margin: "auto",
-            padding: "5px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "5px",
+            width: '90%',
+            height: '100%',
+            maxWidth: '1400px',
+            margin: 'auto',
+            padding: '5px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '5px',
           },
         }}
       >
@@ -256,7 +257,6 @@ const ManageSalesReturn = () => {
           isOpen={viewModalOpen}
           closeModal={closeModal}
           estimate={selectedEstimate}
-         
         />
       </Modal>
 
@@ -267,13 +267,13 @@ const ManageSalesReturn = () => {
         contentLabel="Edit Estimate Modal"
         style={{
           content: {
-            width: "90%",
-            height: "100%",
-            maxWidth: "1400px",
-            margin: "auto",
-            padding: "5px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "5px",
+            width: '90%',
+            height: '100%',
+            maxWidth: '1400px',
+            margin: 'auto',
+            padding: '5px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '5px',
           },
         }}
       >
@@ -285,7 +285,7 @@ const ManageSalesReturn = () => {
         />
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default ManageSalesReturn;
+export default ManageSalesReturn

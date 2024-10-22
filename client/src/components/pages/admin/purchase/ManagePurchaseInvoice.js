@@ -116,7 +116,7 @@ const ManagePurchaseInvoice = () => {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by order No, supplier Name"
+          placeholder="Search by Invoice No, supplier Name"
           className="w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

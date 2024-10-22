@@ -1,116 +1,114 @@
-import React, { useState, useEffect } from "react";
-import Modal from "react-modal";
-import axios from "axios";
-import { useAuth } from "../../../context/Auth";
-import ViewPurchaseReturn from "../modals/ViewPurchaseReturn";
-import EditPurchaseReturn from "../modals/EditPurchaseReturn";
-import { MdRateReview, MdDelete } from "react-icons/md";
-import { FiEdit } from "react-icons/fi";
+import React, { useState, useEffect } from 'react'
+import Modal from 'react-modal'
+import axios from 'axios'
+import { useAuth } from '../../../context/Auth'
+import ViewPurchaseReturn from '../modals/ViewPurchaseReturn'
+import EditPurchaseReturn from '../modals/EditPurchaseReturn'
+import { MdRateReview, MdDelete } from 'react-icons/md'
+import { FiEdit } from 'react-icons/fi'
 const ManagePurchaseReturn = () => {
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedEstimate, setSelectedEstimate] = useState(null);
-  const [salesEstimates, setSalesEstimates] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [customers, setCustomers] = useState([]);
+  const [viewModalOpen, setViewModalOpen] = useState(false)
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [selectedEstimate, setSelectedEstimate] = useState(null)
+  const [salesEstimates, setSalesEstimates] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [customers, setCustomers] = useState([])
 
-  const [auth] = useAuth();
-  const [userid, setUserId] = useState("");
-
-
+  const [auth] = useAuth()
+  const [userid, setUserId] = useState('')
 
   const fetchEstimate = async () => {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
     try {
       const response = await axios.get(
-        `/api/v1/purchesReturnRoute/getAllpurchasereturn/${userid}`
-      );
-      console.log(response.data.returns, "purchase Return");
-      setSalesEstimates(response.data.returns);
+        `/api/v1/purchesReturnRoute/getAllpurchasereturn/${userid}`,
+      )
+      console.log(response.data.returns, 'purchase Return')
+      setSalesEstimates(response.data.returns)
     } catch (error) {
-      setError("Error fetching sales order.");
+      setError('Error fetching sales order.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id);
+      setUserId(auth.user._id)
     }
     if (auth.user.role === 0) {
-      setUserId(auth.user.admin);
+      setUserId(auth.user.admin)
     }
-    fetchEstimate();
-  }, [auth,userid]);
+    fetchEstimate()
+  }, [auth, userid])
 
   const handleView = (estimate) => {
-    setSelectedEstimate(estimate);
-    setViewModalOpen(true);
-  };
+    setSelectedEstimate(estimate)
+    setViewModalOpen(true)
+  }
 
   const handleEdit = (estimate) => {
-    setSelectedEstimate(estimate);
-    setEditModalOpen(true);
-  };
+    setSelectedEstimate(estimate)
+    setEditModalOpen(true)
+  }
 
   const handleDelete = async (estimateId) => {
-    if (window.confirm("Are you sure you want to delete this Invoice?")) {
-      setLoading(true);
+    if (window.confirm('Are you sure you want to delete this Invoice?')) {
+      setLoading(true)
       try {
         await axios.delete(
-          `/api/v1/purchesReturnRoute/deletepurchasereturn/${estimateId}`
-        );
-        fetchEstimate();
+          `/api/v1/purchesReturnRoute/deletepurchasereturn/${estimateId}`,
+        )
+        fetchEstimate()
       } catch (error) {
-        setError("Error deleting the Invoice.");
+        setError('Error deleting the Invoice.')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
-  };
+  }
 
   const fetchsupplier = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`);
-      setCustomers(response.data.data);
-      console.log(response, "dskfkj");
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userid}`)
+      setCustomers(response.data.data)
+      console.log(response, 'dskfkj')
     } catch (error) {
-      console.error("Error fetching suppliers:", error);
+      console.error('Error fetching suppliers:', error)
     }
-  };
+  }
 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
-        setUserId(auth.user._id);
+        setUserId(auth.user._id)
       } else if (auth.user.role === 0) {
-        setUserId(auth.user.admin);
+        setUserId(auth.user.admin)
       }
     }
-    fetchsupplier();
-  }, [auth, userid]);
+    fetchsupplier()
+  }, [auth, userid])
 
   const getSupplierName = (customerId) => {
-    const customer = customers?.find((c) => c.id === customerId);
-    return customer ? customer.name : "Unknown Customer";
-  };
+    const customer = customers?.find((c) => c.id === customerId)
+    return customer ? customer.name : 'Unknown Customer'
+  }
 
   const closeModal = () => {
-    setEditModalOpen(false);
-    setViewModalOpen(false);
-  };
+    setEditModalOpen(false)
+    setViewModalOpen(false)
+  }
 
   const filteredEstimates = salesEstimates?.filter((estimate) => {
-    const debitNoteNo = estimate.debitNoteNo || "";
-    const supplierName = estimate.supplierName || "";
+    const debitNoteNo = estimate.debitNoteNo || ''
+    const supplierName = estimate.supplierName || ''
     return (
       debitNoteNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       supplierName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+    )
+  })
 
   return (
     <div className="responsive-container p-4">
@@ -135,19 +133,19 @@ const ManagePurchaseReturn = () => {
             <thead className="bg-blue-500 text-white">
               <tr>
                 {[
-                  "No.",
-                  "Date",
-                  "Debit No",
-                  "Supplier Name",
+                  'No.',
+                  'Date',
+                  'Debit No',
+                  'Supplier Name',
 
-                  "GST Type",
-                  "Product Code",
-                  "UOM",
-                  "MRP",
-                  "QTY",
+                  'GST Type',
+                  'Product Code',
+                  'UOM',
+                  'MRP',
+                  'QTY',
                   // "Rate",
-                  "Total Value",
-                  "Action",
+                  'Total Value',
+                  'Action',
                 ].map((header) => (
                   <th
                     key={header}
@@ -177,28 +175,32 @@ const ManagePurchaseReturn = () => {
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.supplierName}
+                      {estimate.supplierName ||
+                        estimate?.cash ||
+                        estimate.selectedBank[0]?.name }
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.gstType}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.itemCode || "-"}
+                      {estimate.rows?.[0]?.itemCode || '-'}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.units || "-"}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.maxmimunRetailPrice || "-"}
-                    </td>
-                    <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.quantity || "-"}
+                      {estimate.rows?.[0]?.units || '-'}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.totalValue || "-"}
+                      {estimate.rows?.[0]?.maxmimunRetailPrice || '-'}
+                    </td>
+
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate.rows?.[0]?.quantity || '-'}
+                    </td>
+
+                    <td className="border border-gray-300 p-2 text-center">
+                      {estimate.rows?.[0]?.totalValue || '-'}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
@@ -209,6 +211,7 @@ const ManagePurchaseReturn = () => {
                         >
                           <MdRateReview className="text-xl" />
                         </button>
+
                         <button
                           className="text-yellow-500 hover:underline focus:outline-none "
                           onClick={() => handleEdit(estimate)}
@@ -221,9 +224,6 @@ const ManagePurchaseReturn = () => {
                         >
                           <MdDelete className="text-xl" />
                         </button>
-                        {/* <button className="text-green-500 hover:underline focus:outline-none">
-                          Create Invoice
-                        </button> */}
                       </div>
                     </td>
                   </tr>
@@ -250,13 +250,13 @@ const ManagePurchaseReturn = () => {
         contentLabel="View Estimate Modal"
         style={{
           content: {
-            width: "90%",
-            height: "100%",
-            maxWidth: "1400px",
-            margin: "auto",
-            padding: "5px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "5px",
+            width: '90%',
+            height: '100%',
+            maxWidth: '1400px',
+            margin: 'auto',
+            padding: '5px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '5px',
           },
         }}
       >
@@ -275,13 +275,13 @@ const ManagePurchaseReturn = () => {
         contentLabel="Edit Estimate Modal"
         style={{
           content: {
-            width: "90%",
-            height: "100%",
-            maxWidth: "1400px",
-            margin: "auto",
-            padding: "5px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "5px",
+            width: '90%',
+            height: '100%',
+            maxWidth: '1400px',
+            margin: 'auto',
+            padding: '5px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '5px',
           },
         }}
       >
@@ -292,7 +292,7 @@ const ManagePurchaseReturn = () => {
         />
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default ManagePurchaseReturn;
+export default ManagePurchaseReturn
