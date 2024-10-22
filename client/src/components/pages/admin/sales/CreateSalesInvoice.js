@@ -1697,18 +1697,6 @@ const [cashDetails, setCashDetails] = useState(
             />
           </div>
 
-          {/* <div>
-            <label className="font-bold">Customer Type</label>
-            <select
-              value={customerType}
-              onChange={handleCustomerTypeChange}
-              className="border p-2 w-full  rounded"
-            >
-              <option value="Retailer">Retailer</option>
-              <option value="Wholesaler">Wholesaler</option>
-            </select>
-          </div> */}
-
           <div>
             <label className="font-bold">Customer Name </label>
             <select
@@ -1752,10 +1740,7 @@ const [cashDetails, setCashDetails] = useState(
                 <option value="cash" className="text-green-500">
                   Cash
                 </option>
-                {/* Uncomment if you need the Add New Bank option */}
-                {/* <option value="add-new-bank" className="text-blue-500">
-      + Add New Bank
-    </option> */}
+
               </optgroup>
             </select>
           </div>

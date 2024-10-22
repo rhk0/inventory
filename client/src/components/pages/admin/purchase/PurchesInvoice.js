@@ -192,8 +192,8 @@ const PurchesInvoice = () => {
     }
   }
   const handleCashPayment = (value) => {
-    setCash(value);
-    setGstType("CGST/SGST");
+    setCash(value)
+    setGstType('CGST/SGST')
     // Update formData with the cash value
     setFormData((prev) => ({
       ...prev,
@@ -204,12 +204,12 @@ const PurchesInvoice = () => {
     const selectedBank = banks.find((bank) => bank._id === bankId)
 
     // Update the selected banks
-    setSelectedBanks(selectedBank);
-        // Update formData with selected bank details
+    setSelectedBanks(selectedBank)
+    // Update formData with selected bank details
     setFormData((prev) => ({
       ...prev,
       selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
-    }));
+    }))
     // Additional logic for handling bank data
     setGstType('CGST/SGST')
   }
@@ -765,9 +765,7 @@ const PurchesInvoice = () => {
       if (documentPath) {
         submissionData.append('documentPath', documentPath)
       }
-  
-    
-  
+
       // Send the formData using axios
       const response = await axios.post(
         '/api/v1/purchaseInvoiceRoute/createpurchaseinvoice',
@@ -906,7 +904,7 @@ const PurchesInvoice = () => {
             <div class="section-header">Customer Details</div>
               <div class="details"> Cash</div>
          </div>
-        `;
+        `
       } else if (formData?.selectedBank?.length > 0) {
         return `
           <div class="customer-details">
@@ -915,7 +913,7 @@ const PurchesInvoice = () => {
             <div class="details">IFSC Code: ${formData.selectedBank[0]?.ifscCode}</div>
             <div class="details">Account No: ${formData.selectedBank[0]?.accountNumber}</div>
           </div>
-        `;
+        `
       } else if (chooseUser) {
         return `
           <div class="customer-details">
@@ -925,10 +923,10 @@ const PurchesInvoice = () => {
             <div class="details">Contact: ${chooseUser?.contact}</div>
             <div class="details">GSTIN: ${chooseUser?.gstin}</div>
           </div>
-        `;
+        `
       }
-      return '';
-    };
+      return ''
+    }
 
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {

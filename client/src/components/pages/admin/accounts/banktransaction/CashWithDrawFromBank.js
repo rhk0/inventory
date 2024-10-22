@@ -37,15 +37,25 @@ function CashWithdrawFromBank() {
     });
   };
   useEffect(() => {
-    if (auth?.user) {
-      if (auth.user.role === 1) {
-        setUserId(auth.user._id);
-      } else if (auth.user.role === 0) {
-        setUserId(auth.user.admin);
-      }
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id)
     }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin)
+    }
+    fetchBanks()
+  }, [auth, userId])
+
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
+      setBanks(response.data.data)
+    } catch (error) {
+      console.error('Error fetching Bank data', error)
+      toast.error(error.response.data.message)
+    }
+  }
   
-  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -149,7 +159,7 @@ function CashWithdrawFromBank() {
                 >
                   <MenuItem value="">Select Bank</MenuItem>
                   {bank?.map((bankItem) => (
-                    <MenuItem key={bankItem._id} value={bankItem._id}>
+                    <MenuItem key={bankItem._id} value={bankItem.name}>
                       {bankItem.name}
                     </MenuItem>
                   ))}

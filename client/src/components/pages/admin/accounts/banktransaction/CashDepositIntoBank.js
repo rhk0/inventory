@@ -185,7 +185,7 @@ function CashDepositeIntoBank() {
                 >
                   <MenuItem value="">Select Bank</MenuItem>
                   {bank?.map((bankItem) => (
-                    <MenuItem key={bankItem._id} value={bankItem._id}>
+                    <MenuItem key={bankItem._id} value={bankItem.name}>
                       {bankItem.name}
                     </MenuItem>
                   ))}

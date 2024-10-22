@@ -88,10 +88,10 @@ const ManageSalesReturn = () => {
   }
 
   const closeModal = () => {
-    setEditModalOpen(false);
-    setViewModalOpen(false);
-    fetchSalesReturn();
-  };
+    setEditModalOpen(false)
+    setViewModalOpen(false)
+    fetchSalesReturn()
+  }
 
   // Filter sales estimates based on search term
   const filteredEstimates = salesEstimates?.filter(

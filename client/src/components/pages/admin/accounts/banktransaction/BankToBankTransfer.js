@@ -85,11 +85,12 @@ function BankToBankTransfer() {
 
         userId: userId,
       }
+      console.log(updatedFormData,"sakdjfkj")
       const response = await axios.post(
         '/api/v1/auth/banktoBankTransfer',
         updatedFormData,
       )
-
+      console.log(response, 'ajhjahs')
       if (response) {
         toast.success(response.data.message)
       }
@@ -166,7 +167,7 @@ function BankToBankTransfer() {
                 >
                   <MenuItem value="">Select Bank</MenuItem>
                   {bank?.map((bankItem) => (
-                    <MenuItem key={bankItem._id} value={bankItem._id}>
+                    <MenuItem key={bankItem._id} value={bankItem.name}>
                       {bankItem.name}
                     </MenuItem>
                   ))}
@@ -203,7 +204,7 @@ function BankToBankTransfer() {
                 >
                   <MenuItem value="">Select Bank</MenuItem>
                   {bank?.map((bankItem) => (
-                    <MenuItem key={bankItem._id} value={bankItem._id}>
+                    <MenuItem key={bankItem._id} value={bankItem.name}>
                       {bankItem.name}
                     </MenuItem>
                   ))}
