@@ -166,47 +166,20 @@ export const updatePurchesOrderByIdController = async (req, res) => {
   try {
     const { _id } = req.params;
     const updateData = req.body;
+ console.log(updateData,"dheeru updt")
+    // Now req.body will contain the form data
+    const updatedInvoice = await purchesOrderModel.findByIdAndUpdate(
+      _id,
+      { $set: updateData },
+      { new: true }
+    );
 
-    const invoice = await purchesOrderModel.findById(_id);
-    if (!invoice) {
+    if (!updatedInvoice) {
       return res.status(404).send({
         success: false,
         message: "Purchase Order not found",
       });
     }
-
-    // Update fields
-
-    invoice.date = updateData.date || invoice.date;
-    invoice.orderNo = updateData.orderNo || invoice.orderNo;
-    invoice.purchaseType = updateData.purchaseType || invoice.purchaseType;
-    invoice.supplierName = updateData.supplierName || invoice.supplierName;
-    invoice.placeOfSupply = updateData.placeOfSupply || invoice.placeOfSupply;
-    invoice.paymentTerm = updateData.paymentTerm || invoice.paymentTerm;
-    invoice.dueDate = updateData.dueDate || invoice.dueDate;
-    invoice.receiptDocNo = updateData.receiptDocNo || invoice.receiptDocNo;
-    invoice.dispatchedThrough =
-      updateData.dispatchedThrough || invoice.dispatchedThrough;
-    invoice.destination = updateData.destination || invoice.destination;
-    invoice.carrierNameAgent =
-      updateData.carrierNameAgent || invoice.carrierNameAgent;
-    invoice.billOfLading = updateData.billOfLading || invoice.billOfLading;
-    invoice.motorVehicleNo =
-      updateData.motorVehicleNo || invoice.motorVehicleNo;
-    invoice.billingAddress =
-      updateData.billingAddress || invoice.billingAddress;
-    invoice.reverseCharge = updateData.reverseCharge || invoice.reverseCharge;
-    invoice.gstType = updateData.gstType || invoice.gstType;
-    invoice.rows = updateData.rows || invoice.rows;
-    invoice.otherChargesDescriptions =
-      updateData.otherChargesDescriptions || invoice.otherChargesDescriptions;
-    invoice.otherCharges = updateData.otherCharges || invoice.otherCharges;
-    invoice.narration = updateData.narration || invoice.narration;
-    invoice.grossAmount = updateData.grossAmount || invoice.grossAmount;
-    invoice.GstAmount = updateData.gstAmount || invoice.gstAmount;
-    invoice.netAmount = updateData.netAmount || invoice.netAmount;
-
-    const updatedInvoice = await invoice.save();
 
     res.status(200).send({
       success: true,
@@ -217,3 +190,5 @@ export const updatePurchesOrderByIdController = async (req, res) => {
     res.status(500).send({ error: "Server error", message: error.message });
   }
 };
+
+
