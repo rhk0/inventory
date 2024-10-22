@@ -20,11 +20,10 @@ const SupplierLedger = () => {
   const fetchInvoice = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/"
+        `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userId}`
       );
       const invoices = response.data.invoices;
       setSalesInvoice(invoices);
-      console.log(response, "ksjdfkjs");
     } catch (error) {
       console.log("Error fetching sales invoices.");
     }
@@ -50,7 +49,7 @@ const SupplierLedger = () => {
 
   const fetchPayIns = async () => {
     try {
-      const response = await axios.get("/api/v1/payOutRoute/getAllpayOut");
+      const response = await axios.get(`/api/v1/payOutRoute/getAllpayOut/${userId}`);
       setPayIns(response.data.payOutList);
       console.log(response, "aksjdfksdj");
     } catch (error) {
@@ -251,7 +250,7 @@ const SupplierLedger = () => {
               <td></td>
               <td></td>
               <td className="p-2">
-                <strong style={{ fontSize: "1.2em" }}>{closingBalance}</strong>
+                <strong style={{ fontSize: "1.2em" }}>{closingBalance.toFixed(2)}</strong>
               </td>
               <td></td>
             </tr>
@@ -261,10 +260,10 @@ const SupplierLedger = () => {
                 <strong style={{ fontSize: "1.2em" }}>TOTAL</strong>
               </td>
               <td>
-                <strong style={{ fontSize: "1.2em" }}>{totalDebit}</strong>
+                <strong style={{ fontSize: "1.2em" }}>{totalDebit.toFixed(2)}</strong>
               </td>
               <td className="p-2">
-                <strong style={{ fontSize: "1.2em" }}>{totalCredit}</strong>
+                <strong style={{ fontSize: "1.2em" }}>{totalCredit.toFixed(2)}</strong>
               </td>
             </tr>
           </tbody>

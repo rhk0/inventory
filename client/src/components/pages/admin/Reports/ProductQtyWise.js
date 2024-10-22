@@ -40,7 +40,7 @@ const ProductQtyWise = () => {
   const fetchPurchaseInvoice = async () => {
     try {
       const response = await axios.get(
-        '/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/',
+        `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userId}`,
       )
       setPurchaseData(response.data.invoices)
     } catch (error) {
@@ -51,7 +51,7 @@ const ProductQtyWise = () => {
   const fetchSalesInvoice = async () => {
     try {
       const response = await axios.get(
-        '/api/v1/salesInvoiceRoute/getAllsalesinvoice/',
+        `/api/v1/salesInvoiceRoute/getAllsalesinvoice/${userId}`,
       )
       setSalesData(response.data.response)
     } catch (error) {
@@ -61,18 +61,18 @@ const ProductQtyWise = () => {
 
   const mergedData = productData?.map((product) => {
     const productPurchaseRows = purchaseData
-      .flatMap((purchase) => purchase.rows)
-      .filter((row) => row.itemCode === product.itemCode)
+      ?.flatMap((purchase) => purchase.rows)
+      ?.filter((row) => row.itemCode === product.itemCode)
 
-    const inwardQty = productPurchaseRows.reduce((sum, row) => {
+    const inwardQty = productPurchaseRows?.reduce((sum, row) => {
       return sum + (Number(row.qty) || 0)
     }, 0)
 
     const productSalesRows = salesData
-      .flatMap((sale) => sale.rows)
-      .filter((row) => row.itemCode === product.itemCode)
+      ?.flatMap((sale) => sale.rows)
+      ?.filter((row) => row.itemCode === product.itemCode)
 
-    const outwardQty = productSalesRows.reduce((sum, row) => {
+    const outwardQty = productSalesRows?.reduce((sum, row) => {
       return sum + (Number(row.qty) || 0)
     }, 0)
 

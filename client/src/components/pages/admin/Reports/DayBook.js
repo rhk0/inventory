@@ -1,77 +1,79 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useAuth } from "../../../context/Auth.js";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useAuth } from '../../../context/Auth.js'
 
 const DayBook = () => {
-  const [auth] = useAuth();
-  const [userId, setUserId] = useState("");
-  const [salesInvoices, setSalesInvoice] = useState([]);
-  const [payIns, setPayIns] = useState([]);
-  const [purchaseInvoices, setPurchaseInvoice] = useState([]);
-  const [payOuts, setPayOut] = useState([]);
-  const [dayBookEntries, setDayBookEntries] = useState([]);
-  const [filteredEntries, setFilteredEntries] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
+  const [salesInvoices, setSalesInvoice] = useState([])
+  const [payIns, setPayIns] = useState([])
+  const [purchaseInvoices, setPurchaseInvoice] = useState([])
+  const [payOuts, setPayOut] = useState([])
+  const [dayBookEntries, setDayBookEntries] = useState([])
+  const [filteredEntries, setFilteredEntries] = useState([])
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id);
+      setUserId(auth.user._id)
     } else if (auth.user.role === 0) {
-      setUserId(auth.user.admin);
+      setUserId(auth.user.admin)
     }
-  }, [auth]);
+  }, [auth])
 
   useEffect(() => {
-    fetchSalesInvoice();
-    fetchPayIns();
-    fetchPurchaseInvoice();
-    fetchPayOut();
-  }, [userId]);
+    fetchSalesInvoice()
+    fetchPayIns()
+    fetchPurchaseInvoice()
+    fetchPayOut()
+  }, [userId])
 
   const fetchSalesInvoice = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/salesInvoiceRoute/getAllsalesinvoice/"
-      );
-      const invoices = response.data.response;
-      setSalesInvoice(invoices);
+        `/api/v1/salesInvoiceRoute/getAllsalesinvoice/${userId}`,
+      )
+      const invoices = response.data.response
+      setSalesInvoice(invoices)
     } catch (error) {
-      console.log("Error fetching sales invoices.");
+      console.log('Error fetching sales invoices.')
     }
-  };
+  }
 
   const fetchPayIns = async () => {
     try {
       const response = await axios.get(
-        `/api/v1/payInRoute/getAllpayin/${userId}`
-      );
-      setPayIns(response.data.payInList);
+        `/api/v1/payInRoute/getAllpayin/${userId}`,
+      )
+      setPayIns(response.data.payInList)
     } catch (error) {
-      console.error("Error fetching PayIns:", error);
+      console.error('Error fetching PayIns:', error)
     }
-  };
+  }
 
   const fetchPurchaseInvoice = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/"
-      );
-      const invoices = response.data.invoices;
-      setPurchaseInvoice(invoices);
+        `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userId}`,
+      )
+      const invoices = response.data.invoices
+      setPurchaseInvoice(invoices)
     } catch (error) {
-      console.log("Error fetching purchase invoices.");
+      console.log('Error fetching purchase invoices.')
     }
-  };
+  }
 
   const fetchPayOut = async () => {
     try {
-      const response = await axios.get("/api/v1/payOutRoute/getAllpayOut");
-      setPayOut(response.data.payOutList);
+      const response = await axios.get(
+        `/api/v1/payOutRoute/getAllpayOut/${userId}`,
+      )
+      setPayOut(response.data.payOutList)
     } catch (error) {
-      console.error("Error fetching PayOuts:", error);
+      console.error('Error fetching PayOuts:', error)
     }
-  };
+  }
 
   useEffect(() => {
     const combineData = () => {
@@ -80,73 +82,73 @@ const DayBook = () => {
           date: invoice.date,
           particular: invoice.customerName,
           voucherNo: invoice.InvoiceNo,
-          voucherType: "Invoice",
+          voucherType: 'Invoice',
           debit: invoice.netAmount,
-          credit: "",
-        })) || []; // Fallback to empty array
+          credit: '',
+        })) || [] // Fallback to empty array
 
       const payInEntries =
         payIns?.map((payIn) => ({
           date: payIn.date,
           particular: payIn.selectCustomer,
           voucherNo: payIn.receiptNo,
-          voucherType: "Pay In",
-          debit: "",
+          voucherType: 'Pay In',
+          debit: '',
           credit: payIn.grandtotal,
-        })) || []; // Fallback to empty array
+        })) || [] // Fallback to empty array
 
       const purchaseEntries =
         purchaseInvoices?.map((invoice) => ({
           date: invoice.date,
           particular: invoice.supplierName,
           voucherNo: invoice.invoiceNo,
-          voucherType: "Purchase",
+          voucherType: 'Purchase',
           debit: invoice.netAmount,
-          credit: "",
-        })) || []; // Fallback to empty array
+          credit: '',
+        })) || [] // Fallback to empty array
 
       const payOutEntries =
         payOuts?.map((payOut) => ({
           date: payOut.date,
           particular: payOut.supplierName,
           voucherNo: payOut.paymentNo,
-          voucherType: "Pay Out",
-          debit: "",
-          credit: payOut.total,
-        })) || []; // Fallback to empty array
+          voucherType: 'Pay Out',
+          debit: '',
+          credit: payOut.grandtotal,
+        })) || [] // Fallback to empty array
 
       setDayBookEntries([
         ...salesEntries,
         ...payInEntries,
         ...purchaseEntries,
         ...payOutEntries,
-      ]);
-    };
+      ])
+    }
 
-    combineData();
-  }, [salesInvoices, payIns, purchaseInvoices, payOuts]);
+    combineData()
+  }, [salesInvoices, payIns, purchaseInvoices, payOuts])
 
   useEffect(() => {
-    filterByDate();
-  }, [startDate, endDate, dayBookEntries]);
+    filterByDate()
+  }, [startDate, endDate, dayBookEntries])
 
   const filterByDate = () => {
     const filtered = dayBookEntries.filter((entry) => {
-      const entryDate = new Date(entry.date);
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
+      const entryDate = new Date(entry.date)
+      const start = startDate ? new Date(startDate) : null
+      const end = endDate ? new Date(endDate) : null
 
       if (start && end) {
-        return entryDate >= start && entryDate <= end;
+        return entryDate >= start && entryDate <= end
       } else if (start) {
-        return entryDate >= start;
+        return entryDate >= start
       } else if (end) {
-        return entryDate <= end;
+        return entryDate <= end
       }
-      return true; // If no dates are selected, return all entries
-    });
-    setFilteredEntries(filtered);
-  };
+      return true // If no dates are selected, return all entries
+    })
+    setFilteredEntries(filtered)
+  }
 
   return (
     <div className="p-5 bg-blue-900 text-black responsive-container">
@@ -209,7 +211,7 @@ const DayBook = () => {
         </tbody>
       </table>
     </div>
-  );
-};
+  )
+}
 
-export default DayBook;
+export default DayBook

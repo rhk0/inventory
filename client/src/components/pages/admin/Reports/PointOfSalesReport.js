@@ -1,94 +1,107 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { FaEye, FaPrint } from "react-icons/fa"; // Import icons from FontAwesome
-import InvoiceModal from './InvoiceModel.js'; // Import the modal component
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { FaEye, FaPrint } from 'react-icons/fa' // Import icons from FontAwesome
+import InvoiceModal from './InvoiceModel.js' // Import the modal component
+import { useAuth } from '../../../context/Auth.js'
 
 function PointOfSalesReport() {
-  const [invoice, setInvoice] = useState([]);
-  const [filteredInvoices, setFilteredInvoices] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [searchInvoice, setSearchInvoice] = useState("");
-  const [totalValue, setTotalValue] = useState(0); // State for total value (initial load)
-  const [totalCount, setTotalCount] = useState(0); // State for total count (initial load)
-  const [selectedInvoice, setSelectedInvoice] = useState(null); // State for the selected invoice
+  const [invoice, setInvoice] = useState([])
+  const [filteredInvoices, setFilteredInvoices] = useState([])
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [searchInvoice, setSearchInvoice] = useState('')
+  const [totalValue, setTotalValue] = useState(0) // State for total value (initial load)
+  const [totalCount, setTotalCount] = useState(0) // State for total count (initial load)
+  const [selectedInvoice, setSelectedInvoice] = useState(null) // State for the selected invoice
+
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
 
   const fetchEstimate = async () => {
     try {
-      const response = await axios.get("/api/v1/pointOfSaleRoute/getAllpof");
-     
-      const allInvoices = response.data.posList;
-      setInvoice(allInvoices);
-      setFilteredInvoices(allInvoices); // Set initial data for filtering
+      const response = await axios.get(
+        `/api/v1/pointOfSaleRoute/getAllpof/${userId}`,
+      )
+      console.log(response, 'response....')
+
+      const allInvoices = response.data.posList
+      setInvoice(allInvoices)
+      setFilteredInvoices(allInvoices)
 
       // Calculate total value and total count for the initial data load
       const initialTotalValue = allInvoices.reduce(
         (sum, inv) => sum + parseFloat(inv.netAmount),
-        0
-      );
-      setTotalValue(initialTotalValue);
-      setTotalCount(allInvoices.length);
+        0,
+      )
+      setTotalValue(initialTotalValue)
+      setTotalCount(allInvoices.length)
     } catch (error) {
-      console.log("Error fetching sales estimates.");
+      console.log('Error fetching point of sales')
     }
-  };
+  }
 
   useEffect(() => {
-    fetchEstimate();
-  }, []);
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id)
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin)
+    }
+    fetchEstimate()
+  }, [auth, userId])
 
   // Function to filter invoices based on date range and invoice number
   const filterInvoices = () => {
-    let filteredData = invoice;
+    let filteredData = invoice
 
     // Filter by date range if both startDate and endDate are provided
     if (startDate && endDate) {
-      filteredData = filteredData.filter((inv) => {
-        const invoiceDate = new Date(inv.date);
+      filteredData = filteredData?.filter((inv) => {
+        const invoiceDate = new Date(inv.date)
         return (
           invoiceDate >= new Date(startDate) && invoiceDate <= new Date(endDate)
-        );
-      });
+        )
+      })
     }
 
     // Filter by invoice number if searchInvoice is provided
     if (searchInvoice) {
-      filteredData = filteredData.filter((inv) =>
-        inv.invoicNo.includes(searchInvoice)
-      );
+      filteredData = filteredData?.filter((inv) =>
+        inv.invoicNo.includes(searchInvoice),
+      )
     }
 
-    setFilteredInvoices(filteredData);
+    setFilteredInvoices(filteredData)
 
     // Calculate total value and total count based on filtered data
-    const totalVal = filteredData.reduce(
+    const totalVal = filteredData?.reduce(
       (sum, inv) => sum + parseFloat(inv.netAmount),
-      0
-    );
-    setTotalValue(totalVal);
-    setTotalCount(filteredData.length);
-  };
+      0,
+    )
+    setTotalValue(totalVal)
+    setTotalCount(filteredData.length)
+  }
 
   // Use effect to trigger filtering whenever the startDate, endDate, or searchInvoice changes
   useEffect(() => {
-    filterInvoices();
-  }, [startDate, endDate, searchInvoice]);
+    filterInvoices()
+  }, [startDate, endDate, searchInvoice])
 
   const print = () => {
-    window.print();
-  };
+    window.print()
+  }
 
   const resetFilters = () => {
-    setStartDate("");
-    setEndDate("");
-    setSearchInvoice("");
+    setStartDate('')
+    setEndDate('')
+    setSearchInvoice('')
 
-    setFilteredInvoices(invoice);
+    setFilteredInvoices(invoice)
     setTotalValue(
-      invoice.reduce((sum, inv) => sum + parseFloat(inv.netAmount), 0)
-    );
-    setTotalCount(invoice.length);
-  };
+      invoice.reduce((sum, inv) => sum + parseFloat(inv.netAmount), 0),
+    )
+    setTotalCount(invoice.length)
+  }
 
   return (
     <div className="p-5 rounded-lg responsive-container">
@@ -135,7 +148,10 @@ function PointOfSalesReport() {
       </h2>
       <div className="p-1 rounded-lg flex gap-3">
         <div className="mb-4 w-1/4">
-          <label htmlFor="startdate" className="block text-sm font-medium text-gray-600">
+          <label
+            htmlFor="startdate"
+            className="block text-sm font-medium text-gray-600"
+          >
             From
           </label>
           <input
@@ -147,7 +163,10 @@ function PointOfSalesReport() {
           />
         </div>
         <div className="mb-4 w-1/4">
-          <label htmlFor="enddate" className="block text-sm font-medium text-gray-600">
+          <label
+            htmlFor="enddate"
+            className="block text-sm font-medium text-gray-600"
+          >
             To
           </label>
           <input
@@ -190,8 +209,8 @@ function PointOfSalesReport() {
             </tr>
           </thead>
           <tbody>
-            {filteredInvoices.length > 0 ? (
-              filteredInvoices.map((inv, index) => (
+            {filteredInvoices?.length > 0 ? (
+              filteredInvoices?.map((inv, index) => (
                 <tr key={inv._id} className="text-center">
                   <td>{index + 1}</td>
                   <td className="border px-4 py-2 text-nowrap">{inv.date}</td>
@@ -200,7 +219,10 @@ function PointOfSalesReport() {
                   <td className="border px-4 py-2">{inv.paymentType}</td>
                   <td className="border px-4 py-2">{inv.netAmount}</td>
                   <td className="px-4 py-2 flex gap-5 hide-on-print">
-                    <button className="text-blue-500 flex items-center" onClick={() => setSelectedInvoice(inv)}>
+                    <button
+                      className="text-blue-500 flex items-center"
+                      onClick={() => setSelectedInvoice(inv)}
+                    >
                       <FaEye />
                     </button>
                     <button
@@ -234,13 +256,12 @@ function PointOfSalesReport() {
 
       {selectedInvoice && ( // Render the modal if there's a selected invoice
         <InvoiceModal
-        
           invoice1={selectedInvoice}
           onClose={() => setSelectedInvoice(null)}
         />
       )}
     </div>
-  );
+  )
 }
 
-export default PointOfSalesReport;
+export default PointOfSalesReport

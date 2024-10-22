@@ -21,7 +21,7 @@ const InvoicewiseSales = () => {
   const fetchEstimate = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/salesInvoiceRoute/getAllsalesinvoice"
+        `/api/v1/salesInvoiceRoute/getAllsalesinvoice/${userId}`,
       );
       console.log(response.data.response, "response");
       const allInvoices = response.data.response;
@@ -80,7 +80,7 @@ const InvoicewiseSales = () => {
     setFilteredInvoices(filteredData);
 
     // Calculate total value and total count based on filtered data
-    const totalVal = filteredData.reduce(
+    const totalVal = filteredData?.reduce(
       (sum, inv) => sum + parseFloat(inv.netAmount),
       0
     );

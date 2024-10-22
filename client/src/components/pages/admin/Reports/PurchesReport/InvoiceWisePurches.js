@@ -22,7 +22,7 @@ const InvoiceWisePurches = () => {
   const fetchEstimate = async () => {
     try {
       const response = await axios.get(
-        '/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice',
+        `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userId}`
       )
       console.log(response, 'response')
       const allInvoices = response.data.invoices
@@ -30,7 +30,7 @@ const InvoiceWisePurches = () => {
       setFilteredInvoices(allInvoices) // Set initial data for filtering
 
       // Calculate total value and total count for the initial data load
-      const initialTotalValue = allInvoices.reduce(
+      const initialTotalValue = allInvoices?.reduce(
         (sum, inv) => sum + parseFloat(inv.netAmount),
         0,
       )
@@ -72,7 +72,7 @@ const InvoiceWisePurches = () => {
 
     // Filter by invoice number if searchInvoice is provided
     if (searchInvoice) {
-      filteredData = filteredData.filter((inv) =>
+      filteredData = filteredData?.filter((inv) =>
         inv.invoiceNo
           ? inv.invoiceNo
               .toString()
@@ -85,7 +85,7 @@ const InvoiceWisePurches = () => {
     setFilteredInvoices(filteredData)
 
     // Calculate total value and total count based on filtered data
-    const totalVal = filteredData.reduce(
+    const totalVal = filteredData?.reduce(
       (sum, inv) => sum + parseFloat(inv.netAmount),
       0,
     )
@@ -107,7 +107,7 @@ const InvoiceWisePurches = () => {
 
     setFilteredInvoices(invoice)
     setTotalValue(
-      invoice.reduce((sum, inv) => sum + parseFloat(inv.netAmount), 0),
+      invoice?.reduce((sum, inv) => sum + parseFloat(inv.netAmount), 0),
     )
     setTotalCount(invoice.length)
   }
@@ -277,7 +277,7 @@ const InvoiceWisePurches = () => {
                 Total Value:
               </th>
               <td colSpan="2" className="border px-4 py-2 text-bold font-bold">
-                ₹{totalValue.toFixed(2)}
+                ₹{totalValue}
               </td>
             </tr>
           </tbody>

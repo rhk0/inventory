@@ -23,7 +23,7 @@ const SupplierWiseReports = () => {
   const fetchEstimate = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice"
+        `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userId}`
       );
       const allInvoices = response.data.invoices;
       setInvoice(allInvoices);
@@ -36,7 +36,7 @@ const SupplierWiseReports = () => {
       setCustomerNames(uniqueCustomers); // Set the customer names for dropdown
 
       // Calculate total value and total count for the initial data load
-      const initialTotalValue = allInvoices.reduce(
+      const initialTotalValue = allInvoices?.reduce(
         (sum, inv) => sum + parseFloat(inv.netAmount),
         0
       );
@@ -69,7 +69,7 @@ const SupplierWiseReports = () => {
 
     // Filter by date range if both startDate and endDate are provided
     if (startDate && endDate) {
-      filteredData = filteredData.filter((inv) => {
+      filteredData = filteredData?.filter((inv) => {
         const invoiceDate = new Date(inv.date);
         return (
           invoiceDate >= new Date(startDate) && invoiceDate <= new Date(endDate)
@@ -241,8 +241,8 @@ const SupplierWiseReports = () => {
         </thead>
 
         <tbody>
-          {filteredInvoices.length > 0 ? (
-            filteredInvoices.map((inv, index) => (
+          {filteredInvoices?.length > 0 ? (
+            filteredInvoices?.map((inv, index) => (
               <tr key={inv._id} className="text-center">
                 <td>{index + 1}</td>
                 <td className="border px-4 py-2">{inv.date}</td>

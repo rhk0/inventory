@@ -41,8 +41,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   const [selctedcash, setSelectedCash] = useState([])
   const [banks, setBanks] = useState([])
   const [selectedValue, setSelectedValue] = useState('')
-  const [selectedBank, setSelectedBank] = useState([]) // Array to hold bank data
-
+  const [selectedBank, setSelectedBank] = useState([])
 
   const [auth] = useAuth()
   const [userId, setUserId] = useState('')
@@ -86,7 +85,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           Balance: '',
         })
       }
- 
+
       if (estimate.cash) {
         setCash({
           Amount: estimate.cash.Amount || '',
@@ -164,6 +163,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
     fetchCustomer()
   }, [auth, userId])
+
   const fetchCustomer = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`)
@@ -196,47 +196,47 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
   const [paymentMethod, setPaymentMethod] = useState('')
   const handleCashPayment = (value) => {
-    console.log(value); // Log the selected cash value
-    setGstType('CGST/SGST');
-    
+    console.log(value) // Log the selected cash value
+    setGstType('CGST/SGST')
+
     // Clear customer-related fields
-    setSelectedCash(value);
-    setCustomerName('');   // Clear customerName
-    setSelectedCustomer(""); // Clear selectedCustomer
-    setPlaceOfSupply('');   // Clear placeOfSupply
-    setBillingAddress('');  // Clear billingAddress
-    setSelectedBank([]);    // Clear selectedBank
-    
+    setSelectedCash(value)
+    setCustomerName('') // Clear customerName
+    setSelectedCustomer('') // Clear selectedCustomer
+    setPlaceOfSupply('') // Clear placeOfSupply
+    setBillingAddress('') // Clear billingAddress
+    setSelectedBank([]) // Clear selectedBank
+
     console.log('After cash payment:', {
       customerName,
       selectedCustomer,
       placeOfSupply,
       billingAddress,
-    });  // This log might still show the old values due to asynchronous updates
-  };
-  
+    }) // This log might still show the old values due to asynchronous updates
+  }
+
   const handleBanksChange = (bankId) => {
-    const selectedBank = banks.find((bank) => bank._id === bankId);
-    
+    const selectedBank = banks.find((bank) => bank._id === bankId)
+
     // Update the selected banks
-    setSelectedBank(selectedBank);
-    setSelectedCash('');   // Clear selectedCash
-    setCustomerName('');   // Clear customerName
-    setSelectedCustomer(""); // Clear selectedCustomer
-    setPlaceOfSupply('');   // Clear placeOfSupply
-    setBillingAddress('');  // Clear billingAddress
-    
+    setSelectedBank(selectedBank)
+    setSelectedCash('') // Clear selectedCash
+    setCustomerName('') // Clear customerName
+    setSelectedCustomer('') // Clear selectedCustomer
+    setPlaceOfSupply('') // Clear placeOfSupply
+    setBillingAddress('') // Clear billingAddress
+
     // Additional logic for handling bank data
-    setGstType('CGST/SGST');
-    
+    setGstType('CGST/SGST')
+
     console.log('After bank change:', {
       customerName,
       selectedCustomer,
       placeOfSupply,
       billingAddress,
-    });  // This log might still show old values due to async updates
-  };
-  
+    }) // This log might still show old values due to async updates
+  }
+
   const handleCustomerChange = (e) => {
     const value = e.target.value
     setSelectedCustomer(value)
@@ -674,18 +674,17 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
     try {
       console.log(
         selctedcash,
-     
+
         'cash',
         '    ',
         selectedBank,
-       
+
         'bank',
         customerName,
         'customer name',
       )
-      console.log(customerName,"customerName")
+      console.log(customerName, 'customerName')
       const updatedEstimate = {
-        
         date,
         InvoiceNo,
         salesType,
@@ -740,11 +739,11 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         `/api/v1/salesInvoiceRoute/updatesalesinvoice/${estimate._id}`,
         updatedEstimate,
       )
-      console.log(response,"dheeru update")
+      console.log(response, 'dheeru update')
 
       if (response.data.success) {
         alert('Estimate updated successfully')
-        closeModal();
+        closeModal()
       } else {
         alert('Failed to update estimate: ' + response.data.message)
       }
@@ -832,7 +831,6 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           >
             {/* Customer Options */}
             <optgroup label="Customers">
-            
               {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}

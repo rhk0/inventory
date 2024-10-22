@@ -1,126 +1,126 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useAuth } from "../../../context/Auth.js";
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useAuth } from '../../../context/Auth.js'
 
 const CustomerLedger = () => {
-  const [userId, setUserId] = useState("");
-  const [salesInvoice, setSalesInvoice] = useState([]);
-  const [payIns, setPayIns] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [openingBalance, setOpeningBalance] = useState(0);
-  const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [totalDebit, setTotalDebit] = useState(0);
-  const [totalCredit, setTotalCredit] = useState(0);
-  const [closingBalance, setClosingBalance] = useState(0);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [isCustomerSelected, setIsCustomerSelected] = useState(false);
+  const [userId, setUserId] = useState('')
+  const [salesInvoice, setSalesInvoice] = useState([])
+  const [payIns, setPayIns] = useState([])
+  const [customers, setCustomers] = useState([])
+  const [openingBalance, setOpeningBalance] = useState(0)
+  const [selectedCustomer, setSelectedCustomer] = useState('')
+  const [totalDebit, setTotalDebit] = useState(0)
+  const [totalCredit, setTotalCredit] = useState(0)
+  const [closingBalance, setClosingBalance] = useState(0)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [isCustomerSelected, setIsCustomerSelected] = useState(false)
 
-  const [auth] = useAuth();
+  const [auth] = useAuth()
 
   const fetchInvoice = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/salesInvoiceRoute/getAllsalesinvoice/"
-      );
-      const invoices = response.data.response;
-      setSalesInvoice(invoices);
+        `/api/v1/salesInvoiceRoute/getAllsalesinvoice/${userId}`,
+      )
+      const invoices = response.data.response
+      setSalesInvoice(invoices)
     } catch (error) {
-      console.log("Error fetching sales invoices.");
+      console.log('Error fetching sales invoices.')
     }
-  };
+  }
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
-      const customerData = response.data.data;
-      setCustomers(customerData);
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`)
+      const customerData = response.data.data
+      setCustomers(customerData)
     } catch (error) {
-      console.log("Error fetching customers.");
+      console.log('Error fetching customers.')
     }
-  };
+  }
 
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id);
+      setUserId(auth.user._id)
     } else if (auth.user.role === 0) {
-      setUserId(auth.user.admin);
+      setUserId(auth.user.admin)
     }
-  }, [auth]);
+  }, [auth])
 
   const fetchPayIns = async () => {
     try {
       const response = await axios.get(
-        `/api/v1/payInRoute/getAllpayin/${userId}`
-      );
-      setPayIns(response.data.payInList);
+        `/api/v1/payInRoute/getAllpayin/${userId}`,
+      )
+      setPayIns(response.data.payInList)
     } catch (error) {
-      console.error("Error fetching PayIns:", error);
+      console.error('Error fetching PayIns:', error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchPayIns();
-    fetchInvoice();
+    fetchPayIns()
+    fetchInvoice()
     if (userId) {
-      fetchCustomers();
+      fetchCustomers()
     }
-  }, [userId]);
+  }, [userId])
 
   const handleCustomerSelect = (e) => {
-    const name = e.target.value;
-    setSelectedCustomer(name);
-    setIsCustomerSelected(!!name);
+    const name = e.target.value
+    setSelectedCustomer(name)
+    setIsCustomerSelected(!!name)
 
     const selectedCustomerData = customers.find(
-      (customer) => customer.name === name
-    );
+      (customer) => customer.name === name,
+    )
 
     if (selectedCustomerData) {
-      setOpeningBalance(selectedCustomerData.openingBalance);
+      setOpeningBalance(selectedCustomerData.openingBalance)
     } else {
-      setOpeningBalance(0);
+      setOpeningBalance(0)
     }
-  };
+  }
 
   const filterTransactions = (transactions, isInvoice = true) => {
     return transactions?.filter((transaction) => {
-      const transactionDate = new Date(transaction.date);
+      const transactionDate = new Date(transaction.date)
       const isWithinDateRange =
         (!startDate || transactionDate >= new Date(startDate)) &&
-        (!endDate || transactionDate <= new Date(endDate));
+        (!endDate || transactionDate <= new Date(endDate))
 
       const customerField = isInvoice
         ? transaction.customerName
-        : transaction.selectCustomer;
+        : transaction.selectCustomer
 
-      return selectedCustomer === customerField && isWithinDateRange;
-    });
-  };
+      return selectedCustomer === customerField && isWithinDateRange
+    })
+  }
 
   useEffect(() => {
     if (selectedCustomer) {
-      const filteredInvoices = filterTransactions(salesInvoice, true);
-      const filteredPayIns = filterTransactions(payIns, false);
+      const filteredInvoices = filterTransactions(salesInvoice, true)
+      const filteredPayIns = filterTransactions(payIns, false)
 
-      console.log("Filtered Invoices:", filteredInvoices); // Debugging line
-      console.log("Filtered PayIns:", filteredPayIns); // Debugging line
+      console.log('Filtered Invoices:', filteredInvoices) // Debugging line
+      console.log('Filtered PayIns:', filteredPayIns) // Debugging line
 
       const debitTotal = filteredInvoices?.reduce(
         (sum, invoice) => sum + (Number(invoice.netAmount) || 0),
-        openingBalance || 0
-      );
+        openingBalance || 0,
+      )
 
       const creditTotal = filteredPayIns.reduce(
         (sum, payIn) => sum + (Number(payIn.grandtotal) || 0),
-        0
-      );
+        0,
+      )
 
-      const calculatedClosingBalance = debitTotal - creditTotal;
+      const calculatedClosingBalance = debitTotal - creditTotal
 
-      setTotalDebit(debitTotal);
-      setTotalCredit(creditTotal + calculatedClosingBalance);
-      setClosingBalance(calculatedClosingBalance);
+      setTotalDebit(debitTotal)
+      setTotalCredit(creditTotal + calculatedClosingBalance)
+      setClosingBalance(calculatedClosingBalance)
     }
   }, [
     selectedCustomer,
@@ -129,23 +129,23 @@ const CustomerLedger = () => {
     openingBalance,
     startDate,
     endDate,
-  ]);
+  ])
 
   const handleReset = () => {
-    setSelectedCustomer("");
-    setStartDate("");
-    setEndDate("");
-    setOpeningBalance(0);
-    setTotalDebit(0);
-    setTotalCredit(0);
-    setClosingBalance(0);
-    setIsCustomerSelected(false);
-  };
+    setSelectedCustomer('')
+    setStartDate('')
+    setEndDate('')
+    setOpeningBalance(0)
+    setTotalDebit(0)
+    setTotalCredit(0)
+    setClosingBalance(0)
+    setIsCustomerSelected(false)
+  }
 
   return (
     <div
       className="responsive-container"
-      style={{ backgroundColor: "#FFFFFF", color: "black", padding: "20px" }}
+      style={{ backgroundColor: '#FFFFFF', color: 'black', padding: '20px' }}
     >
       <h2 className="text-center text-3xl">Customer Ledger</h2>
       <div className="p-1 rounded-lg flex gap-3">
@@ -203,7 +203,7 @@ const CustomerLedger = () => {
         </div>
       </div>
       {isCustomerSelected && (
-        <table border="1" style={{ width: "100%", textAlign: "center" }}>
+        <table border="1" style={{ width: '100%', textAlign: 'center' }}>
           <thead>
             <tr>
               <th className="p-2 border border-black">Date</th>
@@ -218,12 +218,12 @@ const CustomerLedger = () => {
             <tr>
               <td className="p-2 border border-black"></td>
               <td className="p-2">
-                <strong style={{ fontSize: "1em" }}>Opening Balance</strong>
+                <strong style={{ fontSize: '1em' }}>Opening Balance</strong>
               </td>
               <td className="p-2 border border-black"></td>
               <td className="p-2 border border-black"></td>
               <td className="">
-                <strong style={{ fontSize: "1em" }}>{openingBalance}</strong>
+                <strong style={{ fontSize: '1em' }}>{openingBalance}</strong>
               </td>
               <td className="p-2 border border-black"></td>
             </tr>
@@ -252,31 +252,31 @@ const CustomerLedger = () => {
             <tr className="p-2 border border-black">
               <td></td>
               <td>
-                <strong style={{ fontSize: "1em" }}>Closing Balance</strong>
+                <strong style={{ fontSize: '1em' }}>Closing Balance</strong>
               </td>
               <td></td>
               <td></td>
               <td></td>
               <td className="p-2">
-                <strong style={{ fontSize: "1em" }}>{closingBalance}</strong>
+                <strong style={{ fontSize: '1em' }}>{closingBalance}</strong>
               </td>
             </tr>
             <tr className="p-2 border border-black">
               <td colSpan="4">
-                <strong style={{ fontSize: "1.2em" }}>TOTAL</strong>
+                <strong style={{ fontSize: '1.2em' }}>TOTAL</strong>
               </td>
               <td>
-                <strong style={{ fontSize: "1.2em" }}>{totalDebit}</strong>
+                <strong style={{ fontSize: '1.2em' }}>{totalDebit}</strong>
               </td>
               <td className="p-2">
-                <strong style={{ fontSize: "1.2em" }}>{totalCredit}</strong>
+                <strong style={{ fontSize: '1.2em' }}>{totalCredit}</strong>
               </td>
             </tr>
           </tbody>
         </table>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default CustomerLedger;
+export default CustomerLedger

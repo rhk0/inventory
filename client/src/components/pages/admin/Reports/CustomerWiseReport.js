@@ -23,7 +23,7 @@ const CustomerWiseReports = () => {
   const fetchEstimate = async () => {
     try {
       const response = await axios.get(
-        "/api/v1/salesInvoiceRoute/getAllsalesinvoice"
+        `/api/v1/salesInvoiceRoute/getAllsalesinvoice/${userId}`,
       );
       const allInvoices = response.data.response;
       setInvoice(allInvoices);
@@ -215,7 +215,7 @@ const CustomerWiseReports = () => {
             onChange={(e) => setSearchInvoice(e.target.value)}
           >
             <option value="">Select Customer</option>
-            {customerNames.map((customer, index) => (
+            {customerNames?.map((customer, index) => (
               <option key={index} value={customer}>
                 {customer}
               </option>
@@ -245,8 +245,8 @@ const CustomerWiseReports = () => {
         </thead>
 
         <tbody>
-          {filteredInvoices.length > 0 ? (
-            filteredInvoices.map((inv, index) => (
+          {filteredInvoices?.length > 0 ? (
+            filteredInvoices?.map((inv, index) => (
               <tr key={inv._id} className="text-center">
                 <td>{index + 1}</td>
                 <td className="border px-4 py-2">{inv.date}</td>

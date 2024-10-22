@@ -11,7 +11,7 @@ import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/createsalespof",requireSignIn,isAdmin, createPOFController);
-router.get("/getAllpof",requireSignIn,isAdmin, getAllPOFController);
+router.get("/getAllpof/:_id",requireSignIn,isAdmin, getAllPOFController);
 router.get("/getAllpofById/:_id",requireSignIn,isAdmin, getAllPOFByIdController);
 router.put("/updatepof/:_id",requireSignIn,isAdmin, updatePOFByIDController);
 router.delete("/deletepof/:_id",requireSignIn,isAdmin, deletePOFByIDController);
