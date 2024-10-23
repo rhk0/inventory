@@ -1,19 +1,25 @@
 {
   "files": {
-    "main.css": "/static/css/main.3b7b522f.css",
-    "main.js": "/static/js/main.f3977410.js",
+    "main.css": "/static/css/main.0a933766.css",
+    "main.js": "/static/js/main.b053071d.js",
+    "static/js/239.eab0352a.chunk.js": "/static/js/239.eab0352a.chunk.js",
+    "static/js/213.2d06e9fa.chunk.js": "/static/js/213.2d06e9fa.chunk.js",
+    "static/js/455.19769c0d.chunk.js": "/static/js/455.19769c0d.chunk.js",
     "static/js/453.258b012d.chunk.js": "/static/js/453.258b012d.chunk.js",
     "static/media/demo.jpeg": "/static/media/demo.154867db25abc65f183c.jpeg",
     "static/media/invenoty.png": "/static/media/invenoty.1da00738ab0ce0d18aa6.png",
     "static/media/m_logo.png": "/static/media/m_logo.b48774965ddf1f4d9635.png",
     "static/media/manasvilogo.png": "/static/media/manasvilogo.6cc5bfb8f61b5a63ff73.png",
     "index.html": "/index.html",
-    "main.3b7b522f.css.map": "/static/css/main.3b7b522f.css.map",
-    "main.f3977410.js.map": "/static/js/main.f3977410.js.map",
+    "main.0a933766.css.map": "/static/css/main.0a933766.css.map",
+    "main.b053071d.js.map": "/static/js/main.b053071d.js.map",
+    "239.eab0352a.chunk.js.map": "/static/js/239.eab0352a.chunk.js.map",
+    "213.2d06e9fa.chunk.js.map": "/static/js/213.2d06e9fa.chunk.js.map",
+    "455.19769c0d.chunk.js.map": "/static/js/455.19769c0d.chunk.js.map",
     "453.258b012d.chunk.js.map": "/static/js/453.258b012d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3b7b522f.css",
-    "static/js/main.f3977410.js"
+    "static/css/main.0a933766.css",
+    "static/js/main.b053071d.js"
   ]
 }

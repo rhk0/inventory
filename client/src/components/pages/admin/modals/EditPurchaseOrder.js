@@ -155,6 +155,7 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
       setGstType("IGST");
     }
   };
+
   const handleCashPayment = (value) => {
     console.log(value ," dheeru cash")
     setCash(value);
@@ -165,6 +166,7 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
     setSelectedBanks([]);
     // Update formData with the cash value
   };
+  
   const handleBankChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
 
@@ -529,16 +531,7 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
         netAmount: parseFloat(netAmount).toFixed(2),
         rows: rows.map((row) => ({ ...row })) // Map rows array
       };
-      // if (selectedBank && selectedBank.length > 0) {
-      //   selectedBank.forEach((selectedBank, index) => {
-      //     Object.keys(selectedBank).forEach((key) => {
-      //       submissionData.append(
-      //         `selectedBank[${index}][${key}]`,
-      //         selectedBank[key],
-      //       )
-      //     })
-      //   })
-      // }
+
       console.log(submissionData.selectedBank,"rahul")
       const response = await axios.put(
         `/api/v1/purchesOrderRoute/updatepurchesorder/${estimate._id}`,

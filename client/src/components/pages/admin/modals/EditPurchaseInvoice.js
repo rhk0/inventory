@@ -207,6 +207,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
       setGstType("IGST");
     }
   };
+
+  
   const handleCashPayment = (value) => {
     console.log(value, " dheeru cash");
     setSelectedCash(value);
@@ -220,6 +222,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
     console.log(SupplierName, "rhhhhh");
     // Update formData with the cash value
   };
+
   const handleBanksChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
 

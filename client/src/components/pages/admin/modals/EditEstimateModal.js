@@ -112,11 +112,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     setCash(value);
     setGstType("CGST/SGST");
 
-    // Update formData with the cash value
-    // setFormData((prev) => ({
-    //   ...prev,
-    //   cash: value,
-    // }));
+
     setCash(value);
     setCustomerName("");
     setPlaceOfSupply("");
