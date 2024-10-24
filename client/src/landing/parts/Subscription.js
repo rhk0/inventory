@@ -16,7 +16,7 @@ const Subscription = () => {
   const fetchPlans = async () => {
     try {
       const response = await axios.get('/api/v1/subscription/all');
-      setPlans(response.data.plan);
+      setPlans(response?.data?.plan);
       
     } catch (error) {
       console.error('Error fetching plans:', error);
@@ -52,7 +52,7 @@ const Subscription = () => {
           {/* Subscription Plans Section */}
           <Box mt={2}>
             <Grid container spacing={2}>
-              {plans.map((plan) => (
+              {plans?.map((plan) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={plan._id}>
                   <Card variant="outlined" sx={{ mb: 2, pt: 0.2,  borderTopLeftRadius: 50, borderBottomRightRadius: 50 }}>
                     <CardContent align="center">
