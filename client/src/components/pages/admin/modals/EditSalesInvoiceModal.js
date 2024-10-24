@@ -198,7 +198,6 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
   
   const handleCashPayment = (value) => {
-    console.log(value) // Log the selected cash value
     setGstType('CGST/SGST')
 
     // Clear customer-related fields

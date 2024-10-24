@@ -99,6 +99,7 @@ const ManagePurchaseReturn = () => {
   const closeModal = () => {
     setEditModalOpen(false)
     setViewModalOpen(false)
+    fetchEstimate()
   }
 
   const filteredEstimates = salesEstimates?.filter((estimate) => {
@@ -177,7 +178,7 @@ const ManagePurchaseReturn = () => {
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.supplierName ||
                         estimate?.cash ||
-                        estimate.selectedBank[0]?.name }
+                        estimate.selectedBank[0]?.name}
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">

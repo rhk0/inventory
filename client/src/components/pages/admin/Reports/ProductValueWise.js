@@ -14,7 +14,6 @@ const ProductValueWise = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 
-  // Fetch Product data from the API
   const fetchProduct = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
@@ -37,7 +36,6 @@ const ProductValueWise = () => {
     }
   }, [auth, userId])
 
-  // Handle product selection
   const handleProductSelect = (selectedOption) => {
     const product = products.find((p) => p.productName === selectedOption.value)
     setSelectedProduct(product)
@@ -65,12 +63,12 @@ const ProductValueWise = () => {
     }
   }
 
-  // Filter sales invoices based on date range and selected product
   const getFilteredSalesInvoices = () => {
-    return salesInvoice.filter((invoice) => {
+    return salesInvoice?.filter((invoice) => {
       const invoiceDate = new Date(invoice.date)
       const start = new Date(startDate)
       const end = new Date(endDate)
+
       return (
         invoice.rows.some(
           (item) => item.productName === selectedProduct?.productName,
@@ -81,7 +79,6 @@ const ProductValueWise = () => {
     })
   }
 
-  // Filter purchase invoices based on date range and selected product
   const getFilteredPurchaseInvoices = () => {
     return purchaseInvoice.filter((invoice) => {
       const invoiceDate = new Date(invoice.date)
@@ -97,51 +94,16 @@ const ProductValueWise = () => {
     })
   }
 
-  // Calculate totals for sales invoices (Inward Qty & Value)
-  const calculateSalesTotals = () => {
-    const filteredInvoices = getFilteredSalesInvoices()
-    let inwardQty = 0
-    let inwardValue = 0
-
-    filteredInvoices.forEach((invoice) => {
-      invoice.rows.forEach((item) => {
-        if (item.productName === selectedProduct?.productName) {
-          inwardQty += item.qty
-          inwardValue += item.totalValue
-        }
-      })
-    })
-
-    return { inwardQty, inwardValue }
-  }
-
-  // Calculate totals for purchase invoices (Outward Qty & Value)
-  const calculatePurchaseTotals = () => {
-    const filteredInvoices = getFilteredPurchaseInvoices()
-    let outwardQty = 0
-    let outwardValue = 0
-
-    filteredInvoices.forEach((invoice) => {
-      invoice.rows.forEach((item) => {
-        if (item.productName === selectedProduct?.productName) {
-          outwardQty += Number(item.qty)
-          outwardValue += Number(item.totalValue)
-        }
-      })
-    })
-
-    return { outwardQty, outwardValue }
-  }
-
-  const { inwardQty, inwardValue } = calculateSalesTotals()
-  const { outwardQty, outwardValue } = calculatePurchaseTotals()
-
   const printReport = () => {
     window.print()
   }
 
   return (
     <div className="min-h-screen shadow-md bg-gray-100 p-5 responsive-container">
+      <h1 className="text-3xl font-bold text-center mb-10">
+        𝙿𝚛𝚘𝚍𝚞𝚌𝚝 𝚅𝚊𝚕𝚞𝚎 𝚆𝚒𝚜𝚎 𝚁𝚎𝚙𝚘𝚛𝚝
+      </h1>
+
       <style>
         {`
              @media print {
@@ -182,10 +144,6 @@ const ProductValueWise = () => {
         `}
       </style>
 
-      <h1 className="text-3xl font-bold text-center mb-10">
-        𝙿𝚛𝚘𝚍𝚞𝚌𝚝 𝚅𝚊𝚕𝚞𝚎 𝚆𝚒𝚜𝚎 𝚁𝚎𝚙𝚘𝚛𝚝
-      </h1>
-
       <div className="bg-white shadow-md rounded-lg p-10">
         <div className="shadow-md p-5 rounded-lg">
           <div className="p-1 rounded-lg flex gap-3">
@@ -219,13 +177,49 @@ const ProductValueWise = () => {
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
+            <div className="mb-4 w-1/4">
+              <label className="block text-sm font-medium text-gray-600 mb-2">
+                Product Name
+              </label>
+              <Select
+                id="product-select"
+                value={
+                  selectedProduct
+                    ? {
+                        label: selectedProduct.productName,
+                        value: selectedProduct.productName,
+                      }
+                    : null
+                }
+                onChange={handleProductSelect}
+                options={products.map((product) => ({
+                  label: product.productName,
+                  value: product.productName,
+                }))}
+                isSearchable={true}
+                placeholder="Select a Product"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    minWidth: '200px',
+                    maxWidth: '500px',
+                    fontSize: '14px',
+                    minHeight: '34px',
+                    height: '34px',
+                  }),
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                }}
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
+              />
+            </div>
           </div>
 
           <table className="min-w-full shadow-md table-auto">
             <thead>
               <tr>
                 <th className="py-2">S.No.</th>
-                <th className="px-4 py-2">Product Name</th>
+                <th className="px-4 py-2">Date</th>
                 <th className="border p-1">
                   Opening
                   <div className="flex justify-between">
@@ -256,39 +250,12 @@ const ProductValueWise = () => {
               <tr className="text-center">
                 <td className="border py-2">1</td>
                 <td className="border">
-                  <Select
-                    id="product-select"
-                    value={
-                      selectedProduct
-                        ? {
-                            label: selectedProduct.productName,
-                            value: selectedProduct.productName,
-                          }
-                        : null
-                    }
-                    onChange={handleProductSelect}
-                    options={products.map((product) => ({
-                      label: product.productName,
-                      value: product.productName,
-                    }))}
-                    isSearchable={true}
-                    placeholder="Select a Product"
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        minWidth: '200px',
-                        maxWidth: '500px',
-                        fontSize: '14px',
-                        minHeight: '34px',
-                        height: '34px',
-                      }),
-                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                    }}
-                    menuPortalTarget={document.body}
-                    menuPosition="fixed"
+                  <input
+                    type="text"
+                    readOnly
+                    className="w-full flex-grow border border-black rounded-md"
                   />
                 </td>
-                {/* Opening Qty & Value */}
                 <td className="border px-4 py-2">
                   <div className="p-1 flex gap-1">
                     <input
@@ -305,58 +272,181 @@ const ProductValueWise = () => {
                     />
                   </div>
                 </td>
-                {/* Inward Qty & Value */}
                 <td className="border px-4 py-2">
                   <div className="p-1 flex gap-1">
                     <input
                       type="text"
-                      value={outwardQty || ''}
                       readOnly
                       className="w-full flex-grow border border-black rounded-md"
                     />
                     <input
                       type="text"
-                      value={outwardValue || ''}
                       readOnly
                       className="w-full flex-grow border border-black rounded-md"
                     />
                   </div>
                 </td>
-                {/* Outward Qty & Value */}
                 <td className="border px-4 py-2">
                   <div className="p-1 flex gap-1">
                     <input
                       type="text"
-                      value={inwardQty || ''}
                       readOnly
                       className="w-full flex-grow border border-black rounded-md"
                     />
                     <input
                       type="text"
-                      value={inwardValue || ''}
                       readOnly
                       className="w-full flex-grow border border-black rounded-md"
                     />
                   </div>
                 </td>
-                {/* Closing Qty & Value */}
                 <td className="border px-4 py-2">
                   <div className="p-1 flex gap-1">
                     <input
                       type="text"
-                      value={selectedProduct?.closingQty || ''}
+                      value={selectedProduct?.quantity || ''}
                       readOnly
                       className="w-full flex-grow border border-black rounded-md"
                     />
                     <input
                       type="text"
-                      value={selectedProduct?.closingValue || ''}
+                      value={selectedProduct?.amount || ''}
                       readOnly
                       className="w-full flex-grow border border-black rounded-md"
                     />
                   </div>
                 </td>
               </tr>
+              {getFilteredSalesInvoices()?.map((invoice, index) => (
+                <tr key={`sales-${index}`} className="text-center">
+                  <td className="border py-2">{index + 1}</td>
+                  <td className="border px-4 py-2">{invoice.date}</td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={invoice.rows[0].qty || ''}
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        value={invoice?.netAmount || ''}
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {/* Purchase Invoices */}
+              {getFilteredPurchaseInvoices()?.map((invoice, index) => (
+                <tr key={`sales-${index}`} className="text-center">
+                  <td className="border py-2">{index + 1}</td>
+                  <td className="border px-4 py-2">{invoice.date}</td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={invoice.rows[0].qty || ''}
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        value={invoice.netAmount || ''}
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
           <div className="mt-4 flex space-x-2">

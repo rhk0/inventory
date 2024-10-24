@@ -549,6 +549,57 @@ export const deletePurchaseInvoiceByIdController = async (req, res) => {
 //   }
 // }
 
+// export const updatePurchaseInvoiceByIdController = async (req, res) => {
+//   upload(req, res, async (err) => {
+//     if (err) {
+//       return res.status(400).json({ message: err })
+//     }
+//     try {
+//       const { _id } = req.params
+//       const updateData = req.body
+
+//       const purchaseReturn = await purchesInvoiceModel.findById(_id)
+//       if (!purchaseReturn) {
+//         return res.status(404).json({
+//           success: false,
+//           message: 'Purchase return not found',
+//         })
+//       }
+
+//       // Parse the rows array if it's sent as a string
+//       if (typeof updateData.rows === 'string') {
+//         updateData.rows = JSON.parse(updateData.rows)
+//       }
+
+//       if (updateData.selectedBank === '' || (Array.isArray(updateData.selectedBank) && updateData.selectedBank.length === 0)) {
+//         updateData.selectedBank = []; // This should be an actual empty array
+//     }
+//       // Continue with your update process
+
+//       // Update fields in the purchase return
+//       Object.assign(purchaseReturn, updateData)
+
+//       if (req.file) {
+//         purchaseReturn.documentPath = req.file.path // Update document path if a new file is uploaded
+//       }
+
+//       const updatedReturn = await purchaseReturn.save()
+
+//       res.status(200).json({
+//         success: true,
+//         message: 'Purchase return updated successfully',
+//         updatedReturn,
+//       })
+//     } catch (error) {
+//       console.error('Error updating purchase return:', error)
+//       res.status(500).json({
+//         error: 'Server error',
+//         message: error.message,
+//       })
+//     }
+//   })
+// }
+
 export const updatePurchaseInvoiceByIdController = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
@@ -557,6 +608,8 @@ export const updatePurchaseInvoiceByIdController = async (req, res) => {
     try {
       const { _id } = req.params
       const updateData = req.body
+
+      // Log updateData for debugging
 
       const purchaseReturn = await purchesInvoiceModel.findById(_id)
       if (!purchaseReturn) {
@@ -571,8 +624,21 @@ export const updatePurchaseInvoiceByIdController = async (req, res) => {
         updateData.rows = JSON.parse(updateData.rows)
       }
 
-      if (updateData.selectedBank === '') {
-        updateData.selectedBank = null // Set to null if empty string
+      if (
+        updateData.selectedBank === '' ||
+        (Array.isArray(updateData.selectedBank) &&
+          updateData.selectedBank.length === 0)
+      ) {
+        updateData.selectedBank = []
+      } else if (typeof updateData.selectedBank === 'string') {
+        try {
+          updateData.selectedBank = JSON.parse(updateData.selectedBank)
+        } catch (error) {
+          console.error('Error parsing selectedBank:', error)
+          return res
+            .status(400)
+            .json({ message: 'Invalid format for selectedBank' })
+        }
       }
 
       // Update fields in the purchase return
@@ -586,11 +652,11 @@ export const updatePurchaseInvoiceByIdController = async (req, res) => {
 
       res.status(200).json({
         success: true,
-        message: 'Purchase return updated successfully',
+        message: 'Purchase Invoice updated successfully',
         updatedReturn,
       })
     } catch (error) {
-      console.error('Error updating purchase return:', error)
+      console.error('Error updating purchase invoice:', error)
       res.status(500).json({
         error: 'Server error',
         message: error.message,
