@@ -55,7 +55,7 @@ const ManageSalesReturn = () => {
     setSelectedEstimate(estimate)
     setEditModalOpen(true)
   }
-
+// fbfh
   const handleDelete = async (estimateId) => {
     if (window.confirm('Are you sure you want to delete this sales?')) {
       setLoading(true)
