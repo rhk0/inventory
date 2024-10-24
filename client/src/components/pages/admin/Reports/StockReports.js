@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const StockReports = () => {
-  const [activeReport, setActiveReport] = useState("");
+  const [activeReport, setActiveReport] = useState('')
 
   const handleReportChange = (report) => {
-    setActiveReport(report);
-  };
+    setActiveReport(report)
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-5 responsive-container">
@@ -25,17 +25,17 @@ const StockReports = () => {
           <button
             className={`px-6 py-28 rounded-lg bg-pink-100 hover:bg-pink-500 hover:text-white  shadow-md text-2xl  `}
           >
-           𝙿𝚛𝚘𝚍𝚞𝚌𝚝 𝚅𝚊𝚕𝚞𝚎 𝚆𝚒𝚜𝚎 𝚁𝚎𝚙𝚘𝚛𝚝
+            𝙿𝚛𝚘𝚍𝚞𝚌𝚝 𝚅𝚊𝚕𝚞𝚎 𝚆𝚒𝚜𝚎 𝚁𝚎𝚙𝚘𝚛𝚝
           </button>
         </Link>
-        <Link to="/admin/ManufacturerW">
+        {/* <Link to="/admin/ManufacturerW">
           <button className="px-6 py-28 rounded-lg bg-green-100 hover:bg-green-500 hover:text-white shadow-md text-2xl ">
           𝙼𝚊𝚗𝚞𝚏𝚊𝚌𝚝𝚞𝚛𝚎𝚛 𝚆𝚒𝚜𝚎 𝚁𝚎𝚙𝚘𝚛𝚝
           </button>
-        </Link>
+        </Link> */}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default StockReports;
+export default StockReports

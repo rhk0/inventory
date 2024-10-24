@@ -41,7 +41,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const [supplier, setSupplier] = useState([])
   const [supplierInvoiceNo, setsupplierInvoiceNo] = useState('')
   const [selectedBank, setSelectedBanks] = useState([]) // Array to hold bank data
-  const [selectedcash, setSelectedCash] = useState('')
   const [selectedsupplier, setSelectedsupplier] = useState('')
   const [chooseUser, setChooseUser] = useState([])
   const [company, setCompanyData] = useState([])
@@ -172,7 +171,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
     const value = e.target.value
     setSelectedsupplier(value)
     setSelectedBanks([]) // Clear selected banks
-    setSelectedCash('') // Clear selected cash
+    setCash('') // Clear selected cash
     const selectedSupplierData = supplier.find((cust) => cust._id === value)
     setChooseUser(selectedSupplierData)
 
@@ -191,7 +190,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   }
 
   const handleCashPayment = (value) => {
-    setSelectedCash(value)
+    setCash(value)
     setSelectedsupplier('') // Clear selected supplier
     setSelectedBanks([]) // Clear selected banks
     setSupplierName('') // Clear supplier name
@@ -203,7 +202,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const handleBanksChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId)
     setSelectedBanks(selectedBank)
-    setSelectedCash('') // Clear selected cash
+    setCash('') // Clear selected cash
     setSelectedsupplier('') // Clear selected supplier
     setSupplierName('') // Clear supplier name
     setBillingAddress('') // Clear billing address
@@ -634,36 +633,34 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       })
 
       if (selectedBank) {
-        if (Array.isArray(selectedBank)) {
+        if (Array.isArray(selectedBank) && selectedBank.length > 0) {
           selectedBank.forEach((bank, index) => {
             Object.keys(bank).forEach((key) => {
               // Append each key-value pair of the bank object
               submissionData.append(`selectedBank[${index}][${key}]`, bank[key])
             })
           })
+        } else if (Array.isArray(selectedBank) && selectedBank.length === 0) {
+          submissionData.append('selectedBank', JSON.stringify([]))
         } else {
           Object.keys(selectedBank).forEach((key) => {
             submissionData.append(`selectedBank[${key}]`, selectedBank[key])
           })
         }
-      } else {
-        submissionData.append('selectedBank', '')
       }
 
       if (SupplierName) {
         submissionData.append('supplierName', SupplierName)
       } else {
-        submissionData.append('supplierName', '') // Append empty string if no supplier name is selected
+        submissionData.append('supplierName', '')
       }
 
-      // Append selected cash only if selected
-      if (selectedcash) {
-        submissionData.append('selectedcash', selectedcash)
+      if (cash) {
+        submissionData.append('cash', cash)
       } else {
-        submissionData.append('selectedcash', '') // Append empty string if no cash is selected
+        submissionData.append('cash', '')
       }
 
-      // Append each row individually
       rows.forEach((row, index) => {
         Object.keys(row).forEach((key) => {
           submissionData.append(`rows[${index}][${key}]`, row[key])
@@ -687,8 +684,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
         `/api/v1/purchesReturnRoute/updatepurchasereturn/${estimate._id}`,
         submissionData,
       )
-
-      console.log(response, 'kdsjfk')
 
       if (response.data.success) {
         toast.success('Purchase Return updated successfully')
@@ -1448,7 +1443,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
         </div>
       </div>
       <ToastContainer />
-
     </div>
   )
 }

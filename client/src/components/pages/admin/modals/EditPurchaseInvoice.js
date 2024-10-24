@@ -620,23 +620,21 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
 
       // Append non-file form data to formData
       const transportDetails = estimate.transportDetails || {}
-      console.log(
-        SupplierName,
-        'SupplierName',
-        selectedcash,
-        ' selectedcash',
-        selectedBank,
-        'selected bank',
-      )
+      // console.log(
+      //   SupplierName,
+      //   'SupplierName',
+      //   selectedcash,
+      //   ' selectedcash',
+      //   selectedBank,
+      //   'selected bank',
+      // )
       // Append non-file form data to formData
+
       const fields = {
         date,
-        invoiceNo: InvoiceNo, // Fix: Correct casing
+        invoiceNo: InvoiceNo,
         supplierInvoiceNo,
         customerType,
-        // supplierName: SupplierName, // Fix: Correct casing
-        // selectedcash,
-        // selectedBank,
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -650,45 +648,46 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
         reverseCharge,
         gstType,
         otherChargesDescriptions,
-        narration, // Fix: Use narration directly (no formData)
+        narration,
         grossAmount: parseFloat(grossAmount).toFixed(2),
         GstAmount: parseFloat(GstAmount).toFixed(2),
         otherCharges: parseFloat(otherCharges).toFixed(2),
         netAmount: parseFloat(netAmount).toFixed(2),
       }
-      // Append all fields to formData
 
       if (selectedBank) {
-        if (Array.isArray(selectedBank)) {
+        if (Array.isArray(selectedBank) && selectedBank.length > 0) {
           selectedBank.forEach((bank, index) => {
             Object.keys(bank).forEach((key) => {
               // Append each key-value pair of the bank object
-              submissionData.append(`selectedBank[${index}][${key}]`, bank[key])
-            })
-          })
+              submissionData.append(`selectedBank[${index}][${key}]`, bank[key]);
+            });
+          });
+        } else if (Array.isArray(selectedBank) && selectedBank.length === 0) {
+          // Append an empty array if selectedBank is an empty array
+          submissionData.append('selectedBank', JSON.stringify([])); 
+          console.log(selectedBank,"append ke baad")
         } else {
+          // Handle the case where selectedBank is not an array
           Object.keys(selectedBank).forEach((key) => {
-            submissionData.append(`selectedBank[${key}]`, selectedBank[key])
-          })
+            submissionData.append(`selectedBank[${key}]`, selectedBank[key]);
+          });
         }
-      } else {
-        submissionData.append('selectedBank', [])
       }
+      
 
       if (SupplierName) {
         submissionData.append('supplierName', SupplierName)
       } else {
-        submissionData.append('supplierName', '') // Append empty string if no supplier name is selected
+        submissionData.append('supplierName', '')
       }
 
-      // Append selected cash only if selected
       if (selectedcash) {
         submissionData.append('selectedcash', selectedcash)
       } else {
         submissionData.append('selectedcash', '') // Append empty string if no cash is selected
       }
 
-      // Append each row individually
       rows.forEach((row, index) => {
         Object.keys(row).forEach((key) => {
           submissionData.append(`rows[${index}][${key}]`, row[key])
