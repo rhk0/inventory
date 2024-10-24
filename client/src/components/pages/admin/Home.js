@@ -16,9 +16,51 @@ import {
   FaDollarSign,
   FaCalculator,
 } from "react-icons/fa";
+import axios from "axios";
+import { useAuth } from "../../context/Auth";
 const Home = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef(null);
+  const [auth] = useAuth();
+  const [salesInvoicecount, setInvoiceCount] = useState([]);
+  const [showTotalSalesAmount, setTotalSalesAmount] = useState([]);
+
+  const [userId, setUserId] = useState("");
+  useEffect(() => {
+    if (auth.user.role === 1) {
+      setUserId(auth.user._id);
+    }
+    if (auth.user.role === 0) {
+      setUserId(auth.user.admin);
+    }
+    fetchEstimate();
+  }, [auth, userId]);
+
+  const fetchEstimate = async () => {
+    try {
+      const response = await axios.get(
+        `/api/v1/salesInvoiceRoute/getAllsalesinvoice/${userId}`
+      );
+
+      setTotalSalesAmount(response.data.response);
+      setInvoiceCount(response.data.response.length);
+    } catch (error) {
+      console.log("Error fetching sales estimates.", error);
+    }
+  };
+
+  const totalNetAmount = showTotalSalesAmount?.reduce(
+    (acc, item) => acc + parseFloat(item.netAmount || 0),
+    0
+  );
+  // Sum all quantities from rows in each object
+  const totalQuantity = showTotalSalesAmount?.reduce((acc, item) => {
+    // Sum all quantities in the 'rows' array
+    const rowsQuantity = item?.rows?.reduce((rowAcc, row) => rowAcc + row.qty, 0);
+    return acc + rowsQuantity;
+  }, 0);
+
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (filterRef.current && !filterRef.current.contains(event.target)) {
@@ -36,36 +78,11 @@ const Home = () => {
         <div className="text-3xl mb-3 font-bold text-indigo-700 text-center">
           Dashboard
         </div>
-        {/* <div className="flex justify-start items-center mb-4 space-x-4">
-          <div className="relative inline-block" ref={filterRef}>
-            <button
-              className="bg-blue-500 hover:bg-green-500 text-white py-2 px-4 rounded"
-              onClick={toggleFilter}
-            >
-              Filter
-            </button>
-            {isFilterOpen && (
-              <div className="absolute top-full left-0 mt-2  bg-white border border-gray-200 w-40 rounded shadow-lg">
-                <ul>
-                  {filterOptions.map((option, index) => (
-                    <li
-                      key={index}
-                      className="px-4 py-2 hover:bg-gray-200 text-black cursor-pointer"
-                      onClick={closeFilter}
-                      onMouseDown={handleOptionClick}
-                    >
-                      {option}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div> */}
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4  gap-4">
           <div className="flex  flex-col  hover:scale-95 items-center rounded-md ">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex gap-16 items-center justify-center rounded-md">
-              <span>900</span>
+              <span>{totalNetAmount}</span>
               <FaChartBar size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -74,7 +91,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full  flex items-center justify-center rounded-md">
-              <span>400</span>
+              <span>{salesInvoicecount}</span>
               <FaMoneyBill size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -83,7 +100,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>600</span>
+              <span>{55}</span>
               <FaUsers size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -92,7 +109,7 @@ const Home = () => {
           </div>
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-purple-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
-              <span>1000</span>
+              <span>{totalQuantity}</span>
               <FaShoppingCart size={24} />
             </div>
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
@@ -117,7 +134,7 @@ const Home = () => {
               Total Purchase
             </div>
           </div>
-          <div className="flex flex-col  hover:scale-95 items-center rounded-md">
+          {/* <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
               <span>300</span>
               <FaClipboardList size={24} />
@@ -125,7 +142,7 @@ const Home = () => {
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
               Total Bills
             </div>
-          </div>
+          </div> */}
           <div className="flex flex-col  hover:scale-95 items-center rounded-md">
             <div className="bg-green-400 h-24 text-2xl gap-16 w-full flex items-center justify-center rounded-md">
               <span>550</span>
@@ -197,7 +214,7 @@ const Home = () => {
             <div className="mt-2 text-center text-black text-xl h-10 w-full">
               Closing Stock
             </div>
-          </div> 
+          </div>
         </div>
       </div>
     </main>
@@ -205,5 +222,3 @@ const Home = () => {
 };
 
 export default Home;
-
-

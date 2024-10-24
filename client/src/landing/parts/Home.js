@@ -1,125 +1,115 @@
-import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import landingImg from '../assets/invenoty.png';
-import Typewriter from 'react-typewriter-effect';
-import Carousel from 'react-material-ui-carousel';
+import React, { useState } from "react";
+import { FaClipboardList, FaClock, FaChartLine } from "react-icons/fa";
+import { motion } from "framer-motion";
+import Image3 from "../assets/image3.png";
+import DemoForm from "../DemoForm";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const [showDemoModal, setShowDemoModal] = useState(false); // state for modal
+  const navigate = useNavigate();
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        when: "beforeChildren",
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+  const openDemoModal = () => {
+    setShowDemoModal(true);
+  };
   return (
-    <div style={{ width: '100%', overflowX: 'hidden', }}> {/* Added paddingTop */}
-      {/* Carousel at the top with responsive styles */}
-      <Carousel 
-        autoPlay
-        interval={3000}
-        indicators={false}
-        sx={{ 
-          width: '100%', 
-          paddingTop: '50px',
-          height: { xs: '150px', sm:'200px', md: '90px' }, // Adjust height for different screen sizes
-          backgroundColor: '#f5f5f5',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adding shadow
-          '& .MuiTypography-root': {
-            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, // Adjust text size for different screen sizes
-          }
-        }}
+    <header
+      className="w-full min-h-screen bg-[#C41E3A] gap-y-4 text-white flex items-center"
+      id="home"
+    >
+      <motion.div
+        className="flex flex-col items-center px-4 py-[6rem] mx-auto max-w-7xl sm:px-6 lg:px-8 md:flex-row"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
       >
-        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center', px: 2 }}>
-          Optimize Your Stock and Streamline Operations
-        </Typography>
-        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center', px: 2 }}>
-          Efficiently Manage Inventory and Orders from One Platform
-        </Typography>
-        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center', px: 2 }}>
-          Elevate Your Inventory Management with Advanced Tools
-        </Typography>
-      </Carousel>
-
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: { xs: 'center', md: 'left' },
-          backgroundColor: '#f5f5f5',
-          px: 2,
-          position: 'relative',
-          minHeight: '60vh',
-        }}
-      >
-        <Box
-          sx={{
-            flex: 1,
-            padding: { xs: '1rem', md: '2rem' },
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            position: 'relative',
-            zIndex: 1,
-          }}
+        <motion.div
+          className="flex flex-col gap-5 pr-8 mb-8md:w-1/2 md:mb-0 md:gap-y-8" // Added `pr-8` for right padding
+          variants={itemVariants}
         >
-          <Typography variant="h2" component="h1" gutterBottom className="typewriter-text">
-            <Typewriter
-              textStyle={{
-                fontFamily: 'Oswald, sans-serif',
-                color: '#6a1b9a',
-              }}  
-              cursorColor="#6a1b9a"
-              multiText={[
-                'Inventory Management System',
-                'Stock Control',
-                'Order Tracking',
-                'Warehouse Management'
-              ]}
-              multiTextDelay={1000}
-              typeSpeed={100}
-              multiTextLoop
-              hideCursorAfterText={true}
-            />
-          </Typography>
+          <h1 className="mb-4 text-4xl font-bold md:text-5xl">
+            We make Inventory Tracking easy for you
+          </h1>
+          <ul className="mb-6">
+            <motion.li
+              className="flex items-center mb-2 md:text-lg"
+              variants={itemVariants}
+            >
+              <FaClipboardList className="mr-2" />
+              Real-Time Inventory Tracking and Updates
+            </motion.li>
+            <motion.li
+              className="flex items-center mb-2 md:text-lg"
+              variants={itemVariants}
+            >
+              <FaClock className="mr-2" />
+              Automate Stock Management to Save Time
+            </motion.li>
+            <motion.li
+              className="flex items-center md:text-lg"
+              variants={itemVariants}
+            >
+              <FaChartLine className="mr-2" />
+              Optimize Inventory Levels for Better Cash Flow
+            </motion.li>
+          </ul>
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <motion.button
+              className="px-6 py-3 bg-white text-[#C41E3A] rounded-md font-semibold hover:bg-gray-100 transition duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={openDemoModal}
+            >
+              Schedule a Demo
+            </motion.button>
+            <motion.button
+              className="px-6 py-3 bg-[#FFD700] text-gray-800 rounded-md font-semibold hover:bg-yellow-400 transition duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.1 }}
+              onClick={() => navigate("/registration")}
+            >
+              Start 7-day free trial
+            </motion.button>
+          </div>
+        </motion.div>
 
-          <Button variant="contained" color="primary" size="small" href="#about" sx={{ mt: 2 }}>
-            Learn More
-          </Button>
-        </Box>
-        <Box
-          sx={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: { xs: '1rem', md: '2rem' },
-            position: 'relative',
-            zIndex: 0,
-          }}
-        >
-          <img
-            src={landingImg}
-            alt="Inventory"
-            style={{
-              maxWidth: '100%',
-              height: 'auto', // Ensure image scales proportionally
-              animation: 'rotate 8s linear infinite',
-            }}
+        <motion.div className="md:w-1/2" variants={itemVariants}>
+          <motion.img
+            src={Image3}
+            alt="Inventory Management"
+            className="w-full h-auto"
+            whileHover={{ scale: 1 }}
+            transition={{ duration: 0.3 }}
           />
-        </Box>
-      </Box>
-
-      <style>
-        {`
-          @keyframes rotate {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-          }
-          .typewriter-text {
-            font-family: 'Oswald', sans-serif;
-            font-weight: 700;
-            color: #6a1b9a;
-          }
-        `}
-      </style>
-    </div>
+        </motion.div>
+      </motion.div>
+      {showDemoModal && (
+        <motion.div
+          className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <DemoForm/>
+        </motion.div>
+      )}
+    </header>
   );
 };
 

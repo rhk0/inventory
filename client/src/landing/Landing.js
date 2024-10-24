@@ -6,10 +6,11 @@ import Navbar from './Navbar';
 import Home from './parts/Home';
 import About from './parts/About';
 import Benefits from './parts/Benefits';
-import Client from './parts/Client';
 import Contact from './parts/Contact';
 import Pricing from './parts/Pricing';
 import DemoForm from './DemoForm';
+import Footer from './parts/Footer';
+import Subscription from './parts/Subscription';
 const Section = ({ id, children, aos }) => {
   return (
     <div
@@ -52,12 +53,12 @@ const Landing = () => {
   }, []);
 
   return (
-    <div style={{ width: '100%', overflowX: 'hidden' }}>
+    <div style={{ width: '100%', overflowX: 'hidden', overflowY: 'hidden' }}>
       {/* Pass the scrollToSection function to the Navbar to handle section navigation */}
       <Navbar
         onHomeClick={() => scrollToSection('home')}
         onAboutClick={() => scrollToSection('about')}
-        onClientClick={() => scrollToSection('client')}
+        onClientClick={() => scrollToSection('Subscription')}
         onContactClick={() => scrollToSection('contact')}
         onPricingClick={() => scrollToSection('pricing')}
         onBenefitsClick={() => scrollToSection('benefits')}
@@ -65,31 +66,36 @@ const Landing = () => {
       />
 
       {/* Home Section */}
-      <Section id="home" aos="flip-right">
+      <Section id="home" >
         <Home />
         
+      </Section>
+      <Section id="benefits" aos="">
+        <Benefits />
       </Section>
  
       {/* Other sections */}
       <Section id="about" aos="flip-right">
         <About />
       </Section>
+      <Section id="pricing" aos="flip-right">
+        <Pricing />
+      </Section>
 
-       <Section id="client" aos="flip-right">
-        <Client />
+       <Section id="subscriptions" aos="flip-right">
+        <Subscription />
       </Section>
 
       <Section id="contact" aos="flip-right">
         <Contact />
       </Section>
-
-      <Section id="pricing" aos="flip-right">
-        <Pricing />
+      <Section id="contact" aos="flip-right">
+        <Footer />
       </Section>
 
-      <Section id="benefits" aos="flip-right">
-        <Benefits />
-      </Section>
+    
+
+     
 
       {/* Scroll-to-top button */}
       {showScrollTop && (

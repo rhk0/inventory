@@ -29,6 +29,7 @@ const Login = () => {
         navigate("/superadmin");
       }
     }
+    
     if (dauth?.user?.role === 0) {
       if (dauth.AccessToken) {
         navigate("/staff");

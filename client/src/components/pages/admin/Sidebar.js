@@ -162,11 +162,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       <div className="sidebar-title">
         <div className="flex justify-between items-center gap-5">
           <div className="flex items-center">
+            <Link to="/">
             <img
               src="https://manasvitech.in/assets/manasvilogo-DYhVbJnJ.png"
               alt="Company Logo"
               className="h-8"
             />
+            </Link>
+          
           </div>
         </div>
         <span

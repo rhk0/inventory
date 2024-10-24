@@ -672,7 +672,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
           })
         }
       } else {
-        submissionData.append('selectedBank', '')
+        submissionData.append('selectedBank', [])
       }
 
       if (SupplierName) {

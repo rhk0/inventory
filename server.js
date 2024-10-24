@@ -38,6 +38,7 @@ import purchesOrderRoute from "./routes/purchesOrderRoute.js";
 import purchaseInvoiceRoute from "./routes/purchaseInvoiceRoute.js";
 import purchesReturnRoute from "./routes/purchesReturnRoute.js";
 import PayOutRoute from "./routes/PayOutRoute.js";
+import formEmailRoute from "./routes/formEmailRoute.js";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -116,6 +117,8 @@ app.use("/api/v1/PayOutRoute", PayOutRoute);
 //subscription routes
 
 app.use("/api/v1/subscription", subscriptionRoute);
+
+app.use("/api/v1/formEmailRoute", formEmailRoute);
 
 // app.use("/uploads", express.static("uploads"));
 
