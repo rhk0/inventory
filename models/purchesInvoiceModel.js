@@ -1,25 +1,26 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const purchesInvoiceSchema = new mongoose.Schema(
   {
-    admin :{type:mongoose.Schema.Types.ObjectId,
-      ref:"user",
-      required:true,
+    admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
     },
     purchaseType: { type: String },
     date: { type: String },
     invoiceNo: { type: String },
     supplierInvoiceNo: { type: String },
     supplierName: { type: String },
-    selectedcash:{type:String},
+    selectedcash: { type: String },
     selectedBank: [
       {
-        bankId: { type: mongoose.Schema.Types.ObjectId, ref: "Bank" }, // Reference to the bank
-        name: { type: String },
+        bankId: { type: mongoose.Schema.Types.ObjectId, ref: 'Bank' }, // Reference to the bank
+        name: { type: String }, // e.g. "SBI"
         ifscCode: { type: String },
         accountNumber: { type: String },
         openingBalance: { type: String },
-        drCr: { type: String }, 
+        drCr: { type: String }, // Debit or Credit
       },
     ],
     placeOfSupply: { type: String },
@@ -85,7 +86,7 @@ const purchesInvoiceSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
-);
+  },
+)
 
-export default mongoose.model("purchesInvoice", purchesInvoiceSchema);
+export default mongoose.model('purchesInvoice', purchesInvoiceSchema)

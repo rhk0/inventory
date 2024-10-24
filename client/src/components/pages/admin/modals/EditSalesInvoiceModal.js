@@ -195,6 +195,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   }, [userId]) // Empty dependency array ensures this only runs once, on mount
 
   const [paymentMethod, setPaymentMethod] = useState('')
+
+  
   const handleCashPayment = (value) => {
     console.log(value) // Log the selected cash value
     setGstType('CGST/SGST')

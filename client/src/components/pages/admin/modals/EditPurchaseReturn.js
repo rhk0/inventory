@@ -3,6 +3,8 @@ import axios from 'axios'
 import { FaTimes } from 'react-icons/fa'
 import Select from 'react-select'
 import { useAuth } from '../../../context/Auth.js'
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer, toast } from 'react-toastify'
 
 const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const [documentPath, setdocumentPath] = useState(null)
@@ -35,6 +37,16 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const [gstRatev, setgstRatev] = useState()
   const [selectPurchase, setSelectPurchase] = useState()
   const [viewModal, setViewModal] = useState(false)
+  const [banks, setBanks] = useState([])
+  const [supplier, setSupplier] = useState([])
+  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState('')
+  const [selectedBank, setSelectedBanks] = useState([]) // Array to hold bank data
+  const [selectedcash, setSelectedCash] = useState('')
+  const [selectedsupplier, setSelectedsupplier] = useState('')
+  const [chooseUser, setChooseUser] = useState([])
+  const [company, setCompanyData] = useState([])
+  const [selectedValue, setSelectedValue] = useState('')
+
   const [bank, setBank] = useState([])
   const [cash, setCash] = useState([])
   const [auth] = useAuth()
@@ -45,7 +57,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
   useEffect(() => {
     if (estimate) {
-      setSupplierName(estimate.supplierName || "");
+      setSupplierName(estimate.supplierName || '')
 
       setDate(estimate.date || '')
       setdebitNoteNo(estimate.debitNoteNo || '')
@@ -125,6 +137,78 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
   const openViewModal = (suppliers) => {
     setViewModal(true)
+  }
+
+  const fetchBanks = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
+      setBanks(response.data.data)
+    } catch (error) {
+      console.error('Error fetching Bank data', error)
+    }
+  }
+  const fetchsupplier = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`)
+      setSupplier(response.data.data)
+    } catch (error) {
+      console.error('Error fetching suppliers:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id)
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin)
+      }
+    }
+    fetchsupplier()
+    fetchBanks()
+  }, [auth, userId])
+
+  const handlesupplierChange = (e) => {
+    const value = e.target.value
+    setSelectedsupplier(value)
+    setSelectedBanks([]) // Clear selected banks
+    setSelectedCash('') // Clear selected cash
+    const selectedSupplierData = supplier.find((cust) => cust._id === value)
+    setChooseUser(selectedSupplierData)
+
+    // Set relevant details from selected supplier
+    setSupplierName(selectedSupplierData?.name || '')
+    setBillingAddress(selectedSupplierData?.address || '')
+    setPlaceOfSupply(selectedSupplierData?.state || '')
+
+    // Determine GST type
+    setGstType(
+      selectedSupplierData.state?.trim().toLowerCase() ===
+        company.state?.trim().toLowerCase()
+        ? 'CGST/SGST'
+        : 'IGST',
+    )
+  }
+
+  const handleCashPayment = (value) => {
+    setSelectedCash(value)
+    setSelectedsupplier('') // Clear selected supplier
+    setSelectedBanks([]) // Clear selected banks
+    setSupplierName('') // Clear supplier name
+    setBillingAddress('') // Clear billing address
+    setPlaceOfSupply('') // Clear place of supply
+    setGstType('CGST/SGST')
+  }
+
+  const handleBanksChange = (bankId) => {
+    const selectedBank = banks.find((bank) => bank._id === bankId)
+    setSelectedBanks(selectedBank)
+    setSelectedCash('') // Clear selected cash
+    setSelectedsupplier('') // Clear selected supplier
+    setSupplierName('') // Clear supplier name
+    setBillingAddress('') // Clear billing address
+    setPlaceOfSupply('') // Clear place of supply
+    setGstType('CGST/SGST')
   }
 
   const [paymentMethod, setPaymentMethod] = useState('')
@@ -523,7 +607,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
         debitNoteNo: debitNoteNo, // Fix: Correct casing
         selectPurchase,
         customerType,
-        supplierName: SupplierName, // Fix: Correct casing
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -550,6 +633,36 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
         }
       })
 
+      if (selectedBank) {
+        if (Array.isArray(selectedBank)) {
+          selectedBank.forEach((bank, index) => {
+            Object.keys(bank).forEach((key) => {
+              // Append each key-value pair of the bank object
+              submissionData.append(`selectedBank[${index}][${key}]`, bank[key])
+            })
+          })
+        } else {
+          Object.keys(selectedBank).forEach((key) => {
+            submissionData.append(`selectedBank[${key}]`, selectedBank[key])
+          })
+        }
+      } else {
+        submissionData.append('selectedBank', '')
+      }
+
+      if (SupplierName) {
+        submissionData.append('supplierName', SupplierName)
+      } else {
+        submissionData.append('supplierName', '') // Append empty string if no supplier name is selected
+      }
+
+      // Append selected cash only if selected
+      if (selectedcash) {
+        submissionData.append('selectedcash', selectedcash)
+      } else {
+        submissionData.append('selectedcash', '') // Append empty string if no cash is selected
+      }
+
       // Append each row individually
       rows.forEach((row, index) => {
         Object.keys(row).forEach((key) => {
@@ -572,14 +685,16 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
 
       const response = await axios.put(
         `/api/v1/purchesReturnRoute/updatepurchasereturn/${estimate._id}`,
-        submissionData
-      );
+        submissionData,
+      )
 
       console.log(response, 'kdsjfk')
 
       if (response.data.success) {
-        alert('Estimate updated successfully')
-        // closeModal();
+        toast.success('Purchase Return updated successfully')
+        setTimeout(() => {
+          closeModal()
+        }, 1000)
       } else {
         alert('Failed to update estimate: ' + response.data.message)
       }
@@ -607,13 +722,49 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg::grid-cols-4 gap-4 mb-4">
         <div>
           <label className="font-bold">Supplier Name</label>
-          <input
-            type="text"
-            name="SupplierName"
-            value={SupplierName}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
+          <select
+            className="w-full p-2 border border-gray-300 rounded"
+            value={selectedValue}
+            onChange={(e) => {
+              const selectedValue = e.target.value
+              setSelectedValue(selectedValue) // Update the selected value
+
+              if (selectedValue === 'add-new-supplier') {
+                window.location.href = '/admin/CreateSupplier'
+              } else if (selectedValue === 'add-new-bank') {
+                window.location.href = '/admin/addbank'
+              } else if (selectedValue === 'cash') {
+                handleCashPayment(selectedValue)
+              } else if (selectedValue.startsWith('bank-')) {
+                handleBanksChange(selectedValue.replace('bank-', ''))
+              } else {
+                handlesupplierChange(e)
+              }
+            }}
+          >
+            <optgroup label="Suppliers">
+              {supplier?.map((supplier) => (
+                <option key={supplier._id} value={supplier._id}>
+                  {supplier.name}
+                </option>
+              ))}
+              <option value="add-new-supplier" className="text-blue-500">
+                + Add New Supplier
+              </option>
+            </optgroup>
+
+            <optgroup label="Banks">
+              {Array.isArray(banks) &&
+                banks.map((bank) => (
+                  <option key={bank._id} value={`bank-${bank._id}`}>
+                    {bank.name}
+                  </option>
+                ))}
+              <option value="cash" className="text-green-500">
+                Cash
+              </option>
+            </optgroup>
+          </select>
         </div>
 
         <div>
@@ -1296,6 +1447,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
           </div>
         </div>
       </div>
+      <ToastContainer />
+
     </div>
   )
 }

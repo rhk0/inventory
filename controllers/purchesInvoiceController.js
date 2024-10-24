@@ -550,37 +550,53 @@ export const deletePurchaseInvoiceByIdController = async (req, res) => {
 // }
 
 export const updatePurchaseInvoiceByIdController = async (req, res) => {
-  try {
-    const { _id } = req.params
-    const updateData = req.fields;
-    console.log("asdkjfk",req.fields)
-
-    // Find the existing sales invoice by ID
-    const invoice = await purchesInvoiceModel.findById(_id)
-
-    if (!invoice) {
-      return res
-        .status(404)
-        .send({ success: false, message: 'Sales Invoice not found' })
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: err })
     }
+    try {
+      const { _id } = req.params
+      const updateData = req.body
 
-    // Apply the updates from updateData to the invoice
-    Object.assign(invoice, updateData)
+      const purchaseReturn = await purchesInvoiceModel.findById(_id)
+      if (!purchaseReturn) {
+        return res.status(404).json({
+          success: false,
+          message: 'Purchase return not found',
+        })
+      }
 
-    // Save the updated invoice
-    const updatedInvoice = await invoice.save()
+      // Parse the rows array if it's sent as a string
+      if (typeof updateData.rows === 'string') {
+        updateData.rows = JSON.parse(updateData.rows)
+      }
 
-    return res.status(200).send({
-      success: true,
-      message: 'Sales Invoice updated successfully',
-      updatedInvoice,
-    })
-  } catch (error) {
-    console.log(error)
-    return res
-      .status(500)
-      .send({ success: false, message: 'Internal Server Issue' })
-  }
+      if (updateData.selectedBank === '') {
+        updateData.selectedBank = null // Set to null if empty string
+      }
+
+      // Update fields in the purchase return
+      Object.assign(purchaseReturn, updateData)
+
+      if (req.file) {
+        purchaseReturn.documentPath = req.file.path // Update document path if a new file is uploaded
+      }
+
+      const updatedReturn = await purchaseReturn.save()
+
+      res.status(200).json({
+        success: true,
+        message: 'Purchase return updated successfully',
+        updatedReturn,
+      })
+    } catch (error) {
+      console.error('Error updating purchase return:', error)
+      res.status(500).json({
+        error: 'Server error',
+        message: error.message,
+      })
+    }
+  })
 }
 
 // Get All Purchase Invoices by Supplier Name Controller

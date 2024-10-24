@@ -13,7 +13,7 @@ const CurrentPlan = () => {
   useEffect(() => {
     const fetchCurrentPlan = async () => {
       try {
-        const response = await axios.get('http://localhost:5011/api/v1/subscription/allplan/66e131af8cef5fa88caa7891');
+        const response = await axios.get('/api/v1/subscription/allplan/66e131af8cef5fa88caa7891');
         const latestPlan = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
         setCurrentPlan(latestPlan);
       } catch (error) {

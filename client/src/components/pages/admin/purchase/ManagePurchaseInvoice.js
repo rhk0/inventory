@@ -28,6 +28,7 @@ const ManagePurchaseInvoice = () => {
       const response = await axios.get(
         `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userid}`
       );
+      console.log(response,"adfkj")
       setSalesEstimates(response.data.invoices);
     } catch (error) {
       setError(error.response.data.message);
