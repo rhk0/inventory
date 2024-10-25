@@ -177,8 +177,8 @@ const CustomerWiseReports = () => {
               }
         `}
       </style>
-      <div className="p-1 rounded-lg flex gap-3">
-        <div className="mb-4 w-1/4">
+      <div className="p-1 rounded-lg flex flex-wrap gap-1">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <label
             htmlFor="startdate"
             className="block text-sm font-medium text-gray-600"
@@ -193,7 +193,7 @@ const CustomerWiseReports = () => {
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
-        <div className="mb-4 w-1/4">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <label
             htmlFor="enddate"
             className="block text-sm font-medium text-gray-600"
@@ -208,7 +208,7 @@ const CustomerWiseReports = () => {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
-        <div className="mt-5 w-1/4">
+        <div className="mt-5 mb-4  w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <select
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
             value={searchInvoice}
@@ -223,7 +223,7 @@ const CustomerWiseReports = () => {
           </select>
         </div>
       </div>
-      <div className="mb-4">
+      <div className="mb-4 ml-2">
         <button
           onClick={resetFilters}
           className="bg-red-500 text-white px-4 py-2 rounded-md"

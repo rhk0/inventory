@@ -153,8 +153,8 @@ const DayBook = () => {
   return (
     <div className="p-5 bg-blue-900 text-black responsive-container">
       <h1 className="text-3xl text-center font-bold mb-5">Day Book</h1>
-      <div className="p-1 rounded-lg flex gap-3">
-        <div className="mb-4 w-1/4">
+      <div className="p-1 rounded-lg flex flex-wrap gap-1">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <label
             htmlFor="startdate"
             className="block text-sm font-medium text-gray-600"
@@ -169,7 +169,7 @@ const DayBook = () => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
           />
         </div>
-        <div className="mb-4 w-1/4">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <label
             htmlFor="enddate"
             className="block text-sm font-medium text-gray-600"
@@ -185,7 +185,7 @@ const DayBook = () => {
           />
         </div>
       </div>
-
+      <div className='overflow-x-auto'>
       <table className="table-auto w-full mt-5 border border-black">
         <thead>
           <tr>
@@ -210,6 +210,7 @@ const DayBook = () => {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

@@ -141,8 +141,8 @@ const SupplierLedger = () => {
       style={{ backgroundColor: "#FFFFFF", color: "black", padding: "20px" }}
     >
       <h2 className="text-center text-3xl">Supplier Ledger</h2>
-      <div className="p-1 rounded-lg flex gap-3">
-        <div className="mb-4 w-1/4">
+      <div className="p-1 rounded-lg flex flex-wrap gap-1">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/5">
           <label
             htmlFor="startdate"
             className="block text-sm font-medium text-gray-600"
@@ -157,7 +157,7 @@ const SupplierLedger = () => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
           />
         </div>
-        <div className="mb-4 w-1/4">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/5">
           <label
             htmlFor="enddate"
             className="block text-sm font-medium text-gray-600"
@@ -172,7 +172,7 @@ const SupplierLedger = () => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
           />
         </div>
-        <div className="mt-5 w-1/4">
+        <div className="mt-5 w-full sm:w-1/2 md:w-1/3 lg:w-1/5">
           <select
             className="block w-full border p-3 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
             onChange={handleCustomerSelect}
@@ -186,7 +186,7 @@ const SupplierLedger = () => {
             ))}
           </select>
         </div>
-        <div className="mt-5 w-1/4">
+        <div className="mt-6 w-full sm:w-1/2 md:w-1/3 lg:w-1/5">
           <button
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
             onClick={handleReset}

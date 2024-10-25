@@ -241,8 +241,8 @@ const BankBook = () => {
       style={{ backgroundColor: '#FFFFFF', color: 'black', padding: '20px' }}
     >
       <h2 className="text-center text-3xl">Bank Book</h2>
-      <div className="p-1 rounded-lg flex gap-3">
-        <div className="mb-4 w-1/4">
+      <div className="p-1 rounded-lg flex flex-wrap gap-1">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/5">
           <label
             htmlFor="startdate"
             className="block text-sm font-medium text-gray-600"
@@ -257,7 +257,7 @@ const BankBook = () => {
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
           />
         </div>
-        <div className="mb-4 w-1/4">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/5">
           <label
             htmlFor="enddate"
             className="block text-sm font-medium text-gray-600"
@@ -273,7 +273,7 @@ const BankBook = () => {
           />
         </div>
 
-        <div className="mb-4 w-1/4">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/5">
           <label
             htmlFor="bankSelect"
             className="block text-sm font-medium text-gray-600"
@@ -298,7 +298,7 @@ const BankBook = () => {
           </select>
         </div>
 
-        <div className="mt-5 w-1/4">
+        <div className="mt-6 mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/5">
           <button
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
             onClick={handleReset}
@@ -306,187 +306,196 @@ const BankBook = () => {
             Reset Filters
           </button>
         </div>
+
       </div>
-      <table border="1" style={{ width: '100%', textAlign: 'center' }}>
-        <thead>
-          <tr>
-            <th className="p-2 border border-black">Date</th>
-            <th className="p-2 border border-black">Particular</th>
-            <th className="p-2 border border-black">Voucher Type</th>
-            <th className="p-2 border border-black">Voucher No.</th>
-            <th className="p-2 border border-black">Debit Amount</th>
-            <th className="p-2 border border-black">Credit Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="p-2 border border-black"></td>
-            <td className="p-2">
-              <strong style={{ fontSize: '1em' }}>Opening Balance</strong>
-            </td>
-            <td className="p-2 border border-black"></td>
-            <td className="p-2 border border-black"></td>
-            {selectedBank && (
-              <td>
-                <strong style={{ fontSize: '1em' }}>
-                  {selectedBank.openingBalance}
-                </strong>
+      <div className="overflow-x-auto">
+        <table border="1" style={{ width: '100%', textAlign: 'center' }}>
+          <thead>
+            <tr>
+              <th className="p-2 border border-black">Date</th>
+              <th className="p-2 border border-black">Particular</th>
+              <th className="p-2 border border-black">Voucher Type</th>
+              <th className="p-2 border border-black">Voucher No.</th>
+              <th className="p-2 border border-black">Debit Amount</th>
+              <th className="p-2 border border-black">Credit Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="p-2 border border-black"></td>
+              <td className="p-2">
+                <strong style={{ fontSize: '1em' }}>Opening Balance</strong>
               </td>
+              <td className="p-2 border border-black"></td>
+              <td className="p-2 border border-black"></td>
+              {selectedBank && (
+                <td>
+                  <strong style={{ fontSize: '1em' }}>
+                    {selectedBank.openingBalance}
+                  </strong>
+                </td>
+              )}
+
+              <td className="p-2 border border-black"></td>
+            </tr>
+
+            {filterTransactions(salesInvoice, true)?.map((invoice, index) => {
+              return invoice.selectedBank[0]?.name === selectedBank?.name ? (
+                <tr key={index}>
+                  <td className="p-2 border border-black">{invoice.date}</td>
+                  <td className="p-2 border border-black">To Sales</td>
+                  <td className="p-2 border border-black">Sales</td>
+                  <td className="p-2 border border-black">
+                    {invoice.InvoiceNo}
+                  </td>
+                  <td className="p-2 border border-black">
+                    {invoice.netAmount}
+                  </td>
+                  <td className="p-2 border border-black"></td>
+                </tr>
+              ) : null
+            })}
+
+            {filterTransactions(payIns, false)?.map((payIn, index) => {
+              return payIn.selectBank === selectedBank?.name ? (
+                <tr key={index}>
+                  <td className="p-2 border border-black">{payIn.date}</td>
+                  <td className="p-2 border border-black">
+                    {payIn.selectCustomer}
+                  </td>
+                  <td className="p-2 border border-black">PayIn</td>
+                  <td className="p-2 border border-black">{payIn.receiptNo}</td>
+                  <td className="p-2 border border-black">
+                    {payIn.grandtotal}
+                  </td>
+                  <td className="p-2 border border-black"></td>
+                </tr>
+              ) : null
+            })}
+
+            {filterTransactions(bankTransfer || [], false)?.map(
+              (transfer, index) => {
+                // Assuming transfer has selectBank or fromAccount to match selectedBank
+                return transfer.fromAccount === selectedBank?.name ? (
+                  <tr key={index}>
+                    <td className="p-2 border border-black">
+                      {formatDate(transfer.date)}
+                    </td>
+                    <td className="p-2 border border-black">
+                      To {transfer.toAccount}
+                    </td>
+                    <td className="p-2 border border-black">Contra</td>
+                    <td className="p-2 border border-black">
+                      {transfer.contraNo || 'N/A'}
+                    </td>
+                    <td className="p-2 border border-black"></td>{' '}
+                    {/* Debit will be empty */}
+                    <td className="p-2 border border-black">
+                      {transfer.amount}
+                    </td>{' '}
+                    {/* Show deposit amount in Credit column */}
+                  </tr>
+                ) : null
+              },
             )}
 
-            <td className="p-2 border border-black"></td>
-          </tr>
+            {filterTransactions(cashWithdrawals, false)?.map(
+              (withdrawal, index) => {
+                return withdrawal.fromAccount === selectedBank?.name ? (
+                  <tr key={index}>
+                    <td className="p-2 border border-black">
+                      {formatDate(withdrawal.date)}
+                    </td>{' '}
+                    {/* Format date here */}
+                    <td className="p-2 border border-black">By Cash</td>
+                    <td className="p-2 border border-black">Contra</td>
+                    <td className="p-2 border border-black">
+                      {withdrawal.contraNo || 'N/A'}
+                    </td>
+                    <td className="p-2 border border-black"></td>
+                    <td className="p-2 border border-black">
+                      {withdrawal.amount}
+                    </td>
+                  </tr>
+                ) : null
+              },
+            )}
 
-          {filterTransactions(salesInvoice, true)?.map((invoice, index) => {
-            return invoice.selectedBank[0]?.name === selectedBank?.name ? (
-              <tr key={index}>
-                <td className="p-2 border border-black">{invoice.date}</td>
-                <td className="p-2 border border-black">To Sales</td>
-                <td className="p-2 border border-black">Sales</td>
-                <td className="p-2 border border-black">{invoice.InvoiceNo}</td>
-                <td className="p-2 border border-black">{invoice.netAmount}</td>
-                <td className="p-2 border border-black"></td>
-              </tr>
-            ) : null
-          })}
-
-          {filterTransactions(payIns, false)?.map((payIn, index) => {
-            return payIn.selectBank === selectedBank?.name ? (
-              <tr key={index}>
-                <td className="p-2 border border-black">{payIn.date}</td>
-                <td className="p-2 border border-black">
-                  {payIn.selectCustomer}
-                </td>
-                <td className="p-2 border border-black">PayIn</td>
-                <td className="p-2 border border-black">{payIn.receiptNo}</td>
-                <td className="p-2 border border-black">{payIn.grandtotal}</td>
-                <td className="p-2 border border-black"></td>
-              </tr>
-            ) : null
-          })}
-
-          {filterTransactions(bankTransfer || [], false)?.map(
-            (transfer, index) => {
-              // Assuming transfer has selectBank or fromAccount to match selectedBank
-              return transfer.fromAccount === selectedBank?.name ? (
+            {filterTransactions(cashDeposite, false)?.map((deposit, index) => {
+              return deposit.toAccount === selectedBank?.name ? (
                 <tr key={index}>
                   <td className="p-2 border border-black">
-                    {formatDate(transfer.date)}
-                  </td>
-                  <td className="p-2 border border-black">
-                    To {transfer.toAccount}
-                  </td>
+                    {formatDate(deposit.date)}
+                  </td>{' '}
+                  {/* Format date here */}
+                  <td className="p-2 border border-black">To Cash</td>
                   <td className="p-2 border border-black">Contra</td>
                   <td className="p-2 border border-black">
-                    {transfer.contraNo || 'N/A'}
+                    {deposit.contraNo || 'N/A'}
                   </td>
+                  <td className="p-2 border border-black">{deposit.amount}</td>{' '}
                   <td className="p-2 border border-black"></td>{' '}
                   {/* Debit will be empty */}
-                  <td className="p-2 border border-black">
-                    {transfer.amount}
-                  </td>{' '}
                   {/* Show deposit amount in Credit column */}
                 </tr>
               ) : null
-            },
-          )}
+            })}
 
-          {filterTransactions(cashWithdrawals, false)?.map(
-            (withdrawal, index) => {
-              return withdrawal.fromAccount === selectedBank?.name ? (
+            {filterTransactions(PayOut, false)?.map((payout, index) => {
+              return payout.selectBank === selectedBank?.name ? (
                 <tr key={index}>
                   <td className="p-2 border border-black">
-                    {formatDate(withdrawal.date)}
+                    {formatDate(payout.date)}
                   </td>{' '}
-                  {/* Format date here */}
-                  <td className="p-2 border border-black">By Cash</td>
-                  <td className="p-2 border border-black">Contra</td>
+                  {/* Format date */}
                   <td className="p-2 border border-black">
-                    {withdrawal.contraNo || 'N/A'}
-                  </td>
-                  <td className="p-2 border border-black"></td>
+                    {payout.supplierName}
+                  </td>{' '}
+                  {/* Supplier name */}
+                  <td className="p-2 border border-black">PayOut</td>{' '}
+                  {/* Voucher Type */}
                   <td className="p-2 border border-black">
-                    {withdrawal.amount}
-                  </td>
+                    {payout.paymentNo || 'N/A'}
+                  </td>{' '}
+                  {/* Voucher No */}
+                  <td className="p-2 border border-black"></td>{' '}
+                  {/* Debit will be empty */}
+                  <td className="p-2 border border-black">
+                    {payout.grandtotal}
+                  </td>{' '}
+                  {/* Credit side */}
                 </tr>
               ) : null
-            },
-          )}
+            })}
 
-          {filterTransactions(cashDeposite, false)?.map((deposit, index) => {
-            return deposit.toAccount === selectedBank?.name ? (
-              <tr key={index}>
-                <td className="p-2 border border-black">
-                  {formatDate(deposit.date)}
-                </td>{' '}
-                {/* Format date here */}
-                <td className="p-2 border border-black">To Cash</td>
-                <td className="p-2 border border-black">Contra</td>
-                <td className="p-2 border border-black">
-                  {deposit.contraNo || 'N/A'}
-                </td>
-                <td className="p-2 border border-black">{deposit.amount}</td>{' '}
-                <td className="p-2 border border-black"></td>{' '}
-                {/* Debit will be empty */}
-                {/* Show deposit amount in Credit column */}
-              </tr>
-            ) : null
-          })}
-
-          {filterTransactions(PayOut, false)?.map((payout, index) => {
-            return payout.selectBank === selectedBank?.name ? (
-              <tr key={index}>
-                <td className="p-2 border border-black">
-                  {formatDate(payout.date)}
-                </td>{' '}
-                {/* Format date */}
-                <td className="p-2 border border-black">
-                  {payout.supplierName}
-                </td>{' '}
-                {/* Supplier name */}
-                <td className="p-2 border border-black">PayOut</td>{' '}
-                {/* Voucher Type */}
-                <td className="p-2 border border-black">
-                  {payout.paymentNo || 'N/A'}
-                </td>{' '}
-                {/* Voucher No */}
-                <td className="p-2 border border-black"></td>{' '}
-                {/* Debit will be empty */}
-                <td className="p-2 border border-black">
-                  {payout.grandtotal}
-                </td>{' '}
-                {/* Credit side */}
-              </tr>
-            ) : null
-          })}
-
-          <tr className="border border-black">
-            <td></td>
-            <td>
-              <strong style={{ fontSize: '1em' }}>Closing Balance</strong>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td className="p-2 ">
-              <strong style={{ fontSize: '1em' }}>
-                {closingBalance.toFixed(2)}
-              </strong>
-            </td>
-          </tr>
-          <tr className="border border-black">
-            <td colSpan="4">
-              <strong style={{ fontSize: '1.2em' }}>TOTAL</strong>
-            </td>
-            <td>
-              <strong style={{ fontSize: '1.2em' }}>{totalDebit}</strong>
-            </td>
-            <td>
-              <strong style={{ fontSize: '1.2em' }}>{totalCredit}</strong>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <tr className="border border-black">
+              <td></td>
+              <td>
+                <strong style={{ fontSize: '1em' }}>Closing Balance</strong>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td className="p-2 ">
+                <strong style={{ fontSize: '1em' }}>
+                  {closingBalance.toFixed(2)}
+                </strong>
+              </td>
+            </tr>
+            <tr className="border border-black">
+              <td colSpan="4">
+                <strong style={{ fontSize: '1.2em' }}>TOTAL</strong>
+              </td>
+              <td>
+                <strong style={{ fontSize: '1.2em' }}>{totalDebit}</strong>
+              </td>
+              <td>
+                <strong style={{ fontSize: '1.2em' }}>{totalCredit}</strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

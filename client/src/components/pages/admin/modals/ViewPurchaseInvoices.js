@@ -145,14 +145,8 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
     }
 
     console.log(documentPath, 'Document path for download')
-    const ff = 'documentPath-1728112826730.pdf'
-    // const fileUrl = documentPath ? documentPath : `/${documentPath}`;
-    //     const fileUrl = "/uploads/documentPath-1728112826730.pdf";
 
-    //  const fileUrl = `http://localhost:5011/uploads/${documentPath}`;
-
-    const link = document.createElement('a')
-    const fileUrl = `/${documentPath}`
+    const fileUrl = `/uploads/${documentPath}`
 
     try {
       const response = await fetch(fileUrl)
@@ -164,10 +158,13 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
       const blob = await response.blob()
       const blobUrl = window.URL.createObjectURL(blob)
 
+      // Detect file type from blob MIME type
+      const fileExtension = blob.type.split('/')[1] // e.g., 'pdf', 'jpeg', 'png'
+      const fileName = `document.${fileExtension}`
+
       const link = document.createElement('a')
       link.href = blobUrl
-
-      link.download = 'document.pdf'
+      link.download = fileName
 
       document.body.appendChild(link)
       link.click()

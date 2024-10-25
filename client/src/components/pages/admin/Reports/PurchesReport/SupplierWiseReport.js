@@ -1,133 +1,133 @@
-import React, { useState, useEffect } from "react";
-import Modal from "react-modal";
+import React, { useState, useEffect } from 'react'
+import Modal from 'react-modal'
 
-import axios from "axios";
-import { FaEye, FaPrint } from "react-icons/fa";
-import ViewPurchaseInvoices from "../../modals//ViewPurchaseInvoices";
-import { useAuth } from "../../../../context/Auth";
+import axios from 'axios'
+import { FaEye, FaPrint } from 'react-icons/fa'
+import ViewPurchaseInvoices from '../../modals//ViewPurchaseInvoices'
+import { useAuth } from '../../../../context/Auth'
 
 const SupplierWiseReports = () => {
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [invoice, setInvoice] = useState([]);
-  const [filteredInvoices, setFilteredInvoices] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [selectedSupplier, setSelectedSupplier] = useState("");
-  const [totalValue, setTotalValue] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
-  const [customerNames, setCustomerNames] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [auth] = useAuth();
-  const [userId, setUserId] = useState("");
+  const [viewModalOpen, setViewModalOpen] = useState(false)
+  const [invoice, setInvoice] = useState([])
+  const [filteredInvoices, setFilteredInvoices] = useState([])
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [selectedSupplier, setSelectedSupplier] = useState('')
+  const [totalValue, setTotalValue] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const [customerNames, setCustomerNames] = useState([])
+  const [customers, setCustomers] = useState([])
+  const [auth] = useAuth()
+  const [userId, setUserId] = useState('')
 
   const fetchEstimate = async () => {
     try {
       const response = await axios.get(
-        `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userId}`
-      );
-      const allInvoices = response.data.invoices;
-      setInvoice(allInvoices);
-      setFilteredInvoices(allInvoices);
+        `/api/v1/purchaseInvoiceRoute/getAllpurchaseinvoice/${userId}`,
+      )
+      const allInvoices = response.data.invoices
+      setInvoice(allInvoices)
+      setFilteredInvoices(allInvoices)
 
       // Extract unique customer names
       const uniqueCustomers = [
         ...new Set(allInvoices.map((inv) => inv.supplierName)),
-      ];
-      setCustomerNames(uniqueCustomers); // Set the customer names for dropdown
+      ]
+      setCustomerNames(uniqueCustomers) // Set the customer names for dropdown
 
       // Calculate total value and total count for the initial data load
       const initialTotalValue = allInvoices?.reduce(
         (sum, inv) => sum + parseFloat(inv.netAmount),
-        0
-      );
-      setTotalValue(initialTotalValue);
-      setTotalCount(allInvoices.length);
+        0,
+      )
+      setTotalValue(initialTotalValue)
+      setTotalCount(allInvoices.length)
     } catch (error) {
-      console.log("Error fetching sales estimates.");
+      console.log('Error fetching sales estimates.')
     }
-  };
+  }
 
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id);
+      setUserId(auth.user._id)
     }
     if (auth.user.role === 0) {
-      setUserId(auth.user.admin);
+      setUserId(auth.user.admin)
     }
-    fetchCustomers();
-    fetchEstimate();
-  }, [auth, userId]);
+    fetchCustomers()
+    fetchEstimate()
+  }, [auth, userId])
 
   const handleView = (inv) => {
-    setInvoice(inv); // Set the specific invoice being clicked
-    setViewModalOpen(true); // Open the modal
-  };
+    setInvoice(inv) // Set the specific invoice being clicked
+    setViewModalOpen(true) // Open the modal
+  }
 
   // Function to filter invoices based on date range and selected supplier
   const filterInvoices = () => {
-    let filteredData = invoice;
+    let filteredData = invoice
 
     // Filter by date range if both startDate and endDate are provided
     if (startDate && endDate) {
       filteredData = filteredData?.filter((inv) => {
-        const invoiceDate = new Date(inv.date);
+        const invoiceDate = new Date(inv.date)
         return (
           invoiceDate >= new Date(startDate) && invoiceDate <= new Date(endDate)
-        );
-      });
+        )
+      })
     }
 
     // Filter by supplier name if selectedSupplier is provided
     if (selectedSupplier) {
       filteredData = filteredData?.filter(
-        (inv) => inv.supplierName === selectedSupplier
-      );
+        (inv) => inv.supplierName === selectedSupplier,
+      )
     }
 
-    setFilteredInvoices(filteredData);
+    setFilteredInvoices(filteredData)
 
     // Calculate total value and total count based on filtered data
     const totalVal = filteredData?.reduce(
       (sum, inv) => sum + parseFloat(inv.netAmount),
-      0
-    );
-    setTotalValue(totalVal);
-    setTotalCount(filteredData.length);
-  };
+      0,
+    )
+    setTotalValue(totalVal)
+    setTotalCount(filteredData.length)
+  }
 
   // Use effect to trigger filtering whenever the startDate, endDate, or selectedSupplier changes
   useEffect(() => {
-    filterInvoices();
-  }, [startDate, endDate, selectedSupplier]);
+    filterInvoices()
+  }, [startDate, endDate, selectedSupplier])
 
   const print = () => {
-    window.print();
-  };
+    window.print()
+  }
 
   const closeModal = () => {
-    setViewModalOpen(false);
-  };
+    setViewModalOpen(false)
+  }
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
-      setCustomers(response.data.data);
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`)
+      setCustomers(response.data.data)
     } catch (error) {
-      console.error("Error fetching customers", error);
+      console.error('Error fetching customers', error)
     }
-  };
+  }
 
   const resetFilters = () => {
-    setStartDate("");
-    setEndDate("");
-    setSelectedSupplier("");
+    setStartDate('')
+    setEndDate('')
+    setSelectedSupplier('')
 
-    setFilteredInvoices(invoice);
+    setFilteredInvoices(invoice)
     setTotalValue(
-      invoice.reduce((sum, inv) => sum + parseFloat(inv.netAmount), 0)
-    );
-    setTotalCount(invoice.length);
-  };
+      invoice.reduce((sum, inv) => sum + parseFloat(inv.netAmount), 0),
+    )
+    setTotalCount(invoice.length)
+  }
 
   return (
     <div className="p-5 rounded-lg responsive-container">
@@ -173,8 +173,8 @@ const SupplierWiseReports = () => {
               }
         `}
       </style>
-      <div className="p-1 rounded-lg flex gap-3">
-        <div className="mb-4 w-1/4">
+      <div className="p-1 rounded-lg flex flex-wrap gap-1">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <label
             htmlFor="startdate"
             className="block text-sm font-medium text-gray-600"
@@ -189,7 +189,7 @@ const SupplierWiseReports = () => {
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
-        <div className="mb-4 w-1/4">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <label
             htmlFor="enddate"
             className="block text-sm font-medium text-gray-600"
@@ -204,7 +204,7 @@ const SupplierWiseReports = () => {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
-        <div className="mt-5 w-1/4">
+        <div className="mt-5 mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <select
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
             value={selectedSupplier}
@@ -263,7 +263,7 @@ const SupplierWiseReports = () => {
                     className="text-blue-500 flex items-center "
                   >
                     <FaPrint />
-                  </button>{" "}
+                  </button>{' '}
                 </td>
               </tr>
             ))
@@ -276,7 +276,7 @@ const SupplierWiseReports = () => {
           )}
 
           <tr className="border px-4 py-2">
-            {" "}
+            {' '}
             <td></td>
             <th colSpan="4" className="border px-4 py-2">
               Total Value:
@@ -293,13 +293,13 @@ const SupplierWiseReports = () => {
         contentLabel="View Estimate Modal"
         style={{
           content: {
-            width: "90%",
-            height: "100%",
-            maxWidth: "1400px",
-            margin: "auto",
-            padding: "5px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "5px",
+            width: '90%',
+            height: '100%',
+            maxWidth: '1400px',
+            margin: 'auto',
+            padding: '5px',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '5px',
           },
         }}
       >
@@ -310,7 +310,7 @@ const SupplierWiseReports = () => {
         />
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default SupplierWiseReports;
+export default SupplierWiseReports

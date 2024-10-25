@@ -170,8 +170,8 @@ const InvoicewiseSales = () => {
       <h2 className="text-3xl font-semibold mb-4 text-center">
         Invoice Wise Sales Report
       </h2>
-      <div className="p-1 rounded-lg flex gap-3">
-        <div className="mb-4 w-1/4">
+      <div className="p-1 rounded-lg flex flex-wrap gap-1">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <label
             htmlFor="startdate"
             className="block text-sm font-medium text-gray-600"
@@ -186,7 +186,7 @@ const InvoicewiseSales = () => {
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
-        <div className="mb-4 w-1/4">
+        <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
           <label
             htmlFor="enddate"
             className="block text-sm font-medium text-gray-600"
