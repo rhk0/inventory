@@ -5,3 +5,5 @@
 // EMAIL_USER = manasvistaff.dharma@gmail.com
 // EMAIL_PASS = pbqu tgfp ojyu uzcv
 
+// RAZORPAY_KEY_ID = rzp_live_BU7B9FdceljAOe
+// RAZORPAY_SECRET = 0ntpgNsX8d6T62sNo5Oujcvq

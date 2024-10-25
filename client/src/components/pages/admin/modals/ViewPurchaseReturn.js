@@ -8,13 +8,11 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
   const [date, setDate] = useState('')
   const [debitNoteNo, setdebitNoteNo] = useState('')
   const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState('')
-
   const [customerType, setCustomerType] = useState('')
   const [supplierName, setsupplierName] = useState('')
   const [placeOfSupply, setPlaceOfSupply] = useState('')
   const [paymentTerm, setPaymentTerm] = useState('')
   const [dueDate, setDueDate] = useState('')
-
   const [billingAddress, setBillingAddress] = useState('')
   const [selectPurchase, setselectPurchase] = useState('')
   const [gstType, setGstType] = useState('')
@@ -113,7 +111,7 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value)
-    setSubPaymentType('') // Resetting subPaymentType when payment method changes
+    setSubPaymentType('')
   }
 
   const handleSubPaymentTypeChange = (e) => {
@@ -209,30 +207,6 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
             className="border p-2 w-full rounded"
           />
         </div>
-
-        {/* <div>
-          <label className="font-bold">
-            Payment Term (days):
-            <input
-              type="number"
-              value={paymentTerm}
-              disabled
-              className="border p-2 w-full rounded"
-            />
-          </label>
-        </div>
-
-        <div>
-          <label className="font-bold">
-            Due Date
-            <input
-              type="text"
-              value={dueDate}
-              disabled
-              className="border p-2 w-full text-black rounded"
-            />
-          </label>
-        </div> */}
 
         <div className="mb-4">
           <label className="font-bold">Billing Address</label>
