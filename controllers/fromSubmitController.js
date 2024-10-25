@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
-import submitFormModel from '../models/submitFormModel.js'; // Ensure this is your correct model path
-
+import submitFormModel from '../models/submitFormModel.js'; 
 export const formSubmitController = async (req, res) => {
   try {
     const { name, email, message } = req.body;
@@ -24,7 +23,7 @@ export const formSubmitController = async (req, res) => {
       from: email, // Sender's email address
       to: 'prajapatidheerendra45@gmail.com', 
       subject: 'Form Submission Received',
-      text: `Hi ${name},\n\nThank you for your message:\n\n"${message}"\n\nWe will get back to you shortly!`, // Email body
+      text: `Hi ${name},\n Email id:${email}\n\nThank you for your message:\n\n"${message}"\n\nWe will get back to you shortly!`, // Email body
     };
     // Send the email
     const info = await transporter.sendMail(mailOptions);

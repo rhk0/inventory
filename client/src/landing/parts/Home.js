@@ -27,6 +27,23 @@ const Home = () => {
   const openDemoModal = () => {
     setShowDemoModal(true);
   };
+  const itemVariants1 = {
+    hidden: { y: '-100vw', opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 30,
+        duration: 3, // 1-second slide-in
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 3 }, // 1-second fade-out
+    },
+  };
   return (
     <header
       className="w-full min-h-screen bg-[#C41E3A] gap-y-4 text-white flex items-center"
@@ -42,9 +59,19 @@ const Home = () => {
           className="flex flex-col gap-5 pr-8 mb-8md:w-1/2 md:mb-0 md:gap-y-8" // Added `pr-8` for right padding
           variants={itemVariants}
         >
-          <h1 className="mb-4 text-4xl font-bold md:text-5xl">
+          <motion.h1
+            className="mb-4 text-4xl font-bold md:text-5xl"
+            initial={{ x: "-100vw", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 100,
+              damping: 60,
+              duration: 5,
+            }}
+          >
             We make Inventory Tracking easy for you
-          </h1>
+          </motion.h1>
           <ul className="mb-6">
             <motion.li
               className="flex items-center mb-2 md:text-lg"
@@ -89,13 +116,20 @@ const Home = () => {
           </div>
         </motion.div>
 
-        <motion.div className="md:w-1/2" variants={itemVariants}>
+        <motion.div
+          className="md:w-1/2"
+          variants={itemVariants1}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          transition={{ delay: 5 }} // Delays exit for 5 seconds
+        >
           <motion.img
             src={Image3}
             alt="Inventory Management"
             className="w-full h-auto"
-            whileHover={{ scale: 1 }}
-            transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.5 }} // Slight scale effect on hover
+            transition={{ duration: 1 }}
           />
         </motion.div>
       </motion.div>
@@ -106,7 +140,7 @@ const Home = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <DemoForm/>
+          <DemoForm />
         </motion.div>
       )}
     </header>
