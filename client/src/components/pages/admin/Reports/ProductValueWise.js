@@ -146,8 +146,10 @@ const ProductValueWise = () => {
 
       <div className="bg-white shadow-md rounded-lg p-10">
         <div className="shadow-md p-5 rounded-lg">
-          <div className="p-1 rounded-lg flex gap-3">
-            <div className="mb-4 w-1/4">
+          <div className="p-1 rounded-lg flex flex-wrap gap-1">
+
+            
+            <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
               <label
                 htmlFor="startdate"
                 className="block text-sm font-medium text-gray-600"
@@ -162,7 +164,8 @@ const ProductValueWise = () => {
                 onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
-            <div className="mb-4 w-1/4">
+
+            <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
               <label
                 htmlFor="enddate"
                 className="block text-sm font-medium text-gray-600"
@@ -177,7 +180,8 @@ const ProductValueWise = () => {
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
-            <div className="mb-4 w-1/4">
+
+            <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Product Name
               </label>
@@ -215,112 +219,64 @@ const ProductValueWise = () => {
             </div>
           </div>
 
-          <table className="min-w-full shadow-md table-auto">
-            <thead>
-              <tr>
-                <th className="py-2">S.No.</th>
-                <th className="px-4 py-2">Date</th>
-                <th className="border p-1">
-                  Opening
-                  <div className="flex justify-between">
-                    <span>Qty</span> <span>Value</span>
-                  </div>
-                </th>
-                <th className="border p-1">
-                  Inward
-                  <div className="flex justify-between">
-                    <span>Qty</span> <span>Value</span>
-                  </div>
-                </th>
-                <th className="border p-1">
-                  Outward
-                  <div className="flex justify-between">
-                    <span>Qty</span> <span>Value</span>
-                  </div>
-                </th>
-                <th className="border p-1">
-                  Closing
-                  <div className="flex justify-between">
-                    <span>Qty</span> <span>Value</span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="text-center">
-                <td className="border py-2">1</td>
-                <td className="border">
-                  <input
-                    type="text"
-                    readOnly
-                    className="w-full flex-grow border border-black rounded-md"
-                  />
-                </td>
-                <td className="border px-4 py-2">
-                  <div className="p-1 flex gap-1">
-                    <input
-                      type="text"
-                      value={selectedProduct?.quantity || ''}
-                      readOnly
-                      className="w-full flex-grow border border-black rounded-md"
-                    />
-                    <input
-                      type="text"
-                      value={selectedProduct?.amount || ''}
-                      readOnly
-                      className="w-full flex-grow border border-black rounded-md"
-                    />
-                  </div>
-                </td>
-                <td className="border px-4 py-2">
-                  <div className="p-1 flex gap-1">
+          <div className="overflow-x-auto">
+            <table className="min-w-full shadow-md table-auto ">
+              <thead>
+                <tr>
+                  <th className="py-2">S.No.</th>
+                  <th className="px-4 py-2">Date</th>
+                  <th className="border p-1">
+                    Opening
+                    <div className="flex justify-between">
+                      <span>Qty</span> <span>Value</span>
+                    </div>
+                  </th>
+                  <th className="border p-1">
+                    Inward
+                    <div className="flex justify-between">
+                      <span>Qty</span> <span>Value</span>
+                    </div>
+                  </th>
+                  <th className="border p-1">
+                    Outward
+                    <div className="flex justify-between">
+                      <span>Qty</span> <span>Value</span>
+                    </div>
+                  </th>
+                  <th className="border p-1">
+                    Closing
+                    <div className="flex justify-between">
+                      <span>Qty</span> <span>Value</span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="text-center">
+                  <td className="border py-2">1</td>
+                  <td className="border">
                     <input
                       type="text"
                       readOnly
                       className="w-full flex-grow border border-black rounded-md"
                     />
-                    <input
-                      type="text"
-                      readOnly
-                      className="w-full flex-grow border border-black rounded-md"
-                    />
-                  </div>
-                </td>
-                <td className="border px-4 py-2">
-                  <div className="p-1 flex gap-1">
-                    <input
-                      type="text"
-                      readOnly
-                      className="w-full flex-grow border border-black rounded-md"
-                    />
-                    <input
-                      type="text"
-                      readOnly
-                      className="w-full flex-grow border border-black rounded-md"
-                    />
-                  </div>
-                </td>
-                <td className="border px-4 py-2">
-                  <div className="p-1 flex gap-1">
-                    <input
-                      type="text"
-                      value={selectedProduct?.quantity || ''}
-                      readOnly
-                      className="w-full flex-grow border border-black rounded-md"
-                    />
-                    <input
-                      type="text"
-                      value={selectedProduct?.amount || ''}
-                      readOnly
-                      className="w-full flex-grow border border-black rounded-md"
-                    />
-                  </div>
-                </td>
-              </tr>
-              {getFilteredSalesInvoices()?.map((invoice, index) => (
-                <tr key={`sales-${index}`} className="text-center">
-                  <td className="border py-2">{index + 1}</td>
-                  <td className="border px-4 py-2">{invoice.date}</td>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <div className="p-1 flex gap-1">
+                      <input
+                        type="text"
+                        value={selectedProduct?.quantity || ''}
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                      <input
+                        type="text"
+                        value={selectedProduct?.amount || ''}
+                        readOnly
+                        className="w-full flex-grow border border-black rounded-md"
+                      />
+                    </div>
+                  </td>
                   <td className="border px-4 py-2">
                     <div className="p-1 flex gap-1">
                       <input
@@ -353,102 +309,153 @@ const ProductValueWise = () => {
                     <div className="p-1 flex gap-1">
                       <input
                         type="text"
-                        value={invoice.rows[0].qty || ''}
+                        value={selectedProduct?.quantity || ''}
                         readOnly
                         className="w-full flex-grow border border-black rounded-md"
                       />
                       <input
                         type="text"
-                        value={invoice?.netAmount || ''}
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                    </div>
-                  </td>
-                  <td className="border px-4 py-2">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                      <input
-                        type="text"
+                        value={selectedProduct?.amount || ''}
                         readOnly
                         className="w-full flex-grow border border-black rounded-md"
                       />
                     </div>
                   </td>
                 </tr>
-              ))}
+                {getFilteredSalesInvoices()?.map((invoice, index) => (
+                  <tr key={`sales-${index}`} className="text-center">
+                    <td className="border py-2">{index + 1}</td>
+                    <td className="border px-4 py-2">{invoice.date}</td>
+                    <td className="border px-4 py-2">
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                      </div>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                      </div>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          value={invoice.rows[0].qty || ''}
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                        <input
+                          type="text"
+                          value={invoice?.netAmount || ''}
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                      </div>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
 
-              {/* Purchase Invoices */}
-              {getFilteredPurchaseInvoices()?.map((invoice, index) => (
-                <tr key={`sales-${index}`} className="text-center">
-                  <td className="border py-2">{index + 1}</td>
-                  <td className="border px-4 py-2">{invoice.date}</td>
-                  <td className="border px-4 py-2">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                      <input
-                        type="text"
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                    </div>
-                  </td>
-                  <td className="border px-4 py-2">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        value={invoice.rows[0].qty || ''}
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                      <input
-                        type="text"
-                        value={invoice.netAmount || ''}
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                    </div>
-                  </td>
-                  <td className="border px-4 py-2">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                      <input
-                        type="text"
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                    </div>
-                  </td>
-                  <td className="border px-4 py-2">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                      <input
-                        type="text"
-                        readOnly
-                        className="w-full flex-grow border border-black rounded-md"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                {/* Purchase Invoices */}
+                {getFilteredPurchaseInvoices()?.map((invoice, index) => (
+                  <tr key={`sales-${index}`} className="text-center">
+                    <td className="border py-2">{index + 1}</td>
+                    <td className="border px-4 py-2">{invoice.date}</td>
+                    <td className="border px-4 py-2">
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                      </div>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          value={invoice.rows[0].qty || ''}
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                        <input
+                          type="text"
+                          value={invoice.netAmount || ''}
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                      </div>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                      </div>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <div className="p-1 flex gap-1">
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                        <input
+                          type="text"
+                          readOnly
+                          className="w-full flex-grow border border-black rounded-md"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
           <div className="mt-4 flex space-x-2">
             <button className="bg-pink-500 text-white px-4 py-2 rounded hide-on-print ">
               Download Report

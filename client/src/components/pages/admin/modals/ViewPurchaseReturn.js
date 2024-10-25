@@ -8,11 +8,13 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
   const [date, setDate] = useState('')
   const [debitNoteNo, setdebitNoteNo] = useState('')
   const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState('')
+
   const [customerType, setCustomerType] = useState('')
   const [supplierName, setsupplierName] = useState('')
   const [placeOfSupply, setPlaceOfSupply] = useState('')
   const [paymentTerm, setPaymentTerm] = useState('')
   const [dueDate, setDueDate] = useState('')
+
   const [billingAddress, setBillingAddress] = useState('')
   const [selectPurchase, setselectPurchase] = useState('')
   const [gstType, setGstType] = useState('')
@@ -111,7 +113,7 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value)
-    setSubPaymentType('')
+    setSubPaymentType('') // Resetting subPaymentType when payment method changes
   }
 
   const handleSubPaymentTypeChange = (e) => {
@@ -120,45 +122,43 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
 
   const handleDownload = async () => {
     if (!documentPath || typeof documentPath !== 'string') {
-      console.error('Invalid document path.')
-      return
+      console.error('Invalid document path.');
+      return;
     }
-
-    console.log(documentPath, 'Document path for download')
-    const ff = 'documentPath-1728112826730.pdf'
-    // const fileUrl = documentPath ? documentPath : `/${documentPath}`;
-    //     const fileUrl = "/uploads/documentPath-1728112826730.pdf";
-
-    //  const fileUrl = `http://localhost:5011/uploads/${documentPath}`;
-
-    const link = document.createElement('a')
-    const fileUrl = `/${documentPath}`
-
+  
+    console.log(documentPath, 'Document path for download');
+  
+    const fileUrl = `/${documentPath}`;
+  
     try {
-      const response = await fetch(fileUrl)
-
+      const response = await fetch(fileUrl);
+  
       if (!response.ok) {
-        throw new Error('Failed to download document')
+        throw new Error('Failed to download document');
       }
-
-      const blob = await response.blob()
-      const blobUrl = window.URL.createObjectURL(blob)
-
-      const link = document.createElement('a')
-      link.href = blobUrl
-
-      link.download = 'document.pdf'
-
-      document.body.appendChild(link)
-      link.click()
-
+  
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+  
+      // Detect file type from blob MIME type
+      const fileExtension = blob.type.split('/')[1]; // e.g., 'pdf', 'jpeg', 'png'
+      const fileName = `document.${fileExtension}`;
+  
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+  
+      document.body.appendChild(link);
+      link.click();
+  
       // Clean up
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(blobUrl)
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
-      console.error('Error while downloading document:', error)
+      console.error('Error while downloading document:', error);
     }
-  }
+  };
+  
 
   return (
     <div
@@ -207,6 +207,30 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
             className="border p-2 w-full rounded"
           />
         </div>
+
+        {/* <div>
+          <label className="font-bold">
+            Payment Term (days):
+            <input
+              type="number"
+              value={paymentTerm}
+              disabled
+              className="border p-2 w-full rounded"
+            />
+          </label>
+        </div>
+
+        <div>
+          <label className="font-bold">
+            Due Date
+            <input
+              type="text"
+              value={dueDate}
+              disabled
+              className="border p-2 w-full text-black rounded"
+            />
+          </label>
+        </div> */}
 
         <div className="mb-4">
           <label className="font-bold">Billing Address</label>

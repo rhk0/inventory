@@ -174,8 +174,8 @@ const ProductQtyWise = () => {
 
       <div className="bg-white shadow-md rounded-lg p-6">
         <div className="p-5  rounded-lg">
-          <div className="p-1 rounded-lg flex gap-3 hide-on-print">
-            <div className="mb-4 w-1/4">
+          <div className=" p-1 rounded-lg flex flex-wrap gap-1 hide-on-print ">
+            <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
               <label
                 htmlFor="startdate"
                 className="block text-sm font-medium text-gray-600"
@@ -188,7 +188,8 @@ const ProductQtyWise = () => {
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200 focus:outline-none"
               />
             </div>
-            <div className="mb-4 w-1/4">
+
+            <div className="mb-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
               <label
                 htmlFor="enddate"
                 className="block text-sm font-medium text-gray-600"
@@ -202,6 +203,7 @@ const ProductQtyWise = () => {
               />
             </div>
           </div>
+
           <div className="overflow-x-auto">
             <table className="min-w-full shadow-md table-auto">
               <thead>
