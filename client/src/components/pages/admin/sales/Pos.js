@@ -38,7 +38,7 @@ const Pos = () => {
         itemCode: "",
         productName: "",
         qty: null,
-        units: null,
+        unit: null,
         mrp: null,
         retailPrice: null,
         totalValue: null,
@@ -124,7 +124,7 @@ const Pos = () => {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
@@ -193,7 +193,7 @@ const Pos = () => {
         itemCode: selectedProduct.itemCode,
         productName: selectedProduct.productName,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
@@ -292,7 +292,7 @@ const Pos = () => {
           itemCode: row.itemCode,
           productName: row.productName,
           qty: row.quantity,
-          units: row.units,
+          units: row.unit,
           retailPrice: row.retailPrice,
           mrp: row.maxmimunRetailPrice,
           taxable: row.taxableValue.toFixed(2),
@@ -486,7 +486,7 @@ const Pos = () => {
               <th className="border ">Product Name</th>
 
               <th className="border p-1">Qty</th>
-              <th className="border p-1">Units</th>
+              <th className="border p-1">unit</th>
               <th className="border p-1">MRP</th>
               <th className="border p-2">Retail Price</th>
               <th className="border p-2">Total Value</th>
@@ -583,9 +583,9 @@ const Pos = () => {
                 <td className="border p-1">
                   <input
                     type="text"
-                    value={row.units}
+                    value={row.unit}
                     onChange={(e) =>
-                      handleRowChange(index, "units", e.target.value)
+                      handleRowChange(index, "unit", e.target.value)
                     }
                     className="w-full"
                   />

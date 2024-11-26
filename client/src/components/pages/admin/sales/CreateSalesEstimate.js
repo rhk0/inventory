@@ -145,7 +145,6 @@ const CreateSalesEstimate = () => {
     }
   };
 
-  
   const handleCashPayment = (value) => {
     setCash(value);
     setGstType("CGST/SGST");
@@ -288,7 +287,7 @@ const CreateSalesEstimate = () => {
         productName: "",
         hsnCode: "",
         qty: 0,
-        units: "",
+        unit: "",
         mrp: 0,
         discount: 0,
         taxableValue: 0,
@@ -325,7 +324,6 @@ const CreateSalesEstimate = () => {
   useEffect(() => {
     fetchProducts();
   }, [auth, userId]);
-
 
   const calculateTotals = () => {
     let grossAmount = 0;
@@ -453,7 +451,7 @@ const CreateSalesEstimate = () => {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
@@ -523,7 +521,7 @@ const CreateSalesEstimate = () => {
         itemCode: selectedProduct.itemCode,
         productName: selectedProduct.productName,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
@@ -579,7 +577,6 @@ const CreateSalesEstimate = () => {
     e.preventDefault();
 
     try {
-
       const updatedFormData = {
         ...formData,
         rows: rows?.map((row) => ({
@@ -587,7 +584,7 @@ const CreateSalesEstimate = () => {
           productName: row.productName,
           hsnCode: row.hsnCode,
           qty: row.quantity,
-          units: row.units,
+          units: row.unit,
           mrp: row.maxmimunRetailPrice,
 
           discountpercent:
@@ -713,7 +710,7 @@ const CreateSalesEstimate = () => {
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.units,
+        units: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -771,7 +768,7 @@ const CreateSalesEstimate = () => {
           </div>
         `;
       }
-      return '';
+      return "";
     };
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {
@@ -860,7 +857,7 @@ const CreateSalesEstimate = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -879,7 +876,7 @@ const CreateSalesEstimate = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -1105,7 +1102,7 @@ const CreateSalesEstimate = () => {
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.units,
+        units: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -1225,7 +1222,7 @@ const CreateSalesEstimate = () => {
           </div>
         `;
       }
-      return '';
+      return "";
     };
     const gstRows = updatedFormData.rows
       ?.map(
@@ -1236,7 +1233,7 @@ const CreateSalesEstimate = () => {
           <td>${row.productName}</td>
           <td>${row.hsnCode}</td>
           <td>${row.qty}</td>
-          <td>${row.units}</td>
+          <td>${row.unit}</td>
           <td>${row.mrp}</td>
           <td>${row.discountpercent}% ${row.discountRS}</td>
           <td>${row.taxable}</td>
@@ -1771,7 +1768,7 @@ const CreateSalesEstimate = () => {
                 <th className="border ">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
-                <th className="border p-1">Units</th>
+                <th className="border p-1">unit</th>
                 <th className="border p-1">MRP</th>
                 <th className="border p-1">
                   Discount
@@ -1887,10 +1884,8 @@ const CreateSalesEstimate = () => {
                       menuPosition="fixed"
                     />
                     <div style={{ marginTop: "10px", fontSize: "12px" }}>
-                      <div>
-                        Exp Dt: {row.expiryDate ? row.expiryDate : "N/A"}
-                      </div>
-                      <div>Batch No: {row.batchNo ? row.batchNo : "N/A"}</div>
+                      {row.expiryDate && <div>Exp Dt: {row.expiryDate}</div>}
+                      {row.batchNo && <div>Batch No: {row.batchNo}</div>}
                     </div>
                   </td>
 
@@ -1925,9 +1920,9 @@ const CreateSalesEstimate = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.units}
+                      value={row.unit}
                       onChange={(e) =>
-                        handleRowChange(index, "units", e.target.value)
+                        handleRowChange(index, "unit", e.target.value)
                       }
                       className="w-full"
                     />
@@ -2328,7 +2323,7 @@ const CreateSalesEstimate = () => {
                 Gross Amount
               </label>
               <input
-                value={grossAmount}
+                value={grossAmount.toLocaleString()}
                 // onChange={handleBillingAddressChange}
                 className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />

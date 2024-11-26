@@ -10,6 +10,7 @@ const posSchema = new mongoose.Schema(  {
       {
         itemCode: { type: String },
         productName: { type: String },
+        units:{type:String},
         qty: { type: Number },
         mrp: { type: Number },
         retailPrice: { type: Number },

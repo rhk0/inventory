@@ -358,7 +358,7 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={row.quantity}
+                    value={row.qty}
                     disabled
                     className="w-full"
                   />
@@ -366,7 +366,7 @@ const ViewPurchaseReturn = ({ closeModal, estimate, getSupplierName }) => {
                 <td className="border p-2">
                   <input
                     type="text"
-                    value={row.units}
+                    value={row.unit}
                     disabled
                     className="w-full"
                   />

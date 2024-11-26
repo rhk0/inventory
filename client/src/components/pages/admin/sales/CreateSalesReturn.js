@@ -18,7 +18,7 @@ const CreateDeliveryChallan = () => {
   const [banks, setBanks] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedBanks, setSelectedBanks] = useState([]); // Array to hold bank data
-  const [cash,setCash]=useState("");
+  const [cash, setCash] = useState("");
   const [reasonForReturn, setReasonForReturn] = useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
@@ -44,8 +44,8 @@ const CreateDeliveryChallan = () => {
     salesType: "",
     customerType: "",
     customerName: "",
-    cash:"",
-    selectedBanks:[],
+    cash: "",
+    selectedBanks: [],
     placeOfSupply: "",
     paymentTerm: "",
     dueDate: "",
@@ -175,7 +175,7 @@ const CreateDeliveryChallan = () => {
     console.log(value, "cash");
     setCash(value);
     setGstType("CGST/SGST");
-  
+
     // Update formData with the cash value
     setFormData((prev) => ({
       ...prev,
@@ -185,16 +185,16 @@ const CreateDeliveryChallan = () => {
   const handleBankChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
     console.log(selectedBank, "selectedBank");
-    
+
     // Update the selected banks
     setSelectedBanks(selectedBank);
-  
+
     // Update formData with selected bank details
     setFormData((prev) => ({
       ...prev,
       selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
     }));
-  
+
     // Additional logic for handling bank data
     setGstType("CGST/SGST");
   };
@@ -356,7 +356,7 @@ const CreateDeliveryChallan = () => {
         productName: "",
         hsnCode: "",
         qty: 0,
-        units: "",
+        unit: "",
         mrp: 0,
         discount: 0,
         taxableValue: 0,
@@ -508,7 +508,7 @@ const CreateDeliveryChallan = () => {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
@@ -541,6 +541,8 @@ const CreateDeliveryChallan = () => {
         igstrs: parseFloat(
           ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
 
         totalvalue: (
           taxableValue +
@@ -575,7 +577,7 @@ const CreateDeliveryChallan = () => {
         itemCode: selectedProduct.itemCode,
         productName: selectedProduct.productName,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
@@ -596,6 +598,8 @@ const CreateDeliveryChallan = () => {
         cgstp: selectedProduct.gstRate / 2,
         sgstp: selectedProduct.gstRate / 2,
         igstp: selectedProduct.gstRate,
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
 
         cgstrs: parseFloat(
           ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
@@ -637,7 +641,7 @@ const CreateDeliveryChallan = () => {
           productName: row.productName,
           hsnCode: row.hsnCode,
           qty: row.quantity,
-          units: row.units,
+          units: row.unit,
           mrp: row.maxmimunRetailPrice,
 
           discountpercent:
@@ -703,7 +707,7 @@ const CreateDeliveryChallan = () => {
             productName: "",
             hsnCode: "",
             qty: null,
-            units: null,
+            unit: null,
             mrp: null,
             discount: null,
             cgst: null,
@@ -759,7 +763,7 @@ const CreateDeliveryChallan = () => {
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.units,
+        units: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -816,7 +820,7 @@ const CreateDeliveryChallan = () => {
           </div>
         `;
       }
-      return '';
+      return "";
     };
     // Determine the table headers and the corresponding data based on gstType
     function numberToWords(num) {
@@ -905,7 +909,7 @@ const CreateDeliveryChallan = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -924,7 +928,7 @@ const CreateDeliveryChallan = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -1127,7 +1131,7 @@ const CreateDeliveryChallan = () => {
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.units,
+        units: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -1176,7 +1180,7 @@ const CreateDeliveryChallan = () => {
           </div>
         `;
       }
-      return '';
+      return "";
     };
     function numberToWords(num) {
       const ones = [
@@ -1257,7 +1261,7 @@ const CreateDeliveryChallan = () => {
           <td>${row.productName}</td>
           <td>${row.hsnCode}</td>
           <td>${row.qty}</td>
-          <td>${row.units}</td>
+          <td>${row.unit}</td>
           <td>${row.mrp}</td>
           <td>${row.discountpercent}% ${row.discountRS}</td>
           <td>${row.taxable}</td>
@@ -1761,7 +1765,7 @@ const CreateDeliveryChallan = () => {
                 <th className="border ">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
-                <th className="border p-1">Units</th>
+                <th className="border p-1">unit</th>
                 <th className="border p-1">MRP</th>
                 <th className="border p-1">
                   Discount
@@ -1876,6 +1880,10 @@ const CreateDeliveryChallan = () => {
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                     />
+                    <div style={{ marginTop: "10px", fontSize: "12px" }}>
+                      {row.expiryDate && <div>Exp Dt: {row.expiryDate}</div>}
+                      {row.batchNo && <div>Batch No: {row.batchNo}</div>}
+                    </div>
                   </td>
 
                   <td className="border p-1">
@@ -1899,9 +1907,9 @@ const CreateDeliveryChallan = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.units}
+                      value={row.unit}
                       onChange={(e) =>
-                        handleRowChange(index, "units", e.target.value)
+                        handleRowChange(index, "unit", e.target.value)
                       }
                       className="w-full"
                     />
@@ -2305,7 +2313,7 @@ const CreateDeliveryChallan = () => {
               <input
                 value={grossAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
+                className="bg-white text-black  border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
             {salesType === "GST Invoice" && (
@@ -2339,7 +2347,7 @@ const CreateDeliveryChallan = () => {
               <input
                 value={netAmount.toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
+                className="bg-white text-black font-bold text-2xl border p-1 w-full  rounded lg:w-2/3"
               />
             </div>
           </div>

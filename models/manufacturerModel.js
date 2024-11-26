@@ -4,27 +4,21 @@ const ManufacturerSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
     },
     address: {
       type: String,
-      required: true,
     },
     state: {
       type: String,
-      required: true,
     },
     country: {
       type: String,
-      required: true,
     },
     pinCode: {
       type: String,
-      required: true,
     },
     contact: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -35,7 +29,6 @@ const ManufacturerSchema = new mongoose.Schema(
 
     registrationType: {
       type: String,
-      required: true,
     },
     gstin: {
       type: String,
@@ -43,17 +36,16 @@ const ManufacturerSchema = new mongoose.Schema(
 
     openingBalance: {
       type: Number,
-      required: true,
     },
 
     asOnDate: {
       type: String,
     },
-    admin:{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"user",
-      required:true,
-    }
+    admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
   },
   {
     timestamps: true,

@@ -1,374 +1,373 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { FaTimes } from 'react-icons/fa'
-import Select from 'react-select'
-import Modal from 'react-modal'
-import { useAuth } from '../../../context/Auth'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { FaTimes } from "react-icons/fa";
+import Select from "react-select";
+import Modal from "react-modal";
+import { useAuth } from "../../../context/Auth";
 
 const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
-  const [date, setDate] = useState('')
-  const [InvoiceNo, setInvoiceNo] = useState('')
-  const [selectedCustomer, setSelectedCustomer] = useState('')
-  const [customer, setCustomer] = useState([])
-  const [chooseUser, setChooseUser] = useState([])
-  const [company, setCompanyData] = useState([])
-  const [salesType, setSalesType] = useState('')
-  const [customerType, setCustomerType] = useState('')
-  const [customerName, setCustomerName] = useState('')
-  const [placeOfSupply, setPlaceOfSupply] = useState('')
-  const [paymentTerm, setPaymentTerm] = useState('')
-  const [dueDate, setDueDate] = useState('')
-  const [receiptDocNo, setReceiptDocNo] = useState('')
-  const [dispatchedThrough, setDispatchedThrough] = useState('')
-  const [destination, setDestination] = useState('')
-  const [carrierNameAgent, setCarrierNameAgent] = useState('')
-  const [billOfLading, setBillOfLading] = useState('')
-  const [motorVehicleNo, setMotorVehicleNo] = useState('')
-  const [billingAddress, setBillingAddress] = useState('')
-  const [reverseCharge, setReverseCharge] = useState('')
-  const [gstType, setGstType] = useState('')
-  const [rows, setRows] = useState([])
-  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState('')
-  const [otherCharges, setOtherCharges] = useState('')
-  const [narration, setNarration] = useState('')
-  const [grossAmount, setGrossAmount] = useState('')
-  const [GstAmount, setGstAmount] = useState('')
-  const [netAmount, setNetAmount] = useState('')
+  const [date, setDate] = useState("");
+  const [InvoiceNo, setInvoiceNo] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [customer, setCustomer] = useState([]);
+  const [chooseUser, setChooseUser] = useState([]);
+  const [company, setCompanyData] = useState([]);
+  const [salesType, setSalesType] = useState("");
+  const [customerType, setCustomerType] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [placeOfSupply, setPlaceOfSupply] = useState("");
+  const [paymentTerm, setPaymentTerm] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [receiptDocNo, setReceiptDocNo] = useState("");
+  const [dispatchedThrough, setDispatchedThrough] = useState("");
+  const [destination, setDestination] = useState("");
+  const [carrierNameAgent, setCarrierNameAgent] = useState("");
+  const [billOfLading, setBillOfLading] = useState("");
+  const [motorVehicleNo, setMotorVehicleNo] = useState("");
+  const [billingAddress, setBillingAddress] = useState("");
+  const [reverseCharge, setReverseCharge] = useState("");
+  const [gstType, setGstType] = useState("");
+  const [rows, setRows] = useState([]);
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+  const [otherCharges, setOtherCharges] = useState("");
+  const [narration, setNarration] = useState("");
+  const [grossAmount, setGrossAmount] = useState("");
+  const [GstAmount, setGstAmount] = useState("");
+  const [netAmount, setNetAmount] = useState("");
 
-  const [viewModal, setViewModal] = useState(false)
-  const [bank, setBank] = useState([])
-  const [cash, setCash] = useState([])
-  const [selctedcash, setSelectedCash] = useState([])
-  const [banks, setBanks] = useState([])
-  const [selectedValue, setSelectedValue] = useState('')
-  const [selectedBank, setSelectedBank] = useState([])
+  const [viewModal, setViewModal] = useState(false);
+  const [bank, setBank] = useState([]);
+  const [cash, setCash] = useState([]);
+  const [selctedcash, setSelectedCash] = useState([]);
+  const [banks, setBanks] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedBank, setSelectedBank] = useState([]);
 
-  const [auth] = useAuth()
-  const [userId, setUserId] = useState('')
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
   useEffect(() => {
     if (estimate) {
-      setDate(estimate.date || '')
-      setInvoiceNo(estimate.InvoiceNo || '')
-      setSalesType(estimate.salesType || '')
-      setCustomerType(estimate.customerType || '')
-      setCustomerName(getCustomerName(estimate.customerId) || '')
-      setPlaceOfSupply(estimate.placeOfSupply || '')
-      setPaymentTerm(estimate.paymentTerm || '')
-      setDueDate(estimate.dueDate || '')
+      setDate(estimate.date || "");
+      setInvoiceNo(estimate.InvoiceNo || "");
+      setSalesType(estimate.salesType || "");
+      setCustomerType(estimate.customerType || "");
+      setCustomerName(getCustomerName(estimate.customerId) || "");
+      setPlaceOfSupply(estimate.placeOfSupply || "");
+      setPaymentTerm(estimate.paymentTerm || "");
+      setDueDate(estimate.dueDate || "");
 
       if (estimate.bank) {
         setBank({
-          bank: estimate.bank.bank || '',
-          selectBankType: estimate.bank.selectBankType || '',
-          transactionDate: estimate.bank.transactionDate || '',
-          chequeNo: estimate.bank.chequeNo || '',
-          transactionNo: estimate.bank.transactionNo || '',
-          Amount: estimate.bank.Amount || '',
-          Advance: estimate.bank.Advance || '',
-          Received: estimate.bank.Received || '',
-          Balance: estimate.bank.Balance || '',
-        })
+          bank: estimate.bank.bank || "",
+          selectBankType: estimate.bank.selectBankType || "",
+          transactionDate: estimate.bank.transactionDate || "",
+          chequeNo: estimate.bank.chequeNo || "",
+          transactionNo: estimate.bank.transactionNo || "",
+          Amount: estimate.bank.Amount || "",
+          Advance: estimate.bank.Advance || "",
+          Received: estimate.bank.Received || "",
+          Balance: estimate.bank.Balance || "",
+        });
       } else {
         setBank({
-          bank: '',
-          selectBankType: '',
-          transactionDate: '',
-          chequeNo: '',
-          transactionNo: '',
-          Amount: '',
-          Advance: '',
-          Received: '',
-          Balance: '',
-        })
+          bank: "",
+          selectBankType: "",
+          transactionDate: "",
+          chequeNo: "",
+          transactionNo: "",
+          Amount: "",
+          Advance: "",
+          Received: "",
+          Balance: "",
+        });
       }
 
       if (estimate.cash) {
         setCash({
-          Amount: estimate.cash.Amount || '',
-          Advance: estimate.cash.Advance || '',
-          Received: estimate.cash.Received || '',
-          Balance: estimate.cash.Balance || '',
-        })
+          Amount: estimate.cash.Amount || "",
+          Advance: estimate.cash.Advance || "",
+          Received: estimate.cash.Received || "",
+          Balance: estimate.cash.Balance || "",
+        });
       } else {
         setCash({
-          Amount: '',
-          Advance: '',
-          Received: '',
-          Balance: '',
-        })
+          Amount: "",
+          Advance: "",
+          Received: "",
+          Balance: "",
+        });
       }
 
-      setDate(estimate.date || '')
-      setInvoiceNo(estimate.InvoiceNo || '')
-      setSalesType(estimate.salesType || '')
-      setCustomerType(estimate.customerType || '')
-      setPlaceOfSupply(estimate.placeOfSupply || '')
-      setPaymentTerm(estimate.paymentTerm || '')
-      setDueDate(estimate.dueDate || '')
-      setReceiptDocNo(estimate.receiptDocNo || '')
-      setDispatchedThrough(estimate.dispatchedThrough || '')
-      setDestination(estimate.destination || '')
-      setCarrierNameAgent(estimate.carrierNameAgent || '')
-      setBillOfLading(estimate.billOfLading || '')
-      setMotorVehicleNo(estimate.motorVehicleNo || '')
-      setBillingAddress(estimate.billingAddress || '')
-      setReverseCharge(estimate.reverseCharge || '')
-      setGstType(estimate.gstType || '')
-      setRows(estimate.rows || [])
-      setOtherChargesDescriptions(estimate.otherChargesDescriptions || '')
-      setOtherCharges(estimate.otherCharges || '')
-      setNarration(estimate.narration || '')
-      setGrossAmount(estimate.grossAmount || '')
-      setGstAmount(estimate.GstAmount || '')
-      setNetAmount(estimate.netAmount || '')
+      setDate(estimate.date || "");
+      setInvoiceNo(estimate.InvoiceNo || "");
+      setSalesType(estimate.salesType || "");
+      setCustomerType(estimate.customerType || "");
+      setPlaceOfSupply(estimate.placeOfSupply || "");
+      setPaymentTerm(estimate.paymentTerm || "");
+      setDueDate(estimate.dueDate || "");
+      setReceiptDocNo(estimate.receiptDocNo || "");
+      setDispatchedThrough(estimate.dispatchedThrough || "");
+      setDestination(estimate.destination || "");
+      setCarrierNameAgent(estimate.carrierNameAgent || "");
+      setBillOfLading(estimate.billOfLading || "");
+      setMotorVehicleNo(estimate.motorVehicleNo || "");
+      setBillingAddress(estimate.billingAddress || "");
+      setReverseCharge(estimate.reverseCharge || "");
+      setGstType(estimate.gstType || "");
+      setRows(estimate.rows || []);
+      setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
+      setOtherCharges(estimate.otherCharges || "");
+      setNarration(estimate.narration || "");
+      setGrossAmount(estimate.grossAmount || "");
+      setGstAmount(estimate.GstAmount || "");
+      setNetAmount(estimate.netAmount || "");
     }
-  }, [estimate, getCustomerName])
+  }, [estimate, getCustomerName]);
 
   const openViewModal = (suppliers) => {
-    setViewModal(true)
-  }
+    setViewModal(true);
+  };
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id)
+      setUserId(auth.user._id);
     }
     if (auth.user.role === 0) {
-      setUserId(auth.user.admin)
+      setUserId(auth.user.admin);
     }
-    fetchBanks()
-  }, [auth, userId])
+    fetchBanks();
+  }, [auth, userId]);
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userId}`)
-        setCompanyData(response.data.data) // Assuming setCompanyData updates the company state
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
+        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
-        console.error('Error fetching company data:', error)
+        console.error("Error fetching company data:", error);
       }
-    }
+    };
 
-    companyData() // Fetch company data on component mount
-  }, [userId]) // Empty dependency array ensures this only runs once, on mount
+    companyData(); // Fetch company data on component mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
-        setUserId(auth.user._id)
+        setUserId(auth.user._id);
       } else if (auth.user.role === 0) {
-        setUserId(auth.user.admin)
+        setUserId(auth.user.admin);
       }
     }
 
-    fetchCustomer()
-  }, [auth, userId])
+    fetchCustomer();
+  }, [auth, userId]);
 
   const fetchCustomer = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`)
-      setCustomer(response.data.data)
+      const response = await axios.get(`/api/v1/auth/manageCustomer/${userId}`);
+      setCustomer(response.data.data);
     } catch (error) {
-      console.error('Error fetching Customers:', error)
+      console.error("Error fetching Customers:", error);
     }
-  }
+  };
   const fetchBanks = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
-      setBanks(response.data.data)
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
+      setBanks(response.data.data);
     } catch (error) {
-      console.error('Error fetching Bank data', error)
+      console.error("Error fetching Bank data", error);
     }
-  }
+  };
 
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userId}`)
-        setCompanyData(response.data.data) // Assuming setCompanyData updates the company state
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
+        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
-        console.error('Error fetching company data:', error)
+        console.error("Error fetching company data:", error);
       }
-    }
+    };
 
-    companyData() // Fetch company data on component mount
-  }, [userId]) // Empty dependency array ensures this only runs once, on mount
+    companyData(); // Fetch company data on component mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
 
-  const [paymentMethod, setPaymentMethod] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState("");
 
-  
   const handleCashPayment = (value) => {
-    setGstType('CGST/SGST')
+    setGstType("CGST/SGST");
 
     // Clear customer-related fields
-    setSelectedCash(value)
-    setCustomerName('') // Clear customerName
-    setSelectedCustomer('') // Clear selectedCustomer
-    setPlaceOfSupply('') // Clear placeOfSupply
-    setBillingAddress('') // Clear billingAddress
-    setSelectedBank([]) // Clear selectedBank
+    setSelectedCash(value);
+    setCustomerName(""); // Clear customerName
+    setSelectedCustomer(""); // Clear selectedCustomer
+    setPlaceOfSupply(""); // Clear placeOfSupply
+    setBillingAddress(""); // Clear billingAddress
+    setSelectedBank([]); // Clear selectedBank
 
-    console.log('After cash payment:', {
+    console.log("After cash payment:", {
       customerName,
       selectedCustomer,
       placeOfSupply,
       billingAddress,
-    }) // This log might still show the old values due to asynchronous updates
-  }
+    }); // This log might still show the old values due to asynchronous updates
+  };
 
   const handleBanksChange = (bankId) => {
-    const selectedBank = banks.find((bank) => bank._id === bankId)
+    const selectedBank = banks.find((bank) => bank._id === bankId);
 
     // Update the selected banks
-    setSelectedBank(selectedBank)
-    setSelectedCash('') // Clear selectedCash
-    setCustomerName('') // Clear customerName
-    setSelectedCustomer('') // Clear selectedCustomer
-    setPlaceOfSupply('') // Clear placeOfSupply
-    setBillingAddress('') // Clear billingAddress
+    setSelectedBank(selectedBank);
+    setSelectedCash(""); // Clear selectedCash
+    setCustomerName(""); // Clear customerName
+    setSelectedCustomer(""); // Clear selectedCustomer
+    setPlaceOfSupply(""); // Clear placeOfSupply
+    setBillingAddress(""); // Clear billingAddress
 
     // Additional logic for handling bank data
-    setGstType('CGST/SGST')
+    setGstType("CGST/SGST");
 
-    console.log('After bank change:', {
+    console.log("After bank change:", {
       customerName,
       selectedCustomer,
       placeOfSupply,
       billingAddress,
-    }) // This log might still show old values due to async updates
-  }
+    }); // This log might still show old values due to async updates
+  };
 
   const handleCustomerChange = (e) => {
-    const value = e.target.value
-    setSelectedCustomer(value)
+    const value = e.target.value;
+    setSelectedCustomer(value);
 
-    setSelectedBank([])
-    setSelectedCash('')
-    console.log(customer, 'customer')
-    const selectedCustomerData = customer.find((cust) => cust._id === value)
-    setChooseUser(selectedCustomerData)
-    setCustomerName(selectedCustomerData?.name)
-    console.log(selectedCustomerData, 'selectedCustomerData')
+    setSelectedBank([]);
+    setSelectedCash("");
+    console.log(customer, "customer");
+    const selectedCustomerData = customer.find((cust) => cust._id === value);
+    setChooseUser(selectedCustomerData);
+    setCustomerName(selectedCustomerData?.name);
+    console.log(selectedCustomerData, "selectedCustomerData");
 
-    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : '')
-    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : '')
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
     if (
       selectedCustomerData.state.trim().toLowerCase() ===
       company.state.trim().toLowerCase()
     ) {
-      setGstType('CGST/SGST')
+      setGstType("CGST/SGST");
     } else {
-      setGstType('IGST')
+      setGstType("IGST");
     }
-  }
+  };
   const handlePaymentMethodChange = (e) => {
-    setPaymentMethod(e.target.value)
-  }
+    setPaymentMethod(e.target.value);
+  };
 
   const handleCashChange = (e) => {
-    setCash({ ...cash, [e.target.name]: e.target.value })
-  }
+    setCash({ ...cash, [e.target.name]: e.target.value });
+  };
 
   const handleBankChange = (e) => {
-    const { name, value } = e.target
-    setBank({ ...bank, [name]: value })
-  }
+    const { name, value } = e.target;
+    setBank({ ...bank, [name]: value });
+  };
 
   const handleSubPaymentTypeChange = (e) => {
-    setBank({ ...bank, selectBankType: e.target.value })
-  }
+    setBank({ ...bank, selectBankType: e.target.value });
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    if (name === 'otherCharges') {
-      setOtherCharges(value)
-      calculateTotalAmounts()
+    const { name, value } = e.target;
+    if (name === "otherCharges") {
+      setOtherCharges(value);
+      calculateTotalAmounts();
     }
     switch (name) {
       // Handle transport details fields separately
-      case 'receiptDocNo':
-        setReceiptDocNo(value)
-        break
-      case 'dispatchedThrough':
-        setDispatchedThrough(value)
-        break
-      case 'destination':
-        setDestination(value)
-        break
-      case 'carrierNameAgent':
-        setCarrierNameAgent(value)
-        break
-      case 'billOfLading':
-        setBillOfLading(value)
-        break
-      case 'motorVehicleNo':
-        setMotorVehicleNo(value)
-        break
-      case 'date':
-        setDate(value)
-        break
-      case 'InvoiceNo':
-        setInvoiceNo(value)
-        break
-      case 'salesType':
-        setSalesType(value)
-        break
-      case 'customerType':
-        setCustomerType(value)
-        break
-      case 'customerName':
-        setCustomerName(value)
-        break
-      case 'placeOfSupply':
-        setPlaceOfSupply(value)
-        break
-      case 'paymentTerm':
-        setPaymentTerm(value)
-        break
-      case 'dueDate':
-        setDueDate(value)
-        break
-      case 'billingAddress':
-        setBillingAddress(value)
-        break
-      case 'reverseCharge':
-        setReverseCharge(value)
-        break
-      case 'gstType':
-        setGstType(value)
-        break
-      case 'otherChargesDescriptions':
-        setOtherChargesDescriptions(value)
-        break
-      case 'otherCharges':
-        setOtherCharges(value)
-        break
-      case 'narration':
-        setNarration(value)
-        break
-      case 'grossAmount':
-        setGrossAmount(value)
-        break
-      case 'GstAmount':
-        setGstAmount(value)
-        break
-      case 'netAmount':
-        setNetAmount(value)
-        break
+      case "receiptDocNo":
+        setReceiptDocNo(value);
+        break;
+      case "dispatchedThrough":
+        setDispatchedThrough(value);
+        break;
+      case "destination":
+        setDestination(value);
+        break;
+      case "carrierNameAgent":
+        setCarrierNameAgent(value);
+        break;
+      case "billOfLading":
+        setBillOfLading(value);
+        break;
+      case "motorVehicleNo":
+        setMotorVehicleNo(value);
+        break;
+      case "date":
+        setDate(value);
+        break;
+      case "InvoiceNo":
+        setInvoiceNo(value);
+        break;
+      case "salesType":
+        setSalesType(value);
+        break;
+      case "customerType":
+        setCustomerType(value);
+        break;
+      case "customerName":
+        setCustomerName(value);
+        break;
+      case "placeOfSupply":
+        setPlaceOfSupply(value);
+        break;
+      case "paymentTerm":
+        setPaymentTerm(value);
+        break;
+      case "dueDate":
+        setDueDate(value);
+        break;
+      case "billingAddress":
+        setBillingAddress(value);
+        break;
+      case "reverseCharge":
+        setReverseCharge(value);
+        break;
+      case "gstType":
+        setGstType(value);
+        break;
+      case "otherChargesDescriptions":
+        setOtherChargesDescriptions(value);
+        break;
+      case "otherCharges":
+        setOtherCharges(value);
+        break;
+      case "narration":
+        setNarration(value);
+        break;
+      case "grossAmount":
+        setGrossAmount(value);
+        break;
+      case "GstAmount":
+        setGstAmount(value);
+        break;
+      case "netAmount":
+        setNetAmount(value);
+        break;
       default:
-        break
+        break;
     }
-  }
+  };
 
   const addRow = () => {
     setRows([
       ...rows,
       {
-        itemCode: '',
-        productName: '',
-        hsnCode: '',
+        itemCode: "",
+        productName: "",
+        hsnCode: "",
         qty: 0,
-        units: '',
+        units: "",
         mrp: 0,
         discountpercent: 0,
         discountRS: 0,
@@ -381,69 +380,69 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         igstRS: 0,
         totalValue: 0,
       },
-    ])
-  }
+    ]);
+  };
 
   const removeRow = (index) => {
     if (rows.length > 1) {
-      setRows(rows.filter((_, i) => i !== index))
+      setRows(rows.filter((_, i) => i !== index));
     }
-  }
+  };
 
   const calculateTotalAmounts = () => {
-    let grossAmount = 0
-    let totalGST = 0
+    let grossAmount = 0;
+    let totalGST = 0;
 
     rows.forEach((row) => {
-      grossAmount += parseFloat(row.taxable) || 0
-      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0)
-    })
+      grossAmount += parseFloat(row.taxable) || 0;
+      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0);
+    });
 
-    const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0)
+    const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0);
 
-    setGrossAmount(grossAmount.toFixed(2))
-    setGstAmount(totalGST.toFixed(2))
-    setNetAmount(netAmount.toFixed(2))
-  }
+    setGrossAmount(grossAmount.toFixed(2));
+    setGstAmount(totalGST.toFixed(2));
+    setNetAmount(netAmount.toFixed(2));
+  };
 
   const calculateTotals = () => {
-    let grossAmount = 0
-    let GstAmount = 0
+    let grossAmount = 0;
+    let GstAmount = 0;
     rows.forEach((rows) => {
-      grossAmount += Number(rows.taxableValue)
+      grossAmount += Number(rows.taxableValue);
       GstAmount +=
-        gstType === 'CGST/SGST'
+        gstType === "CGST/SGST"
           ? Number(rows.cgstrs) + Number(rows.sgstrs)
-          : Number(rows.igstrs)
-    })
-    let netAmount
+          : Number(rows.igstrs);
+    });
+    let netAmount;
     // Check if otherChargesDescriptions includes "discount"
-    if (salesType === 'Bill of Supply') {
-      if (otherChargesDescriptions.includes('discount')) {
-        netAmount = grossAmount - otherCharges // Do not add GstAmount
+    if (salesType === "Bill of Supply") {
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount - otherCharges; // Do not add GstAmount
       } else {
-        netAmount = grossAmount + otherCharges // Do not add GstAmount
+        netAmount = grossAmount + otherCharges; // Do not add GstAmount
       }
     } else {
-      if (otherChargesDescriptions.includes('discount')) {
-        netAmount = grossAmount + GstAmount - otherCharges
+      if (otherChargesDescriptions.includes("discount")) {
+        netAmount = grossAmount + GstAmount - otherCharges;
       } else {
-        netAmount = grossAmount + GstAmount + otherCharges
+        netAmount = grossAmount + GstAmount + otherCharges;
       }
     }
 
-    return { grossAmount, GstAmount, netAmount }
-  }
+    return { grossAmount, GstAmount, netAmount };
+  };
 
   const handleRowChange = (index, field, value) => {
     // Create a copy of rows
-    const newRows = [...rows]
+    const newRows = [...rows];
 
-    newRows[index] = { ...newRows[index], [field]: value }
+    newRows[index] = { ...newRows[index], [field]: value };
 
     const selectedProduct = products.find(
-      (product) => product.productName === newRows[index].productName,
-    )
+      (product) => product.productName === newRows[index].productName
+    );
 
     if (selectedProduct) {
       // Calculate retail price and apply the discount if applicable
@@ -452,30 +451,30 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.retailDiscount) /
             100
-        : 0
+        : 0;
 
       // Get sales tax and GST rate
-      const salesTaxInclude = selectedProduct.salesTaxInclude
-      const gstRate = selectedProduct.gstRate
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
+      const gstRate = selectedProduct.gstRate;
 
       // Extract the quantity from the updated row
-      const { qty } = newRows[index]
+      const { qty } = newRows[index];
 
       // Calculate taxable value
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
           (100 + Number(selectedProduct.gstRate))
-        : retailPrice * qty
+        : retailPrice * qty;
 
       // Calculate GST amounts
       const cgstrs =
-        gstType === 'CGST/SGST' ? (taxableValue * gstRate) / 2 / 100 : 0
+        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
       const sgstrs =
-        gstType === 'CGST/SGST' ? (taxableValue * gstRate) / 2 / 100 : 0
-      const igstrs = gstType === 'IGST' ? (taxableValue * gstRate) / 100 : 0
+        gstType === "CGST/SGST" ? (taxableValue * gstRate) / 2 / 100 : 0;
+      const igstrs = gstType === "IGST" ? (taxableValue * gstRate) / 100 : 0;
 
       // Calculate total value
-      const totalValue = taxableValue + (taxableValue * gstRate) / 100
+      const totalValue = taxableValue + (taxableValue * gstRate) / 100;
 
       // Update the row with the calculated values
       newRows[index] = {
@@ -486,47 +485,47 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         sgstrs: sgstrs.toFixed(2),
         igstrs: igstrs.toFixed(2),
         totalvalue: totalValue.toFixed(2),
-      }
+      };
       // Set the updated rows state
-      setRows(newRows)
+      setRows(newRows);
       // Trigger total calculation
-      calculateTotals(newRows)
+      calculateTotals(newRows);
     }
-  }
+  };
 
   const handleQtyChange = (index, value) => {
-    const qty = parseFloat(value) || 0
+    const qty = parseFloat(value) || 0;
 
-    const updatedRows = [...rows]
+    const updatedRows = [...rows];
 
     // Fetch the selected product for this row
     const selectedProduct = products.find(
-      (product) => product.itemCode === updatedRows[index].itemCode,
-    )
+      (product) => product.itemCode === updatedRows[index].itemCode
+    );
 
     if (selectedProduct) {
-      const mrp = parseFloat(selectedProduct.maxmimunRetailPrice) || 0
+      const mrp = parseFloat(selectedProduct.maxmimunRetailPrice) || 0;
 
       const discountPercent =
-        customerType === 'Wholesaler'
+        customerType === "Wholesaler"
           ? selectedProduct.wholesalerDiscount || 0
-          : selectedProduct.retailDiscount || 0
+          : selectedProduct.retailDiscount || 0;
 
-      const discountAmount = (mrp * qty * discountPercent) / 100
+      const discountAmount = (mrp * qty * discountPercent) / 100;
 
-      const salesTaxInclude = selectedProduct.salesTaxInclude
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.retailDiscount) /
             100
-        : 0
+        : 0;
 
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
           (100 + Number(selectedProduct.gstRate))
-        : retailPrice * qty
+        : retailPrice * qty;
 
       updatedRows[index] = {
         ...updatedRows[index],
@@ -552,91 +551,91 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
-      }
+      };
 
       // Set the updated rows back to state
-      setRows(updatedRows)
+      setRows(updatedRows);
 
       // Recalculate total amounts after updating the row
-      calculateTotalAmounts()
+      calculateTotalAmounts();
     }
-  }
+  };
 
   useEffect(() => {
-    calculateTotalAmounts()
-  }, [rows, otherCharges])
+    calculateTotalAmounts();
+  }, [rows, otherCharges]);
 
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
       if (response.data && Array.isArray(response.data.data)) {
-        setProducts(response.data.data)
+        setProducts(response.data.data);
       } else {
-        console.error('Unexpected response structure:', response.data)
+        console.error("Unexpected response structure:", response.data);
       }
     } catch (error) {
-      console.error('Error fetching products:', error)
+      console.error("Error fetching products:", error);
       // toast.error("Failed to fetch products. Please try again.");
     }
-  }
+  };
 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
-        setUserId(auth.user._id)
+        setUserId(auth.user._id);
       } else if (auth.user.role === 0) {
-        setUserId(auth.user.admin)
+        setUserId(auth.user.admin);
       }
     }
-    fetchProducts()
-  }, [auth, userId])
+    fetchProducts();
+  }, [auth, userId]);
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
-      (product) => product.productName === selectedProductName,
-    )
+      (product) => product.productName === selectedProductName
+    );
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex)
+      updateRowValues(selectedProduct, rowIndex);
     }
-  }
+  };
 
   const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
     const selectedProduct = products.find(
-      (product) => product.itemCode === selectedItemCode,
-    )
+      (product) => product.itemCode === selectedItemCode
+    );
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex)
+      updateRowValues(selectedProduct, rowIndex);
     }
-  }
+  };
 
   const updateRowValues = (selectedProduct, rowIndex) => {
-    const updatedRows = [...rows] // Clone the current rows
+    const updatedRows = [...rows]; // Clone the current rows
 
     // Calculate retail price and taxable value based on product details
     const retailPrice =
       selectedProduct.maxmimunRetailPrice -
       (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100
+        100;
 
     const taxableValue = selectedProduct.salesTaxInclude
       ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
         (100 + Number(selectedProduct.gstRate))
-      : retailPrice * selectedProduct.quantity
+      : retailPrice * selectedProduct.quantity;
 
     // Update all relevant fields in the selected row
     updatedRows[rowIndex] = {
       ...updatedRows[rowIndex], // Keep any existing row data
-      itemCode: selectedProduct.itemCode || '', // Map itemCode
-      productName: selectedProduct.productName || '', // Map productName
-      hsnCode: selectedProduct.hsnCode || '', // Map HSN code
-      units: selectedProduct.units || '', // Map units
+      itemCode: selectedProduct.itemCode || "", // Map itemCode
+      productName: selectedProduct.productName || "", // Map productName
+      hsnCode: selectedProduct.hsnCode || "", // Map HSN code
+      units: selectedProduct.unit || "", // Map units
       mrp: selectedProduct.maxmimunRetailPrice
         ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-        : '0.00', // Map maximum retail price
+        : "0.00", // Map maximum retail price
 
       qty: selectedProduct.quantity || 0, // Map quantity
       wholesalerDiscount: selectedProduct.wholesalerDiscount || 0, // Map wholesaler discount
@@ -662,37 +661,25 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         taxableValue +
         (taxableValue * selectedProduct.gstRate) / 100
       ).toFixed(2),
-    }
+    };
 
     // Set updated rows back to the state
-    setRows(updatedRows)
+    setRows(updatedRows);
 
     // Recalculate total amounts after updating the row
-    calculateTotalAmounts()
-  }
+    calculateTotalAmounts();
+  };
 
   const handleUpdate = async () => {
     try {
-      console.log(
-        selctedcash,
-
-        'cash',
-        '    ',
-        selectedBank,
-
-        'bank',
-        customerName,
-        'customer name',
-      )
-      console.log(customerName, 'customerName')
       const updatedEstimate = {
         date,
         InvoiceNo,
         salesType,
         customerType,
         customerName,
-        selctedcash,
-        selectedBank,
+        // selctedcash,
+        // selectedBank,
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -734,32 +721,33 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         netAmount,
         cash,
         bank,
-      }
+      };
 
+      console.log(updatedEstimate, "kdsjfk");
       const response = await axios.put(
         `/api/v1/salesInvoiceRoute/updatesalesinvoice/${estimate._id}`,
-        updatedEstimate,
-      )
-      console.log(response, 'dheeru update')
+        updatedEstimate
+      );
+      console.log("Response:", response.data);
 
-      if (response.data.success) {
-        alert('Estimate updated successfully')
-        closeModal()
+      if (response) {
+        alert("Estimate updated successfully");
+        closeModal();
       } else {
-        alert('Failed to update estimate: ' + response.data.message)
+        alert("Failed to update estimate: " + response.data.message);
       }
     } catch (error) {
-      console.error('Error updating estimate:', error)
-      alert('Error updating estimate: ' + error.message)
+      console.error("Error updating estimate:", error);
+      alert("Error updating estimate: " + error.message);
     }
-  }
+  };
 
   const closeViewModal = () => {
-    setViewModal(false) // Close only the View Receipt modal
-  }
+    setViewModal(false); // Close only the View Receipt modal
+  };
 
   return (
-    <div style={{ backgroundColor: '#82ac73' }} className="p-4 ">
+    <div style={{ backgroundColor: "#82ac73" }} className="p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4">
           Edit sales Invoice
@@ -814,19 +802,19 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
             className="w-full p-2 border border-gray-300 rounded"
             value={selectedValue} // This ensures the selected value is shown in the dropdown
             onChange={(e) => {
-              const selectedValue = e.target.value
-              setSelectedValue(selectedValue) // Update the state to reflect the selected value
+              const selectedValue = e.target.value;
+              setSelectedValue(selectedValue); // Update the state to reflect the selected value
 
-              if (selectedValue === 'add-new-customer') {
-                window.location.href = '/admin/CreateCustomer'
-              } else if (selectedValue === 'add-new-bank') {
-                window.location.href = '/admin/addbank'
-              } else if (selectedValue === 'cash') {
-                handleCashPayment(selectedValue) // Handle cash payment
-              } else if (selectedValue.startsWith('bank-')) {
-                handleBanksChange(selectedValue.replace('bank-', '')) // Handle bank change
+              if (selectedValue === "add-new-customer") {
+                window.location.href = "/admin/CreateCustomer";
+              } else if (selectedValue === "add-new-bank") {
+                window.location.href = "/admin/addbank";
+              } else if (selectedValue === "cash") {
+                handleCashPayment(selectedValue); // Handle cash payment
+              } else if (selectedValue.startsWith("bank-")) {
+                handleBanksChange(selectedValue.replace("bank-", "")); // Handle bank change
               } else {
-                handleCustomerChange(e) // Handle customer change
+                handleCustomerChange(e); // Handle customer change
               }
             }}
           >
@@ -983,7 +971,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
 
-        {salesType === 'GST Invoice' && (
+        {salesType === "GST Invoice" && (
           <div className="mb-4 w-full">
             <label className="font-bold">GST Type:</label>
             <select
@@ -1016,10 +1004,10 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                   <span className="mr-16">%</span> <span>₹</span>
                 </div>
               </th>
-              {salesType === 'GST Invoice' && (
+              {salesType === "GST Invoice" && (
                 <>
                   <th className="border p-2">Taxable Value</th>
-                  {gstType === 'CGST/SGST' && (
+                  {gstType === "CGST/SGST" && (
                     <>
                       <th className="border p-2">
                         CGST
@@ -1035,7 +1023,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                       </th>
                     </>
                   )}
-                  {gstType === 'IGST' && (
+                  {gstType === "IGST" && (
                     <th className="border p-2">
                       IGST
                       <div className="flex justify-between">
@@ -1076,11 +1064,11 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: '120px',
-                          maxWidth: '300px',
-                          fontSize: '14px',
-                          minHeight: '34px',
-                          height: '34px',
+                          minWidth: "120px",
+                          maxWidth: "300px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -1113,11 +1101,11 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: '200px',
-                          maxWidth: '500px',
-                          fontSize: '14px',
-                          minHeight: '34px',
-                          height: '34px',
+                          minWidth: "200px",
+                          maxWidth: "500px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -1131,12 +1119,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="text"
                     value={row.hsnCode}
                     onChange={(e) =>
-                      handleRowChange(index, 'hsnCode', e.target.value)
+                      handleRowChange(index, "hsnCode", e.target.value)
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '60px',
-                      flexBasis: '60px',
+                      minWidth: "60px",
+                      flexBasis: "60px",
                       flexShrink: 1,
                     }}
                   />
@@ -1144,12 +1132,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    value={rows[index].qty || ''} // Ensure this is directly tied to state
+                    value={rows[index].qty || ""} // Ensure this is directly tied to state
                     onChange={(e) => handleQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '30px',
-                      flexBasis: '30px',
+                      minWidth: "30px",
+                      flexBasis: "30px",
                       flexShrink: 1,
                     }}
                   />
@@ -1160,7 +1148,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="text"
                     value={row.units}
                     onChange={(e) =>
-                      handleRowChange(index, 'units', e.target.value)
+                      handleRowChange(index, "units", e.target.value)
                     }
                     className="w-full"
                   />
@@ -1170,7 +1158,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.mrp}
                     onChange={(e) =>
-                      handleRowChange(index, 'mrp', e.target.value)
+                      handleRowChange(index, "mrp", e.target.value)
                     }
                     className="w-full"
                   />
@@ -1185,8 +1173,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                         readOnly
                         className="w-full flex-grow"
                         style={{
-                          minWidth: '2px',
-                          flexBasis: '2px',
+                          minWidth: "2px",
+                          flexBasis: "2px",
                           flexShrink: 1,
                         }}
                       />
@@ -1196,8 +1184,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                         readOnly
                         className="w-full flex-grow"
                         style={{
-                          minWidth: '2px', // Reduced width for discountRS
-                          flexBasis: '2px',
+                          minWidth: "2px", // Reduced width for discountRS
+                          flexBasis: "2px",
                           flexShrink: 1,
                         }}
                       />
@@ -1211,14 +1199,14 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                           onChange={(e) =>
                             handleRowChange(
                               index,
-                              'discountpercent',
-                              e.target.value,
+                              "discountpercent",
+                              e.target.value
                             )
                           }
                           className="w-full flex-grow"
                           style={{
-                            minWidth: '2px',
-                            flexBasis: '2px',
+                            minWidth: "2px",
+                            flexBasis: "2px",
                             flexShrink: 1,
                           }}
                         />
@@ -1227,12 +1215,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                           type="text"
                           value={row.wholesalerDiscountRS}
                           onChange={(e) =>
-                            handleRowChange(index, 'discountRS', e.target.value)
+                            handleRowChange(index, "discountRS", e.target.value)
                           }
                           className="w-full flex-grow"
                           style={{
-                            minWidth: '10px',
-                            flexBasis: '10px',
+                            minWidth: "10px",
+                            flexBasis: "10px",
                             flexShrink: 1,
                           }}
                         />
@@ -1240,24 +1228,24 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     </>
                   )}
                 </td>
-                {salesType === 'GST Invoice' && (
+                {salesType === "GST Invoice" && (
                   <>
                     <td className="border p-2">
                       <input
                         type="number"
                         value={row.taxable}
                         onChange={(e) =>
-                          handleRowChange(index, 'taxable', e.target.value)
+                          handleRowChange(index, "taxable", e.target.value)
                         }
                         className="w-full flex-grow"
                         style={{
-                          minWidth: '70px',
-                          flexBasis: '70px',
+                          minWidth: "70px",
+                          flexBasis: "70px",
                           flexShrink: 1,
                         }}
                       />
                     </td>
-                    {gstType === 'CGST/SGST' && (
+                    {gstType === "CGST/SGST" && (
                       <>
                         <td className="border p-2">
                           <div className="flex gap-1">
@@ -1267,14 +1255,14 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  'cgstpercent',
-                                  e.target.value,
+                                  "cgstpercent",
+                                  e.target.value
                                 )
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: '20px', // Reduced width for discountRS
-                                flexBasis: '20px',
+                                minWidth: "20px", // Reduced width for discountRS
+                                flexBasis: "20px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1282,12 +1270,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               type="number"
                               value={row.cgstRS}
                               onChange={(e) =>
-                                handleRowChange(index, 'cgstRS', e.target.value)
+                                handleRowChange(index, "cgstRS", e.target.value)
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: '50px', // Reduced width for discountRS
-                                flexBasis: '50px',
+                                minWidth: "50px", // Reduced width for discountRS
+                                flexBasis: "50px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1301,14 +1289,14 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               onChange={(e) =>
                                 handleRowChange(
                                   index,
-                                  'sgstpercent',
-                                  e.target.value,
+                                  "sgstpercent",
+                                  e.target.value
                                 )
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: '20px', // Reduced width for discountRS
-                                flexBasis: '20px',
+                                minWidth: "20px", // Reduced width for discountRS
+                                flexBasis: "20px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1316,12 +1304,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               type="number"
                               value={row.sgstRS}
                               onChange={(e) =>
-                                handleRowChange(index, 'sgstRS', e.target.value)
+                                handleRowChange(index, "sgstRS", e.target.value)
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: '50px', // Reduced width for discountRS
-                                flexBasis: '50px',
+                                minWidth: "50px", // Reduced width for discountRS
+                                flexBasis: "50px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1329,7 +1317,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                         </td>
                       </>
                     )}
-                    {gstType === 'IGST' && (
+                    {gstType === "IGST" && (
                       <td className="border p-2">
                         <div className="flex gap-1">
                           <input
@@ -1338,8 +1326,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                'igstpercent',
-                                e.target.value,
+                                "igstpercent",
+                                e.target.value
                               )
                             }
                             className="w-full"
@@ -1348,7 +1336,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                             type="number"
                             value={row.igstRS}
                             onChange={(e) =>
-                              handleRowChange(index, 'igstRS', e.target.value)
+                              handleRowChange(index, "igstRS", e.target.value)
                             }
                             className="w-full"
                           />
@@ -1362,12 +1350,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.totalValue}
                     onChange={(e) =>
-                      handleRowChange(index, 'totalValue', e.target.value)
+                      handleRowChange(index, "totalValue", e.target.value)
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '60px',
-                      flexBasis: '60px',
+                      minWidth: "60px",
+                      flexBasis: "60px",
                       flexShrink: 1,
                     }}
                   />
@@ -1503,7 +1491,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
               className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
             />
           </div>
-          {salesType === 'GST Invoice' && (
+          {salesType === "GST Invoice" && (
             <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
               <label className="font-bold lg:w-1/2 text-nowrap">
                 GST Amount
@@ -1555,13 +1543,13 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
               contentLabel="View Item Modal"
               style={{
                 content: {
-                  width: '80%',
-                  height: '90%',
-                  maxWidth: '800px',
-                  margin: 'auto',
-                  padding: '5px',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                  borderRadius: '5px',
+                  width: "80%",
+                  height: "90%",
+                  maxWidth: "800px",
+                  margin: "auto",
+                  padding: "5px",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  borderRadius: "5px",
                 },
               }}
             >
@@ -1582,7 +1570,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                       name="paymentMethod"
                       value="Cash"
                       onChange={handlePaymentMethodChange}
-                      checked={paymentMethod === 'Cash'}
+                      checked={paymentMethod === "Cash"}
                     />
                     Cash
                   </label>
@@ -1592,7 +1580,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                       name="paymentMethod"
                       value="Bank"
                       onChange={handlePaymentMethodChange}
-                      checked={paymentMethod === 'Bank'}
+                      checked={paymentMethod === "Bank"}
                     />
                     Bank
                   </label>
@@ -1600,7 +1588,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
                 {/* Conditional form rendering based on payment method */}
                 <form>
-                  {paymentMethod === 'Cash' && (
+                  {paymentMethod === "Cash" && (
                     <>
                       <label className="font-bold">Amount</label>
                       <input
@@ -1637,20 +1625,23 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     </>
                   )}
 
-                  {paymentMethod === 'Bank' && (
+                  {paymentMethod === "Bank" && (
                     <>
                       <label className="font-bold">Select Bank</label>
-                      <input
-                        name="selectBankType"
-                        className="border p-2 mb-2 w-full"
+                      <select
+                        name="bank"
                         value={bank.bank}
                         onChange={handleBankChange}
-                        readOnly
+                        className="border p-2 mb-2 w-full"
                       >
-                        {/* <option value="">Select Bank</option>
-                        <option value="Bank 1">Bank 1</option>
-                        <option value="Bank 2">Bank 2</option> */}
-                      </input>
+                        <option value="">Select Bank</option>
+                        {banks.map((bank, index) => (
+                          <option key={index} value={bank.name}>
+                            {bank.name}
+                          </option>
+                        ))}
+                      </select>
+
                       <select
                         name="subPaymentType"
                         className="border p-2 mb-2 w-full"
@@ -1661,7 +1652,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                         <option value="Online">Online</option>
                         <option value="Cheque">Cheque</option>
                       </select>
-                      {bank.selectBankType === 'Online' && (
+                      {bank.selectBankType === "Online" && (
                         <>
                           <label className="font-bold">Transaction Date</label>
                           <input
@@ -1681,7 +1672,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                           />
                         </>
                       )}
-                      {bank.selectBankType === 'Cheque' && (
+                      {bank.selectBankType === "Cheque" && (
                         <>
                           <label className="font-bold">Transaction Date</label>
                           <input
@@ -1741,7 +1732,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     <button
                       className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 h-10 "
                       onClick={() => {
-                        closeViewModal()
+                        closeViewModal();
                       }}
                     >
                       Save
@@ -1770,7 +1761,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EditSalesInvoiceModal
+export default EditSalesInvoiceModal;

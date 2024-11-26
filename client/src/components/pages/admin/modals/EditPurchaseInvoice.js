@@ -1,346 +1,344 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { FaTimes } from 'react-icons/fa'
-import Select from 'react-select'
-import Modal from 'react-modal'
-import { useAuth } from '../../../context/Auth.js'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { FaTimes } from "react-icons/fa";
+import Select from "react-select";
+import Modal from "react-modal";
+import { useAuth } from "../../../context/Auth.js";
 
-import 'react-toastify/dist/ReactToastify.css'
-import { ToastContainer, toast } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 
 const EditPurchaseInvoice = ({ closeModal, estimate }) => {
-  const [documentPath, setdocumentPath] = useState(null)
-  const [date, setDate] = useState('')
-  const [InvoiceNo, setInvoiceNo] = useState('')
-  const [salesType, setSalesType] = useState('')
-  const [company, setCompanyData] = useState([])
-  const [customerType, setCustomerType] = useState('')
-  const [selectedsupplier, setSelectedsupplier] = useState('')
-  const [chooseUser, setChooseUser] = useState([])
-  const [SupplierName, setSupplierName] = useState('')
-  const [placeOfSupply, setPlaceOfSupply] = useState('')
-  const [supplier, setSupplier] = useState([])
-  const [paymentTerm, setPaymentTerm] = useState('')
-  const [dueDate, setDueDate] = useState('')
-  const [receiptDocNo, setReceiptDocNo] = useState('')
-  const [dispatchedThrough, setDispatchedThrough] = useState('')
-  const [destination, setDestination] = useState('')
-  const [carrierNameAgent, setCarrierNameAgent] = useState('')
-  const [billOfLading, setBillOfLading] = useState('')
-  const [motorVehicleNo, setMotorVehicleNo] = useState('')
-  const [billingAddress, setBillingAddress] = useState('')
-  const [reverseCharge, setReverseCharge] = useState('')
-  const [gstType, setGstType] = useState()
-  const [rows, setRows] = useState([])
-  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState('')
-  const [otherCharges, setOtherCharges] = useState('')
-  const [narration, setNarration] = useState('')
-  const [grossAmount, setGrossAmount] = useState('')
-  const [GstAmount, setGstAmount] = useState('')
-  const [netAmount, setNetAmount] = useState('')
-  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState('')
-  const [qty, setQty] = useState(0)
-  const [gstRatev, setgstRatev] = useState()
-  const [banks, setBanks] = useState([])
-  const [viewModal, setViewModal] = useState(false)
-  const [bank, setBank] = useState([])
-  const [cash, setCash] = useState([])
+  const [documentPath, setdocumentPath] = useState(null);
+  const [date, setDate] = useState("");
+  const [InvoiceNo, setInvoiceNo] = useState("");
+  const [salesType, setSalesType] = useState("");
+  const [company, setCompanyData] = useState([]);
+  const [customerType, setCustomerType] = useState("");
+  const [selectedsupplier, setSelectedsupplier] = useState("");
+  const [chooseUser, setChooseUser] = useState([]);
+  const [SupplierName, setSupplierName] = useState("");
+  const [placeOfSupply, setPlaceOfSupply] = useState("");
+  const [supplier, setSupplier] = useState([]);
+  const [paymentTerm, setPaymentTerm] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [receiptDocNo, setReceiptDocNo] = useState("");
+  const [dispatchedThrough, setDispatchedThrough] = useState("");
+  const [destination, setDestination] = useState("");
+  const [carrierNameAgent, setCarrierNameAgent] = useState("");
+  const [billOfLading, setBillOfLading] = useState("");
+  const [motorVehicleNo, setMotorVehicleNo] = useState("");
+  const [billingAddress, setBillingAddress] = useState("");
+  const [reverseCharge, setReverseCharge] = useState("");
+  const [gstType, setGstType] = useState();
+  const [rows, setRows] = useState([]);
+  const [otherChargesDescriptions, setOtherChargesDescriptions] = useState("");
+  const [otherCharges, setOtherCharges] = useState("");
+  const [narration, setNarration] = useState("");
+  const [grossAmount, setGrossAmount] = useState("");
+  const [GstAmount, setGstAmount] = useState("");
+  const [netAmount, setNetAmount] = useState("");
+  const [supplierInvoiceNo, setsupplierInvoiceNo] = useState("");
+  const [qty, setQty] = useState(0);
+  const [gstRatev, setgstRatev] = useState();
+  const [banks, setBanks] = useState([]);
+  const [viewModal, setViewModal] = useState(false);
+  const [bank, setBank] = useState([]);
+  const [cash, setCash] = useState([]);
 
-  const [selectedBank, setSelectedBanks] = useState([])
-  const [selectedcash, setSelectedCash] = useState('')
-  const [auth] = useAuth()
-  const [userId, setUserId] = useState('')
-  const [selectedValue, setSelectedValue] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false)
+  const [selectedBank, setSelectedBanks] = useState([]);
+  const [selectedcash, setSelectedCash] = useState("");
+  const [auth] = useAuth();
+  const [userId, setUserId] = useState("");
+  const [selectedValue, setSelectedValue] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
 
   useEffect(() => {
     if (estimate) {
-      console.log(estimate, 'sdkjfk')
+      setDate(estimate.date || "");
+      setInvoiceNo(estimate.invoiceNo || "");
+      setsupplierInvoiceNo(estimate.supplierInvoiceNo || "");
 
-      setDate(estimate.date || '')
-      setInvoiceNo(estimate.invoiceNo || '')
-      setsupplierInvoiceNo(estimate.supplierInvoiceNo || '')
-
-      setPlaceOfSupply(estimate.placeOfSupply || '')
-      setPaymentTerm(estimate.paymentTerm || '')
-      setDueDate(estimate.dueDate || '')
+      setPlaceOfSupply(estimate.placeOfSupply || "");
+      setPaymentTerm(estimate.paymentTerm || "");
+      setDueDate(estimate.dueDate || "");
 
       if (estimate.bank) {
         setBank({
-          bank: estimate.bank.bank || '',
-          selectBankType: estimate.bank.selectBankType || '',
-          transactionDate: estimate.bank.transactionDate || '',
-          chequeNo: estimate.bank.chequeNo || '',
-          transactionNo: estimate.bank.transactionNo || '',
-          Amount: estimate.bank.Amount || '',
-          Advance: estimate.bank.Advance || '',
-          Received: estimate.bank.Received || '',
-          Balance: estimate.bank.Balance || '',
-        })
+          bank: estimate.bank.bank || "",
+          selectBankType: estimate.bank.selectBankType || "",
+          transactionDate: estimate.bank.transactionDate || "",
+          chequeNo: estimate.bank.chequeNo || "",
+          transactionNo: estimate.bank.transactionNo || "",
+          Amount: estimate.bank.Amount || "",
+          Advance: estimate.bank.Advance || "",
+          Received: estimate.bank.Received || "",
+          Balance: estimate.bank.Balance || "",
+        });
       } else {
         setBank({
-          bank: '',
-          selectBankType: '',
-          transactionDate: '',
-          chequeNo: '',
-          transactionNo: '',
-          Amount: '',
-          Advance: '',
-          Received: '',
-          Balance: '',
-        })
+          bank: "",
+          selectBankType: "",
+          transactionDate: "",
+          chequeNo: "",
+          transactionNo: "",
+          Amount: "",
+          Advance: "",
+          Received: "",
+          Balance: "",
+        });
       }
 
       if (estimate.cash) {
         setCash({
-          Amount: estimate.cash.Amount || '',
-          Advance: estimate.cash.Advance || '',
-          Received: estimate.cash.Received || '',
-          Balance: estimate.cash.Balance || '',
-        })
+          Amount: estimate.cash.Amount || "",
+          Advance: estimate.cash.Advance || "",
+          Received: estimate.cash.Received || "",
+          Balance: estimate.cash.Balance || "",
+        });
       } else {
         setCash({
-          Amount: '',
-          Advance: '',
-          Received: '',
-          Balance: '',
-        })
+          Amount: "",
+          Advance: "",
+          Received: "",
+          Balance: "",
+        });
       }
 
-      setReceiptDocNo(estimate.receiptDocNo || '')
-      setDispatchedThrough(estimate.dispatchedThrough || '')
-      setDestination(estimate.destination || '')
-      setCarrierNameAgent(estimate.carrierNameAgent || '')
-      setBillOfLading(estimate.billOfLading || '')
-      setMotorVehicleNo(estimate.motorVehicleNo || '')
-      setBillingAddress(estimate.billingAddress || '')
-      setReverseCharge(estimate.reverseCharge || '')
-      setGstType(estimate.gstType || '')
-      setRows(estimate.rows || [])
-      setOtherChargesDescriptions(estimate.otherChargesDescriptions || '')
-      setOtherCharges(estimate.otherCharges || '')
-      setNarration(estimate.narration || '')
-      setGrossAmount(estimate.grossAmount || '')
-      setGstAmount(estimate.GstAmount || '')
-      setNetAmount(estimate.netAmount || '')
+      setReceiptDocNo(estimate.receiptDocNo || "");
+      setDispatchedThrough(estimate.dispatchedThrough || "");
+      setDestination(estimate.destination || "");
+      setCarrierNameAgent(estimate.carrierNameAgent || "");
+      setBillOfLading(estimate.billOfLading || "");
+      setMotorVehicleNo(estimate.motorVehicleNo || "");
+      setBillingAddress(estimate.billingAddress || "");
+      setReverseCharge(estimate.reverseCharge || "");
+      setGstType(estimate.gstType || "");
+      setRows(estimate.rows || []);
+      setOtherChargesDescriptions(estimate.otherChargesDescriptions || "");
+      setOtherCharges(estimate.otherCharges || "");
+      setNarration(estimate.narration || "");
+      setGrossAmount(estimate.grossAmount || "");
+      setGstAmount(estimate.GstAmount || "");
+      setNetAmount(estimate.netAmount || "");
 
-      setdocumentPath(estimate.documentPath || '')
+      setdocumentPath(estimate.documentPath || "");
 
       const updatedRows = estimate.rows.map((row) => {
-        const { igstpercent, ...rest } = row
-        setgstRatev(igstpercent)
-      })
+        const { igstpercent, ...rest } = row;
+        setgstRatev(igstpercent);
+      });
     }
-  }, [estimate])
+  }, [estimate]);
 
   const openViewModal = (suppliers) => {
-    setViewModal(true)
-  }
+    setViewModal(true);
+  };
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id)
+      setUserId(auth.user._id);
     }
     if (auth.user.role === 0) {
-      setUserId(auth.user.admin)
+      setUserId(auth.user.admin);
     }
-    fetchBanks()
-  }, [auth, userId])
+    fetchBanks();
+  }, [auth, userId]);
 
   const fetchBanks = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
-      setBanks(response.data.data)
+      const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
+      setBanks(response.data.data);
     } catch (error) {
-      console.error('Error fetching Bank data', error)
+      console.error("Error fetching Bank data", error);
     }
-  }
+  };
   const fetchsupplier = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`)
-      setSupplier(response.data.data)
+      const response = await axios.get(`/api/v1/auth/manageSupplier/${userId}`);
+      setSupplier(response.data.data);
     } catch (error) {
-      console.error('Error fetching suppliers:', error)
+      console.error("Error fetching suppliers:", error);
     }
-  }
+  };
 
   useEffect(() => {
     if (auth?.user) {
       if (auth.user.role === 1) {
-        setUserId(auth.user._id)
+        setUserId(auth.user._id);
       } else if (auth.user.role === 0) {
-        setUserId(auth.user.admin)
+        setUserId(auth.user.admin);
       }
     }
-    fetchsupplier()
-  }, [auth, userId])
+    fetchsupplier();
+  }, [auth, userId]);
   useEffect(() => {
     const companyData = async () => {
       try {
-        const response = await axios.get(`/api/v1/company/get/${userId}`)
-        setCompanyData(response.data.data) // Assuming setCompanyData updates the company state
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
+        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
       } catch (error) {
-        console.error('Error fetching company data:', error)
+        console.error("Error fetching company data:", error);
       }
-    }
+    };
 
-    companyData() // Fetch company data on component mount
-  }, [userId]) // Empty dependency array ensures this only runs once, on mount
+    companyData(); // Fetch company data on component mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
 
   const handlesupplierChange = (e) => {
-    const value = e.target.value
-    setSelectedsupplier(value)
-    setSelectedBanks([]) // Clear selected banks
-    setSelectedCash('') // Clear selected cash
-    const selectedSupplierData = supplier.find((cust) => cust._id === value)
-    setChooseUser(selectedSupplierData)
+    const value = e.target.value;
+    setSelectedsupplier(value);
+    setSelectedBanks([]); // Clear selected banks
+    setSelectedCash(""); // Clear selected cash
+    const selectedSupplierData = supplier.find((cust) => cust._id === value);
+    setChooseUser(selectedSupplierData);
 
     // Set relevant details from selected supplier
-    setSupplierName(selectedSupplierData?.name || '')
-    setBillingAddress(selectedSupplierData?.address || '')
-    setPlaceOfSupply(selectedSupplierData?.state || '')
+    setSupplierName(selectedSupplierData?.name || "");
+    setBillingAddress(selectedSupplierData?.address || "");
+    setPlaceOfSupply(selectedSupplierData?.state || "");
 
     // Determine GST type
     setGstType(
       selectedSupplierData.state.trim().toLowerCase() ===
         company.state.trim().toLowerCase()
-        ? 'CGST/SGST'
-        : 'IGST',
-    )
-  }
+        ? "CGST/SGST"
+        : "IGST"
+    );
+  };
 
   const handleCashPayment = (value) => {
-    setSelectedCash(value)
-    setSelectedsupplier('') // Clear selected supplier
-    setSelectedBanks([]) // Clear selected banks
-    setSupplierName('') // Clear supplier name
-    setBillingAddress('') // Clear billing address
-    setPlaceOfSupply('') // Clear place of supply
-    setGstType('CGST/SGST')
-  }
+    setSelectedCash(value);
+    setSelectedsupplier(""); // Clear selected supplier
+    setSelectedBanks([]); // Clear selected banks
+    setSupplierName(""); // Clear supplier name
+    setBillingAddress(""); // Clear billing address
+    setPlaceOfSupply(""); // Clear place of supply
+    setGstType("CGST/SGST");
+  };
 
   const handleBanksChange = (bankId) => {
-    const selectedBank = banks.find((bank) => bank._id === bankId)
-    setSelectedBanks(selectedBank)
-    setSelectedCash('') // Clear selected cash
-    setSelectedsupplier('') // Clear selected supplier
-    setSupplierName('') // Clear supplier name
-    setBillingAddress('') // Clear billing address
-    setPlaceOfSupply('') // Clear place of supply
-    setGstType('CGST/SGST')
-  }
+    const selectedBank = banks.find((bank) => bank._id === bankId);
+    setSelectedBanks(selectedBank);
+    setSelectedCash(""); // Clear selected cash
+    setSelectedsupplier(""); // Clear selected supplier
+    setSupplierName(""); // Clear supplier name
+    setBillingAddress(""); // Clear billing address
+    setPlaceOfSupply(""); // Clear place of supply
+    setGstType("CGST/SGST");
+  };
 
-  const [paymentMethod, setPaymentMethod] = useState('')
-  const [subPaymentType, setSubPaymentType] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [subPaymentType, setSubPaymentType] = useState("");
 
   const handlePaymentMethodChange = (e) => {
-    setPaymentMethod(e.target.value)
-  }
+    setPaymentMethod(e.target.value);
+  };
 
   const handleCashChange = (e) => {
-    setCash({ ...cash, [e.target.name]: e.target.value })
-  }
+    setCash({ ...cash, [e.target.name]: e.target.value });
+  };
 
   const handleBankChange = (e) => {
-    const { name, value } = e.target
-    setBank({ ...bank, [name]: value })
-  }
+    const { name, value } = e.target;
+    setBank({ ...bank, [name]: value });
+  };
 
   const handleSubPaymentTypeChange = (e) => {
-    setBank({ ...bank, selectBankType: e.target.value })
-  }
+    setBank({ ...bank, selectBankType: e.target.value });
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    if (name === 'otherCharges') {
-      setOtherCharges(value)
-      calculateTotalAmounts()
+    const { name, value } = e.target;
+    if (name === "otherCharges") {
+      setOtherCharges(value);
+      calculateTotalAmounts();
     }
     switch (name) {
-      case 'receiptDocNo':
-        setReceiptDocNo(value)
-        break
-      case 'dispatchedThrough':
-        setDispatchedThrough(value)
-        break
-      case 'destination':
-        setDestination(value)
-        break
-      case 'carrierNameAgent':
-        setCarrierNameAgent(value)
-        break
-      case 'billOfLading':
-        setBillOfLading(value)
-        break
-      case 'motorVehicleNo':
-        setMotorVehicleNo(value)
-        break
-      case 'date':
-        setDate(value)
-        break
-      case 'InvoiceNo':
-        setInvoiceNo(value)
-        break
-      case 'salesType':
-        setSalesType(value)
-        break
-      case 'customerType':
-        setCustomerType(value)
-        break
-      case 'SupplierName':
-        setSupplierName(value)
-        break
-      case 'placeOfSupply':
-        setPlaceOfSupply(value)
-        break
-      case 'paymentTerm':
-        setPaymentTerm(value)
-        break
-      case 'dueDate':
-        setDueDate(value)
-        break
-      case 'billingAddress':
-        setBillingAddress(value)
-        break
-      case 'reverseCharge':
-        setReverseCharge(value)
-        break
-      case 'gstType':
-        setGstType(value)
-        break
-      case 'otherChargesDescriptions':
-        setOtherChargesDescriptions(value)
-        break
-      case 'otherCharges':
-        setOtherCharges(value)
-        break
-      case 'narration':
-        setNarration(value)
-        break
-      case 'grossAmount':
-        setGrossAmount(value)
-        break
-      case 'GstAmount':
-        setGstAmount(value)
-        break
-      case 'netAmount':
-        setNetAmount(value)
-        break
+      case "receiptDocNo":
+        setReceiptDocNo(value);
+        break;
+      case "dispatchedThrough":
+        setDispatchedThrough(value);
+        break;
+      case "destination":
+        setDestination(value);
+        break;
+      case "carrierNameAgent":
+        setCarrierNameAgent(value);
+        break;
+      case "billOfLading":
+        setBillOfLading(value);
+        break;
+      case "motorVehicleNo":
+        setMotorVehicleNo(value);
+        break;
+      case "date":
+        setDate(value);
+        break;
+      case "InvoiceNo":
+        setInvoiceNo(value);
+        break;
+      case "salesType":
+        setSalesType(value);
+        break;
+      case "customerType":
+        setCustomerType(value);
+        break;
+      case "SupplierName":
+        setSupplierName(value);
+        break;
+      case "placeOfSupply":
+        setPlaceOfSupply(value);
+        break;
+      case "paymentTerm":
+        setPaymentTerm(value);
+        break;
+      case "dueDate":
+        setDueDate(value);
+        break;
+      case "billingAddress":
+        setBillingAddress(value);
+        break;
+      case "reverseCharge":
+        setReverseCharge(value);
+        break;
+      case "gstType":
+        setGstType(value);
+        break;
+      case "otherChargesDescriptions":
+        setOtherChargesDescriptions(value);
+        break;
+      case "otherCharges":
+        setOtherCharges(value);
+        break;
+      case "narration":
+        setNarration(value);
+        break;
+      case "grossAmount":
+        setGrossAmount(value);
+        break;
+      case "GstAmount":
+        setGstAmount(value);
+        break;
+      case "netAmount":
+        setNetAmount(value);
+        break;
       default:
-        break
+        break;
     }
-  }
+  };
 
   const addRow = () => {
     setRows([
       ...rows,
       {
-        itemCode: '',
-        productName: '',
-        hsnCode: '',
+        itemCode: "",
+        productName: "",
+        hsnCode: "",
         qty: 0,
-        units: '',
-        freeQty: '',
+        unit: "",
+        freeQty: "",
         maxmimunRetailPrice: 0,
         unitCost: 0,
         schemeMargin: 0,
@@ -355,230 +353,230 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
         igstRS: 0,
         totalValue: 0,
       },
-    ])
-  }
+    ]);
+  };
 
   const removeRow = (index) => {
     if (rows.length > 1) {
-      setRows(rows.filter((_, i) => i !== index))
+      setRows(rows.filter((_, i) => i !== index));
     }
-  }
+  };
 
   const handleRowChange = (rowIndex, field, value) => {
-    const updatedRows = [...rows] // Clone the existing rows array
-    const currentRow = updatedRows[rowIndex] // Get the current row
+    const updatedRows = [...rows]; // Clone the existing rows array
+    const currentRow = updatedRows[rowIndex]; // Get the current row
 
-    if (field === 'discountpercent') {
-      const discountPercent = parseFloat(value) || 0 // Ensure a valid number
-      currentRow.discountpercent = discountPercent
+    if (field === "discountpercent") {
+      const discountPercent = parseFloat(value) || 0; // Ensure a valid number
+      currentRow.discountpercent = discountPercent;
 
-      const unitCost = Number(currentRow.unitCost)
-      const discountRS = (unitCost * discountPercent) / 100 // Calculate discount in Rs
-      currentRow.discountRs = discountRS.toFixed(2)
+      const unitCost = Number(currentRow.unitCost);
+      const discountRS = (unitCost * discountPercent) / 100; // Calculate discount in Rs
+      currentRow.discountRs = discountRS.toFixed(2);
 
-      const qt = Number(currentRow.qty) // Make sure you're using the correct qty for the current row
-      const taxableValue = (unitCost - discountRS) * qt // Calculate taxable value
-      currentRow.taxableValue = taxableValue.toFixed(2) // Ensure consistent format
+      const qt = Number(currentRow.qty); // Make sure you're using the correct qty for the current row
+      const taxableValue = (unitCost - discountRS) * qt; // Calculate taxable value
+      currentRow.taxableValue = taxableValue.toFixed(2); // Ensure consistent format
 
-      const gstRate = Number(gstRatev) || 0 // Get the GST rate
+      const gstRate = Number(gstRatev) || 0; // Get the GST rate
       {
-        console.log(gstRate, 'aslkfdj')
+        console.log(gstRate, "aslkfdj");
       }
-      const cgstRS = (taxableValue * (gstRate / 2)) / 100
-      const sgstRS = (taxableValue * (gstRate / 2)) / 100
-      const igstRS = (taxableValue * gstRate) / 100
+      const cgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const sgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const igstRS = (taxableValue * gstRate) / 100;
 
-      currentRow.cgstRS = cgstRS.toFixed(2)
-      currentRow.sgstRS = sgstRS.toFixed(2)
-      currentRow.igstRS = igstRS.toFixed(2)
-
-      // Update totalValue as taxableValue + GST amount
-      const totalGST =
-        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS
-      currentRow.totalValue = (taxableValue + totalGST).toFixed(2)
-    } else if (field === 'discountRs') {
-      const discountRs = parseFloat(value) || 0
-      const unitCost = Number(currentRow.unitCost)
-      const discountPercent = (discountRs / unitCost) * 100
-
-      currentRow.discountpercent = discountPercent.toFixed(2)
-      currentRow.discountRs = discountRs.toFixed(2)
-
-      const qt = Number(currentRow.qty)
-      const taxableValue = (unitCost - discountRs) * qt // Calculate taxable value
-      currentRow.taxableValue = taxableValue.toFixed(2)
-
-      const gstRate = Number(gstRatev) || 0 // Get the GST rate
-      const cgstRS = (taxableValue * (gstRate / 2)) / 100
-      const sgstRS = (taxableValue * (gstRate / 2)) / 100
-      const igstRS = (taxableValue * gstRate) / 100
-
-      currentRow.cgstRS = cgstRS.toFixed(2)
-      currentRow.sgstRS = sgstRS.toFixed(2)
-      currentRow.igstRS = igstRS.toFixed(2)
+      currentRow.cgstRS = cgstRS.toFixed(2);
+      currentRow.sgstRS = sgstRS.toFixed(2);
+      currentRow.igstRS = igstRS.toFixed(2);
 
       // Update totalValue as taxableValue + GST amount
       const totalGST =
-        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS
-      currentRow.totalValue = (taxableValue + totalGST).toFixed(2)
+        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
+      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
+    } else if (field === "discountRs") {
+      const discountRs = parseFloat(value) || 0;
+      const unitCost = Number(currentRow.unitCost);
+      const discountPercent = (discountRs / unitCost) * 100;
+
+      currentRow.discountpercent = discountPercent.toFixed(2);
+      currentRow.discountRs = discountRs.toFixed(2);
+
+      const qt = Number(currentRow.qty);
+      const taxableValue = (unitCost - discountRs) * qt; // Calculate taxable value
+      currentRow.taxableValue = taxableValue.toFixed(2);
+
+      const gstRate = Number(gstRatev) || 0; // Get the GST rate
+      const cgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const sgstRS = (taxableValue * (gstRate / 2)) / 100;
+      const igstRS = (taxableValue * gstRate) / 100;
+
+      currentRow.cgstRS = cgstRS.toFixed(2);
+      currentRow.sgstRS = sgstRS.toFixed(2);
+      currentRow.igstRS = igstRS.toFixed(2);
+
+      // Update totalValue as taxableValue + GST amount
+      const totalGST =
+        currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS;
+      currentRow.totalValue = (taxableValue + totalGST).toFixed(2);
     }
 
     // Update the rows state
-    updatedRows[rowIndex] = currentRow
-    setRows(updatedRows)
-  }
+    updatedRows[rowIndex] = currentRow;
+    setRows(updatedRows);
+  };
 
   const handlQtyChange = (rowIndex, qty) => {
-    const updatedRows = [...rows]
+    const updatedRows = [...rows];
 
-    const selectedRow = updatedRows[rowIndex]
+    const selectedRow = updatedRows[rowIndex];
 
-    setQty(qty)
+    setQty(qty);
     updatedRows[rowIndex] = {
       ...selectedRow,
       qty: qty,
-    }
+    };
 
-    setRows(updatedRows)
-  }
+    setRows(updatedRows);
+  };
 
   const calculateTotalAmounts = () => {
-    let grossAmount = 0
-    let GstAmount = 0
-    let totalOtherCharges = parseFloat(otherCharges) || 0
+    let grossAmount = 0;
+    let GstAmount = 0;
+    let totalOtherCharges = parseFloat(otherCharges) || 0;
 
     rows.forEach((row) => {
-      const taxableValue = parseFloat(row.taxableValue) || 0
-      const cgstRS = parseFloat(row.cgstRS) || 0
-      const sgstRS = parseFloat(row.sgstRS) || 0
-      const igstRS = parseFloat(row.igstRS) || 0
+      const taxableValue = parseFloat(row.taxableValue) || 0;
+      const cgstRS = parseFloat(row.cgstRS) || 0;
+      const sgstRS = parseFloat(row.sgstRS) || 0;
+      const igstRS = parseFloat(row.igstRS) || 0;
 
-      grossAmount += taxableValue
-      GstAmount += cgstRS + sgstRS // Total GST amount for each row
-    })
+      grossAmount += taxableValue;
+      GstAmount += cgstRS + sgstRS; // Total GST amount for each row
+    });
 
-    let netAmount
+    let netAmount;
     // Check if otherChargesDescriptions includes "discount" to decide calculation
-    if (otherChargesDescriptions.toLowerCase().includes('discount')) {
-      netAmount = grossAmount + GstAmount - totalOtherCharges
+    if (otherChargesDescriptions.toLowerCase().includes("discount")) {
+      netAmount = grossAmount + GstAmount - totalOtherCharges;
     } else {
-      netAmount = grossAmount + GstAmount + totalOtherCharges
+      netAmount = grossAmount + GstAmount + totalOtherCharges;
     }
-    setGrossAmount(grossAmount.toFixed(2))
-    setGstAmount(GstAmount.toFixed(2))
-    setNetAmount(netAmount)
-  }
+    setGrossAmount(grossAmount.toFixed(2));
+    setGstAmount(GstAmount.toFixed(2));
+    setNetAmount(netAmount);
+  };
 
   useEffect(() => {
-    calculateTotalAmounts()
-  }, [rows, otherCharges])
+    calculateTotalAmounts();
+  }, [rows, otherCharges]);
 
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`);
 
-      console.log(response, 'kasjfksdj')
+      console.log(response, "kasjfksdj");
       if (response.data && Array.isArray(response.data.data)) {
-        setProducts(response.data.data)
+        setProducts(response.data.data);
       } else {
-        console.error('Unexpected response structure:', response.data)
+        console.error("Unexpected response structure:", response.data);
       }
     } catch (error) {
-      console.error('Error fetching products:', error)
+      console.error("Error fetching products:", error);
       // toast.error("Failed to fetch products. Please try again.");
     }
-  }
+  };
 
   useEffect(() => {
     if (auth.user.role === 1) {
-      setUserId(auth.user._id)
+      setUserId(auth.user._id);
     }
     if (auth.user.role === 0) {
-      setUserId(auth.user.admin)
+      setUserId(auth.user.admin);
     }
-    fetchProducts()
-  }, [auth, userId])
+    fetchProducts();
+  }, [auth, userId]);
 
   const handleFreeQtyChange = (rowIndex, newFreeQty) => {
-    console.log(newFreeQty, 'hfgdhghdhf  dfsf dad')
-    const updatedRows = [...rows]
-    const selectedRow = updatedRows[rowIndex]
+    console.log(newFreeQty, "hfgdhghdhf  dfsf dad");
+    const updatedRows = [...rows];
+    const selectedRow = updatedRows[rowIndex];
 
     // Update the free quantity in the selected row
-    const freeQty = parseFloat(newFreeQty) || 0 // Ensure it's a valid number
+    const freeQty = parseFloat(newFreeQty) || 0; // Ensure it's a valid number
 
     // Calculate total quantity using the quantity from the selected row
-    const totalQuantity = Number(qty) + freeQty
+    const totalQuantity = Number(qty) + freeQty;
 
     // Calculate schemeMargin only if both freeQty and quantity exist
     const schemeMargin =
-      freeQty && qty ? ((freeQty / totalQuantity) * 100).toFixed(2) : 0
+      freeQty && qty ? ((freeQty / totalQuantity) * 100).toFixed(2) : 0;
 
-    console.log(schemeMargin, 'schemeMargin')
+    console.log(schemeMargin, "schemeMargin");
 
     // Update the row with the new freeQty and schemeMargin
     updatedRows[rowIndex] = {
       ...selectedRow,
       freeQty: freeQty,
       schemeMargin: schemeMargin,
-    }
+    };
 
     // Update the state with the modified rows
-    setRows(updatedRows)
-  }
+    setRows(updatedRows);
+  };
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
-      (product) => product.productName === selectedProductName,
-    )
+      (product) => product.productName === selectedProductName
+    );
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex)
+      updateRowValues(selectedProduct, rowIndex);
     }
-  }
+  };
 
   const handleItemCodeSelect = (rowIndex, selectedItemCode) => {
     const selectedProduct = products.find(
-      (product) => product.itemCode === selectedItemCode,
-    )
+      (product) => product.itemCode === selectedItemCode
+    );
 
     if (selectedProduct) {
-      updateRowValues(selectedProduct, rowIndex)
+      updateRowValues(selectedProduct, rowIndex);
     }
-  }
+  };
 
   const updateRowValues = (selectedProduct, rowIndex) => {
-    const updatedRows = [...rows] // Clone the current rows
+    const updatedRows = [...rows]; // Clone the current rows
 
     // Calculate retail price and taxableValue value based on product details
     if (selectedProduct) {
-      setgstRatev(selectedProduct.gstRate)
-      const updatedRows = [...rows]
+      setgstRatev(selectedProduct.gstRate);
+      const updatedRows = [...rows];
 
       // Calculate retail price
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100
+          100;
 
       // Determine if sales tax is included from the fetched product data
-      const salesTaxInclude = selectedProduct.salesTaxInclude
+      const salesTaxInclude = selectedProduct.salesTaxInclude;
 
       // Calculate taxable value based on salesTaxInclude
-      const taxableValue = 0
+      const taxableValue = 0;
 
       // Update the row with the new values, schemeMargin is excluded here since it's handled separately
       updatedRows[rowIndex] = {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
-          : '0.00',
+          : "0.00",
         // quantity: selectedProduct.quantity,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
@@ -592,44 +590,34 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
         igstpercent: selectedProduct.gstRate,
 
         cgstRS: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2),
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
         sgstRS: parseFloat(
-          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2),
+          ((taxableValue * (selectedProduct.gstRate / 2)) / 100).toFixed(2)
         ),
         igstRS: parseFloat(
-          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2),
+          ((taxableValue * selectedProduct.gstRate) / 100).toFixed(2)
         ),
 
         totalValue: (
           taxableValue +
           (taxableValue * selectedProduct.gstRate) / 100
         ).toFixed(2),
-      }
+      };
 
-      setRows(updatedRows)
+      setRows(updatedRows);
     }
 
     // Recalculate total amounts after updating the row
-    calculateTotalAmounts()
-  }
+    calculateTotalAmounts();
+  };
 
   const handleUpdate = async () => {
     try {
-      const submissionData = new FormData()
+      const submissionData = new FormData();
 
-      // Append non-file form data to formData
-      const transportDetails = estimate.transportDetails || {}
-      // console.log(
-      //   SupplierName,
-      //   'SupplierName',
-      //   selectedcash,
-      //   ' selectedcash',
-      //   selectedBank,
-      //   'selected bank',
-      // )
-      // Append non-file form data to formData
-
+      // Prepare transport details with fallback values
+      const transportDetails = estimate.transportDetails || {};
       const fields = {
         date,
         invoiceNo: InvoiceNo,
@@ -638,12 +626,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
         placeOfSupply,
         paymentTerm,
         dueDate,
-        receiptDocNo: transportDetails.receiptDocNo || '',
-        dispatchedThrough: transportDetails.dispatchedThrough || '',
-        destination: transportDetails.destination || '',
-        carrierNameAgent: transportDetails.carrierNameAgent || '',
-        billOfLading: transportDetails.billOfLading || '',
-        motorVehicleNo: transportDetails.motorVehicleNo || '',
+        receiptDocNo: transportDetails.receiptDocNo || "",
+        dispatchedThrough: transportDetails.dispatchedThrough || "",
+        destination: transportDetails.destination || "",
+        carrierNameAgent: transportDetails.carrierNameAgent || "",
+        billOfLading: transportDetails.billOfLading || "",
+        motorVehicleNo: transportDetails.motorVehicleNo || "",
         billingAddress,
         reverseCharge,
         gstType,
@@ -653,84 +641,72 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
         GstAmount: parseFloat(GstAmount).toFixed(2),
         otherCharges: parseFloat(otherCharges).toFixed(2),
         netAmount: parseFloat(netAmount).toFixed(2),
-      }
+      };
 
-      if (selectedBank) {
-        if (Array.isArray(selectedBank) && selectedBank.length > 0) {
-          selectedBank.forEach((bank, index) => {
-            Object.keys(bank).forEach((key) => {
-              // Append each key-value pair of the bank object
-              submissionData.append(`selectedBank[${index}][${key}]`, bank[key]);
-            });
-          });
-        } else if (Array.isArray(selectedBank) && selectedBank.length === 0) {
-          // Append an empty array if selectedBank is an empty array
-          submissionData.append('selectedBank', JSON.stringify([])); 
-          console.log(selectedBank,"append ke baad")
-        } else {
-          // Handle the case where selectedBank is not an array
-          Object.keys(selectedBank).forEach((key) => {
-            submissionData.append(`selectedBank[${key}]`, selectedBank[key]);
-          });
-        }
-      }
-      
+      // Append all fields to FormData
+      Object.entries(fields).forEach(([key, value]) => {
+        submissionData.append(key, value);
+      });
 
-      if (SupplierName) {
-        submissionData.append('supplierName', SupplierName)
-      } else {
-        submissionData.append('supplierName', '')
-      }
+      // Append supplier name
+      submissionData.append("supplierName", SupplierName || "");
 
-      if (selectedcash) {
-        submissionData.append('selectedcash', selectedcash)
-      } else {
-        submissionData.append('selectedcash', '') // Append empty string if no cash is selected
-      }
-
+      // Append rows
       rows.forEach((row, index) => {
-        Object.keys(row).forEach((key) => {
-          submissionData.append(`rows[${index}][${key}]`, row[key])
-        })
-      })
+        Object.entries(row).forEach(([key, value]) => {
+          submissionData.append(`rows[${index}][${key}]`, value);
+        });
+      });
 
-      if (paymentMethod === 'Cash' && cash) {
-        // Fix: Use cash state
-        submissionData.append('cash', JSON.stringify(cash))
-      } else if (paymentMethod === 'Bank' && bank) {
-        // Fix: Use bank state
-        submissionData.append('bank', JSON.stringify(bank))
-      }
+      // Serialize cash and bank objects before appending
 
-      // If a document file has been selected, append it to the FormData
+      submissionData.append("cash", JSON.stringify(cash));
+      submissionData.append("bank", JSON.stringify(bank));
+
+      // Append document if available
       if (documentPath) {
-        submissionData.append('documentPath', documentPath)
+        submissionData.append("documentPath", documentPath);
       }
 
+      // Log FormData for debugging
+      console.log("Submitting the following data:");
+      for (let [key, value] of submissionData.entries()) {
+        console.log(key, value);
+      }
+
+      // Make the API call
       const response = await axios.put(
         `/api/v1/purchaseInvoiceRoute/updatepurchaseinvoice/${estimate._id}`,
-        submissionData,
-      )
+        submissionData
+      );
+
+      // Handle response
       if (response.data.success) {
-        toast.success('invoice updated successfully')
+        toast.success("Invoice updated successfully");
         setTimeout(() => {
-          closeModal()
-        }, 1000)
+          closeModal();
+        }, 1000);
       } else {
-        alert('Failed to update estimate: ' + response.data.message)
+        alert("Failed to update invoice: " + response.data.message);
       }
     } catch (error) {
-      console.error('Error updating invoice:', error)
-      alert('Error updating invoice: ' + error.message)
+      console.error("Error updating invoice:", error);
+
+      // Show error message to user
+      alert(
+        `Error updating invoice: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     }
-  }
+  };
 
   const closeViewModal = () => {
-    setViewModal(false)
-  }
+    setViewModal(false);
+  };
 
   return (
-    <div style={{ backgroundColor: '#82ac73' }} className="p-4 ">
+    <div style={{ backgroundColor: "#82ac73" }} className="p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-center text-black text-2xl underline mb-4"></h1>
         <button
@@ -782,19 +758,19 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
             className="w-full p-2 border border-gray-300 rounded"
             value={selectedValue}
             onChange={(e) => {
-              const selectedValue = e.target.value
-              setSelectedValue(selectedValue) // Update the selected value
+              const selectedValue = e.target.value;
+              setSelectedValue(selectedValue); // Update the selected value
 
-              if (selectedValue === 'add-new-supplier') {
-                window.location.href = '/admin/CreateSupplier'
-              } else if (selectedValue === 'add-new-bank') {
-                window.location.href = '/admin/addbank'
-              } else if (selectedValue === 'cash') {
-                handleCashPayment(selectedValue)
-              } else if (selectedValue.startsWith('bank-')) {
-                handleBanksChange(selectedValue.replace('bank-', ''))
+              if (selectedValue === "add-new-supplier") {
+                window.location.href = "/admin/CreateSupplier";
+              } else if (selectedValue === "add-new-bank") {
+                window.location.href = "/admin/addbank";
+              } else if (selectedValue === "cash") {
+                handleCashPayment(selectedValue);
+              } else if (selectedValue.startsWith("bank-")) {
+                handleBanksChange(selectedValue.replace("bank-", ""));
               } else {
-                handlesupplierChange(e)
+                handlesupplierChange(e);
               }
             }}
           >
@@ -947,7 +923,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
           </select>
         </div>
 
-        {salesType === 'GST Invoice' && (
+        {salesType === "GST Invoice" && (
           <div className="mb-4 w-full">
             <label className="font-bold">GST Type:</label>
             <select
@@ -972,7 +948,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
               <th className="border p-2">Qty</th>
-              <th className="border p-2 ">Units</th>
+              <th className="border p-2 ">unit</th>
               <th className="border p-2 ">free Qty</th>
 
               <th className="border p-2">MRP</th>
@@ -987,7 +963,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               </th>
               <>
                 <th className="border p-2">Taxable</th>
-                {gstType === 'CGST/SGST' && (
+                {gstType === "CGST/SGST" && (
                   <>
                     <th className="border p-2">
                       CGST
@@ -1003,7 +979,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     </th>
                   </>
                 )}
-                {gstType === 'IGST' && (
+                {gstType === "IGST" && (
                   <th className="border p-2">
                     IGST
                     <div className="flex justify-between">
@@ -1043,11 +1019,11 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: '120px',
-                          maxWidth: '300px',
-                          fontSize: '14px',
-                          minHeight: '34px',
-                          height: '34px',
+                          minWidth: "120px",
+                          maxWidth: "300px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -1080,11 +1056,11 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       styles={{
                         control: (base) => ({
                           ...base,
-                          minWidth: '200px',
-                          maxWidth: '500px',
-                          fontSize: '14px',
-                          minHeight: '34px',
-                          height: '34px',
+                          minWidth: "200px",
+                          maxWidth: "500px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -1098,12 +1074,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="text"
                     value={row.hsnCode}
                     onChange={(e) =>
-                      handleRowChange(index, 'hsnCode', e.target.value)
+                      handleRowChange(index, "hsnCode", e.target.value)
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '80px',
-                      flexBasis: '80px',
+                      minWidth: "80px",
+                      flexBasis: "80px",
                       flexShrink: 1,
                     }}
                   />
@@ -1116,8 +1092,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) => handlQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '40px',
-                      flexBasis: '40px',
+                      minWidth: "40px",
+                      flexBasis: "40px",
                       flexShrink: 1,
                     }}
                   />
@@ -1126,9 +1102,9 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                 <td className="border p-2">
                   <input
                     type="text"
-                    value={row.units}
+                    value={row.unit}
                     onChange={(e) =>
-                      handleRowChange(index, 'units', e.target.value)
+                      handleRowChange(index, "unit", e.target.value)
                     }
                     className="w-full"
                   />
@@ -1142,8 +1118,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) => handleFreeQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '40px',
-                      flexBasis: '40px',
+                      minWidth: "40px",
+                      flexBasis: "40px",
                       flexShrink: 1,
                     }}
                   />
@@ -1156,14 +1132,14 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     onChange={(e) =>
                       handleRowChange(
                         index,
-                        'maxmimunRetailPrice',
-                        e.target.value,
+                        "maxmimunRetailPrice",
+                        e.target.value
                       )
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '60px',
-                      flexBasis: '60px',
+                      minWidth: "60px",
+                      flexBasis: "60px",
                       flexShrink: 1,
                     }}
                   />
@@ -1174,12 +1150,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="text"
                     value={row.unitCost}
                     onChange={(e) =>
-                      handleRowChange(index, 'unitCost', e.target.value)
+                      handleRowChange(index, "unitCost", e.target.value)
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '50px',
-                      flexBasis: '50px',
+                      minWidth: "50px",
+                      flexBasis: "50px",
                       flexShrink: 1,
                     }}
                   />
@@ -1190,7 +1166,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="text"
                     value={row.schemeMargin}
                     onChange={(e) =>
-                      handleRowChange(index, 'schemeMargin', e.target.value)
+                      handleRowChange(index, "schemeMargin", e.target.value)
                     }
                     className="w-full"
                   />
@@ -1204,14 +1180,14 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       onChange={(e) =>
                         handleRowChange(
                           index,
-                          'discountpercent',
-                          e.target.value,
+                          "discountpercent",
+                          e.target.value
                         )
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: '20px',
-                        flexBasis: '20px',
+                        minWidth: "20px",
+                        flexBasis: "20px",
                         flexShrink: 1,
                       }}
                     />
@@ -1220,12 +1196,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       value={row.discountRs}
                       onChange={
                         (e) =>
-                          handleRowChange(index, 'discountRs', e.target.value) // Fix here
+                          handleRowChange(index, "discountRs", e.target.value) // Fix here
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: '40px',
-                        flexBasis: '40px',
+                        minWidth: "40px",
+                        flexBasis: "40px",
                         flexShrink: 1,
                       }}
                     />
@@ -1237,17 +1213,17 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       type="number"
                       value={row.taxableValue}
                       onChange={(e) =>
-                        handleRowChange(index, 'taxableValue', e.target.value)
+                        handleRowChange(index, "taxableValue", e.target.value)
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: '70px',
-                        flexBasis: '70px',
+                        minWidth: "70px",
+                        flexBasis: "70px",
                         flexShrink: 1,
                       }}
                     />
                   </td>
-                  {gstType === 'CGST/SGST' && (
+                  {gstType === "CGST/SGST" && (
                     <>
                       <td className="border p-2">
                         <div className="flex gap-1">
@@ -1257,14 +1233,14 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                'cgstpercent',
-                                e.target.value,
+                                "cgstpercent",
+                                e.target.value
                               )
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: '50px',
-                              flexBasis: '50px',
+                              minWidth: "50px",
+                              flexBasis: "50px",
                               flexShrink: 1,
                             }}
                           />
@@ -1272,12 +1248,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                             type="number"
                             value={row.cgstRS}
                             onChange={(e) =>
-                              handleRowChange(index, 'cgstRS', e.target.value)
+                              handleRowChange(index, "cgstRS", e.target.value)
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: '50px',
-                              flexBasis: '50px',
+                              minWidth: "50px",
+                              flexBasis: "50px",
                               flexShrink: 1,
                             }}
                           />
@@ -1291,14 +1267,14 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                'sgstpercent',
-                                e.target.value,
+                                "sgstpercent",
+                                e.target.value
                               )
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: '50px',
-                              flexBasis: '50px',
+                              minWidth: "50px",
+                              flexBasis: "50px",
                               flexShrink: 1,
                             }}
                           />
@@ -1306,12 +1282,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                             type="number"
                             value={row.sgstRS}
                             onChange={(e) =>
-                              handleRowChange(index, 'sgstRS', e.target.value)
+                              handleRowChange(index, "sgstRS", e.target.value)
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: '50px',
-                              flexBasis: '50px',
+                              minWidth: "50px",
+                              flexBasis: "50px",
                               flexShrink: 1,
                             }}
                           />
@@ -1319,7 +1295,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       </td>
                     </>
                   )}
-                  {gstType === 'IGST' && (
+                  {gstType === "IGST" && (
                     <td className="border p-2">
                       <div className="flex gap-1">
                         <input
@@ -1328,8 +1304,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                           onChange={(e) =>
                             handleRowChange(
                               index,
-                              'igstpercent',
-                              e.target.value,
+                              "igstpercent",
+                              e.target.value
                             )
                           }
                           className="w-full"
@@ -1338,7 +1314,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                           type="number"
                           value={row.igstRS}
                           onChange={(e) =>
-                            handleRowChange(index, 'igstRS', e.target.value)
+                            handleRowChange(index, "igstRS", e.target.value)
                           }
                           className="w-full"
                         />
@@ -1351,12 +1327,12 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="number"
                     value={row.totalValue}
                     onChange={(e) =>
-                      handleRowChange(index, 'totalValue', e.target.value)
+                      handleRowChange(index, "totalValue", e.target.value)
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '70px',
-                      flexBasis: '70px',
+                      minWidth: "70px",
+                      flexBasis: "70px",
                       flexShrink: 1,
                     }}
                   />
@@ -1484,7 +1460,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               strokeWidth={2}
               d="M12 4v16m8-8H4"
             />
-          </svg>{' '}
+          </svg>{" "}
           change Document
           <input
             type="file"
@@ -1567,13 +1543,13 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               contentLabel="View Item Modal"
               style={{
                 content: {
-                  width: '80%',
-                  height: '90%',
-                  maxWidth: '800px',
-                  margin: 'auto',
-                  padding: '5px',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                  borderRadius: '5px',
+                  width: "80%",
+                  height: "90%",
+                  maxWidth: "800px",
+                  margin: "auto",
+                  padding: "5px",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  borderRadius: "5px",
                 },
               }}
             >
@@ -1594,7 +1570,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       name="paymentMethod"
                       value="Cash"
                       onChange={handlePaymentMethodChange}
-                      checked={paymentMethod === 'Cash'}
+                      checked={paymentMethod === "Cash"}
                     />
                     Cash
                   </label>
@@ -1604,7 +1580,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                       name="paymentMethod"
                       value="Bank"
                       onChange={handlePaymentMethodChange}
-                      checked={paymentMethod === 'Bank'}
+                      checked={paymentMethod === "Bank"}
                     />
                     Bank
                   </label>
@@ -1612,7 +1588,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
 
                 {/* Conditional form rendering based on payment method */}
                 <form>
-                  {paymentMethod === 'Cash' && (
+                  {paymentMethod === "Cash" && (
                     <>
                       <label className="font-bold">Amount</label>
                       <input
@@ -1649,7 +1625,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     </>
                   )}
 
-                  {paymentMethod === 'Bank' && (
+                  {paymentMethod === "Bank" && (
                     <>
                       <label className="font-bold">Select Bank</label>
                       <input
@@ -1673,7 +1649,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                         <option value="Online">Online</option>
                         <option value="Cheque">Cheque</option>
                       </select>
-                      {bank.selectBankType === 'Online' && (
+                      {bank.selectBankType === "Online" && (
                         <>
                           <label className="font-bold">Transaction Date</label>
                           <input
@@ -1693,7 +1669,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                           />
                         </>
                       )}
-                      {bank.selectBankType === 'Cheque' && (
+                      {bank.selectBankType === "Cheque" && (
                         <>
                           <label className="font-bold">Transaction Date</label>
                           <input
@@ -1753,7 +1729,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                     <button
                       className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 h-10 "
                       onClick={() => {
-                        closeViewModal()
+                        closeViewModal();
                       }}
                     >
                       Save
@@ -1783,7 +1759,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
       </div>
       <ToastContainer />
     </div>
-  )
-}
+  );
+};
 
-export default EditPurchaseInvoice
+export default EditPurchaseInvoice;

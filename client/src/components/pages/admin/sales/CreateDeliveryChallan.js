@@ -16,7 +16,7 @@ const CreateDeliveryChallan = () => {
   const [banks, setBanks] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedBanks, setSelectedBanks] = useState([]);
-  const [cash,setCash]=useState("");
+  const [cash, setCash] = useState("");
   const [transportDetails, setTransportDetails] = useState({
     receiptDocNo: "",
     dispatchedThrough: "",
@@ -44,8 +44,8 @@ const CreateDeliveryChallan = () => {
     salesType: "",
     customerType: "",
     customerName: "",
-    cash:"",
-    selectedBanks:[],
+    cash: "",
+    selectedBanks: [],
     placeOfSupply: "",
     paymentTerm: "",
     dueDate: "",
@@ -146,7 +146,7 @@ const CreateDeliveryChallan = () => {
     console.log(value, "cash");
     setCash(value);
     setGstType("CGST/SGST");
-  
+
     // Update formData with the cash value
     setFormData((prev) => ({
       ...prev,
@@ -156,16 +156,16 @@ const CreateDeliveryChallan = () => {
   const handleBankChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
     console.log(selectedBank, "selectedBank");
-    
+
     // Update the selected banks
     setSelectedBanks(selectedBank);
-  
+
     // Update formData with selected bank details
     setFormData((prev) => ({
       ...prev,
       selectedBank: selectedBank ? [selectedBank] : [], // Store as an array if needed
     }));
-  
+
     // Additional logic for handling bank data
     setGstType("CGST/SGST");
   };
@@ -286,7 +286,7 @@ const CreateDeliveryChallan = () => {
         productName: "",
         hsnCode: "",
         qty: 0,
-        units: "",
+        unit: "",
         mrp: 0,
         discount: 0,
         taxableValue: 0,
@@ -384,7 +384,14 @@ const CreateDeliveryChallan = () => {
 
       // Calculate taxable value
 
-      console.log(salesTaxInclude,"salesTaxInclude", selectedProduct.retailPrice ,"rtailprice",selectedProduct.gstRate,"gstrate")
+      console.log(
+        salesTaxInclude,
+        "salesTaxInclude",
+        selectedProduct.retailPrice,
+        "rtailprice",
+        selectedProduct.gstRate,
+        "gstrate"
+      );
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
           (100 + Number(selectedProduct.gstRate))
@@ -451,7 +458,7 @@ const CreateDeliveryChallan = () => {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
@@ -467,7 +474,8 @@ const CreateDeliveryChallan = () => {
           (selectedProduct.maxmimunRetailPrice *
             selectedProduct.retailDiscount) /
           100,
-
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
         // taxable value based on salesTaxInclude
         taxableValue: taxableValue,
 
@@ -519,7 +527,7 @@ const CreateDeliveryChallan = () => {
         itemCode: selectedProduct.itemCode,
         productName: selectedProduct.productName,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
@@ -536,6 +544,9 @@ const CreateDeliveryChallan = () => {
             selectedProduct.retailDiscount) /
           100
         ).toFixed(2),
+
+        expiryDate: selectedProduct.expiryDate,
+        batchNo: selectedProduct.batchNo,
         taxableValue: taxableValue,
         cgstp: selectedProduct.gstRate / 2,
         sgstp: selectedProduct.gstRate / 2,
@@ -580,7 +591,7 @@ const CreateDeliveryChallan = () => {
           productName: row.productName,
           hsnCode: row.hsnCode,
           qty: row.quantity,
-          units: row.units,
+          units: row.unit,
           mrp: row.maxmimunRetailPrice,
 
           discountpercent:
@@ -625,8 +636,8 @@ const CreateDeliveryChallan = () => {
         salesType: "",
         customerType: "",
         customerName: "",
-        cash:"",
-        selectedBanks:[],
+        cash: "",
+        selectedBanks: [],
         placeOfSupply: "",
         paymentTerm: "",
         dueDate: "",
@@ -722,7 +733,7 @@ const CreateDeliveryChallan = () => {
           </div>
         `;
       }
-      return '';
+      return "";
     };
     const updatedFormData = {
       ...formData,
@@ -731,7 +742,7 @@ const CreateDeliveryChallan = () => {
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.units,
+        units: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -846,7 +857,7 @@ const CreateDeliveryChallan = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -865,7 +876,7 @@ const CreateDeliveryChallan = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -1083,7 +1094,7 @@ const CreateDeliveryChallan = () => {
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.units,
+        units: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -1132,7 +1143,7 @@ const CreateDeliveryChallan = () => {
           </div>
         `;
       }
-      return '';
+      return "";
     };
     function numberToWords(num) {
       const ones = [
@@ -1213,7 +1224,7 @@ const CreateDeliveryChallan = () => {
           <td>${row.productName}</td>
           <td>${row.hsnCode}</td>
           <td>${row.qty}</td>
-          <td>${row.units}</td>
+          <td>${row.unit}</td>
           <td>${row.mrp}</td>
           <td>${row.discountpercent}% ${row.discountRS}</td>
           <td>${row.taxable}</td>
@@ -1436,7 +1447,6 @@ const CreateDeliveryChallan = () => {
         style={{ backgroundColor: "#FFFFFF" }}
         className="p-4 responsive-container"
       >
-
         {/* Top Section */}
         <h1 className="text-center font-bold text-3xl  text-black mb-5">
           Create Delivery Challan
@@ -1710,7 +1720,7 @@ const CreateDeliveryChallan = () => {
                 <th className="border ">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
-                <th className="border p-1">Units</th>
+                <th className="border p-1">unit</th>
                 <th className="border p-1">MRP</th>
                 <th className="border p-1">
                   Discount
@@ -1825,6 +1835,10 @@ const CreateDeliveryChallan = () => {
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                     />
+                    <div style={{ marginTop: "10px", fontSize: "12px" }}>
+                      {row.expiryDate && <div>Exp Dt: {row.expiryDate}</div>}
+                      {row.batchNo && <div>Batch No: {row.batchNo}</div>}
+                    </div>
                   </td>
 
                   <td className="border p-1">
@@ -1848,9 +1862,9 @@ const CreateDeliveryChallan = () => {
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.units}
+                      value={row.unit}
                       onChange={(e) =>
-                        handleRowChange(index, "units", e.target.value)
+                        handleRowChange(index, "unit", e.target.value)
                       }
                       className="w-full"
                     />
@@ -2254,7 +2268,7 @@ const CreateDeliveryChallan = () => {
                 Gross Amount
               </label>
               <input
-                value={grossAmount}
+                value={grossAmount.toLocaleString()}
                 // onChange={handleBillingAddressChange}
                 className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
               />
@@ -2288,9 +2302,9 @@ const CreateDeliveryChallan = () => {
                 Net Amount
               </label>
               <input
-                value={netAmount}
+                value={Math.round(netAmount).toFixed(2)}
                 // onChange={handleBillingAddressChange}
-                className="bg-white text-black border p-1 w-full  rounded lg:w-2/3"
+                className=" text-black border p-1 text-2xl w-full font-bold  rounded lg:w-2/3"
               />
             </div>
           </div>

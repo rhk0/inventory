@@ -33,7 +33,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   const [GstAmount, setGstAmount] = useState('')
   const [netAmount, setNetAmount] = useState('')
   const [supplierdebitNoteNo, setsupplierdebitNoteNo] = useState('')
-  const [quantity, setQty] = useState(0)
+  const [qty, setQty] = useState(0)
   const [gstRatev, setgstRatev] = useState()
   const [selectPurchase, setSelectPurchase] = useState()
   const [viewModal, setViewModal] = useState(false)
@@ -317,8 +317,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
         itemCode: '',
         productName: '',
         hsnCode: '',
-        quantity: 0,
-        units: '',
+        qty: 0,
+        unit: '',
         freeQty: '',
         maxmimunRetailPrice: 0,
         unitCost: 0,
@@ -355,7 +355,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       const discountRS = (unitCost * discountPercent) / 100 // Calculate discount in Rs
       currentRow.discountRs = discountRS.toFixed(2)
 
-      const qt = Number(currentRow.quantity) // Make sure you're using the correct qty for the current row
+      const qt = Number(currentRow.qty) // Make sure you're using the correct qty for the current row
       const taxableValue = (unitCost - discountRS) * qt // Calculate taxable value
       currentRow.taxableValue = taxableValue.toFixed(2) // Ensure consistent format
 
@@ -383,7 +383,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       currentRow.discountpercent = discountPercent.toFixed(2)
       currentRow.discountRs = discountRs.toFixed(2)
 
-      const qt = Number(currentRow.quantity)
+      const qt = Number(currentRow.qty)
       const taxableValue = (unitCost - discountRs) * qt // Calculate taxable value
       currentRow.taxableValue = taxableValue.toFixed(2)
 
@@ -395,7 +395,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       currentRow.cgstRS = cgstRS.toFixed(2)
       currentRow.sgstRS = sgstRS.toFixed(2)
       currentRow.igstRS = igstRS.toFixed(2)
-      currentRow.quantity = qt
+      currentRow.qty = qt
       // Update totalValue as taxableValue + GST amount
       const totalGST =
         currentRow.cgstRS && currentRow.sgstRS ? cgstRS + sgstRS : igstRS
@@ -407,15 +407,15 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
     setRows(updatedRows)
   }
 
-  const handlQtyChange = (rowIndex, quantity) => {
+  const handlQtyChange = (rowIndex, qty) => {
     const updatedRows = [...rows]
 
     const selectedRow = updatedRows[rowIndex]
 
-    setQty(quantity)
+    setQty(qty)
     updatedRows[rowIndex] = {
       ...selectedRow,
-      quantity: quantity,
+      qty: qty,
     }
 
     setRows(updatedRows)
@@ -485,15 +485,15 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
     const updatedRows = [...rows]
     const selectedRow = updatedRows[rowIndex]
 
-    // Update the free quantity in the selected row
+    // Update the free qty in the selected row
     const freeQty = parseFloat(newFreeQty) || 0 // Ensure it's a valid number
 
-    // Calculate total quantity using the quantity from the selected row
-    const totalquantity = Number(quantity) + freeQty
+    // Calculate total qty using the qty from the selected row
+    const totalqty = Number(qty) + freeQty
 
-    // Calculate schemeMargin only if both freeQty and quantity exist
+    // Calculate schemeMargin only if both freeQty and qty exist
     const schemeMargin =
-      freeQty && quantity ? ((freeQty / totalquantity) * 100).toFixed(2) : 0
+      freeQty && qty ? ((freeQty / totalqty) * 100).toFixed(2) : 0
 
     console.log(schemeMargin, 'schemeMargin')
 
@@ -553,12 +553,12 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : '0.00',
-        // quantity: selectedProduct.quantity,
+        // qty: selectedProduct.qty,
         expiryDate: selectedProduct.expiryDate,
         batchNo: selectedProduct.batchNo,
         unitCost: selectedProduct.purchasePriceExGst,
@@ -845,7 +845,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
               <th className="border p-2">Qty</th>
-              <th className="border p-2 ">Units</th>
+              <th className="border p-2 ">unit</th>
               <th className="border p-2 ">free Qty</th>
 
               <th className="border p-2">MRP</th>
@@ -984,8 +984,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                 <td className="border p-2">
                   <input
                     type="number"
-                    name="quantity"
-                    value={row.quantity}
+                    name="qty"
+                    value={row.qty}
                     onChange={(e) => handlQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{
@@ -999,9 +999,9 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                 <td className="border p-2">
                   <input
                     type="text"
-                    value={row.units}
+                    value={row.unit}
                     onChange={(e) =>
-                      handleRowChange(index, 'units', e.target.value)
+                      handleRowChange(index, 'unit', e.target.value)
                     }
                     className="w-full"
                   />

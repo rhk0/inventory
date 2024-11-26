@@ -112,7 +112,6 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     setCash(value);
     setGstType("CGST/SGST");
 
-
     setCash(value);
     setCustomerName("");
     setPlaceOfSupply("");
@@ -529,7 +528,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       itemCode: selectedProduct.itemCode || "", // Map itemCode
       productName: selectedProduct.productName || "", // Map productName
       hsnCode: selectedProduct.hsnCode || "", // Map HSN code
-      units: selectedProduct.units || "", // Map units
+      units: selectedProduct.unit || "", // Map units
       mrp: selectedProduct.maxmimunRetailPrice
         ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
         : "0.00", // Map maximum retail price
@@ -1098,6 +1097,13 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       <input
                         type="text"
                         value={row.discountpercent}
+                        onChange={(e) =>
+                          handleRowChange(
+                            index,
+                            "discountpercent",
+                            e.target.value
+                          )
+                        }
                         readOnly
                         className="w-full flex-grow"
                         style={{
@@ -1110,6 +1116,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                         type="text"
                         value={row.discountRS}
                         readOnly
+                        onChange={(e) =>
+                          handleRowChange(index, "discountRS", e.target.value)
+                        }
                         className="w-full flex-grow"
                         style={{
                           minWidth: "40px",

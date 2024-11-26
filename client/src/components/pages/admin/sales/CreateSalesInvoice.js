@@ -14,7 +14,7 @@ const CreateSalesInvoice = () => {
   const [dueDate, setDueDate] = useState("");
   const [chooseUser, setChooseUser] = useState([]);
   const [company, setCompanyData] = useState([]);
-  const [rAmount,setRAmount] =useState(0);
+  const [rAmount, setRAmount] = useState(0);
   const [userId, setUserId] = useState("");
   const [auth] = useAuth();
   const [transportDetails, setTransportDetails] = useState({
@@ -83,25 +83,19 @@ const CreateSalesInvoice = () => {
     otherCharges: "",
   });
 
-  
-
-  // const handleCashDetailsChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setCashDetails((prev) => ({ ...prev, [name]: value }));
-  // };
-
-  // const handleBankDetailsChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setBankDetails((prev) => ({
-  //     ...prev,
-  //     [name]: value, // Update the corresponding field in bankDetails
-  //   }));
-  // };
-
   const [paymentMethod, setPaymentMethod] = useState("");
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
+  };
+
+  const handleCustomerTypeChange = (e) => {
+    const value = e.target.value;
+    setCustomerType(value);
+    setFormData((prev) => ({
+      ...prev,
+      customerType: value,
+    }));
   };
 
   const [subPaymentType, setSubPaymentType] = useState("");
@@ -162,7 +156,6 @@ const CreateSalesInvoice = () => {
 
     setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
     setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
-    
 
     if (
       selectedCustomerData.state.trim().toLowerCase() ===
@@ -185,7 +178,6 @@ const CreateSalesInvoice = () => {
   };
   const handleBankChange = (bankId) => {
     const selectedBank = banks.find((bank) => bank._id === bankId);
-  
 
     // Update the selected banks
     setSelectedBanks(selectedBank);
@@ -213,6 +205,7 @@ const CreateSalesInvoice = () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageBank/${userId}`);
       setBanks(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       console.error("Error fetching Bank data", error);
       toast.error(error.response.data.message);
@@ -324,7 +317,7 @@ const CreateSalesInvoice = () => {
         productName: "",
         hsnCode: "",
         qty: 0,
-        units: "",
+        unit: "",
         mrp: 0,
         discount: 0,
         taxableValue: 0,
@@ -494,7 +487,7 @@ const CreateSalesInvoice = () => {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         productName: selectedProduct.productName,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
@@ -564,7 +557,7 @@ const CreateSalesInvoice = () => {
         itemCode: selectedProduct.itemCode,
         productName: selectedProduct.productName,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        unit: selectedProduct.unit,
         maxmimunRetailPrice: selectedProduct.maxmimunRetailPrice
           ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
           : "0.00",
@@ -616,15 +609,13 @@ const CreateSalesInvoice = () => {
     });
   };
 
-
-const [cashDetails, setCashDetails] = useState(
-    {
+  const [cashDetails, setCashDetails] = useState({
     Amount: "",
     Advance: "",
     Received: "",
     Balance: "",
   });
-  cashDetails.Amount=netAmount;
+  cashDetails.Amount = netAmount;
 
   const [bankDetails, setBankDetails] = useState({
     Amount: "",
@@ -637,17 +628,17 @@ const [cashDetails, setCashDetails] = useState(
     Received: "",
     Balance: "",
   });
-  bankDetails.Amount=netAmount
+  bankDetails.Amount = netAmount;
 
   const calculateBalance = (advance, received, Amount) => {
     const totalAdvanceReceived = parseFloat(advance) + parseFloat(received);
-    return (Amount) - totalAdvanceReceived || 0;
+    return Amount - totalAdvanceReceived || 0;
   };
 
   const handleCashDetailsChange = (e) => {
     const { name, value } = e.target;
     const updatedCashDetails = { ...cashDetails, [name]: value };
-  
+
     // If Advance or Received is updated, calculate the Balance
     if (name === "Advance" || name === "Received") {
       updatedCashDetails.Balance = calculateBalance(
@@ -656,15 +647,14 @@ const [cashDetails, setCashDetails] = useState(
         updatedCashDetails.Amount
       );
     }
-  
+
     setCashDetails(updatedCashDetails);
   };
-
 
   const handleBankDetailsChange = (e) => {
     const { name, value } = e.target;
     const updatedBankDetails = { ...bankDetails, [name]: value };
-  
+
     // If Advance or Received is updated, calculate the Balance
     if (name === "Advance" || name === "Received") {
       updatedBankDetails.Balance = calculateBalance(
@@ -673,7 +663,7 @@ const [cashDetails, setCashDetails] = useState(
         updatedBankDetails.Amount
       );
     }
-  
+
     setBankDetails(updatedBankDetails);
   };
 
@@ -688,7 +678,7 @@ const [cashDetails, setCashDetails] = useState(
           productName: row.productName,
           hsnCode: row.hsnCode,
           qty: row.quantity,
-          units: row.units,
+          units: row.unit,
           mrp: row.maxmimunRetailPrice,
 
           discountpercent:
@@ -725,7 +715,6 @@ const [cashDetails, setCashDetails] = useState(
         "/api/v1/salesInvoiceRoute/createsalesinvoice",
         updatedFormData
       );
-
       if (response) {
         toast.success("Sales invoice created successfully...");
       }
@@ -831,7 +820,7 @@ const [cashDetails, setCashDetails] = useState(
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.units,
+        units: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -934,7 +923,7 @@ const [cashDetails, setCashDetails] = useState(
 
       return words;
     }
- 
+
     const renderDetails = () => {
       if (formData.selctedcash) {
         return `
@@ -963,7 +952,7 @@ const [cashDetails, setCashDetails] = useState(
           </div>
         `;
       }
-      return '';
+      return "";
     };
     const gstHeaders =
       updatedFormData.gstType === "CGST/SGST"
@@ -1023,7 +1012,7 @@ const [cashDetails, setCashDetails] = useState(
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -1042,7 +1031,7 @@ const [cashDetails, setCashDetails] = useState(
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -1270,7 +1259,7 @@ const [cashDetails, setCashDetails] = useState(
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.units,
+        units: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -1321,7 +1310,7 @@ const [cashDetails, setCashDetails] = useState(
           </div>
         `;
       }
-      return '';
+      return "";
     };
     function numberToWords(num) {
       const ones = [
@@ -1402,7 +1391,7 @@ const [cashDetails, setCashDetails] = useState(
           <td>${row.productName}</td>
           <td>${row.hsnCode}</td>
           <td>${row.qty}</td>
-          <td>${row.units}</td>
+          <td>${row.unit}</td>
           <td>${row.mrp}</td>
           <td>${row.discountpercent}% ${row.discountRS}</td>
           <td>${row.taxable}</td>
@@ -1676,6 +1665,16 @@ const [cashDetails, setCashDetails] = useState(
             </label>
           </div>
           <div>
+            <label className="font-bold">Invoice No.</label>
+            <input
+              name="InvoiceNo"
+              type="text"
+              value={InvoiceNo} // Bind to local state
+              onChange={handleInvoiceNoChange} // Update both local and formData states
+              className="border p-2 w-full  rounded"
+            />
+          </div>
+          <div>
             <label className="font-bold">Sales Type</label>
             <select
               value={salesType}
@@ -1686,15 +1685,17 @@ const [cashDetails, setCashDetails] = useState(
               <option value="Bill of Supply">Bill of Supply</option>
             </select>
           </div>
+
           <div>
-            <label className="font-bold">Invoice No.</label>
-            <input
-              name="InvoiceNo"
-              type="text"
-              value={InvoiceNo} // Bind to local state
-              onChange={handleInvoiceNoChange} // Update both local and formData states
+            <label className="font-bold">Customer Type</label>
+            <select
+              value={customerType}
+              onChange={handleCustomerTypeChange}
               className="border p-2 w-full  rounded"
-            />
+            >
+              <option value="Retailer">Retailer</option>
+              <option value="Wholesaler">Wholesaler</option>
+            </select>
           </div>
 
           <div>
@@ -1740,7 +1741,6 @@ const [cashDetails, setCashDetails] = useState(
                 <option value="cash" className="text-green-500">
                   Cash
                 </option>
-
               </optgroup>
             </select>
           </div>
@@ -1897,7 +1897,7 @@ const [cashDetails, setCashDetails] = useState(
                 <th className="border ">Product Name</th>
                 <th className="border p-1 text-nowrap">HSN Code</th>
                 <th className="border p-1">Qty</th>
-                <th className="border p-1">Units</th>
+                <th className="border p-1">unit</th>
                 <th className="border p-1">MRP</th>
                 <th className="border p-1">
                   Discount
@@ -2013,10 +2013,8 @@ const [cashDetails, setCashDetails] = useState(
                       menuPosition="fixed"
                     />
                     <div style={{ marginTop: "10px", fontSize: "12px" }}>
-                      <div>Date: {row.expiryDate ? row.expiryDate : "N/A"}</div>
-                      <div>
-                        Batch Number: {row.batchNo ? row.batchNo : "N/A"}
-                      </div>
+                      {row.expiryDate && <div>Exp Dt: {row.expiryDate}</div>}
+                      {row.batchNo && <div>Batch No: {row.batchNo}</div>}
                     </div>
                   </td>
 
@@ -2041,9 +2039,9 @@ const [cashDetails, setCashDetails] = useState(
                   <td className="border p-1">
                     <input
                       type="text"
-                      value={row.units}
+                      value={row.unit}
                       onChange={(e) =>
-                        handleRowChange(index, "units", e.target.value)
+                        handleRowChange(index, "unit", e.target.value)
                       }
                       className="w-full"
                     />
@@ -2444,7 +2442,7 @@ const [cashDetails, setCashDetails] = useState(
                 Gross Amount
               </label>
               <input
-                value={grossAmount}
+                value={grossAmount.toLocaleString()}
                 // onChange={handleBillingAddressChange}
                 className=" text-black border p-1 w-full  rounded lg:w-2/3"
               />
@@ -2591,8 +2589,11 @@ const [cashDetails, setCashDetails] = useState(
                       className="border p-2 mb-2 w-full"
                     >
                       <option value="">Select Bank</option>
-                      <option value="Bank 1">Bank 1</option>
-                      <option value="Bank 2">Bank 2</option>
+                      {banks.map((bank, index) => (
+                        <option key={index} value={bank.name}>
+                          {bank.name}
+                        </option>
+                      ))}
                     </select>
                     <select
                       name="subPaymentType"

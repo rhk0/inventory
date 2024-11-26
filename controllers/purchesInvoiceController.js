@@ -640,6 +640,15 @@ export const updatePurchaseInvoiceByIdController = async (req, res) => {
             .json({ message: 'Invalid format for selectedBank' })
         }
       }
+      if (typeof updateData.cash === 'string') {
+        updateData.cash = JSON.parse(updateData.cash);
+      }
+      if (typeof updateData.bank === 'string') {
+        updateData.bank = JSON.parse(updateData.bank);
+      }
+      
+
+
 
       // Update fields in the purchase return
       Object.assign(purchaseReturn, updateData)

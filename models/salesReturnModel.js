@@ -36,7 +36,7 @@ const salesReturnSchema = new mongoose.Schema(
         productName: { type: String },
         hsnCode: { type: String },
         qty: { type: Number },
-        units: { type: String },
+        unit: { type: String },
         mrp: { type: Number },
         discountpercent: { type: Number },
         discountRS: { type: Number },

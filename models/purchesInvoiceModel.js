@@ -40,7 +40,7 @@ const purchesInvoiceSchema = new mongoose.Schema(
         itemCode: { type: String },
         productName: { type: String },
         hsnCode: { type: String },
-        units: { type: String },
+        unit: { type: String },
         qty: { type: String },
         freeQty: { type: String },
         maxmimunRetailPrice: { type: Number },

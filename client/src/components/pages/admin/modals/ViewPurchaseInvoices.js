@@ -458,7 +458,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                 <td className="border p-2">
                   <input
                     type="text"
-                    value={row.units}
+                    value={row.unit}
                     disabled
                     className="w-full"
                   />

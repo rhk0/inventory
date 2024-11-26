@@ -479,7 +479,7 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
         ...updatedRows[rowIndex],
         itemCode: selectedProduct.itemCode,
         hsnCode: selectedProduct.hsnCode,
-        units: selectedProduct.units,
+        units: selectedProduct.unit,
         productName: selectedProduct.productName,
         mrp: parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2),
         qty: qty,

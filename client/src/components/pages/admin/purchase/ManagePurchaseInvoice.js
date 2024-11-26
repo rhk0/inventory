@@ -195,7 +195,7 @@ const ManagePurchaseInvoice = () => {
                     </td>
 
                     <td className="border border-gray-300 p-2 text-center">
-                      {estimate.rows?.[0]?.units || "-"}
+                      {estimate.rows?.[0]?.unit || "-"}
                     </td>
                     <td className="border border-gray-300 p-2 text-center">
                       {estimate.rows?.[0]?.maxmimunRetailPrice || "-"}

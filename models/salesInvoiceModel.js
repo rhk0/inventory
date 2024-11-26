@@ -8,15 +8,15 @@ const salesInvoiceSchema = new mongoose.Schema(
     salesType: { type: String },
     customerType: { type: String },
     customerName: { type: String },
-    selctedcash:{type:String},
+    selctedcash: { type: String },
     selectedBank: [
       {
-        bankId: { type: mongoose.Schema.Types.ObjectId, ref: "Bank" }, // Reference to the bank
-        name: { type: String }, // e.g. "SBI"
+        bankId: { type: mongoose.Schema.Types.ObjectId, ref: "Bank" },
+        name: { type: String },
         ifscCode: { type: String },
         accountNumber: { type: String },
         openingBalance: { type: String },
-        drCr: { type: String }, // Debit or Credit
+        drCr: { type: String },
       },
     ],
     placeOfSupply: { type: String },

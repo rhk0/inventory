@@ -18,24 +18,7 @@ export const createvendorController = async (req, res) => {
       asOnDate,
       userId,
     } = req.body;
-    const requiredFields = [
-      "name",
-      "address",
-      "state",
-      "country",
-      "pinCode",
-      "contact",
-      "registrationType",
-      "openingBalance",
-      "userId",
-    ];
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
-    if (missingFields.length > 0) {
-      return res.status(400).send({
-        message: "Required fields are missing",
-        missingFields: missingFields,
-      });
-    }
+
     const old = await vendorModel.findOne({ email });
     if (old) {
       return res.status(400).send({
@@ -56,7 +39,7 @@ export const createvendorController = async (req, res) => {
       gstin,
       openingBalance,
       asOnDate,
-      admin:userId,
+      admin: userId,
     });
     return res.status(201).send({
       success: true,
@@ -72,9 +55,9 @@ export const createvendorController = async (req, res) => {
 };
 export const managevendorController = async (req, res) => {
   try {
-    const _id=req.params._id;
+    const _id = req.params._id;
 
-    const data = await vendorModel.find({admin:_id});
+    const data = await vendorModel.find({ admin: _id });
     if (data && data.length > 0) {
       return res
         .status(200)

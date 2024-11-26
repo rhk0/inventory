@@ -3,27 +3,21 @@ import mongoose from "mongoose";
 const vendorSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
   },
   address: {
     type: String,
-    required: true,
   },
   state: {
     type: String,
-    required: true,
   },
   country: {
     type: String,
-    required: true,
   },
   pinCode: {
     type: String,
-    required: true,
   },
   contact: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
@@ -34,7 +28,6 @@ const vendorSchema = new mongoose.Schema({
 
   registrationType: {
     type: String,
-    required: true,
   },
   gstin: {
     type: String,
@@ -42,7 +35,6 @@ const vendorSchema = new mongoose.Schema({
 
   openingBalance: {
     type: Number,
-    required: true,
   },
 
   asOnDate: {

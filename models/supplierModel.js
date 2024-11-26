@@ -4,27 +4,21 @@ const supplierSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
     },
     address: {
       type: String,
-      required: true,
     },
     state: {
       type: String,
-      required: true,
     },
     country: {
       type: String,
-      required: true,
     },
     pinCode: {
       type: String,
-      required: true,
     },
     contact: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
@@ -35,27 +29,22 @@ const supplierSchema = new mongoose.Schema(
 
     bankName: {
       type: String,
-      required: true,
     },
     bankAddress: {
       type: String,
     },
     ifscCode: {
       type: String,
-      required: true,
     },
     accountHolderName: {
       type: String,
-      required: true,
     },
     accountNumber: {
       type: String,
-      required: true,
     },
 
     registrationType: {
       type: String,
-      required: true,
     },
     gstin: {
       type: String,
@@ -63,11 +52,10 @@ const supplierSchema = new mongoose.Schema(
 
     openingBalance: {
       type: Number,
-      required: true,
     },
-    Admin:{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"user"
+    Admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
     },
   },
 
