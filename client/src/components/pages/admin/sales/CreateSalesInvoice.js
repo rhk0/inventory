@@ -1012,7 +1012,7 @@ const CreateSalesInvoice = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.unit}</td>
+            <td>${row.units}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -1031,7 +1031,7 @@ const CreateSalesInvoice = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.unit}</td>
+            <td>${row.units}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -1391,7 +1391,7 @@ const CreateSalesInvoice = () => {
           <td>${row.productName}</td>
           <td>${row.hsnCode}</td>
           <td>${row.qty}</td>
-          <td>${row.unit}</td>
+          <td>${row.units}</td>
           <td>${row.mrp}</td>
           <td>${row.discountpercent}% ${row.discountRS}</td>
           <td>${row.taxable}</td>
@@ -1708,7 +1708,7 @@ const CreateSalesInvoice = () => {
                 setSelectedValue(selectedValue); // Update the state to reflect the selected value
 
                 if (selectedValue === "add-new-customer") {
-                  window.location.href = "/admin/CreateCustomer";
+                  window.location.href = "/admin/InvoiceCreateCustomer";
                 } else if (selectedValue === "add-new-bank") {
                   window.location.href = "/admin/addbank";
                 } else if (selectedValue === "cash") {
@@ -2548,7 +2548,7 @@ const CreateSalesInvoice = () => {
                     <input
                       type="text"
                       name="Amount"
-                      value={cashDetails.Amount}
+                      value={parseFloat(cashDetails.Amount || 0).toFixed(2)}
                       onChange={handleCashDetailsChange}
                       className="border p-2 mb-2 w-full"
                     />
@@ -2572,7 +2572,7 @@ const CreateSalesInvoice = () => {
                     <input
                       type="text"
                       name="Balance"
-                      value={cashDetails.Balance}
+                      value={parseFloat(cashDetails.Balance || 0).toFixed(2)}
                       onChange={handleCashDetailsChange}
                       className="border p-2 mb-2 w-full"
                     />
@@ -2649,7 +2649,7 @@ const CreateSalesInvoice = () => {
                     <input
                       type="text"
                       name="Amount"
-                      value={bankDetails.Amount}
+                      value={parseFloat(bankDetails.Amount || 0).toFixed(2)}
                       onChange={handleBankDetailsChange}
                       className="border p-2 mb-2 w-full"
                     />
@@ -2673,7 +2673,7 @@ const CreateSalesInvoice = () => {
                     <input
                       type="text"
                       name="Balance"
-                      value={bankDetails.Balance}
+                      value={parseFloat(bankDetails.Balance || 0).toFixed(2)}
                       onChange={handleBankDetailsChange}
                       className="border p-2 mb-2 w-full"
                     />{" "}

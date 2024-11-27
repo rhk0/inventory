@@ -645,11 +645,11 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
   }
 
   return (
-    <div style={{ backgroundColor: '#82ac73' }} className="p-4 ">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="font-bold text-center text-black text-2xl underline mb-4">
+    <div style={{ backgroundColor: '#F4F4F5' }} className="p-4 ">
+      <div className="flex justify-end items-center mb-4">
+        {/* <h1 className="font-bold text-center text-black text-2xl underline mb-4">
           Edit Delivery Challan
-        </h1>
+        </h1> */}
         <button
           type="button"
           className="text-black hover:text-black border"
@@ -1377,7 +1377,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
             value={narration}
             name="narration"
             onChange={handleChange}
-            className="bg-black text-white border p-1 w-full rounded"
+            className="text-black border p-1 w-full rounded"
           />
         </div>
         <div className="w-full lg:w-1/3">
@@ -1390,7 +1390,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               name="grossAmount"
               value={grossAmount}
               onChange={handleChange}
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full rounded lg:w-2/3"
             />
           </div>
           {salesType === 'GST Invoice' && (
@@ -1403,7 +1403,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                 name="GstAmount"
                 value={GstAmount}
                 onChange={handleChange}
-                className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+                className="text-black border p-1 w-full rounded lg:w-2/3"
               />
             </div>
           )}
@@ -1416,7 +1416,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               name="otherCharges"
               value={otherCharges}
               onChange={handleChange}
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full rounded lg:w-2/3"
             />
           </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
@@ -1426,7 +1426,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               name="netAmount"
               value={netAmount}
               onChange={handleChange}
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full rounded lg:w-2/3"
             />
           </div>
           <div className="flex justify-end mt-4">

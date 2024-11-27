@@ -94,6 +94,7 @@ import UpdateCompanyRegistration from '../auth/UpdateCompanyRegistration.js'
 import OnlineStore from '../pages/admin/sales/OnlineStore.js'
 import CashBook from '../pages/admin/Reports/CashBook.js'
 import BankBook from '../pages/admin/Reports/BankBook.js'
+import InvoiceCreateCustomer from '../pages/admin/parties/InvoiceCreateCustomer'
 const AdminRoute = () => {
   const [auth] = useAuth()
 
@@ -135,6 +136,10 @@ const AdminRoute = () => {
         <Route path="ManageCustomer" element={<ManageCustomer />} />
         <Route path="/CreateManufacturer" element={<CreateManufacturer />} />
         <Route path="/ManageManufacturer" element={<ManageManufacturer />} />
+        <Route path="/InvoiceCreateCustomer" element={<InvoiceCreateCustomer />} />
+
+
+        InvoiceCreateCustomer
 
         <Route path="Cash" element={<Cash />} />
         <Route path="bankTobankTransfer" element={<BankToBankTranfer />} />

@@ -39,12 +39,13 @@ function CashDepositeIntoBank() {
       }
     }
     fetchBanks()
-  }, [])
+  }, [auth, userId])
 
   const fetchBanks = async () => {
     try {
       const response = await axios.get(`/api/v1/auth/manageBank/${userId}`)
       setBanks(response.data.data)
+      console.log(response)
     } catch (error) {
       console.error('Error fetching Bank data', error)
       toast.error(error.response.data.message)

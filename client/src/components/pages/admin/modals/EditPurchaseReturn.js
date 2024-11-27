@@ -704,7 +704,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
   }
 
   return (
-    <div style={{ backgroundColor: '#82ac73' }} className="p-4">
+    <div style={{ backgroundColor: '#F4F4F5' }} className="p-4">
       <div className="flex justify-end items-center mb-4">
         <button
           type="button"
@@ -1376,7 +1376,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
             value={narration}
             name="narration"
             onChange={handleChange}
-            className="bg-black text-white border p-1 w-full rounded"
+            className="text-black border p-1 w-full rounded"
           />
         </div>
         <div className="w-full lg:w-1/3">
@@ -1389,7 +1389,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
               name="grossAmount"
               value={grossAmount}
               onChange={handleChange}
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full rounded lg:w-2/3"
             />
           </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
@@ -1399,7 +1399,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
               name="GstAmount"
               value={GstAmount}
               // onChange={handleChange}
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full rounded lg:w-2/3"
             />
           </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
@@ -1411,7 +1411,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
               name="otherCharges"
               value={otherCharges}
               onChange={handleChange}
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full rounded lg:w-2/3"
             />
           </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
@@ -1421,7 +1421,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
               name="netAmount"
               value={netAmount}
               onChange={handleChange}
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full rounded lg:w-2/3"
             />
           </div>
 

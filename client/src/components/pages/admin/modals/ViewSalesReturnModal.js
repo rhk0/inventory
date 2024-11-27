@@ -73,13 +73,13 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
 
   return (
     <div
-      style={{ backgroundColor: '#82ac73' }}
+      style={{ backgroundColor: '#F4F4F5' }}
       className="p-4 responsive-container"
     >
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="font-bold text-center text-black text-2xl underline mb-4">
+      <div className="flex justify-end items-center mb-4">
+        {/* <h1 className="font-bold text-center text-black text-2xl underline mb-4">
           View Sales Return
-        </h1>
+        </h1> */}
         <button
           type="button"
           className="text-black hover:text-black border"
@@ -96,7 +96,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               type="date"
               value={date}
               disabled
-              className="border p-2 w-full rounded"
+              className="border p-2 w-full bg-white rounded"
             />
           </label>
         </div>
@@ -105,7 +105,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
           <select
             value={salesType}
             disabled
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full bg-white rounded"
           >
             <option value="GST Invoice">GST Invoice</option>
             <option value="Bill of Supply">Bill of Supply</option>
@@ -117,7 +117,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
             type="text"
             value={creditNoteNo}
             disabled
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full bg-white rounded"
           />
         </div>
 
@@ -127,7 +127,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
             type="text"
             value={customerName}
             disabled
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full bg-white rounded"
           />
         </div>
 
@@ -137,7 +137,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
             type="text"
             value={placeOfSupply}
             disabled
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full bg-white rounded"
           />
         </div>
 
@@ -146,7 +146,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
           <select
             value={customerType}
             disabled
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full bg-white rounded"
           >
             <option value="Retailer">Retailer</option>
             <option value="Wholesaler">Wholesaler</option>
@@ -159,7 +159,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               type="number"
               value={paymentTerm}
               disabled
-              className="border p-2 w-full rounded"
+              className="border p-2 w-full bg-white rounded"
             />
           </label>
         </div>
@@ -171,7 +171,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               type="text"
               value={dueDate}
               disabled
-              className="border p-2 w-full text-black rounded"
+              className="border p-2 w-full text-black bg-white rounded"
             />
           </label>
         </div>
@@ -188,7 +188,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg z-50">
+          <div className="bg-white p-6 bg-white rounded shadow-lg w-11/12 max-w-lg z-50">
             <h4 className="font-bold mb-4">Transport Details</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
               {/* <div>
@@ -197,7 +197,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                   type="text"
                   value={transportDetails.receiptDocNo}
                   disabled
-                  className="border p-2 w-full rounded"
+                  className="border p-2 w-full bg-white rounded"
                 />
               </div> */}
               <div>
@@ -206,7 +206,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                   type="text"
                   value={transportDetails.dispatchedThrough}
                   disabled
-                  className="border p-2 w-full rounded"
+                  className="border p-2 w-full bg-white rounded"
                 />
               </div>
               <div>
@@ -215,7 +215,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                   type="text"
                   value={transportDetails.destination}
                   disabled
-                  className="border p-2 w-full rounded"
+                  className="border p-2 w-full bg-white rounded"
                 />
               </div>
               <div>
@@ -224,7 +224,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                   type="text"
                   value={transportDetails.carrierNameAgent}
                   disabled
-                  className="border p-2 w-full rounded"
+                  className="border p-2 w-full bg-white rounded"
                 />
               </div>
               <div>
@@ -233,7 +233,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                   type="text"
                   value={transportDetails.billOfLading}
                   disabled
-                  className="border p-2 w-full rounded"
+                  className="border p-2 w-full bg-white rounded"
                 />
               </div>
               {/* <div>
@@ -242,7 +242,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                   type="text"
                   value={transportDetails.motorVehicleNo}
                   disabled
-                  className="border p-2 w-full rounded"
+                  className="border p-2 w-full bg-white rounded"
                 />
               </div> */}
             </div>
@@ -264,7 +264,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
           <textarea
             value={billingAddress}
             disabled
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full bg-white rounded"
           />
         </div>
         <div className="mb-4 w-full">
@@ -272,7 +272,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
           <select
             value={reverseCharge}
             disabled
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full bg-white rounded"
           >
             <option value="Yes">Yes</option>
             <option value="No">No</option>
@@ -285,7 +285,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
             <select
               value={gstType}
               disabled
-              className="border p-2 w-full rounded"
+              className="border p-2 w-full bg-white rounded"
             >
               <option value="CGST/SGST">CGST/SGST</option>
               <option value="IGST">IGST</option>
@@ -297,7 +297,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
           <textarea
             value={reasonForReturn}
             disabled
-            className="border p-2 w-full rounded"
+            className="border p-2 w-full bg-white rounded"
           />
         </div>
       </div>
@@ -361,7 +361,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="text"
                     value={row.itemCode}
                     disabled
-                    className="w-full"
+                    className="w-full bg-white"
                   />
                 </td>
                 <td className="border p-2">
@@ -369,7 +369,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="text"
                     value={row.productName}
                     disabled
-                    className="w-full"
+                    className="w-full bg-white"
                   />
                 </td>
                 <td className="border p-2">
@@ -377,7 +377,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="text"
                     value={row.hsnCode}
                     disabled
-                    className="w-full"
+                    className="w-full bg-white"
                   />
                 </td>
                 <td className="border p-2">
@@ -385,7 +385,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.qty}
                     disabled
-                    className="w-full"
+                    className="w-full bg-white"
                   />
                 </td>
                 <td className="border p-2">
@@ -393,7 +393,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="text"
                     value={row.units}
                     disabled
-                    className="w-full"
+                    className="w-full bg-white"
                   />
                 </td>
                 <td className="border p-2">
@@ -401,7 +401,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.mrp}
                     disabled
-                    className="w-full"
+                    className="w-full bg-white"
                   />
                 </td>
                 <td className="border p-2">
@@ -410,13 +410,13 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                       type="number"
                       value={row.discountpercent}
                       disabled
-                      className="w-full"
+                      className="w-full bg-white"
                     />
                     <input
                       type="number"
                       value={row.discountRS}
                       disabled
-                      className="w-full"
+                      className="w-full bg-white"
                     />
                   </div>
                 </td>
@@ -427,7 +427,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                         type="number"
                         value={row.taxable}
                         disabled
-                        className="w-full"
+                        className="w-full bg-white"
                       />
                     </td>
                     {gstType === 'CGST/SGST' && (
@@ -438,13 +438,13 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                               type="number"
                               value={row.cgstpercent}
                               disabled
-                              className="w-full"
+                              className="w-full bg-white"
                             />
                             <input
                               type="number"
                               value={row.cgstRS}
                               disabled
-                              className="w-full"
+                              className="w-full bg-white"
                             />
                           </div>
                         </td>
@@ -454,13 +454,13 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                               type="number"
                               value={row.sgstpercent}
                               disabled
-                              className="w-full"
+                              className="w-full bg-white"
                             />
                             <input
                               type="number"
                               value={row.sgstRS}
                               disabled
-                              className="w-full"
+                              className="w-full bg-white"
                             />
                           </div>
                         </td>
@@ -473,13 +473,13 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                             type="number"
                             value={row.igstpercent}
                             disabled
-                            className="w-full"
+                            className="w-full bg-white"
                           />
                           <input
                             type="number"
                             value={row.igstRS}
                             disabled
-                            className="w-full"
+                            className="w-full bg-white"
                           />
                         </div>
                       </td>
@@ -491,7 +491,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.totalValue}
                     disabled
-                    className="w-full"
+                    className="w-full bg-white"
                   />
                 </td>
               </tr>
@@ -504,7 +504,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
       <div className="mt-4">
         <button
           onClick={() => setIsModalOtherChargesOpen(true)}
-          className="text-blue-800 text-md p-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+          className="text-blue-800 text-md p-2 bg-white rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -526,7 +526,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
 
       {isModalOtherChargesOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-lg">
+          <div className="bg-white p-6 bg-white rounded shadow-lg w-11/12 max-w-lg">
             <h4 className="font-bold mb-4">Other Charges Details</h4>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
@@ -535,7 +535,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                   type="text"
                   value={otherChargesDescriptions}
                   disabled
-                  className="border p-2 w-full rounded"
+                  className="border p-2 w-full bg-white rounded"
                 />
               </div>
               <div>
@@ -544,7 +544,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                   type="text"
                   value={otherCharges}
                   disabled
-                  className="border p-2 w-full rounded"
+                  className="border p-2 w-full bg-white rounded"
                 />
               </div>
             </div>
@@ -568,7 +568,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
           <textarea
             value={narration}
             disabled
-            className="bg-black text-white border p-1 w-full rounded"
+            className="text-black border p-1 w-full bg-white rounded"
           />
         </div>
         <div className="w-full lg:w-1/3">
@@ -580,7 +580,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               type="text"
               value={grossAmount}
               disabled
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full bg-white rounded lg:w-2/3"
             />
           </div>
           {salesType === 'GST Invoice' && (
@@ -592,7 +592,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                 type="text"
                 value={GstAmount}
                 disabled
-                className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+                className="text-black border p-1 w-full bg-white rounded lg:w-2/3"
               />
             </div>
           )}
@@ -604,7 +604,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               type="text"
               value={otherCharges}
               disabled
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full bg-white rounded lg:w-2/3"
             />
           </div>
           <div className="flex flex-col lg:flex-row lg:justify-between mb-4">
@@ -613,7 +613,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               type="text"
               value={netAmount}
               disabled
-              className="bg-black text-white border p-1 w-full rounded lg:w-2/3"
+              className="text-black border p-1 w-full bg-white rounded lg:w-2/3"
             />
           </div>
         </div>

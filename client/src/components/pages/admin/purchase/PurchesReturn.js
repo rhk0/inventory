@@ -780,7 +780,7 @@ const PurchesReturn = () => {
         itemCode: row.itemCode,
         productName: row.productName,
         hsnCode: row.hsnCode,
-        qty: row.quantity,
+        qty: row.qty,
         freeQuantity: row.freeQty,
         unit: row.unit,
         mrp: row.maxmimunRetailPrice,
