@@ -1374,7 +1374,7 @@ const PurchesInvoice = () => {
                 setSelectedValue(selectedValue); // Update the state to reflect the selected value
 
                 if (selectedValue === "add-new-supplier") {
-                  window.location.href = "/admin/CreateSupplier";
+                  window.location.href = "/admin/InvoiceCreateSupplier";
                 } else if (selectedValue === "add-new-bank") {
                   window.location.href = "/admin/addbank";
                 } else if (selectedValue === "cash") {

@@ -1628,17 +1628,20 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                   {paymentMethod === "Bank" && (
                     <>
                       <label className="font-bold">Select Bank</label>
-                      <input
-                        name="selectBankType"
-                        className="border p-2 mb-2 w-full"
+                      <select
+                        name="bank"
                         value={bank.bank}
                         onChange={handleBankChange}
-                        readOnly
+                        className="border p-2 mb-2 w-full"
                       >
-                        {/* <option value="">Select Bank</option>
-                        <option value="Bank 1">Bank 1</option>
-                        <option value="Bank 2">Bank 2</option> */}
-                      </input>
+                        <option value="">Select Bank</option>
+                        {banks.map((bank, index) => (
+                          <option key={index} value={bank.name}>
+                            {bank.name}
+                          </option>
+                        ))}
+                      </select>
+
                       <select
                         name="subPaymentType"
                         className="border p-2 mb-2 w-full"

@@ -95,6 +95,7 @@ import OnlineStore from '../pages/admin/sales/OnlineStore.js'
 import CashBook from '../pages/admin/Reports/CashBook.js'
 import BankBook from '../pages/admin/Reports/BankBook.js'
 import InvoiceCreateCustomer from '../pages/admin/parties/InvoiceCreateCustomer'
+import InvoiceCreateSupplier from '../pages/admin/parties/InvoiceCreateSupplier'
 const AdminRoute = () => {
   const [auth] = useAuth()
 
@@ -137,6 +138,8 @@ const AdminRoute = () => {
         <Route path="/CreateManufacturer" element={<CreateManufacturer />} />
         <Route path="/ManageManufacturer" element={<ManageManufacturer />} />
         <Route path="/InvoiceCreateCustomer" element={<InvoiceCreateCustomer />} />
+        <Route path="/InvoiceCreateSupplier" element={<InvoiceCreateSupplier />} />
+
 
 
         InvoiceCreateCustomer
