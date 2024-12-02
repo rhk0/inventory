@@ -96,6 +96,9 @@ import CashBook from '../pages/admin/Reports/CashBook.js'
 import BankBook from '../pages/admin/Reports/BankBook.js'
 import InvoiceCreateCustomer from '../pages/admin/parties/InvoiceCreateCustomer'
 import InvoiceCreateSupplier from '../pages/admin/parties/InvoiceCreateSupplier'
+import ManageBankToBankTransfer from '../pages/admin/accounts/banktransaction/ManageBankToBankTransfer '
+import ManageCashDepositeIntoBank from '../pages/admin/accounts/banktransaction/ManageCashDepositeIntoBank'
+import ManageCashWithdrawfromBank from '../pages/admin/accounts/banktransaction/ManageCashWithdrawfromBank'
 const AdminRoute = () => {
   const [auth] = useAuth()
 
@@ -245,6 +248,11 @@ const AdminRoute = () => {
         <Route path="supplierledger" element={<SupplierLedger />} />
         <Route path="cashBook" element={<CashBook />} />
         <Route path="bankBook" element={<BankBook />} />
+
+        <Route path="/managebanktobanktransfer" element={<ManageBankToBankTransfer />} />
+        <Route path="/managecashdepositeintobank" element={< ManageCashDepositeIntoBank/>} />
+        <Route path="/managecashwithdrawfrombank" element={<ManageCashWithdrawfromBank />} />
+
 
         <Route path="current-plan" element={<CurrentPlan />} />
         <Route path="plan-history" element={<PlanHistory />} />

@@ -1676,8 +1676,12 @@ const OrderPurchaseInvoice = () => {
                       type="text"
                       value={row.qty}
                       onChange={(e) => handlQtyChange(index, e.target.value)}
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "50px", // Set a small minimum width to ensure visibility
+                        flexBasis: "50px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>
                   <td className="border p-1">
                     <input
@@ -1698,8 +1702,8 @@ const OrderPurchaseInvoice = () => {
                       } // Call your handler
                       className="w-full flex-grow"
                       style={{
-                        minWidth: '70px',
-                        flexBasis: '70px',
+                        minWidth: '20px',
+                        flexBasis: '20px',
                         flexShrink: 1,
                       }}
                     />
@@ -1717,8 +1721,8 @@ const OrderPurchaseInvoice = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: '70px',
-                        flexBasis: '70px',
+                        minWidth: '80px',
+                        flexBasis: '80px',
                         flexShrink: 1,
                       }}
                     />
@@ -1740,8 +1744,12 @@ const OrderPurchaseInvoice = () => {
                       onChange={(e) =>
                         handleRowChange(index, 'schemeMargin', e.target.value)
                       }
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "20px", // Set a small minimum width to ensure visibility
+                        flexBasis: "20px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>
                   <td className="border">
                     <div className="p-1 flex gap-1">
@@ -1769,8 +1777,12 @@ const OrderPurchaseInvoice = () => {
                           (e) =>
                             handleRowChange(index, 'discountRs', e.target.value) // Fix here
                         }
-                        className="w-full"
-                      />
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: "70px", // Set a small minimum width to ensure visibility
+                          flexBasis: "70px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}                      />
                     </div>
                   </td>
                   {salesType === 'GST Invoice' && (
@@ -1790,8 +1802,8 @@ const OrderPurchaseInvoice = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: '70px',
-                                flexBasis: '70px',
+                                minWidth: '90px',
+                                flexBasis: '90px',
                                 flexShrink: 1,
                               }}
                             />
@@ -1827,8 +1839,8 @@ const OrderPurchaseInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: '60px', // Set a small minimum width to ensure visibility
-                                  flexBasis: '60px', // Allow it to shrink, but still have a base width
+                                  minWidth: '90px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '90px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1865,8 +1877,8 @@ const OrderPurchaseInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: '60px', // Set a small minimum width to ensure visibility
-                                  flexBasis: '60px', // Allow it to shrink, but still have a base width
+                                  minWidth: '90px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '90px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1887,8 +1899,12 @@ const OrderPurchaseInvoice = () => {
                                   e.target.value,
                                 )
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                            />
                           </td>
                           <td className="border p-1">
                             <div className="flex gap-1">
@@ -1921,8 +1937,8 @@ const OrderPurchaseInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: '60px', // Set a small minimum width to ensure visibility
-                                  flexBasis: '60px', // Allow it to shrink, but still have a base width
+                                  minWidth: '90px', // Set a small minimum width to ensure visibility
+                                  flexBasis: '90px', // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1941,8 +1957,8 @@ const OrderPurchaseInvoice = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: '70px',
-                        flexBasis: '70px',
+                        minWidth: '90px',
+                        flexBasis: '90px',
                         flexShrink: 1,
                       }}
                     />

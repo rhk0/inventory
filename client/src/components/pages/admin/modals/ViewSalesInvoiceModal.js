@@ -673,7 +673,7 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate }) => {
             >
               &times;
             </button>
-            <h2 className="text-lg font-bold mb-4 ">Receipt</h2>
+            <h2 className="text-lg font-bold mb-4 ">Payment</h2>
 
             {/* Radio buttons to select payment method */}
             <div className="gap-5 mb-4">

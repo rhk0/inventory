@@ -2033,8 +2033,12 @@ const CreateSalesInvoice = () => {
                       type="text"
                       value={rows[index]?.qty || ""}
                       onChange={(e) => handlQtyChange(index, e.target.value)}
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "50px", // Set a small minimum width to ensure visibility
+                        flexBasis: "50px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>
                   <td className="border p-1">
                     <input
@@ -2059,8 +2063,8 @@ const CreateSalesInvoice = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px", // Set a small minimum width to ensure visibility
-                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        minWidth: "80px", // Set a small minimum width to ensure visibility
+                        flexBasis: "80px", // Allow it to shrink, but still have a base width
                         flexShrink: 1, // Allow it to shrink on mobile
                       }}
                     />
@@ -2092,8 +2096,12 @@ const CreateSalesInvoice = () => {
                           onChange={(e) =>
                             handleRowChange(index, "discountRS", e.target.value)
                           }
-                          className="w-full"
-                        />
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: "50px", // Set a small minimum width to ensure visibility
+                            flexBasis: "50px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}                        />
                       </div>
                     )}
                     {customerType === "Retailer" && (
@@ -2121,8 +2129,12 @@ const CreateSalesInvoice = () => {
                           onChange={(e) =>
                             handleRowChange(index, "discountRS", e.target.value)
                           }
-                          className="w-full"
-                        />
+                          className="w-full flex-grow"
+                          style={{
+                            minWidth: "50px", // Set a small minimum width to ensure visibility
+                            flexBasis: "50px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}                        />
                       </div>
                     )}
                   </td>
@@ -2143,8 +2155,8 @@ const CreateSalesInvoice = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px",
-                                flexBasis: "70px",
+                                minWidth: "90px",
+                                flexBasis: "90px",
                                 flexShrink: 1,
                               }}
                             />
@@ -2180,8 +2192,8 @@ const CreateSalesInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2218,8 +2230,8 @@ const CreateSalesInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2240,8 +2252,12 @@ const CreateSalesInvoice = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                            />
                           </td>
                           <td className="border p-1">
                             <div className="flex gap-1">
@@ -2274,8 +2290,8 @@ const CreateSalesInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2294,8 +2310,8 @@ const CreateSalesInvoice = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
+                        minWidth: "90px",
+                        flexBasis: "90px",
                         flexShrink: 1,
                       }}
                     />
@@ -2516,7 +2532,7 @@ const CreateSalesInvoice = () => {
               >
                 &times;
               </button>
-              <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
+              <h2 className="text-lg font-bold mb-4 text-black">Payment</h2>
 
               {/* Radio buttons to select payment method */}
               <div className="gap-5 mb-4">

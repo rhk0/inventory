@@ -1960,7 +1960,7 @@ const EstimateSalesInvoice = () => {
                         control: (base) => ({
                           ...base,
                           minWidth: "200px",
-                          maxWidth: "500px",
+                          maxWidth: "800px",
                           fontSize: "14px",
                           minHeight: "34px",
                           height: "34px",
@@ -1987,8 +1987,12 @@ const EstimateSalesInvoice = () => {
                       type="text"
                       value={rows[index]?.qty || ""}
                       onChange={(e) => handlQtyChange(index, e.target.value)}
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "50px", // Set a small minimum width to ensure visibility
+                        flexBasis: "50px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>
                   <td className="border p-1">
                     <input
@@ -2013,8 +2017,8 @@ const EstimateSalesInvoice = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px", // Set a small minimum width to ensure visibility
-                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        minWidth: "80px", // Set a small minimum width to ensure visibility
+                        flexBasis: "80px", // Allow it to shrink, but still have a base width
                         flexShrink: 1, // Allow it to shrink on mobile
                       }}
                     />
@@ -2064,8 +2068,12 @@ const EstimateSalesInvoice = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                            />
                           </td>
                           <td className="border p-1">
                             <div className="flex gap-1">
@@ -2098,8 +2106,8 @@ const EstimateSalesInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2122,8 +2130,8 @@ const EstimateSalesInvoice = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px",
-                                flexBasis: "70px",
+                                minWidth: "90px",
+                                flexBasis: "90px",
                                 flexShrink: 1,
                               }}
                             />
@@ -2159,8 +2167,8 @@ const EstimateSalesInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2197,8 +2205,8 @@ const EstimateSalesInvoice = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2217,8 +2225,8 @@ const EstimateSalesInvoice = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
+                        minWidth: "90px",
+                        flexBasis: "90px",
                         flexShrink: 1,
                       }}
                     />

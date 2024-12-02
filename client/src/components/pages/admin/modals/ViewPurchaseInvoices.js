@@ -8,6 +8,8 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
   const [date, setDate] = useState('')
   const [invoiceNo, setInvoiceNo] = useState('')
   const [supplierInvoiceNo, setsupplierInvoiceNo] = useState('')
+  const [purchaseType, setpurchaseType] = useState('')
+
 
   const [customerType, setCustomerType] = useState('')
   const [supplierName, setsupplierName] = useState('')
@@ -44,6 +46,8 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
       setDate(estimate.date || '')
       setInvoiceNo(estimate.invoiceNo || '')
       setsupplierInvoiceNo(estimate.supplierInvoiceNo || '')
+      setpurchaseType(estimate.purchaseType || '')
+
 
       setCustomerType(estimate.customerType || '')
       setsupplierName(
@@ -205,6 +209,19 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
               className="border p-2 w-full bg-white rounded"
             />
           </label>
+        </div>
+
+
+        <div>
+          <label className="font-bold">Purchase Type</label>
+          <select
+            value={purchaseType}
+            disabled
+            className="border p-2 w-full bg-white rounded"
+          >
+            <option value="GST Invoice">GST Invoice</option>
+            <option value="Bill of Supply">Bill of Supply</option>
+          </select>
         </div>
         <div>
           <label className="font-bold">Invoice No.</label>
@@ -761,7 +778,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
             >
               &times;
             </button>
-            <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
+            <h2 className="text-lg font-bold mb-4 text-black">Payment</h2>
 
             {/* Radio buttons to select payment method */}
             <div className="gap-5 mb-4">

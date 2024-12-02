@@ -45,6 +45,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
   const [viewModal, setViewModal] = useState(false);
   const [bank, setBank] = useState([]);
   const [cash, setCash] = useState([]);
+  const [purchaseType, setpurchaseType] = useState('')
+
 
   const [selectedBank, setSelectedBanks] = useState([]);
   const [selectedcash, setSelectedCash] = useState("");
@@ -57,6 +59,8 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
+      setpurchaseType(estimate.purchaseType)
+
       setInvoiceNo(estimate.invoiceNo || "");
       setsupplierInvoiceNo(estimate.supplierInvoiceNo || "");
 
@@ -729,6 +733,15 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
               className="border p-2 w-full rounded"
             />
           </label>
+        </div>
+
+        <div>
+          <label className="font-bold">Purchase Type</label>
+          <input
+            value={purchaseType}
+            onChange={handleChange}
+            className="border p-2 w-full  rounded"
+          ></input>
         </div>
         <div>
           <label className="font-bold">Invoice No.</label>
@@ -1560,7 +1573,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                 >
                   &times;
                 </button>
-                <h2 className="text-lg font-bold mb-4 text-black">Receipt</h2>
+                <h2 className="text-lg font-bold mb-4 text-black">Payment</h2>
 
                 {/* Radio buttons to select payment method */}
                 <div className="gap-5 mb-4">

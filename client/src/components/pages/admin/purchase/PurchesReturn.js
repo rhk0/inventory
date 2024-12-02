@@ -17,7 +17,7 @@ const PurchesReturn = () => {
   const [billingAddress, setBillingAddress] = useState("");
   const [selectPurchase, setselectPurchase] = useState("No");
   const [reasonForReturn, setreasonForReturn] = useState("");
-  const [qty, setQty] = useState(0);
+  const [qty, setQty] = useState();
   const [gstRatev, setgstRatev] = useState(0);
 
   const [gstType, setGstType] = useState("CGST/SGST");
@@ -409,7 +409,7 @@ const PurchesReturn = () => {
         itemCode: "",
         productName: "",
         hsnCode: "",
-        qty: 0,
+        qty: "",
         unit: "",
         maxmimunRetailPrice: 0,
         discountpercent: 0,
@@ -1438,8 +1438,13 @@ const PurchesReturn = () => {
                       type="text"
                       value={row.qty}
                       onChange={(e) => handlQtyChange(index, e.target.value)}
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "50px", // Set a small minimum width to ensure visibility
+                        flexBasis: "50px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}
+                         />                    
                   </td>
                   <td className="border p-1">
                     <input
@@ -1448,8 +1453,12 @@ const PurchesReturn = () => {
                       onChange={(e) =>
                         handleRowChange(index, "unit", e.target.value)
                       }
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "40px", // Set a small minimum width to ensure visibility
+                        flexBasis: "40px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>
                   <td className="border p-1">
                     <input
@@ -1458,8 +1467,12 @@ const PurchesReturn = () => {
                       onChange={(e) =>
                         handleFreeQtyChange(index, e.target.value)
                       }
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "40px", // Set a small minimum width to ensure visibility
+                        flexBasis: "40px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>
                   <td className="border p-2">
                     <input
@@ -1474,8 +1487,8 @@ const PurchesReturn = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
+                        minWidth: "80px",
+                        flexBasis: "80px",
                         flexShrink: 1,
                       }}
                     />
@@ -1487,8 +1500,12 @@ const PurchesReturn = () => {
                       onChange={(e) =>
                         handleRowChange(index, "unitCost", e.target.value)
                       }
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "70px", // Set a small minimum width to ensure visibility
+                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>{" "}
                   <td className="border p-1">
                     <input
@@ -1497,8 +1514,12 @@ const PurchesReturn = () => {
                       onChange={(e) =>
                         handleRowChange(index, "schemeMargin", e.target.value)
                       }
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "50px", // Set a small minimum width to ensure visibility
+                        flexBasis: "50px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>
                   <td className="border">
                     <div className="p-1 flex gap-1">
@@ -1526,8 +1547,12 @@ const PurchesReturn = () => {
                           (e) =>
                             handleRowChange(index, "discountRs", e.target.value) // Fix here
                         }
-                        className="w-full"
-                      />
+                        className="w-full flex-grow"
+                        style={{
+                          minWidth: "80px", // Set a small minimum width to ensure visibility
+                          flexBasis: "80px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}                      />
                     </div>
                   </td>
                   {salesType === "GST Invoice" && (
@@ -1547,8 +1572,8 @@ const PurchesReturn = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px",
-                                flexBasis: "70px",
+                                minWidth: "100px",
+                                flexBasis: "100px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1584,8 +1609,8 @@ const PurchesReturn = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1622,8 +1647,8 @@ const PurchesReturn = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1644,8 +1669,12 @@ const PurchesReturn = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "100px", // Set a small minimum width to ensure visibility
+                                flexBasis: "100px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                            />
                           </td>
                           <td className="border p-1">
                             <div className="flex gap-1">
@@ -1678,8 +1707,8 @@ const PurchesReturn = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "90px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "90px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -1698,8 +1727,8 @@ const PurchesReturn = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
+                        minWidth: "100px",
+                        flexBasis: "100px",
                         flexShrink: 1,
                       }}
                     />

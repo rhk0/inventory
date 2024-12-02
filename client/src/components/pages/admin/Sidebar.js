@@ -818,18 +818,47 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                     </li>
                     <li>
                       <Link
+                        to="/admin/managebanktobanktransfer"
+                        className="flex items-center  text-white nesteditem p-1"
+                      >
+                        Manage Bank to Bank Transfer
+                      </Link>
+                    </li>
+
+                    
+                    <li>
+                      <Link
                         to="/admin/CashDepositIntoBank"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Cash Deposit Into Bank
                       </Link>
                     </li>
+
+                    <li>
+                      <Link
+                        to="/admin/managecashdepositeintobank"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                        Manage Cash Deposit Into Bank
+                      </Link>
+                    </li>
+
                     <li>
                       <Link
                         to="/admin/cashwithdrawfrombank"
                         className="flex items-center text-white nesteditem p-1"
                       >
                         Cash Withdraw from Bank
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link
+                        to="/admin/managecashwithdrawfrombank"
+                        className="flex items-center text-white nesteditem p-1"
+                      >
+                       manage Cash Withdraw from Bank
                       </Link>
                     </li>
                   </ul>

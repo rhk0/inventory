@@ -1824,7 +1824,7 @@ const CreatePurchaseOrder = () => {
                     />
                   </td>
 
-                  <td className="border ">
+                  <td className="border">
                     <Select
                       id="product-select"
                       value={
@@ -1835,13 +1835,21 @@ const CreatePurchaseOrder = () => {
                             }
                           : null
                       }
-                      onChange={(selectedOption) =>
-                        handleProductSelect(index, selectedOption.value)
-                      }
-                      options={products.map((product) => ({
-                        label: product.productName,
-                        value: product.productName,
-                      }))}
+                      onChange={(selectedOption) => {
+                        if (selectedOption.value === "addProduct") {
+                          // Navigate to the Add Product page
+                          window.location.href = "/admin/createproduct"; // Replace with your route
+                        } else {
+                          handleProductSelect(index, selectedOption.value);
+                        }
+                      }}
+                      options={[
+                        ...products.map((product) => ({
+                          label: product.productName,
+                          value: product.productName,
+                        })),
+                        { label: "Add Product", value: "addProduct" }, // Extra option for adding a product
+                      ]}
                       isSearchable={true}
                       placeholder="Select a Product"
                       styles={{
@@ -1852,6 +1860,10 @@ const CreatePurchaseOrder = () => {
                           fontSize: "14px",
                           minHeight: "34px",
                           height: "34px",
+                        }),
+                        option: (base, { data }) => ({
+                          ...base,
+                          color: data.value === "addProduct" ? "blue" : base.color, // Add blue color to "Add Product"
                         }),
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       }}
@@ -1879,8 +1891,12 @@ const CreatePurchaseOrder = () => {
                       type="text"
                       value={rows[index]?.qty || ""}
                       onChange={(e) => handlQtyChange(index, e.target.value)}
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "50px", // Set a small minimum width to ensure visibility
+                        flexBasis: "50px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}                    />
                   </td>
 
                   <td className="border p-1">
@@ -1890,8 +1906,13 @@ const CreatePurchaseOrder = () => {
                       onChange={(e) =>
                         handleRowChange(index, "unit", e.target.value)
                       }
-                      className="w-full"
-                    />
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "40px", // Set a small minimum width to ensure visibility
+                        flexBasis: "40px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }}
+                                        />
                   </td>
                   <td className="border p-2">
                     <input
@@ -1906,8 +1927,8 @@ const CreatePurchaseOrder = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px", // Set a small minimum width to ensure visibility
-                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        minWidth: "80px", // Set a small minimum width to ensure visibility
+                        flexBasis: "80px", // Allow it to shrink, but still have a base width
                         flexShrink: 1, // Allow it to shrink on mobile
                       }}
                     />
@@ -1959,8 +1980,8 @@ const CreatePurchaseOrder = () => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "70px",
-                                flexBasis: "70px",
+                                minWidth: "90px",
+                                flexBasis: "90px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1996,8 +2017,8 @@ const CreatePurchaseOrder = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "80px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "80px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2034,8 +2055,8 @@ const CreatePurchaseOrder = () => {
                                 }
                                 className="w-full flex-grow"
                                 style={{
-                                  minWidth: "60px", // Set a small minimum width to ensure visibility
-                                  flexBasis: "60px", // Allow it to shrink, but still have a base width
+                                  minWidth: "80px", // Set a small minimum width to ensure visibility
+                                  flexBasis: "80px", // Allow it to shrink, but still have a base width
                                   flexShrink: 1, // Allow it to shrink on mobile
                                 }}
                               />
@@ -2056,8 +2077,13 @@ const CreatePurchaseOrder = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "80px", // Set a small minimum width to ensure visibility
+                                flexBasis: "80px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}
+                                                        />
                           </td>
                           <td className="border p-1">
                             <div className="flex gap-1">
@@ -2110,8 +2136,8 @@ const CreatePurchaseOrder = () => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
+                        minWidth: "90px",
+                        flexBasis: "90px",
                         flexShrink: 1,
                       }}
                     />
