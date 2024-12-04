@@ -10,12 +10,21 @@ const ManageBankToBankTransfer = () => {
 
   const API_BASE = "/api/v1/auth/transfers";
 
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`; // Returns in YYYY-MM-DD format
+  };
+  
   // Fetch transactions
   const fetchTransactions = async () => {
     try {
       const { data } = await axios.get(API_BASE);
       setTransactions(data.transactions || []);
-      console.log(data,'sakdjfk')
+      console.log(data, 'sakdjfk')
     } catch (error) {
       toast.error("Error fetching transactions");
     }
@@ -71,7 +80,7 @@ const ManageBankToBankTransfer = () => {
               <tr key={transaction._id} className="even:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {transaction.date}
+                  {formatDate(transaction.date)}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {transaction.contraNo}
@@ -87,7 +96,7 @@ const ManageBankToBankTransfer = () => {
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   <button
-                    className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
+                    className="bg-blue-500 text-white px-3 py-1 rounded mr-2 mb-2"
                     onClick={() => {
                       setSelectedTransaction(transaction);
                       setShowViewModal(true);
@@ -96,7 +105,7 @@ const ManageBankToBankTransfer = () => {
                     View
                   </button>
                   <button
-                    className="bg-green-500 text-white px-3 py-1 rounded mr-2"
+                    className="bg-green-500 text-white px-3 py-1 rounded mr-2 mb-2"
                     onClick={() => {
                       setSelectedTransaction(transaction);
                       setShowUpdateModal(true);
@@ -122,7 +131,7 @@ const ManageBankToBankTransfer = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96">
             <h3 className="text-xl font-semibold mb-4">View Transaction</h3>
-            <p><strong>Date:</strong> {selectedTransaction?.date}</p>
+            <p><strong>Date:</strong> {formatDate(selectedTransaction?.date)}</p>
             <p><strong>Contra No:</strong> {selectedTransaction?.contraNo}</p>
             <p><strong>From Account:</strong> {selectedTransaction?.fromAccount}</p>
             <p><strong>To Account:</strong> {selectedTransaction?.toAccount}</p>
@@ -138,89 +147,91 @@ const ManageBankToBankTransfer = () => {
       )}
 
       {/* Update Modal */}
-      {showUpdateModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h3 className="text-xl font-semibold mb-4">Update Transaction</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const updatedData = {
-                  date: e.target.date.value,
-                  contraNo: e.target.contraNo.value,
-                  fromAccount: e.target.fromAccount.value,
-                  toAccount: e.target.toAccount.value,
-                  amount: e.target.amount.value,
-                };
-                handleUpdateTransaction(updatedData);
-              }}
-            >
-              <div className="mb-4">
-                <label className="block font-semibold">Date</label>
-                <input
-                  type="date"
-                  name="date"
-                  defaultValue={selectedTransaction?.date}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block font-semibold">Contra No</label>
-                <input
-                  type="text"
-                  name="contraNo"
-                  defaultValue={selectedTransaction?.contraNo}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block font-semibold">From Account</label>
-                <input
-                  type="text"
-                  name="fromAccount"
-                  defaultValue={selectedTransaction?.fromAccount}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block font-semibold">To Account</label>
-                <input
-                  type="text"
-                  name="toAccount"
-                  defaultValue={selectedTransaction?.toAccount}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block font-semibold">Amount</label>
-                <input
-                  type="number"
-                  name="amount"
-                  defaultValue={selectedTransaction?.amount}
-                  className="w-full px-3 py-2 border rounded"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-green-500 text-white px-4 py-2 rounded"
-              >
-                Update
-              </button>
-            </form>
-            <button
-              className="mt-4 bg-gray-500 text-white px-4 py-2 rounded"
-              onClick={() => setShowUpdateModal(false)}
-            >
-              Close
-            </button>
-          </div>
+{/* Update Modal */}
+{showUpdateModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-96">
+      <h3 className="text-xl font-semibold mb-4">Update Transaction</h3>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const updatedData = {
+            date: e.target.date.value,
+            contraNo: e.target.contraNo.value,
+            fromAccount: e.target.fromAccount.value,
+            toAccount: e.target.toAccount.value,
+            amount: e.target.amount.value,
+          };
+          handleUpdateTransaction(updatedData);
+        }}
+      >
+        <div className="mb-4">
+          <label className="block font-semibold">Date</label>
+          <input
+            type="date"
+            name="date"
+            defaultValue={formatDate(selectedTransaction?.date)} // Here we format the date for the input
+            className="w-full px-3 py-2 border rounded"
+            required
+          />
         </div>
-      )}
+        <div className="mb-4">
+          <label className="block font-semibold">Contra No</label>
+          <input
+            type="text"
+            name="contraNo"
+            defaultValue={selectedTransaction?.contraNo}
+            className="w-full px-3 py-2 border rounded"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block font-semibold">From Account</label>
+          <input
+            type="text"
+            name="fromAccount"
+            defaultValue={selectedTransaction?.fromAccount}
+            className="w-full px-3 py-2 border rounded"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block font-semibold">To Account</label>
+          <input
+            type="text"
+            name="toAccount"
+            defaultValue={selectedTransaction?.toAccount}
+            className="w-full px-3 py-2 border rounded"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block font-semibold">Amount</label>
+          <input
+            type="number"
+            name="amount"
+            defaultValue={selectedTransaction?.amount}
+            className="w-full px-3 py-2 border rounded"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
+          Update
+        </button>
+      </form>
+      <button
+        className="mt-4 bg-gray-500 text-white px-4 py-2 rounded"
+        onClick={() => setShowUpdateModal(false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

@@ -12,13 +12,20 @@ const ManageCashWithdrawfromBank = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const API_BASE = "/api/v1/auth/withdrawals";
-
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`; // Returns in YYYY-MM-DD format
+  };
   // Fetch transactions
   const fetchTransactions = async () => {
     try {
       const { data } = await axios.get(API_BASE);
       setTransactions(data.data || []);
-      console.log(data,"data")
+      console.log(data, "data")
     } catch (error) {
       toast.error("Error fetching transactions");
     }
@@ -74,7 +81,7 @@ const ManageCashWithdrawfromBank = () => {
               <tr key={transaction._id} className="even:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {transaction.date}
+                  {formatDate(transaction.date)}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {transaction.contraNo}
@@ -90,7 +97,7 @@ const ManageCashWithdrawfromBank = () => {
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   <button
-                    className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
+                    className="bg-blue-500 text-white px-3 py-1 rounded mr-2 mb-2 "
                     onClick={() => {
                       setSelectedTransaction(transaction);
                       setShowViewModal(true);
@@ -99,7 +106,7 @@ const ManageCashWithdrawfromBank = () => {
                     View
                   </button>
                   <button
-                    className="bg-green-500 text-white px-3 py-1 rounded mr-2"
+                    className="bg-green-500 text-white px-3 py-1 rounded mr-2 mb-2"
                     onClick={() => {
                       setSelectedTransaction(transaction);
                       setShowUpdateModal(true);
@@ -125,7 +132,7 @@ const ManageCashWithdrawfromBank = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96">
             <h3 className="text-xl font-semibold mb-4">View Transaction</h3>
-            <p><strong>Date:</strong> {selectedTransaction?.date}</p>
+            <p><strong>Date:</strong> {formatDate(selectedTransaction?.date)}</p>
             <p><strong>Contra No:</strong> {selectedTransaction?.contraNo}</p>
             <p><strong>From Account:</strong> {selectedTransaction?.fromAccount}</p>
             <p><strong>To Account:</strong> {selectedTransaction?.toAccount}</p>
@@ -163,7 +170,7 @@ const ManageCashWithdrawfromBank = () => {
                 <input
                   type="date"
                   name="date"
-                  defaultValue={selectedTransaction?.date}
+                  defaultValue={formatDate(selectedTransaction?.date)} // Here we format the date for the input
                   className="w-full px-3 py-2 border rounded"
                   required
                 />

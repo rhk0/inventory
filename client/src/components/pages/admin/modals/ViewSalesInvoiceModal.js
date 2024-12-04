@@ -115,6 +115,7 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate }) => {
     }
   }, [estimate])
 
+
   const openViewModal = () => {
     setViewModal(true)
     setPaymentMethod('')

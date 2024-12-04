@@ -641,7 +641,7 @@ const CreateDeliveryChallan = () => {
           productName: row.productName,
           hsnCode: row.hsnCode,
           qty: row.quantity,
-          units: row.unit,
+          unit: row.unit,
           mrp: row.maxmimunRetailPrice,
 
           discountpercent:
@@ -763,7 +763,7 @@ const CreateDeliveryChallan = () => {
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.unit,
+        unit: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -909,7 +909,7 @@ const CreateDeliveryChallan = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -928,7 +928,7 @@ const CreateDeliveryChallan = () => {
             <td>${row.productName}</td>
             <td>${row.hsnCode}</td>
             <td>${row.qty}</td>
-            <td>${row.units}</td>
+            <td>${row.unit}</td>
             <td>${row.mrp}</td>
             <td>${row.discountpercent}% ${row.discountRS}</td>
             <td>${row.taxable}</td>
@@ -1131,7 +1131,7 @@ const CreateDeliveryChallan = () => {
         productName: row.productName,
         hsnCode: row.hsnCode,
         qty: row.quantity,
-        units: row.unit,
+        unit: row.unit,
         mrp: row.maxmimunRetailPrice,
         discountpercent:
           customerType === "Wholesaler"
@@ -1261,7 +1261,7 @@ const CreateDeliveryChallan = () => {
           <td>${row.productName}</td>
           <td>${row.hsnCode}</td>
           <td>${row.qty}</td>
-          <td>${row.units}</td>
+          <td>${row.unit}</td>
           <td>${row.mrp}</td>
           <td>${row.discountpercent}% ${row.discountRS}</td>
           <td>${row.taxable}</td>

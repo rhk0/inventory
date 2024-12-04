@@ -147,7 +147,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       setGstType('IGST')
     }
   }
-  
+
   useEffect(() => {
     const companyData = async () => {
       try {
@@ -284,14 +284,16 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     }
   }
 
-  
+
   const calculateTotalAmounts = () => {
     let grossAmount = 0
     let totalGST = 0
 
     rows.forEach((row) => {
       grossAmount += parseFloat(row.taxable) || 0
-      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0)
+      totalGST += gstType === "CGST/SGST"
+        ? (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0)
+        : (parseFloat(row.igstRS) || 0);
     })
 
     const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0)
@@ -344,9 +346,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       // Calculate retail price and apply the discount if applicable
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
+        (selectedProduct.maxmimunRetailPrice *
+          selectedProduct.retailDiscount) /
+        100
         : 0
 
       // Get sales tax and GST rate
@@ -357,9 +359,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       const { qty } = newRows[index]
 
       // Calculate taxable value
-     const taxableValue = salesTaxInclude
+      const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
-          (100 + Number(selectedProduct.gstRate))
+        (100 + Number(selectedProduct.gstRate))
         : retailPrice * qty
 
       // Calculate GST amounts
@@ -413,15 +415,15 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
 
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
+        (selectedProduct.maxmimunRetailPrice *
+          selectedProduct.retailDiscount) /
+        100
         : 0
 
       const taxableValue = salesTaxInclude
-      ? (selectedProduct.retailPrice * qty * 100) /
+        ? (selectedProduct.retailPrice * qty * 100) /
         (100 + Number(selectedProduct.gstRate))
-      : retailPrice * qty
+        : retailPrice * qty
 
 
       updatedRows[index] = {
@@ -515,11 +517,11 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     const retailPrice =
       selectedProduct.maxmimunRetailPrice -
       (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100
+      100
 
     const taxableValue = selectedProduct.salesTaxInclude
       ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-        (100 + Number(selectedProduct.gstRate))
+      (100 + Number(selectedProduct.gstRate))
       : retailPrice * selectedProduct.quantity
 
     // Update all relevant fields in the selected row
@@ -528,7 +530,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       itemCode: selectedProduct.itemCode || '', // Map itemCode
       productName: selectedProduct.productName || '', // Map productName
       hsnCode: selectedProduct.hsnCode || '', // Map HSN code
-      units: selectedProduct.units || '', // Map units
+      units: selectedProduct.unit || '', // Map units
       mrp: selectedProduct.maxmimunRetailPrice
         ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
         : '0.00', // Map maximum retail price
@@ -602,13 +604,13 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           mrp: row.mrp,
 
           discountpercent:
-            customerType === 'Wholesaler'
-              ? row.wholesalerDiscount
-              : row.retailDiscount,
+            customerType === "Wholesaler"
+              ? row.wholesalerDiscount || rows[0].discountpercent
+              : row.retailDiscount || rows[0].discountpercent,
           discountRS:
-            customerType === 'Wholesaler'
-              ? row.wholesalerDiscountRS
-              : row.retailDiscountRS,
+            customerType === "Wholesaler"
+              ? row.wholesalerDiscountRS || rows[0].discountRS
+              : row.retailDiscountRS || rows[0].discountRS,
 
           taxable: row.taxable,
           cgstpercent: row.cgstpercent,
@@ -729,7 +731,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           >
             {/* Customer Options */}
             <optgroup label="Customers">
-         
+
               {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
@@ -957,9 +959,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       value={
                         rows[index].itemCode
                           ? {
-                              label: rows[index].itemCode,
-                              value: rows[index].itemCode,
-                            }
+                            label: rows[index].itemCode,
+                            value: rows[index].itemCode,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -994,9 +996,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       value={
                         rows[index].productName
                           ? {
-                              label: rows[index].productName,
-                              value: rows[index].productName,
-                            }
+                            label: rows[index].productName,
+                            value: rows[index].productName,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -1039,7 +1041,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.qty}
                     onChange={(e) =>
-                      handleQtyChange(index,e.target.value)
+                      handleQtyChange(index, e.target.value)
                     }
                     className="w-full"
                   />

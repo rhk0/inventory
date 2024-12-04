@@ -48,7 +48,6 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOtherChargesOpen, setIsModalOtherChargesOpen] = useState(false);
-
   useEffect(() => {
     if (estimate) {
       setDate(estimate.date || "");
@@ -127,6 +126,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
       setNetAmount(estimate.netAmount || "");
     }
   }, [estimate, getCustomerName]);
+
 
   const openViewModal = (suppliers) => {
     setViewModal(true);
@@ -264,15 +264,6 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
     setPaymentMethod(e.target.value);
   };
 
-  const handleCashChange = (e) => {
-    setCash({ ...cash, [e.target.name]: e.target.value });
-  };
-
-  const handleBankChange = (e) => {
-    const { name, value } = e.target;
-    setBank({ ...bank, [name]: value });
-  };
-
   const handleSubPaymentTypeChange = (e) => {
     setBank({ ...bank, selectBankType: e.target.value });
   };
@@ -395,7 +386,9 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
     rows.forEach((row) => {
       grossAmount += parseFloat(row.taxable) || 0;
-      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0);
+      totalGST += gstType === "CGST/SGST"
+        ? (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0)
+        : (parseFloat(row.igstRS) || 0);
     });
 
     const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0);
@@ -408,13 +401,15 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   const calculateTotals = () => {
     let grossAmount = 0;
     let GstAmount = 0;
-    rows.forEach((rows) => {
-      grossAmount += Number(rows.taxableValue);
-      GstAmount +=
-        gstType === "CGST/SGST"
-          ? Number(rows.cgstrs) + Number(rows.sgstrs)
-          : Number(rows.igstrs);
+    rows.forEach((row, index) => {
+      grossAmount += Number(row.taxableValue);
+      if (gstType === "CGST/SGST") {
+        GstAmount += Number(row.cgstrs) + Number(row.sgstrs);
+      } else {
+        GstAmount += Number(row.igstrs);
+      }
     });
+
     let netAmount;
     // Check if otherChargesDescriptions includes "discount"
     if (salesType === "Bill of Supply") {
@@ -433,6 +428,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
     return { grossAmount, GstAmount, netAmount };
   };
+  console.log(GstAmount, "sdkfjksjd")
+
 
   const handleRowChange = (index, field, value) => {
     // Create a copy of rows
@@ -448,9 +445,9 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
       // Calculate retail price and apply the discount if applicable
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
+        (selectedProduct.maxmimunRetailPrice *
+          selectedProduct.retailDiscount) /
+        100
         : 0;
 
       // Get sales tax and GST rate
@@ -463,7 +460,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
       // Calculate taxable value
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
-          (100 + Number(selectedProduct.gstRate))
+        (100 + Number(selectedProduct.gstRate))
         : retailPrice * qty;
 
       // Calculate GST amounts
@@ -517,14 +514,14 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
 
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
+        (selectedProduct.maxmimunRetailPrice *
+          selectedProduct.retailDiscount) /
+        100
         : 0;
 
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
-          (100 + Number(selectedProduct.gstRate))
+        (100 + Number(selectedProduct.gstRate))
         : retailPrice * qty;
 
       updatedRows[index] = {
@@ -619,11 +616,11 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
     const retailPrice =
       selectedProduct.maxmimunRetailPrice -
       (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100;
+      100;
 
     const taxableValue = selectedProduct.salesTaxInclude
       ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-        (100 + Number(selectedProduct.gstRate))
+      (100 + Number(selectedProduct.gstRate))
       : retailPrice * selectedProduct.quantity;
 
     // Update all relevant fields in the selected row
@@ -670,6 +667,54 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
     calculateTotalAmounts();
   };
 
+
+  const handleCashChange = (e) => {
+    const { name, value } = e.target;
+    const updatedCash = { ...cash, [name]: value };
+
+    // Perform dynamic calculations
+    const amount = parseFloat(updatedCash.Amount || 0);
+    const received = parseFloat(updatedCash.Received || 0);
+    const advance = parseFloat(updatedCash.Advance || 0);
+
+    updatedCash.Balance = amount - received - advance;
+
+    setCash(updatedCash);
+  };
+
+
+  const handleBankChange = (e) => {
+    const { name, value } = e.target;
+    const updatedBank = { ...bank, [name]: value };
+
+    // Perform dynamic calculations
+    const amount = parseFloat(updatedBank.Amount || 0);
+    const received = parseFloat(updatedBank.Received || 0);
+    const advance = parseFloat(updatedBank.Advance || 0);
+
+    updatedBank.Balance = amount - received - advance;
+
+    setBank(updatedBank);
+  };
+
+
+  useEffect(() => {
+    if (viewModal) {
+      setCash({
+        Amount: netAmount,
+        Advance: cash.Advance,
+        Received: cash.Received,
+        Balance: cash.Balance, // Assuming initial balance equals net amount
+      });
+      setBank({
+        Amount: netAmount,
+        Advance: bank.Advance,
+        Received: cash.Received,
+        Balance: bank.Balance, // Assuming initial balance equals net amount
+      });
+    }
+  }, [viewModal, netAmount]);
+
   const handleUpdate = async () => {
     try {
       const updatedEstimate = {
@@ -678,8 +723,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
         salesType,
         customerType,
         customerName,
-        // selctedcash,
-        // selectedBank,
+
         placeOfSupply,
         paymentTerm,
         dueDate,
@@ -701,8 +745,16 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
           units: row.units,
           mrp: row.mrp,
 
-          discountpercent: row.wholesalerDiscount,
-          discountRS: row.wholesalerDiscountRS,
+
+          discountpercent:
+            customerType === "Wholesaler"
+              ? row.wholesalerDiscount || rows[0].discountpercent
+              : row.retailDiscount || rows[0].discountpercent,
+          discountRS:
+            customerType === "Wholesaler"
+              ? row.wholesalerDiscountRS || rows[0].discountRS
+              : row.retailDiscountRS || rows[0].discountRS,
+
 
           taxable: row.taxable,
           cgstpercent: row.cgstpercent,
@@ -749,7 +801,6 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
   return (
     <div style={{ backgroundColor: "#F4F4F5" }} className="p-4 ">
       <div className="flex justify-end items-center mb-4">
-
         <button
           type="button"
           className="text-black hover:text-black border"
@@ -1045,9 +1096,9 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                       value={
                         rows[index].itemCode
                           ? {
-                              label: rows[index].itemCode,
-                              value: rows[index].itemCode,
-                            }
+                            label: rows[index].itemCode,
+                            value: rows[index].itemCode,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -1082,9 +1133,9 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                       value={
                         rows[index].productName
                           ? {
-                              label: rows[index].productName,
-                              value: rows[index].productName,
-                            }
+                            label: rows[index].productName,
+                            value: rows[index].productName,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -1497,7 +1548,7 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
               <input
                 type="text"
                 name="GstAmount"
-                value={GstAmount}
+                value={GstAmount || ''} // Bind to the GstAmount state or prop
                 onChange={handleChange}
                 className="text-black border p-1 w-full rounded lg:w-2/3"
               />

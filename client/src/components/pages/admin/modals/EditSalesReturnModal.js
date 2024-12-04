@@ -30,7 +30,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
   const [grossAmount, setGrossAmount] = useState('')
   const [GstAmount, setGstAmount] = useState('')
   const [netAmount, setNetAmount] = useState('')
-  
+
   const [banks, setBanks] = useState([])
   const [selectedValue, setSelectedValue] = useState('')
   const [selectedBank, setSelectedBank] = useState([]) // Array to hold bank data
@@ -164,7 +164,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
         productName: '',
         hsnCode: '',
         qty: 0,
-        units: '',
+        unit: '',
         mrp: 0,
         discountpercent: 0,
         discountRS: 0,
@@ -242,7 +242,9 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
 
     rows.forEach((row) => {
       grossAmount += parseFloat(row.taxable) || 0
-      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0)
+      totalGST += gstType === "CGST/SGST"
+        ? (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0)
+        : (parseFloat(row.igstRS) || 0);
     })
 
     const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0)
@@ -265,7 +267,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
     setPlaceOfSupply('')
     setBillingAddress('')
     setSelectedBank([])
-  } 
+  }
   const handleCustomerChange = (e) => {
     const value = e.target.value
     setSelectedCustomer(value)
@@ -343,9 +345,9 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
       // Calculate retail price and apply the discount if applicable
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
+        (selectedProduct.maxmimunRetailPrice *
+          selectedProduct.retailDiscount) /
+        100
         : 0
 
       // Get sales tax and GST rate
@@ -358,7 +360,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
       // Calculate taxable value
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
-          (100 + Number(selectedProduct.gstRate))
+        (100 + Number(selectedProduct.gstRate))
         : retailPrice * qty
 
       // Calculate GST amounts
@@ -412,14 +414,14 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
 
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
+        (selectedProduct.maxmimunRetailPrice *
+          selectedProduct.retailDiscount) /
+        100
         : 0
 
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
-          (100 + Number(selectedProduct.gstRate))
+        (100 + Number(selectedProduct.gstRate))
         : retailPrice * qty
 
       updatedRows[index] = {
@@ -462,30 +464,30 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
 
   const [products, setProducts] = useState([])
 
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data)
-        } else {
-          console.error('Unexpected response structure:', response.data)
-        }
-      } catch (error) {
-        console.error('Error fetching products:', error)
-        // toast.error("Failed to fetch products. Please try again.");
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`/api/v1/auth/manageproduct/${userId}`)
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data)
+      } else {
+        console.error('Unexpected response structure:', response.data)
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      // toast.error("Failed to fetch products. Please try again.");
+    }
+  }
+
+  useEffect(() => {
+    if (auth?.user) {
+      if (auth.user.role === 1) {
+        setUserId(auth.user._id)
+      } else if (auth.user.role === 0) {
+        setUserId(auth.user.admin)
       }
     }
-
-    useEffect(() => {
-      if (auth?.user) {
-        if (auth.user.role === 1) {
-          setUserId(auth.user._id)
-        } else if (auth.user.role === 0) {
-          setUserId(auth.user.admin)
-        }
-      }
-      fetchProducts()
-    }, [auth, userId])
+    fetchProducts()
+  }, [auth, userId])
 
   const handleProductSelect = (rowIndex, selectedProductName) => {
     const selectedProduct = products.find(
@@ -514,11 +516,11 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
     const retailPrice =
       selectedProduct.maxmimunRetailPrice -
       (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100
+      100
 
     const taxableValue = selectedProduct.salesTaxInclude
       ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-        (100 + Number(selectedProduct.gstRate))
+      (100 + Number(selectedProduct.gstRate))
       : retailPrice * selectedProduct.quantity
 
     // Update all relevant fields in the selected row
@@ -527,7 +529,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
       itemCode: selectedProduct.itemCode || '', // Map itemCode
       productName: selectedProduct.productName || '', // Map productName
       hsnCode: selectedProduct.hsnCode || '', // Map HSN code
-      units: selectedProduct.units || '', // Map units
+      unit: selectedProduct.unit || '', // Map unit
       mrp: selectedProduct.maxmimunRetailPrice
         ? parseFloat(selectedProduct.maxmimunRetailPrice).toFixed(2)
         : '0.00', // Map maximum retail price
@@ -570,7 +572,6 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
   }
 
   const handleUpdate = async () => {
-    console.log(customerName,"customerNamecash" , cash ,"selectedBank" ,selectedBank)
     try {
       const updatedEstimate = {
         date,
@@ -598,17 +599,17 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
           productName: row.productName,
           hsnCode: row.hsnCode,
           qty: row.qty,
-          units: row.units,
+          unit: row.unit,
           mrp: row.mrp,
 
           discountpercent:
-            customerType === 'Wholesaler'
-              ? row.wholesalerDiscount
-              : row.retailDiscount,
+            customerType === "Wholesaler"
+              ? row.wholesalerDiscount || rows[0].discountpercent
+              : row.retailDiscount || rows[0].discountpercent,
           discountRS:
-            customerType === 'Wholesaler'
-              ? row.wholesalerDiscountRS
-              : row.retailDiscountRS,
+            customerType === "Wholesaler"
+              ? row.wholesalerDiscountRS || rows[0].discountRS
+              : row.retailDiscountRS || rows[0].discountRS,
 
           taxable: row.taxable,
           cgstpercent: row.cgstpercent,
@@ -729,7 +730,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
           >
             {/* Customer Options */}
             <optgroup label="Customers">
-         
+
               {customer?.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.name}
@@ -906,7 +907,7 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
               <th className="border p-2">Qty</th>
-              <th className="border p-2">Units</th>
+              <th className="border p-2">unit</th>
               <th className="border p-2">MRP</th>
               <th className="border p-2">
                 Discount
@@ -957,9 +958,9 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                       value={
                         rows[index].itemCode
                           ? {
-                              label: rows[index].itemCode,
-                              value: rows[index].itemCode,
-                            }
+                            label: rows[index].itemCode,
+                            value: rows[index].itemCode,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -994,9 +995,9 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                       value={
                         rows[index].productName
                           ? {
-                              label: rows[index].productName,
-                              value: rows[index].productName,
-                            }
+                            label: rows[index].productName,
+                            value: rows[index].productName,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -1048,9 +1049,9 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                 <td className="border p-2">
                   <input
                     type="text"
-                    value={row.units}
+                    value={row.unit}
                     onChange={(e) =>
-                      handleRowChange(index, 'units', e.target.value)
+                      handleRowChange(index, 'unit', e.target.value)
                     }
                     className="w-full"
                   />

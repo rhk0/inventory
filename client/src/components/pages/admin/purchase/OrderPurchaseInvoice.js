@@ -597,6 +597,9 @@ const OrderPurchaseInvoice = () => {
   }
 
   const generateRowsFromFilteredData = (filteredData) => {
+
+
+
     setGstType(filteredData.gstType);
     setSelectedCustomer(filteredData.supplierName);
     setPlaceOfSupply(filteredData.placeOfSupply);
@@ -650,9 +653,10 @@ const OrderPurchaseInvoice = () => {
         ).toFixed(2),
       }
     })
-
     // Set the generated rows in the state
     setRows(generatedRows)
+
+    
 
     // Update otherCharges based on the selectedFilteredData
     const totalOtherCharges = filteredData.otherCharges || 0 // Adjust according to your data structure
@@ -662,11 +666,6 @@ const OrderPurchaseInvoice = () => {
     const totals = calculateTotals();
     handleCustomerChange(filteredData.supplierName);
   };
-
-
-
-
-
   cashDetails.Amount=netAmount;
 
   const [bankDetails, setBankDetails] = useState({
@@ -720,6 +719,21 @@ const OrderPurchaseInvoice = () => {
     setBankDetails(updatedBankDetails);
   };
 
+
+
+  const updateGstType = () => {
+    if (company?.state && placeOfSupply) {
+      const newGstType = company.state === placeOfSupply ? "CGST/SGST" : "IGST";
+      if (gstType !== newGstType) {
+        setGstType(newGstType);
+        console.log("Updated GST Type to:", newGstType);
+      }
+    }
+  };
+
+  useEffect(() => {
+    updateGstType()
+  }, [company?.state, placeOfSupply, gstType]);
 
 
 

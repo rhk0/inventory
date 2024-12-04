@@ -51,9 +51,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       setCustomerType(estimate.customerType || "");
       setCustomerName(
         estimate?.customerName ||
-          estimate?.cash ||
-          ` ${estimate.selectedBank[0]?.name} ` ||
-          ""
+        estimate?.cash ||
+        ` ${estimate.selectedBank[0]?.name} ` ||
+        ""
       );
       setPlaceOfSupply(estimate.placeOfSupply || "");
       setPaymentTerm(estimate.paymentTerm || "");
@@ -270,7 +270,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
 
     rows.forEach((row) => {
       grossAmount += parseFloat(row.taxable) || 0;
-      totalGST += (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0);
+      totalGST += gstType === "CGST/SGST"
+        ? (parseFloat(row.cgstRS) || 0) + (parseFloat(row.sgstRS) || 0)
+        : (parseFloat(row.igstRS) || 0);
     });
 
     const netAmount = grossAmount + totalGST + parseFloat(otherCharges || 0);
@@ -323,9 +325,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       // Calculate retail price and apply the discount if applicable
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
+        (selectedProduct.maxmimunRetailPrice *
+          selectedProduct.retailDiscount) /
+        100
         : 0;
 
       // Get sales tax and GST rate
@@ -338,7 +340,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
       // Calculate taxable value
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
-          (100 + Number(selectedProduct.gstRate))
+        (100 + Number(selectedProduct.gstRate))
         : retailPrice * qty;
 
       // Calculate GST amounts
@@ -412,14 +414,14 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
 
       const retailPrice = selectedProduct.maxmimunRetailPrice
         ? selectedProduct.maxmimunRetailPrice -
-          (selectedProduct.maxmimunRetailPrice *
-            selectedProduct.retailDiscount) /
-            100
+        (selectedProduct.maxmimunRetailPrice *
+          selectedProduct.retailDiscount) /
+        100
         : 0;
 
       const taxableValue = salesTaxInclude
         ? (selectedProduct.retailPrice * qty * 100) /
-          (100 + Number(selectedProduct.gstRate))
+        (100 + Number(selectedProduct.gstRate))
         : retailPrice * qty;
 
       updatedRows[index] = {
@@ -515,11 +517,11 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
     const retailPrice =
       selectedProduct.maxmimunRetailPrice -
       (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-        100;
+      100;
 
     const taxableValue = selectedProduct.salesTaxInclude
       ? (selectedProduct.retailPrice * selectedProduct.quantity * 100) /
-        (100 + Number(selectedProduct.gstRate))
+      (100 + Number(selectedProduct.gstRate))
       : retailPrice * selectedProduct.quantity;
 
     // Update all relevant fields in the selected row
@@ -603,12 +605,13 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
 
           discountpercent:
             customerType === "Wholesaler"
-              ? row.wholesalerDiscount
-              : row.retailDiscount,
+              ? row.wholesalerDiscount || rows[0].discountpercent
+              : row.retailDiscount || rows[0].discountpercent,
           discountRS:
             customerType === "Wholesaler"
-              ? row.wholesalerDiscountRS
-              : row.retailDiscountRS,
+              ? row.wholesalerDiscountRS || rows[0].discountRS
+              : row.retailDiscountRS || rows[0].discountRS,
+
 
           taxable: row.taxable,
           cgstpercent: row.cgstpercent,
@@ -746,10 +749,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
               <option value="cash" className="text-green-500">
                 Cash
               </option>
-              {/* Uncomment if you need the Add New Bank option */}
-              {/* <option value="add-new-bank" className="text-blue-500">
-                   + Add New Bank
-                 </option> */}
+
             </optgroup>
           </select>
         </div>
@@ -898,7 +898,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
           </select>
         </div>
 
-        {salesType === "GST Invoice" && (
+        {/* {salesType === "GST Invoice" && (
           <div className="mb-4 w-full">
             <label className="font-bold">GST Type:</label>
             <select
@@ -911,7 +911,7 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
               <option value="IGST">IGST</option>
             </select>
           </div>
-        )}
+        )} */}
       </div>
       {/* Items Section */}
       <div className="overflow-x-auto">
@@ -974,9 +974,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       value={
                         rows[index].itemCode
                           ? {
-                              label: rows[index].itemCode,
-                              value: rows[index].itemCode,
-                            }
+                            label: rows[index].itemCode,
+                            value: rows[index].itemCode,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -1011,9 +1011,9 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                       value={
                         rows[index].productName
                           ? {
-                              label: rows[index].productName,
-                              value: rows[index].productName,
-                            }
+                            label: rows[index].productName,
+                            value: rows[index].productName,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>

@@ -42,9 +42,9 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
       setCustomerType(estimate.customerType || '')
       setCustomerName(
         estimate?.customerName ||
-          estimate?.cash ||
-          ` ${estimate.selectedBank[0]?.name} ` ||
-          '',
+        estimate?.cash ||
+        ` ${estimate.selectedBank[0]?.name} ` ||
+        '',
       )
       setPlaceOfSupply(estimate.placeOfSupply || '')
       setPaymentTerm(estimate.paymentTerm || '')
@@ -312,7 +312,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
               <th className="border p-2">Product Name</th>
               <th className="border p-2">HSN Code</th>
               <th className="border p-2">Qty</th>
-              <th className="border p-2">Units</th>
+              <th className="border p-2">unit</th>
               <th className="border p-2">MRP</th>
               <th className="border p-2">
                 Discount
@@ -391,7 +391,7 @@ const ViewSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                 <td className="border p-2">
                   <input
                     type="text"
-                    value={row.units}
+                    value={row.unit}
                     disabled
                     className="w-full bg-white"
                   />
