@@ -15,6 +15,9 @@ const PayIn = () => {
   const [selctedCustomerInvoiceData, setSelctedCustomerInvoiceData] = useState(
     [],
   )
+
+  const [selectedValue, setSelectedValue] = useState("");
+
   const [isAdvancedReceiptSelected, setIsAdvancedReceiptSelected] = useState(false);
   const handleAdvancedReceiptChange = (event) => {
     setIsAdvancedReceiptSelected(event.target.checked);
@@ -75,7 +78,7 @@ const PayIn = () => {
         `/api/v1/salesInvoiceRoute/salesinvoicesByName/${selectedCustomer}`,
       )
       setSelctedCustomerInvoiceData(response.data.response)
-      } catch (error) {
+    } catch (error) {
       console.error('Error fetching customer invoices:', error)
     }
   }
@@ -110,7 +113,7 @@ const PayIn = () => {
     }
     setRows(newRows);
   };
-  
+
 
   const addRow = () => {
     setRows([
@@ -150,21 +153,21 @@ const PayIn = () => {
 
   const GrandTotal = () => {
     let total = 0;
-  
+
     rows.forEach((row) => {
       const paidAmount = parseFloat(row.paidAmount) || 0;
       const receivedAmount = parseFloat(row.recievedAmount) || 0;
-  
+
       if (isAdvancedReceiptSelected) {
         total += receivedAmount;
       } else {
         total += paidAmount - receivedAmount;
       }
     });
-  
+
     return total.toFixed(2);
   };
-  
+
 
 
 
@@ -263,23 +266,40 @@ const PayIn = () => {
             onChange={(e) => setReceiptNo(e.target.value)}
           />
         </div>
-        <div className="flex flex-col">
-          <label className="text-md font-bold text-black">
-            Select Customer
-          </label>
+        <div>
+          <label className="font-bold">Customer Name</label>
           <select
             className="w-full p-2 border border-gray-300 rounded"
-            value={selectedCustomer}
-            onChange={handleCustomerChange}
+            value={selectedValue} // This ensures the selected value is shown in the dropdown
+            onChange={(e) => {
+              const selectedValue = e.target.value;
+              setSelectedValue(selectedValue); // Update the state to reflect the selected value
+
+              if (selectedValue === "add-new-customer") {
+                window.location.href = "/admin/payincreatecustomer";
+              } else {
+                handleCustomerChange(e); // Handle customer change
+              }
+            }}
           >
-            <option value="">Select Customer</option>
-            {customer?.map((customer) => (
-              <option key={customer._id} value={customer.name}>
-                {customer.name}
-              </option>
-            ))}
+            <option value="" disabled selected>Select Customer</option> {/* Default selection */}
+
+            {/* Customer Options */}
+            <option value="add-new-customer" className="text-blue-500">
+              + Add New Customer
+            </option>
+            <optgroup label="Customers">
+
+              {customer?.map((customer) => (
+                <option key={customer.name} value={customer.name}>
+                  {customer.name}
+                </option>
+              ))}
+
+            </optgroup>
           </select>
         </div>
+
 
         <div className="flex flex-col">
           <label className="text-md font-bold text-black">Receipt Mode</label>

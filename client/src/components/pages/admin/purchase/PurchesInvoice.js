@@ -738,7 +738,7 @@ const PurchesInvoice = () => {
     // Update form data and other states
     setFormData((prev) => ({
       ...prev,
-      customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      supplierName: selectedCustomerData ? selectedCustomerData.name : "",
       billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
       placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
     }));

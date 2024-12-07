@@ -99,6 +99,8 @@ import InvoiceCreateSupplier from '../pages/admin/parties/InvoiceCreateSupplier'
 import ManageBankToBankTransfer from '../pages/admin/accounts/banktransaction/ManageBankToBankTransfer '
 import ManageCashDepositeIntoBank from '../pages/admin/accounts/banktransaction/ManageCashDepositeIntoBank'
 import ManageCashWithdrawfromBank from '../pages/admin/accounts/banktransaction/ManageCashWithdrawfromBank'
+import PayInCreateCustomer from '../pages/admin/parties/PayInCreateCustomer.js'
+import PayOutCreateSupplier from '../pages/admin/parties/PayOutCreateSupplier.js'
 const AdminRoute = () => {
   const [auth] = useAuth()
 
@@ -248,6 +250,10 @@ const AdminRoute = () => {
         <Route path="supplierledger" element={<SupplierLedger />} />
         <Route path="cashBook" element={<CashBook />} />
         <Route path="bankBook" element={<BankBook />} />
+        <Route path="payincreatecustomer" element={<PayInCreateCustomer />} />
+        <Route path="payoutcreatesupplier" element={<PayOutCreateSupplier />} />
+
+
 
         <Route path="/managebanktobanktransfer" element={<ManageBankToBankTransfer />} />
         <Route path="/managecashdepositeintobank" element={< ManageCashDepositeIntoBank/>} />

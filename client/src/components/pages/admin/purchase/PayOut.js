@@ -91,26 +91,26 @@ const PayOut = () => {
 
   const handleRowChange = (index, key, value) => {
     const newRows = [...rows];
-  
+
     if (key === 'billNo') {
       const selectedInvoice = selctedSupplierInvoiceData.find(
         (item) => item.invoiceNo === value
       );
-  
+
       if (selectedInvoice) {
         const paymentData = selectedInvoice.cash
           ? selectedInvoice.cash
           : selectedInvoice.bank;
-  
+
         newRows[index] = {
           ...newRows[index],
           billNo: selectedInvoice.invoiceNo,
           billAmount: selectedInvoice.netAmount,
-          paidAmount: paymentData ? paymentData.Received : 0,
+          paidAmount: paymentData ? paymentData.Balance : 0,
           balanceAmount: calculateBalance(paymentData ? paymentData.Balance : 0, newRows[index].recievedAmount, isAdvancedReceiptSelected)
         };
       }
-    }  else {
+    } else {
       newRows[index][key] = value;
       // Calculate balance when receivedAmount is updated
       if (key === 'recievedAmount') {
@@ -119,7 +119,7 @@ const PayOut = () => {
     }
     setRows(newRows);
   };
-  
+
   const addRow = () => {
     setRows([
       ...rows,
@@ -271,16 +271,36 @@ const PayOut = () => {
           <select
             className="w-full p-2 border border-gray-300 rounded"
             value={selectedSupplier}
-            onChange={handleSupplierChange}
+            onChange={(e) => {
+              const selectedValue = e.target.value;
+              setSelectedSupplier(selectedValue); // Update the selected supplier in state
+              if (selectedValue === "add-new-supplier") {
+                // Redirect to the page for adding a new supplier
+                window.location.href = "/admin/payoutcreatesupplier"; // Modify the URL as per your requirement
+              } else {
+                handleSupplierChange(e); // Handle change when a supplier is selected
+              }
+            }}
           >
-            <option value="">Select Supplier</option>
-            {Supplier?.map((Supplier) => (
-              <option key={Supplier._id} value={Supplier.name}>
-                {Supplier.name}
+            {/* Default option for selecting a supplier */}
+            <option value="" disabled selected>
+              Select Supplier
+            </option>
+
+            {/* Option to add a new supplier */}
+            <option value="add-new-supplier" className="text-blue-500">
+              + Add New Supplier
+            </option>
+
+            {/* Supplier options */}
+            {Supplier?.map((supplier) => (
+              <option key={supplier._id} value={supplier.name}>
+                {supplier.name}
               </option>
             ))}
           </select>
         </div>
+
 
         <div className="flex flex-col">
           <label className="text-md font-bold text-black">Payment Mode</label>
