@@ -114,6 +114,23 @@ const PayIn = () => {
     setRows(newRows);
   };
 
+// const generateReceiptNumber = () => {
+//   // Fetch the last receipt number from localStorage or start at 1
+//   let lastReceiptNo = parseInt(localStorage.getItem("lastReceiptNo") || "0", 10);
+//   const newReceiptNo = lastReceiptNo + 1;
+
+//   // Save the updated receipt number in localStorage
+//   localStorage.setItem("lastReceiptNo", newReceiptNo);
+
+//   // Format the receipt number with leading zeros (e.g., 001, 002)
+//   return `${String(newReceiptNo).padStart(3, "0")}`;
+// };
+
+// // Generate receipt number on component mount
+// useEffect(() => {
+//   const generatedReceiptNo = generateReceiptNumber();
+//   setReceiptNo(generatedReceiptNo);
+// }, []);
 
   const addRow = () => {
     setRows([
@@ -210,11 +227,17 @@ const PayIn = () => {
     }
 
     try {
-      await axios.post('/api/v1/payInRoute/createsalespayin', dataToSubmit)
+      const response= await axios.post('/api/v1/payInRoute/createsalespayin', dataToSubmit)
       toast.success('Data saved successfully!', {
         position: 'top-right',
         autoClose: 3000,
       })
+      if (response.data.success) {
+        toast.success('Data saved successfully!', {
+          position: 'top-right',
+          autoClose: 3000,
+        })};
+      
       // Reset form
       setDate('')
       setReceiptNo('')

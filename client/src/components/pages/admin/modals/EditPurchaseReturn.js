@@ -167,6 +167,19 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
     fetchBanks()
   }, [auth, userId])
 
+  useEffect(() => {
+    const companyData = async () => {
+      try {
+        const response = await axios.get(`/api/v1/company/get/${userId}`);
+        setCompanyData(response.data.data); // Assuming setCompanyData updates the company state
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+      }
+    };
+
+    companyData(); // Fetch company data on component mount
+  }, [userId]); // Empty dependency array ensures this only runs once, on mount
+
   const handlesupplierChange = (e) => {
     const value = e.target.value
     setSelectedsupplier(value)
@@ -179,7 +192,6 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
     setSupplierName(selectedSupplierData?.name || '')
     setBillingAddress(selectedSupplierData?.address || '')
     setPlaceOfSupply(selectedSupplierData?.state || '')
-
     // Determine GST type
     setGstType(
       selectedSupplierData.state?.trim().toLowerCase() ===
@@ -538,7 +550,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100
+        100
 
       // Determine if sales tax is included from the fetched product data
       const salesTaxInclude = selectedProduct.salesTaxInclude
@@ -897,9 +909,9 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                       value={
                         rows[index].itemCode
                           ? {
-                              label: rows[index].itemCode,
-                              value: rows[index].itemCode,
-                            }
+                            label: rows[index].itemCode,
+                            value: rows[index].itemCode,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -934,9 +946,9 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                       value={
                         rows[index].productName
                           ? {
-                              label: rows[index].productName,
-                              value: rows[index].productName,
-                            }
+                            label: rows[index].productName,
+                            value: rows[index].productName,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -1006,7 +1018,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                       minWidth: "40px", // Set a small minimum width to ensure visibility
                       flexBasis: "40px", // Allow it to shrink, but still have a base width
                       flexShrink: 1, // Allow it to shrink on mobile
-                    }}                  />
+                    }} />
                 </td>
 
                 <td className="border p-2">
@@ -1072,7 +1084,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                       minWidth: "70px", // Set a small minimum width to ensure visibility
                       flexBasis: "70px", // Allow it to shrink, but still have a base width
                       flexShrink: 1, // Allow it to shrink on mobile
-                    }}                  />
+                    }} />
                 </td>
 
                 <td className="border">
@@ -1216,7 +1228,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                             minWidth: "50px", // Set a small minimum width to ensure visibility
                             flexBasis: "50px", // Allow it to shrink, but still have a base width
                             flexShrink: 1, // Allow it to shrink on mobile
-                          }}                        />
+                          }} />
                         <input
                           type="number"
                           value={row.igstRS}
@@ -1228,7 +1240,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                             minWidth: "90px", // Set a small minimum width to ensure visibility
                             flexBasis: "90px", // Allow it to shrink, but still have a base width
                             flexShrink: 1, // Allow it to shrink on mobile
-                          }}                          />
+                          }} />
                       </div>
                     </td>
                   )}

@@ -4,22 +4,23 @@ export const createPayInController = async (req, res) => {
   try {
     const {
       date,
-      receiptNo,
       selectCustomer,
-
+      receiptNo,
       receiptMode,
       rows,
       grandtotal,
       Narration,
-      selectBank,         
-      method,              
+      selectBank,
+      method,
       transactionCheckNo,
-      userId,    
+      userId,
     } = req.body;
-   
-
 
     try {
+
+      // const lastPayIn = await payInModel.findOne().sort({ receiptNo: -1 });
+      // const newReceiptNo = lastPayIn ? lastPayIn.receiptNo + 1 : 1;
+
       const newPayIn = new payInModel({
         admin: userId,
         date,
@@ -30,7 +31,7 @@ export const createPayInController = async (req, res) => {
         rows,
         grandtotal,
         Narration,
-        selectBank,         
+        selectBank,
         method,
         transactionCheckNo
       });
@@ -51,7 +52,7 @@ export const createPayInController = async (req, res) => {
 export const getAllPayInController = async (req, res) => {
   try {
     const _id = req.params._id;
-    const response = await payInModel.find({admin:_id});
+    const response = await payInModel.find({ admin: _id });
 
     if (!response || response.length === 0) {
       return res.status(404).send({
@@ -165,7 +166,7 @@ export const updatePayInByIdController = async (req, res) => {
       console.log(error)
       return res.status(500).send({
         success: false,
-        message: "Error updating Pay In",error,
+        message: "Error updating Pay In", error,
         error: error.message,
       });
     }
