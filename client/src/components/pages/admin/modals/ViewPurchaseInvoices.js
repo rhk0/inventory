@@ -52,9 +52,9 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
       setCustomerType(estimate.customerType || '')
       setsupplierName(
         estimate.supplierName ||
-          estimate?.selectedcash ||
-          ` ${estimate.selectedBank[0]?.name} ` ||
-          '',
+        estimate?.selectedcash ||
+        ` ${estimate.selectedBank[0]?.name} ` ||
+        '',
       )
       setPlaceOfSupply(estimate.placeOfSupply || '')
       setPaymentTerm(estimate.paymentTerm || '')
@@ -396,7 +396,7 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
               <th className="border p-2">Units</th>
               <th className="border p-2">Free quantity</th>
 
-              <th className="border p-2">mrp</th>
+              <th className="border p-2">MRP</th>
               <th className="border p-2">Unit Cost</th>
               <th className="border p-2">Scheme Margin</th>
 
@@ -461,16 +461,24 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="text"
                     value={row.hsnCode}
                     disabled
-                    className="w-full bg-white"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "60px", // Set a small minimum width to ensure visibility
+                      flexBasis: "60px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
                 </td>
                 <td className="border p-2">
                   <input
                     type="number"
                     value={row.qty}
                     disabled
-                    className="w-full bg-white "
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "50px", // Set a small minimum width to ensure visibility
+                      flexBasis: "50px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
                 </td>
                 <td className="border p-2">
                   <input
@@ -485,8 +493,12 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="number"
                     value={row.freeQty}
                     disabled
-                    className="w-full bg-white"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "10px", // Set a small minimum width to ensure visibility
+                      flexBasis: "10px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
                 </td>
 
                 <td className="border p-2">
@@ -494,16 +506,24 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="number"
                     value={row.maxmimunRetailPrice}
                     disabled
-                    className="w-full bg-white"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "70px", // Set a small minimum width to ensure visibility
+                      flexBasis: "70px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
                 </td>
                 <td className="border p-2">
                   <input
                     type="number"
                     value={row.unitCost}
                     disabled
-                    className="w-full bg-white"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "70px", // Set a small minimum width to ensure visibility
+                      flexBasis: "70px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
                 </td>
 
                 <td className="border p-2">
@@ -511,8 +531,12 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="number"
                     value={row.schemeMargin}
                     disabled
-                    className="w-full bg-white"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "60px", // Set a small minimum width to ensure visibility
+                      flexBasis: "60px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
                 </td>
 
                 <td className="border p-2">
@@ -521,14 +545,22 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                       type="number"
                       value={row.discountpercent}
                       disabled
-                      className="w-full bg-white"
-                    />
+                      className="w-full flex-grow bg-white"
+                      style={{
+                        minWidth: "50px", // Set a small minimum width to ensure visibility
+                        flexBasis: "50px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }} />
                     <input
                       type="number"
                       value={row.discountRs}
                       disabled
-                      className="w-full bg-white"
-                    />
+                      className="w-full flex-grow bg-white"
+                      style={{
+                        minWidth: "70px", // Set a small minimum width to ensure visibility
+                        flexBasis: "70px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }} />
                   </div>
                 </td>
                 <>
@@ -537,8 +569,12 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                       type="number"
                       value={row.taxableValue}
                       disabled
-                      className="w-full bg-white"
-                    />
+                      className="w-full flex-grow bg-white"
+                      style={{
+                        minWidth: "90px", // Set a small minimum width to ensure visibility
+                        flexBasis: "90px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
+                      }} />
                   </td>
                   {gstType === 'CGST/SGST' && (
                     <>
@@ -548,14 +584,22 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                             type="number"
                             value={row.cgstpercent}
                             disabled
-                            className="w-full bg-white"
-                          />
+                            className="w-full flex-grow bg-white"
+                            style={{
+                              minWidth: "50px", // Set a small minimum width to ensure visibility
+                              flexBasis: "50px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }} />
                           <input
                             type="number"
                             value={row.cgstRS}
                             disabled
-                            className="w-full bg-white"
-                          />
+                            className="w-full flex-grow bg-white"
+                            style={{
+                              minWidth: "90px", // Set a small minimum width to ensure visibility
+                              flexBasis: "90px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }} />
                         </div>
                       </td>
                       <td className="border p-2">
@@ -564,14 +608,22 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                             type="number"
                             value={row.sgstpercent}
                             disabled
-                            className="w-full bg-white"
-                          />
+                            className="w-full flex-grow bg-white"
+                            style={{
+                              minWidth: "50px", // Set a small minimum width to ensure visibility
+                              flexBasis: "50px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }} />
                           <input
                             type="number"
                             value={row.sgstRS}
                             disabled
-                            className="w-full bg-white"
-                          />
+                            className="w-full flex-grow bg-white"
+                            style={{
+                              minWidth: "90px", // Set a small minimum width to ensure visibility
+                              flexBasis: "90px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }} />
                         </div>
                       </td>
                     </>
@@ -583,14 +635,22 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                           type="number"
                           value={row.igstpercent}
                           disabled
-                          className="w-full bg-white"
-                        />
+                          className="w-full flex-grow bg-white"
+                          style={{
+                            minWidth: "50px", // Set a small minimum width to ensure visibility
+                            flexBasis: "50px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }} />
                         <input
                           type="number"
                           value={row.igstRS}
                           disabled
-                          className="w-full bg-white"
-                        />
+                          className="w-full flex-grow bg-white"
+                          style={{
+                            minWidth: "90px", // Set a small minimum width to ensure visibility
+                            flexBasis: "90px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }} />
                       </div>
                     </td>
                   )}
@@ -600,8 +660,12 @@ const ViewPurchaseInvoice = ({ closeModal, estimate }) => {
                     type="number"
                     value={row.totalValue}
                     disabled
-                    className="w-full bg-white"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "110px", // Set a small minimum width to ensure visibility
+                      flexBasis: "110px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
                 </td>
               </tr>
             ))}

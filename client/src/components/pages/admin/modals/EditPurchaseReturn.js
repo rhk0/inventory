@@ -360,9 +360,7 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
       currentRow.taxableValue = taxableValue.toFixed(2) // Ensure consistent format
 
       const gstRate = Number(gstRatev) || 0 // Get the GST rate
-      {
-        console.log(gstRate, 'aslkfdj')
-      }
+
       const cgstRS = (taxableValue * (gstRate / 2)) / 100
       const sgstRS = (taxableValue * (gstRate / 2)) / 100
       const igstRS = (taxableValue * gstRate) / 100
@@ -989,8 +987,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                     onChange={(e) => handlQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '40px',
-                      flexBasis: '40px',
+                      minWidth: '50px',
+                      flexBasis: '50px',
                       flexShrink: 1,
                     }}
                   />
@@ -1003,8 +1001,12 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                     onChange={(e) =>
                       handleRowChange(index, 'unit', e.target.value)
                     }
-                    className="w-full"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "40px", // Set a small minimum width to ensure visibility
+                      flexBasis: "40px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
 
                 <td className="border p-2">
@@ -1035,8 +1037,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '60px',
-                      flexBasis: '60px',
+                      minWidth: '70px',
+                      flexBasis: '70px',
                       flexShrink: 1,
                     }}
                   />
@@ -1051,8 +1053,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '50px',
-                      flexBasis: '50px',
+                      minWidth: '70px',
+                      flexBasis: '70px',
                       flexShrink: 1,
                     }}
                   />
@@ -1065,8 +1067,12 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                     onChange={(e) =>
                       handleRowChange(index, 'schemeMargin', e.target.value)
                     }
-                    className="w-full"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "70px", // Set a small minimum width to ensure visibility
+                      flexBasis: "70px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
 
                 <td className="border">
@@ -1095,11 +1101,11 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                         (e) =>
                           handleRowChange(index, 'discountRs', e.target.value) // Fix here
                       }
-                      className="w-full flex-grow"
+                      className="w-full flex-grow bg-white"
                       style={{
-                        minWidth: '40px',
-                        flexBasis: '40px',
-                        flexShrink: 1,
+                        minWidth: "60px", // Set a small minimum width to ensure visibility
+                        flexBasis: "60px", // Allow it to shrink, but still have a base width
+                        flexShrink: 1, // Allow it to shrink on mobile
                       }}
                     />
                   </div>
@@ -1114,8 +1120,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: '70px',
-                        flexBasis: '70px',
+                        minWidth: '100px',
+                        flexBasis: '100px',
                         flexShrink: 1,
                       }}
                     />
@@ -1149,8 +1155,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: '50px',
-                              flexBasis: '50px',
+                              minWidth: '100px',
+                              flexBasis: '100px',
                               flexShrink: 1,
                             }}
                           />
@@ -1183,8 +1189,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: '50px',
-                              flexBasis: '50px',
+                              minWidth: '100px',
+                              flexBasis: '100px',
                               flexShrink: 1,
                             }}
                           />
@@ -1205,16 +1211,24 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                               e.target.value,
                             )
                           }
-                          className="w-full"
-                        />
+                          className="w-full flex-grow bg-white"
+                          style={{
+                            minWidth: "50px", // Set a small minimum width to ensure visibility
+                            flexBasis: "50px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}                        />
                         <input
                           type="number"
                           value={row.igstRS}
                           onChange={(e) =>
                             handleRowChange(index, 'igstRS', e.target.value)
                           }
-                          className="w-full"
-                        />
+                          className="w-full flex-grow bg-white"
+                          style={{
+                            minWidth: "90px", // Set a small minimum width to ensure visibility
+                            flexBasis: "90px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}                          />
                       </div>
                     </td>
                   )}
@@ -1228,8 +1242,8 @@ const EditPurchaseReturn = ({ closeModal, estimate }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '70px',
-                      flexBasis: '70px',
+                      minWidth: '100px',
+                      flexBasis: '100px',
                       flexShrink: 1,
                     }}
                   />

@@ -1185,8 +1185,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) => handleQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{
-                      minWidth: "30px",
-                      flexBasis: "30px",
+                      minWidth: "50px",
+                      flexBasis: "50px",
                       flexShrink: 1,
                     }}
                   />
@@ -1209,8 +1209,12 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) =>
                       handleRowChange(index, "mrp", e.target.value)
                     }
-                    className="w-full"
-                  />
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "60px", // Set a small minimum width to ensure visibility
+                      flexBasis: "60px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                    />
                 </td>
                 <td className="border">
                   {row.discountpercent && row.discountRS ? (
@@ -1288,8 +1292,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                         }
                         className="w-full flex-grow"
                         style={{
-                          minWidth: "70px",
-                          flexBasis: "70px",
+                          minWidth: "100px",
+                          flexBasis: "100px",
                           flexShrink: 1,
                         }}
                       />
@@ -1310,8 +1314,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "20px", // Reduced width for discountRS
-                                flexBasis: "20px",
+                                minWidth: "40px", // Reduced width for discountRS
+                                flexBasis: "40px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1323,8 +1327,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "50px", // Reduced width for discountRS
-                                flexBasis: "50px",
+                                minWidth: "100px", // Reduced width for discountRS
+                                flexBasis: "100px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1344,8 +1348,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "20px", // Reduced width for discountRS
-                                flexBasis: "20px",
+                                minWidth: "40px", // Reduced width for discountRS
+                                flexBasis: "40px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1357,8 +1361,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                               }
                               className="w-full flex-grow"
                               style={{
-                                minWidth: "50px", // Reduced width for discountRS
-                                flexBasis: "50px",
+                                minWidth: "100px", // Reduced width for discountRS
+                                flexBasis: "100px",
                                 flexShrink: 1,
                               }}
                             />
@@ -1379,16 +1383,24 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full"
-                          />
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "20px", // Set a small minimum width to ensure visibility
+                              flexBasis: "20px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }}                            />
                           <input
                             type="number"
                             value={row.igstRS}
                             onChange={(e) =>
                               handleRowChange(index, "igstRS", e.target.value)
                             }
-                            className="w-full"
-                          />
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "90px", // Set a small minimum width to ensure visibility
+                              flexBasis: "90px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }}                            />
                         </div>
                       </td>
                     )}
@@ -1403,8 +1415,8 @@ const EditSalesInvoiceModal = ({ closeModal, estimate, getCustomerName }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: "60px",
-                      flexBasis: "60px",
+                      minWidth: "110px",
+                      flexBasis: "110px",
                       flexShrink: 1,
                     }}
                   />

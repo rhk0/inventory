@@ -269,7 +269,7 @@ const CustomerLedger = () => {
                 <strong style={{ fontSize: '1.2em' }}>{totalDebit}</strong>
               </td>
               <td className="p-2">
-                <strong style={{ fontSize: '1.2em' }}>{totalCredit}</strong>
+                <strong style={{ fontSize: '1.2em' }}>{totalCredit.toFixed(2)}</strong>
               </td>
             </tr>
           </tbody>

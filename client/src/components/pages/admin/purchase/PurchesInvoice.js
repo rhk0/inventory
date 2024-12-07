@@ -170,31 +170,31 @@ const PurchesInvoice = () => {
     companyData(); // Fetch company data on component mount
   }, [userId]); // Empty dependency array ensures this only runs once, on mount
 
-  const handleCustomerChange = (e) => {
-    const value = e.target.value;
-    setSelectedCustomer(value);
+  // const handleCustomerChange = (e) => {
+  //   const value = e.target.value;
+  //   setSelectedCustomer(value);
 
-    const selectedCustomerData = customer.find((cust) => cust._id === value);
-    setChooseUser(selectedCustomerData);
-    setFormData((prev) => ({
-      ...prev,
-      supplierName: selectedCustomerData ? selectedCustomerData.name : "",
-      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
-      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
-    }));
+  //   const selectedCustomerData = customer.find((cust) => cust._id === value);
+  //   setChooseUser(selectedCustomerData);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     supplierName: selectedCustomerData ? selectedCustomerData.name : "",
+  //     billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
+  //     placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
+  //   }));
 
-    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
-    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+  //   setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+  //   setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
 
-    if (
-      selectedCustomerData.state.trim().toLowerCase() ===
-      company.state.trim().toLowerCase()
-    ) {
-      setGstType("CGST/SGST");
-    } else {
-      setGstType("IGST");
-    }
-  };
+  //   if (
+  //     selectedCustomerData.state.trim().toLowerCase() ===
+  //     company.state.trim().toLowerCase()
+  //   ) {
+  //     setGstType("CGST/SGST");
+  //   } else {
+  //     setGstType("IGST");
+  //   }
+  // };
   const handleCashPayment = (value) => {
     setCash(value);
     setGstType("CGST/SGST");
@@ -555,7 +555,7 @@ const PurchesInvoice = () => {
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100;
+        100;
 
       // Determine if sales tax is included from the fetched product data
       const salesTaxInclude = selectedProduct.salesTaxInclude;
@@ -618,7 +618,7 @@ const PurchesInvoice = () => {
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100;
+        100;
 
       const taxableValue = 0;
 
@@ -724,6 +724,77 @@ const PurchesInvoice = () => {
     }
 
     setBankDetails(updatedBankDetails);
+  };
+
+
+  const handleCustomerChange = async (e) => {
+    const value = e.target.value; // Selected customer ID
+    setSelectedCustomer(value);
+
+    // Find the selected customer from the customer list
+    const selectedCustomerData = customer.find((cust) => cust._id === value);
+    setChooseUser(selectedCustomerData);
+
+    // Update form data and other states
+    setFormData((prev) => ({
+      ...prev,
+      customerName: selectedCustomerData ? selectedCustomerData.name : "",
+      billingAddress: selectedCustomerData ? selectedCustomerData.address : "",
+      placeOfSupply: selectedCustomerData ? selectedCustomerData.state : "",
+    }));
+
+    setPlaceOfSupply(selectedCustomerData ? selectedCustomerData.state : "");
+    setBillingAddress(selectedCustomerData ? selectedCustomerData.address : "");
+
+    // Determine GST type based on state comparison
+    if (
+      selectedCustomerData.state.trim().toLowerCase() ===
+      company.state.trim().toLowerCase()
+    ) {
+      setGstType("CGST/SGST");
+    } else {
+      setGstType("IGST");
+    }
+
+    // Fetch advance amount for the selected customer from the PayIn API
+    try {
+      const response = await axios.get(`/api/v1/PayOutRoute/getAllpayout/${userId}`);
+      const payInsList = response.data.payOutList;
+
+      // Find pay-ins for the selected customer
+      const filteredPayIns = payInsList.filter(
+        (payIn) => payIn.supplierName === selectedCustomerData.name
+      );
+
+      // Sum up the advance amounts if there are multiple pay-ins
+      if (filteredPayIns.length > 0) {
+        const totalAdvance = filteredPayIns.reduce((sum, payIn) => {
+          const grandTotal = parseFloat(payIn.grandtotal);
+          console.log("Processing PayIn:", payIn);
+          console.log("Grand Total:", grandTotal);
+          return sum + grandTotal;
+        }, 0);
+
+
+        setCashDetails((prev) => ({
+          ...prev,
+          Advance: totalAdvance.toFixed(2),
+        }));
+
+        setBankDetails((prev) => ({
+          ...prev,
+          Advance: totalAdvance.toFixed(2), // Set the total advance in bankDetails as well
+        }));
+
+
+
+      } else {
+        console.log("No filtered PayIns to process.");
+      }
+    } catch (error) {
+      console.error("Error fetching advance amount:", error.response || error.message);
+      toast.error("Error fetching advance amount");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -1059,39 +1130,31 @@ const PurchesInvoice = () => {
       : `
             <td style="width: 33.33%; text-align: left;">
                 <div class="receipt-details">
-                    <div class="section-header">Receipt Mode: Bank - ${
-                      submissionData.bank.selectBankType
-                    }</div>
-                    <div class="details">Bank Name: ${
-                      submissionData.bank.bank
-                    }</div>
-                    <div class="details">Transaction Date: ${
-                      submissionData.bank.transactionDate
-                    }</div>
-                    <div class="details">Transaction / Cheque No: ${
-                      submissionData.bank.transactionNo ||
-                      submissionData.bank.chequeNo
-                    }</div>
-                    <div class="details">Total Amount: ₹${
-                      submissionData.bank.Amount
-                    }</div>
-                    <div class="details">Advance Received: ₹${
-                      submissionData.bank.Advance
-                    }</div>
-                    <div class="details">Amount Received: ₹${
-                      submissionData.bank.Received
-                    }</div>
-                    <div class="details">Balance Amount: ₹${
-                      submissionData.bank.Balance
-                    }</div>
+                    <div class="section-header">Receipt Mode: Bank - ${submissionData.bank.selectBankType
+      }</div>
+                    <div class="details">Bank Name: ${submissionData.bank.bank
+      }</div>
+                    <div class="details">Transaction Date: ${submissionData.bank.transactionDate
+      }</div>
+                    <div class="details">Transaction / Cheque No: ${submissionData.bank.transactionNo ||
+      submissionData.bank.chequeNo
+      }</div>
+                    <div class="details">Total Amount: ₹${submissionData.bank.Amount
+      }</div>
+                    <div class="details">Advance Received: ₹${submissionData.bank.Advance
+      }</div>
+                    <div class="details">Amount Received: ₹${submissionData.bank.Received
+      }</div>
+                    <div class="details">Balance Amount: ₹${submissionData.bank.Balance
+      }</div>
                 </div>
             </td>`;
 
     const gstRows =
       submissionData.gstType === "CGST/SGST"
         ? submissionData.rows
-            .map(
-              (row, index) => `
+          .map(
+            (row, index) => `
           <tr>
             <td>${index + 1}</td>
             <td>${row.itemCode}</td>
@@ -1109,11 +1172,11 @@ const PurchesInvoice = () => {
             <td >${row.sgstpercent}% ${row.sgstRS}</td>
             <td>${row.totalValue}</td>
           </tr>`
-            )
-            .join("")
+          )
+          .join("")
         : submissionData.rows
-            .map(
-              (row, index) => `
+          .map(
+            (row, index) => `
           <tr>
             <td>${index + 1}</td>
             <td>${row.itemCode}</td>
@@ -1130,8 +1193,8 @@ const PurchesInvoice = () => {
             <td>${row.igstpercent}% ${row.igstRS}</td>
             <td>${row.totalValue}</td>
           </tr>`
-            )
-            .join("");
+          )
+          .join("");
 
     printWindow.document.write(`
       <html>
@@ -1197,21 +1260,16 @@ const PurchesInvoice = () => {
               <td style="width: 30%;">
                 <div style="text-align:left;" class="sales-estimate">
                   <div class="section-header"> Invoice Details</div>
-                  <div class="details">Invoice No: <span>${
-                    submissionData.invoiceNo
-                  }</span></div>
-                  <div class="details">Invoice Date: <span>${
-                    submissionData.date
-                  }</span></div>
-                     <div class="details">Supplier Invoice: <span>${
-                       submissionData.supplierInvoiceNo
-                     }</span></div>
-                  <div class="details">Place of Supply: <span>${
-                    submissionData.placeOfSupply || company.state
-                  }</span></div>
-                   <div class="details">Due Date: <span>${
-                     submissionData.dueDate
-                   }</span></div>
+                  <div class="details">Invoice No: <span>${submissionData.invoiceNo
+      }</span></div>
+                  <div class="details">Invoice Date: <span>${submissionData.date
+      }</span></div>
+                     <div class="details">Supplier Invoice: <span>${submissionData.supplierInvoiceNo
+      }</span></div>
+                  <div class="details">Place of Supply: <span>${submissionData.placeOfSupply || company.state
+      }</span></div>
+                   <div class="details">Due Date: <span>${submissionData.dueDate
+      }</span></div>
                  
                 </div>
               </td>
@@ -1221,18 +1279,14 @@ const PurchesInvoice = () => {
                  
                    
 
-                  <div class="details">Dispatch Through: <span>${
-                    submissionData.dispatchedThrough
-                  }</span></div>
-                   <div class="details">Destination: <span>${
-                     submissionData.destination
-                   }</span></div>
-                   <div class="details">Carrier Name/Agent : <span>${
-                     submissionData.carrierNameAgent
-                   }</span></div>
-                  <div class="details">Bill of Lading/LR-RR No.: <span>${
-                    submissionData.billOfLading
-                  }</span></div>
+                  <div class="details">Dispatch Through: <span>${submissionData.dispatchedThrough
+      }</span></div>
+                   <div class="details">Destination: <span>${submissionData.destination
+      }</span></div>
+                   <div class="details">Carrier Name/Agent : <span>${submissionData.carrierNameAgent
+      }</span></div>
+                  <div class="details">Bill of Lading/LR-RR No.: <span>${submissionData.billOfLading
+      }</span></div>
                   
                 </div>
               </td>
@@ -1268,18 +1322,14 @@ const PurchesInvoice = () => {
                 <td style="width: 33.33%; text-align: left;">
                   <div class="banking-details">
                     <div class="section-header">Banking Details</div>
-                      <div class="details">Bank Name: ${
-                        company?.bank_name || "-"
-                      }</div>
-                    <div class="details">IFSC Code: ${
-                      company?.ifce_code || "-"
-                    }</div>
-                    <div class="details">Account No:${
-                      company?.accountNumber || "-"
-                    }</div>
-                    <div class="details">Account Holder Name: ${
-                      company?.account_holder_name || "-"
-                    }</div>
+                      <div class="details">Bank Name: ${company?.bank_name || "-"
+      }</div>
+                    <div class="details">IFSC Code: ${company?.ifce_code || "-"
+      }</div>
+                    <div class="details">Account No:${company?.accountNumber || "-"
+      }</div>
+                    <div class="details">Account Holder Name: ${company?.account_holder_name || "-"
+      }</div>
                     <div class="details">UPI ID: ${company?.upiId || "-"}</div>
                 </div>
                   </div>
@@ -1293,21 +1343,17 @@ const PurchesInvoice = () => {
                 <td style="width: 33.33%; text-align: left;">
                   <div class="amount-details">
                     <div class="section-header">Amount Details</div>
-                    <div class="details">Gross Total: ₹${
-                      submissionData.grossAmount
-                    }</div>
-                    <div class="details">GST Amount: ₹${
-                      submissionData.GstAmount
-                    }</div>
-                    <div class="details">Additional Charges: ₹${
-                      submissionData.otherCharges
-                    }</div>
-                    <div class="details">Net Total: ₹${
-                      submissionData.netAmount
-                    }</div>
+                    <div class="details">Gross Total: ₹${submissionData.grossAmount
+      }</div>
+                    <div class="details">GST Amount: ₹${submissionData.GstAmount
+      }</div>
+                    <div class="details">Additional Charges: ₹${submissionData.otherCharges
+      }</div>
+                    <div class="details">Net Total: ₹${submissionData.netAmount
+      }</div>
                     <div class="details">Amount in Words:${numberToWords(
-                      submissionData.netAmount
-                    )}</div>
+        submissionData.netAmount
+      )}</div>
                   </div>
                 </td>
               </tr>
@@ -1336,7 +1382,7 @@ const PurchesInvoice = () => {
 
       // Create a fake event object (optional)
       const dummyEvent = {
-        preventDefault: () => {},
+        preventDefault: () => { },
       };
 
       handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
@@ -1540,9 +1586,8 @@ const PurchesInvoice = () => {
 
            <div class="header">
           
-            <div class="business-name"> ${
-              company?.businessName || "---------"
-            } </div>
+            <div class="business-name"> ${company?.businessName || "---------"
+      } </div>
             <div> ${company?.address || "---------"} </div>
             <div>GSTIN: ${company?.gstIn || "---------"}</div>
           </div>
@@ -1562,39 +1607,30 @@ const PurchesInvoice = () => {
               <td style="width: 30%;">
                 <div style="text-align:left;" class="sales-estimate">
                   <div class="section-header">Order Details</div>
-                  <div class="details">Order No: <span>${
-                    updatedFormData?.orderNo
-                  }</span></div>
-                  <div class="details">Order Date: <span>${
-                    updatedFormData?.date
-                  }</span></div>
-                  <div class="details">Place of Supply: <span>${
-                    updatedFormData?.placeOfSupply || company.state
-                  }</span></div>
+                  <div class="details">Order No: <span>${updatedFormData?.orderNo
+      }</span></div>
+                  <div class="details">Order Date: <span>${updatedFormData?.date
+      }</span></div>
+                  <div class="details">Place of Supply: <span>${updatedFormData?.placeOfSupply || company.state
+      }</span></div>
                 
                 </div>
               </td>
               <td style="width: 40%;">
                 <div style="text-align:left;" class="transport-details">
                   <div class="section-header">Transport Details</div>
-                   <div class="details">Receipt Doc No.: <span>${
-                     updatedFormData.receiptDocNo
-                   }</span></div>
-                  <div class="details">Dispatch Through: <span>${
-                    updatedFormData.dispatchedThrough
-                  }</span></div>
-                  <div class="details">Destination: <span>${
-                    updatedFormData.destination
-                  }</span></div>
-                  <div class="details">Carrier Name/Agent: <span>${
-                    updatedFormData.carrierNameAgent
-                  }</span></div>
-                  <div class="details">Bill of Lading/LR-RR No.: <span>${
-                    updatedFormData.billOfLading
-                  }</span></div>
-                   <div class="details">Motor Vehicle No.: <span>${
-                     updatedFormData.motorVehicleNo
-                   }</span></div>
+                   <div class="details">Receipt Doc No.: <span>${updatedFormData.receiptDocNo
+      }</span></div>
+                  <div class="details">Dispatch Through: <span>${updatedFormData.dispatchedThrough
+      }</span></div>
+                  <div class="details">Destination: <span>${updatedFormData.destination
+      }</span></div>
+                  <div class="details">Carrier Name/Agent: <span>${updatedFormData.carrierNameAgent
+      }</span></div>
+                  <div class="details">Bill of Lading/LR-RR No.: <span>${updatedFormData.billOfLading
+      }</span></div>
+                   <div class="details">Motor Vehicle No.: <span>${updatedFormData.motorVehicleNo
+      }</span></div>
                 </div>
               </td>
             </tr>
@@ -1625,18 +1661,14 @@ const PurchesInvoice = () => {
               <td style="width: 33.33%; text-align: left;">
                 <div class="banking-details">
                   <div class="section-header">Banking Details</div>
-                <div class="details">Bank Name: ${
-                  company?.bank_name || "-"
-                }</div>
-                    <div class="details">IFSC Code: ${
-                      company?.ifce_code || "-"
-                    }</div>
-                    <div class="details">Account No:${
-                      company?.accountNumber || "-"
-                    }</div>
-                    <div class="details">Account Holder Name: ${
-                      company?.account_holder_name || "-"
-                    }</div>
+                <div class="details">Bank Name: ${company?.bank_name || "-"
+      }</div>
+                    <div class="details">IFSC Code: ${company?.ifce_code || "-"
+      }</div>
+                    <div class="details">Account No:${company?.accountNumber || "-"
+      }</div>
+                    <div class="details">Account Holder Name: ${company?.account_holder_name || "-"
+      }</div>
                     <div class="details">UPI ID: ${company?.upiId || "-"}</div>
                 </div>
                 </div>
@@ -1645,18 +1677,15 @@ const PurchesInvoice = () => {
               <td style="width: 33.33%; text-align: left;">
                 <div class="amount-details">
                   <div class="section-header">Amount Details</div>
-                  <div class="details">Gross Total: ₹${
-                    updatedFormData.grossAmount
-                  }</div>
-                  <div class="details">Additional Charges: ₹${
-                    updatedFormData.otherCharges
-                  }</div>
-                  <div class="details">Net Total: ₹${
-                    updatedFormData.netAmount
-                  }</div>
+                  <div class="details">Gross Total: ₹${updatedFormData.grossAmount
+      }</div>
+                  <div class="details">Additional Charges: ₹${updatedFormData.otherCharges
+      }</div>
+                  <div class="details">Net Total: ₹${updatedFormData.netAmount
+      }</div>
                   <div class="details">Amount in Words: ${numberToWords(
-                    updatedFormData.netAmount
-                  )}</div>
+        updatedFormData.netAmount
+      )}</div>
                 </div>
               </td>
             </tr>
@@ -1684,7 +1713,7 @@ const PurchesInvoice = () => {
 
       // Create a fake event object (optional)
       const dummyEvent = {
-        preventDefault: () => {},
+        preventDefault: () => { },
       };
 
       handleSubmit(dummyEvent); // Call handleSubmit with the dummy event
@@ -2043,9 +2072,9 @@ const PurchesInvoice = () => {
                       value={
                         rows[index].itemCode
                           ? {
-                              label: rows[index].itemCode,
-                              value: rows[index].itemCode,
-                            }
+                            label: rows[index].itemCode,
+                            value: rows[index].itemCode,
+                          }
                           : null
                       }
                       onChange={(selectedOption) =>
@@ -2078,9 +2107,9 @@ const PurchesInvoice = () => {
                       value={
                         rows[index].productName
                           ? {
-                              label: rows[index].productName,
-                              value: rows[index].productName,
-                            }
+                            label: rows[index].productName,
+                            value: rows[index].productName,
+                          }
                           : null
                       }
                       onChange={(selectedOption) => {
@@ -2160,7 +2189,7 @@ const PurchesInvoice = () => {
                         flexBasis: "40px", // Allow it to shrink, but still have a base width
                         flexShrink: 1, // Allow it to shrink on mobile
                       }}
-                         />
+                    />
                   </td>
                   <td className="border p-1">
                     <input
@@ -2219,7 +2248,7 @@ const PurchesInvoice = () => {
                         flexBasis: "20px", // Allow it to shrink, but still have a base width
                         flexShrink: 1, // Allow it to shrink on mobile
                       }}
-                                             />
+                    />
                   </td>
                   <td className="border">
                     <div className="p-1 flex gap-1">
@@ -2253,7 +2282,7 @@ const PurchesInvoice = () => {
                           flexBasis: "70px", // Allow it to shrink, but still have a base width
                           flexShrink: 1, // Allow it to shrink on mobile
                         }}
-                           />                      
+                      />
                     </div>
                   </td>
                   {purchaseType === "GST Invoice" && (
@@ -2376,7 +2405,7 @@ const PurchesInvoice = () => {
                                 flexBasis: "90px", // Allow it to shrink, but still have a base width
                                 flexShrink: 1, // Allow it to shrink on mobile
                               }}
-                                 />                            
+                            />
                           </td>
                           <td className="border p-1">
                             <div className="flex gap-1">

@@ -556,7 +556,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
       const retailPrice =
         selectedProduct.maxmimunRetailPrice -
         (selectedProduct.maxmimunRetailPrice * selectedProduct.retailDiscount) /
-          100;
+        100;
 
       // Determine if sales tax is included from the fetched product data
       const salesTaxInclude = selectedProduct.salesTaxInclude;
@@ -739,8 +739,7 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
 
       // Show error message to user
       alert(
-        `Error updating invoice: ${
-          error.response?.data?.message || error.message
+        `Error updating invoice: ${error.response?.data?.message || error.message
         }`
       );
     }
@@ -994,201 +993,267 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
       </div>
       {/* Items Section */}
       <div className="overflow-x-auto">
-          <table className="w-full border-collapse overflow-x-auto">
-            <thead>
-              <tr>
-                <th className="border p-2">#</th>
-                <th className="border p-2">Item Code</th>
-                <th className="border p-2">Product Name</th>
-                <th className="border p-2">HSN Code</th>
-                <th className="border p-2">Qty</th>
-                <th className="border p-2 ">unit</th>
-                <th className="border p-2 ">free Qty</th>
+        <table className="w-full border-collapse overflow-x-auto">
+          <thead>
+            <tr>
+              <th className="border p-2">#</th>
+              <th className="border p-2">Item Code</th>
+              <th className="border p-2">Product Name</th>
+              <th className="border p-2">HSN Code</th>
+              <th className="border p-2">Qty</th>
+              <th className="border p-2 ">unit</th>
+              <th className="border p-2 ">free Qty</th>
 
-                <th className="border p-2">MRP</th>
-                <th className="border p-2">Unit Cost</th>
-                <th className="border p-2">Scheme Margin</th>
+              <th className="border p-2">MRP</th>
+              <th className="border p-2">Unit Cost</th>
+              <th className="border p-2">Scheme Margin</th>
 
-                <th className="border p-2">
-                  Discount
-                  <div className="flex justify-between">
-                    <span className="mr-16">%</span> <span>₹</span>
-                  </div>
-                </th>
-                <>
-                  <th className="border p-2">Taxable</th>
-                  {gstType === "CGST/SGST" && (
-                    <>
-                      <th className="border p-2">
-                        CGST
-                        <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>₹</span>
-                        </div>
-                      </th>
-                      <th className="border p-2">
-                        SGST
-                        <div className="flex justify-between">
-                          <span className="mr-16">%</span> <span>₹</span>
-                        </div>
-                      </th>
-                    </>
-                  )}
-                  {gstType === "IGST" && (
+              <th className="border p-2">
+                Discount
+                <div className="flex justify-between">
+                  <span className="mr-16">%</span> <span>₹</span>
+                </div>
+              </th>
+              <>
+                <th className="border p-2">Taxable</th>
+                {gstType === "CGST/SGST" && (
+                  <>
                     <th className="border p-2">
-                      IGST
+                      CGST
                       <div className="flex justify-between">
                         <span className="mr-16">%</span> <span>₹</span>
                       </div>
                     </th>
-                  )}
-                </>
-                <th className="border p-2">Total Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, index) => (
-                <tr key={index}>
-                  <td className="border p-2">{index + 1}</td>
-                  <td className="border p-2">
-                    <td className="border">
-                      <Select
-                        id="itemcode-select"
-                        value={
-                          rows[index].itemCode
-                            ? {
-                                label: rows[index].itemCode,
-                                value: rows[index].itemCode,
-                              }
-                            : null
-                        }
-                        onChange={(selectedOption) =>
-                          handleItemCodeSelect(index, selectedOption.value)
-                        }
-                        options={products.map((product) => ({
-                          label: product.itemCode,
-                          value: product.itemCode,
-                        }))}
-                        isSearchable={true}
-                        placeholder="Select"
-                        styles={{
-                          control: (base) => ({
-                            ...base,
-                            minWidth: "120px",
-                            maxWidth: "300px",
-                            fontSize: "14px",
-                            minHeight: "34px",
-                            height: "34px",
-                          }),
-                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                        }}
-                        menuPortalTarget={document.body}
-                        menuPosition="fixed"
-                      />
-                    </td>
-                  </td>
-                  <td className="border p-2">
-                    <td className="border ">
-                      <Select
-                        id="product-select"
-                        value={
-                          rows[index].productName
-                            ? {
-                                label: rows[index].productName,
-                                value: rows[index].productName,
-                              }
-                            : null
-                        }
-                        onChange={(selectedOption) =>
-                          handleProductSelect(index, selectedOption.value)
-                        }
-                        options={products.map((product) => ({
-                          label: product.productName,
-                          value: product.productName,
-                        }))}
-                        isSearchable={true}
-                        placeholder="Select a Product"
-                        styles={{
-                          control: (base) => ({
-                            ...base,
-                            minWidth: "200px",
-                            maxWidth: "500px",
-                            fontSize: "14px",
-                            minHeight: "34px",
-                            height: "34px",
-                          }),
-                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                        }}
-                        menuPortalTarget={document.body}
-                        menuPosition="fixed"
-                      />
-                    </td>
-                  </td>
-                  <td className="border p-2">
-                    <input
-                      type="text"
-                      value={row.hsnCode}
-                      onChange={(e) =>
-                        handleRowChange(index, "hsnCode", e.target.value)
+                    <th className="border p-2">
+                      SGST
+                      <div className="flex justify-between">
+                        <span className="mr-16">%</span> <span>₹</span>
+                      </div>
+                    </th>
+                  </>
+                )}
+                {gstType === "IGST" && (
+                  <th className="border p-2">
+                    IGST
+                    <div className="flex justify-between">
+                      <span className="mr-16">%</span> <span>₹</span>
+                    </div>
+                  </th>
+                )}
+              </>
+              <th className="border p-2">Total Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, index) => (
+              <tr key={index}>
+                <td className="border p-2">{index + 1}</td>
+                <td className="border p-2">
+                  <td className="border">
+                    <Select
+                      id="itemcode-select"
+                      value={
+                        rows[index].itemCode
+                          ? {
+                            label: rows[index].itemCode,
+                            value: rows[index].itemCode,
+                          }
+                          : null
                       }
-                      className="w-full flex-grow"
-                      style={{
-                        minWidth: "80px",
-                        flexBasis: "80px",
-                        flexShrink: 1,
-                      }}
-                    />
-                  </td>
-                  <td className="border p-2">
-                    <input
-                      type="number"
-                      name="qty"
-                      value={row.qty}
-                      onChange={(e) => handlQtyChange(index, e.target.value)}
-                      className="w-full flex-grow"
-                      style={{
-                        minWidth: "40px",
-                        flexBasis: "40px",
-                        flexShrink: 1,
-                      }}
-                    />
-                  </td>
-
-                  <td className="border p-2">
-                    <input
-                      type="text"
-                      value={row.unit}
-                      onChange={(e) =>
-                        handleRowChange(index, "unit", e.target.value)
+                      onChange={(selectedOption) =>
+                        handleItemCodeSelect(index, selectedOption.value)
                       }
-                      className="w-full"
+                      options={products.map((product) => ({
+                        label: product.itemCode,
+                        value: product.itemCode,
+                      }))}
+                      isSearchable={true}
+                      placeholder="Select"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "120px",
+                          maxWidth: "300px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
                     />
                   </td>
+                </td>
+                <td className="border p-2">
+                  <td className="border ">
+                    <Select
+                      id="product-select"
+                      value={
+                        rows[index].productName
+                          ? {
+                            label: rows[index].productName,
+                            value: rows[index].productName,
+                          }
+                          : null
+                      }
+                      onChange={(selectedOption) =>
+                        handleProductSelect(index, selectedOption.value)
+                      }
+                      options={products.map((product) => ({
+                        label: product.productName,
+                        value: product.productName,
+                      }))}
+                      isSearchable={true}
+                      placeholder="Select a Product"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minWidth: "200px",
+                          maxWidth: "500px",
+                          fontSize: "14px",
+                          minHeight: "34px",
+                          height: "34px",
+                        }),
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                    />
+                  </td>
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={row.hsnCode}
+                    onChange={(e) =>
+                      handleRowChange(index, "hsnCode", e.target.value)
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "80px",
+                      flexBasis: "80px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    name="qty"
+                    value={row.qty}
+                    onChange={(e) => handlQtyChange(index, e.target.value)}
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "50px",
+                      flexBasis: "50px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
 
-                  <td className="border p-2">
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={row.unit}
+                    onChange={(e) =>
+                      handleRowChange(index, "unit", e.target.value)
+                    }
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "40px", // Set a small minimum width to ensure visibility
+                      flexBasis: "40px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
+                </td>
+
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    name="freeQty"
+                    value={row.freeQty}
+                    onChange={(e) => handleFreeQtyChange(index, e.target.value)}
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "40px",
+                      flexBasis: "40px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    value={row.maxmimunRetailPrice}
+                    onChange={(e) =>
+                      handleRowChange(
+                        index,
+                        "maxmimunRetailPrice",
+                        e.target.value
+                      )
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "60px",
+                      flexBasis: "60px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={row.unitCost}
+                    onChange={(e) =>
+                      handleRowChange(index, "unitCost", e.target.value)
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "50px",
+                      flexBasis: "50px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+
+                <td className="border p-2">
+                  <input
+                    type="text"
+                    value={row.schemeMargin}
+                    onChange={(e) =>
+                      handleRowChange(index, "schemeMargin", e.target.value)
+                    }
+                    className="w-full"
+                  />
+                </td>
+
+                <td className="border">
+                  <div className="p-1 flex gap-1">
                     <input
                       type="text"
-                      name="freeQty"
-                      value={row.freeQty}
-                      onChange={(e) => handleFreeQtyChange(index, e.target.value)}
-                      className="w-full flex-grow"
-                      style={{
-                        minWidth: "40px",
-                        flexBasis: "40px",
-                        flexShrink: 1,
-                      }}
-                    />
-                  </td>
-
-                  <td className="border p-2">
-                    <input
-                      type="number"
-                      value={row.maxmimunRetailPrice}
+                      value={row.discountpercent}
                       onChange={(e) =>
                         handleRowChange(
                           index,
-                          "maxmimunRetailPrice",
+                          "discountpercent",
                           e.target.value
                         )
+                      }
+                      className="w-full flex-grow"
+                      style={{
+                        minWidth: "20px",
+                        flexBasis: "20px",
+                        flexShrink: 1,
+                      }}
+                    />
+                    <input
+                      type="text"
+                      value={row.discountRs}
+                      onChange={
+                        (e) =>
+                          handleRowChange(index, "discountRs", e.target.value) // Fix here
                       }
                       className="w-full flex-grow"
                       style={{
@@ -1197,225 +1262,171 @@ const EditPurchaseInvoice = ({ closeModal, estimate }) => {
                         flexShrink: 1,
                       }}
                     />
-                  </td>
-
+                  </div>
+                </td>
+                <>
                   <td className="border p-2">
                     <input
-                      type="text"
-                      value={row.unitCost}
+                      type="number"
+                      value={row.taxableValue}
                       onChange={(e) =>
-                        handleRowChange(index, "unitCost", e.target.value)
+                        handleRowChange(index, "taxableValue", e.target.value)
                       }
                       className="w-full flex-grow"
                       style={{
-                        minWidth: "50px",
-                        flexBasis: "50px",
+                        minWidth: "110px",
+                        flexBasis: "110px",
                         flexShrink: 1,
                       }}
                     />
                   </td>
-
-                  <td className="border p-2">
-                    <input
-                      type="text"
-                      value={row.schemeMargin}
-                      onChange={(e) =>
-                        handleRowChange(index, "schemeMargin", e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </td>
-
-                  <td className="border">
-                    <div className="p-1 flex gap-1">
-                      <input
-                        type="text"
-                        value={row.discountpercent}
-                        onChange={(e) =>
-                          handleRowChange(
-                            index,
-                            "discountpercent",
-                            e.target.value
-                          )
-                        }
-                        className="w-full flex-grow"
-                        style={{
-                          minWidth: "20px",
-                          flexBasis: "20px",
-                          flexShrink: 1,
-                        }}
-                      />
-                      <input
-                        type="text"
-                        value={row.discountRs}
-                        onChange={
-                          (e) =>
-                            handleRowChange(index, "discountRs", e.target.value) // Fix here
-                        }
-                        className="w-full flex-grow"
-                        style={{
-                          minWidth: "40px",
-                          flexBasis: "40px",
-                          flexShrink: 1,
-                        }}
-                      />
-                    </div>
-                  </td>
-                  <>
-                    <td className="border p-2">
-                      <input
-                        type="number"
-                        value={row.taxableValue}
-                        onChange={(e) =>
-                          handleRowChange(index, "taxableValue", e.target.value)
-                        }
-                        className="w-full flex-grow"
-                        style={{
-                          minWidth: "70px",
-                          flexBasis: "70px",
-                          flexShrink: 1,
-                        }}
-                      />
-                    </td>
-                    {gstType === "CGST/SGST" && (
-                      <>
-                        <td className="border p-2">
-                          <div className="flex gap-1">
-                            <input
-                              type="number"
-                              value={row.cgstpercent}
-                              onChange={(e) =>
-                                handleRowChange(
-                                  index,
-                                  "cgstpercent",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full flex-grow"
-                              style={{
-                                minWidth: "50px",
-                                flexBasis: "50px",
-                                flexShrink: 1,
-                              }}
-                            />
-                            <input
-                              type="number"
-                              value={row.cgstRS}
-                              onChange={(e) =>
-                                handleRowChange(index, "cgstRS", e.target.value)
-                              }
-                              className="w-full flex-grow"
-                              style={{
-                                minWidth: "50px",
-                                flexBasis: "50px",
-                                flexShrink: 1,
-                              }}
-                            />
-                          </div>
-                        </td>
-                        <td className="border p-2">
-                          <div className="flex gap-1">
-                            <input
-                              type="number"
-                              value={row.sgstpercent}
-                              onChange={(e) =>
-                                handleRowChange(
-                                  index,
-                                  "sgstpercent",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full flex-grow"
-                              style={{
-                                minWidth: "50px",
-                                flexBasis: "50px",
-                                flexShrink: 1,
-                              }}
-                            />
-                            <input
-                              type="number"
-                              value={row.sgstRS}
-                              onChange={(e) =>
-                                handleRowChange(index, "sgstRS", e.target.value)
-                              }
-                              className="w-full flex-grow"
-                              style={{
-                                minWidth: "50px",
-                                flexBasis: "50px",
-                                flexShrink: 1,
-                              }}
-                            />
-                          </div>
-                        </td>
-                      </>
-                    )}
-                    {gstType === "IGST" && (
+                  {gstType === "CGST/SGST" && (
+                    <>
                       <td className="border p-2">
                         <div className="flex gap-1">
                           <input
                             type="number"
-                            value={row.igstpercent}
+                            value={row.cgstpercent}
                             onChange={(e) =>
                               handleRowChange(
                                 index,
-                                "igstpercent",
+                                "cgstpercent",
                                 e.target.value
                               )
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
                           />
                           <input
                             type="number"
-                            value={row.igstRS}
+                            value={row.cgstRS}
                             onChange={(e) =>
-                              handleRowChange(index, "igstRS", e.target.value)
+                              handleRowChange(index, "cgstRS", e.target.value)
                             }
-                            className="w-full"
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "110px",
+                              flexBasis: "110px",
+                              flexShrink: 1,
+                            }}
                           />
                         </div>
                       </td>
-                    )}
-                  </>
-                  <td className="border p-2">
-                    <input
-                      type="number"
-                      value={row.totalValue}
-                      onChange={(e) =>
-                        handleRowChange(index, "totalValue", e.target.value)
-                      }
-                      className="w-full flex-grow"
-                      style={{
-                        minWidth: "70px",
-                        flexBasis: "70px",
-                        flexShrink: 1,
-                      }}
-                    />
-                  </td>
-                  <td className="p-1 gap-2 flex">
-                    <button
-                      onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+                      <td className="border p-2">
+                        <div className="flex gap-1">
+                          <input
+                            type="number"
+                            value={row.sgstpercent}
+                            onChange={(e) =>
+                              handleRowChange(
+                                index,
+                                "sgstpercent",
+                                e.target.value
+                              )
+                            }
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "50px",
+                              flexBasis: "50px",
+                              flexShrink: 1,
+                            }}
+                          />
+                          <input
+                            type="number"
+                            value={row.sgstRS}
+                            onChange={(e) =>
+                              handleRowChange(index, "sgstRS", e.target.value)
+                            }
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "110px",
+                              flexBasis: "110px",
+                              flexShrink: 1,
+                            }}
+                          />
+                        </div>
+                      </td>
+                    </>
+                  )}
+                  {gstType === "IGST" && (
+                    <td className="border p-2">
+                      <div className="flex gap-1">
+                        <input
+                          type="number"
+                          value={row.igstpercent}
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              "igstpercent",
+                              e.target.value
+                            )
+                          }
+                          className="w-full flex-grow bg-white"
+                          style={{
+                            minWidth: "50px",
+                            flexBasis: "50px",
+                            flexShrink: 1,
+                          }} />
+                        <input
+                          type="number" 
+                          value={row.igstRS}
+                          onChange={(e) =>
+                            handleRowChange(index, "igstRS", e.target.value)
+                          }
+                          className="w-full flex-grow bg-white"
+                          style={{
+                            minWidth: "100px", // Set a small minimum width to ensure visibility
+                            flexBasis: "100px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }} />
+                      </div>
+                    </td>
+                  )}
+                </>
+                <td className="border p-2">
+                  <input
+                    type="number"
+                    value={row.totalValue}
+                    onChange={(e) =>
+                      handleRowChange(index, "totalValue", e.target.value)
+                    }
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "110px",
+                      flexBasis: "110px",
+                      flexShrink: 1,
+                    }}
+                  />
+                </td>
+                <td className="p-1 gap-2 flex">
+                  <button
+                    onClick={() => removeRow(index)}
+                    className="bg-red-500 text-white p-1 mt-2 rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 flex items-center justify-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       <button
         onClick={addRow}

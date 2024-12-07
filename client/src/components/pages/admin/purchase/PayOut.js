@@ -17,6 +17,11 @@ const PayOut = () => {
     [],
   )
 
+
+  const [isAdvancedReceiptSelected, setIsAdvancedReceiptSelected] = useState(false);
+  const handleAdvancedReceiptChange = (event) => {
+    setIsAdvancedReceiptSelected(event.target.checked);
+  };
   const [Banks, setBanks] = useState([])
 
   const [auth] = useAuth()
@@ -85,31 +90,36 @@ const PayOut = () => {
   }
 
   const handleRowChange = (index, key, value) => {
-    const newRows = [...rows]
+    const newRows = [...rows];
+  
     if (key === 'billNo') {
       const selectedInvoice = selctedSupplierInvoiceData.find(
-        (item) => item.invoiceNo === value,
-      )
-      {
-        console.log(selectedInvoice, 'invoice')
-      }
+        (item) => item.invoiceNo === value
+      );
+  
       if (selectedInvoice) {
         const paymentData = selectedInvoice.cash
           ? selectedInvoice.cash
-          : selectedInvoice.bank
+          : selectedInvoice.bank;
+  
         newRows[index] = {
           ...newRows[index],
           billNo: selectedInvoice.invoiceNo,
           billAmount: selectedInvoice.netAmount,
           paidAmount: paymentData ? paymentData.Received : 0,
-        }
+          balanceAmount: calculateBalance(paymentData ? paymentData.Balance : 0, newRows[index].recievedAmount, isAdvancedReceiptSelected)
+        };
       }
-    } else {
-      newRows[index][key] = value
+    }  else {
+      newRows[index][key] = value;
+      // Calculate balance when receivedAmount is updated
+      if (key === 'recievedAmount') {
+        newRows[index].balanceAmount = calculateBalance(newRows[index].paidAmount, value, isAdvancedReceiptSelected);
+      }
     }
-    setRows(newRows)
-  }
-
+    setRows(newRows);
+  };
+  
   const addRow = () => {
     setRows([
       ...rows,
@@ -129,23 +139,38 @@ const PayOut = () => {
       setRows(rows.filter((row) => row.id !== id))
     }
   }
-  let grandtotal = 0
-  const calculateBalance = (billAmount, paidAmount, receivedAmount) => {
-    const bill = parseFloat(billAmount) || 0
-    const credit = parseFloat(paidAmount) || 0
-    const received = parseFloat(receivedAmount) || 0
-    grandtotal += bill - credit - received
-    return (bill - credit - received).toFixed(2)
+  let grandtotal = 0;
+  let alltotal = 0;
+
+  // Function to calculate the balance
+  const calculateBalance = (paidAmount, receivedAmount, isAdvancedReceiptSelected) => {
+    const credit = parseFloat(paidAmount) || 0;
+    const received = parseFloat(receivedAmount) || 0;
+    // If advanced receipt is selected, show only received amount in grandtotal
+    if (isAdvancedReceiptSelected) {
+      return NaN;
+    } else {
+      grandtotal += credit - received;
+      return (credit - received).toFixed(2);
+    }
   }
 
-  let alltotal = 0
-  const GrandTotal = (billAmount, paidAmount, receivedAmount) => {
-    const bill = parseFloat(billAmount) || 0
-    const credit = parseFloat(paidAmount) || 0
-    const received = parseFloat(receivedAmount) || 0
-    alltotal += bill - credit - received
-    return alltotal
-  }
+  const GrandTotal = () => {
+    let total = 0;
+
+    rows.forEach((row) => {
+      const paidAmount = parseFloat(row.paidAmount) || 0;
+      const receivedAmount = parseFloat(row.recievedAmount) || 0;
+
+      if (isAdvancedReceiptSelected) {
+        total += receivedAmount;
+      } else {
+        total += paidAmount - receivedAmount;
+      }
+    });
+
+    return total.toFixed(2);
+  };
   const calculateTotalReceived = () => {
     return rows
       .reduce((total, row) => {
@@ -170,8 +195,9 @@ const PayOut = () => {
       rows: rows?.map((row) => ({
         billNo: row.billNo,
         billAmount: row.billAmount,
+        paidAmount: row.paidAmount, // Ensure this is defined and sent
         recievedAmount: row.recievedAmount,
-        balanceAmount: calculateBalance(row.billAmount, row.recievedAmount),
+        balanceAmount: row.balanceAmount,
       })),
       grandtotal, // Ensure grandtotal is set correctly
       Narration,
@@ -268,6 +294,21 @@ const PayOut = () => {
           </select>
         </div>
 
+
+
+        <div className="flex items-center space-x-2">
+
+          <label className="text-md font-bold text-black">
+            Advanced Receipt
+          </label>
+          <input
+            type="checkbox"
+            checked={isAdvancedReceiptSelected}
+            onChange={handleAdvancedReceiptChange}
+          />
+
+        </div>
+
         {paymentMode === 'Bank' && (
           <>
             <div className="flex flex-col">
@@ -324,11 +365,11 @@ const PayOut = () => {
           <thead>
             <tr>
               <th className="border border-gray-500 p-1">#</th>
-              <th className="border border-gray-500 p-1">invoice NO</th>
-              <th className="border border-gray-500 p-1">Invoice Amount</th>
-              <th className="border border-gray-500 p-1">Payment Amount</th>
+              <th className="border border-gray-500 p-1">Bill No</th>
+              <th className="border border-gray-500 p-1">Bill Amount</th>
               <th className="border border-gray-500 p-1">Balance Amount</th>
-              <th className="border border-gray-500 p-1">Actions</th>
+              <th className="border border-gray-500 p-1">Received Amount</th>
+              <th className="border border-gray-500 p-1">Net Balance Amount</th>
             </tr>
           </thead>
 
@@ -341,6 +382,8 @@ const PayOut = () => {
                 <td className="border border-gray-500 p-1">
                   <select
                     value={row.billNo}
+                    disabled={isAdvancedReceiptSelected}
+
                     onChange={(e) =>
                       handleRowChange(index, 'billNo', e.target.value)
                     }
@@ -354,8 +397,13 @@ const PayOut = () => {
                     ))}
                   </select>
                 </td>
-                <td className="border border-gray-500 p-1">
+                <td className="border border-gray-500 p-1" disabled={isAdvancedReceiptSelected}
+                >
                   {row.billAmount || 'NA'}
+                </td>
+                <td className="border border-gray-500 p-1" disabled={isAdvancedReceiptSelected}
+                >
+                  {typeof row.paidAmount === 'number' ? row.paidAmount.toFixed(2) : 'NA'}
                 </td>
 
                 <td className="border border-gray-500 p-1">
@@ -368,11 +416,13 @@ const PayOut = () => {
                     className="w-full p-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </td>
-                <td className="border border-gray-500 p-1">
+                <td className="border border-gray-500 p-1" disabled={isAdvancedReceiptSelected}
+                >
                   {calculateBalance(
-                    row.billAmount,
                     row.paidAmount,
                     row.recievedAmount,
+                    isAdvancedReceiptSelected
+
                   )}
                 </td>
                 <td className="text-center flex gap-2 pl-1">
@@ -414,7 +464,7 @@ const PayOut = () => {
         <label className="text-2xl font-bold text-black mr-2">Total</label>
         <input
           type="text"
-          value={grandtotal.toFixed(2)}
+          value={GrandTotal()} // Dynamically calculate grand total
           readOnly
           className="p-1 border border-gray-500 w-1/2 rounded-md bg-gray-200"
         />

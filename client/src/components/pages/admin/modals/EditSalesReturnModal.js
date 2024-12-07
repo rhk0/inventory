@@ -1032,8 +1032,12 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) =>
                       handleRowChange(index, 'hsnCode', e.target.value)
                     }
-                    className="w-full"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "60px", // Set a small minimum width to ensure visibility
+                      flexBasis: "60px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
                 <td className="border p-2">
                   <input
@@ -1042,8 +1046,12 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) =>
                       handleQtyChange(index, e.target.value)
                     }
-                    className="w-full"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "50px", // Set a small minimum width to ensure visibility
+                      flexBasis: "50px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
 
                 <td className="border p-2">
@@ -1053,8 +1061,12 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) =>
                       handleRowChange(index, 'unit', e.target.value)
                     }
-                    className="w-full"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "40px", // Set a small minimum width to ensure visibility
+                      flexBasis: "40px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
                 <td className="border p-2">
                   <input
@@ -1063,8 +1075,12 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) =>
                       handleRowChange(index, 'mrp', e.target.value)
                     }
-                    className="w-full"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "60px", // Set a small minimum width to ensure visibility
+                      flexBasis: "60px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
                 <td className="border">
                   {row.discountpercent && row.discountRS ? (
@@ -1170,8 +1186,12 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                         onChange={(e) =>
                           handleRowChange(index, 'taxable', e.target.value)
                         }
-                        className="w-full"
-                      />
+                        className="w-full flex-grow bg-white"
+                        style={{
+                          minWidth: "90px", // Set a small minimum width to ensure visibility
+                          flexBasis: "90px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}                      />
                     </td>
                     {gstType === 'CGST/SGST' && (
                       <>
@@ -1187,16 +1207,24 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                                   e.target.value,
                                 )
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow bg-white"
+                              style={{
+                                minWidth: "40px", // Set a small minimum width to ensure visibility
+                                flexBasis: "40px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                            />
                             <input
                               type="number"
                               value={row.cgstRS}
                               onChange={(e) =>
                                 handleRowChange(index, 'cgstRS', e.target.value)
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow bg-white"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                            />
                           </div>
                         </td>
                         <td className="border p-2">
@@ -1211,16 +1239,24 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                                   e.target.value,
                                 )
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow bg-white"
+                              style={{
+                                minWidth: "40px", // Set a small minimum width to ensure visibility
+                                flexBasis: "40px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                            />
                             <input
                               type="number"
                               value={row.sgstRS}
                               onChange={(e) =>
                                 handleRowChange(index, 'sgstRS', e.target.value)
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow bg-white"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                            />
                           </div>
                         </td>
                       </>
@@ -1238,16 +1274,24 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                                 e.target.value,
                               )
                             }
-                            className="w-full"
-                          />
+                            className="w-full flex-grow bg-white"
+                            style={{
+                              minWidth: "30px", // Set a small minimum width to ensure visibility
+                              flexBasis: "30px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }}                          />
                           <input
                             type="number"
                             value={row.igstRS}
                             onChange={(e) =>
                               handleRowChange(index, 'igstRS', e.target.value)
                             }
-                            className="w-full"
-                          />
+                            className="w-full flex-grow bg-white"
+                            style={{
+                              minWidth: "90px", // Set a small minimum width to ensure visibility
+                              flexBasis: "90px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }}                          />
                         </div>
                       </td>
                     )}
@@ -1260,8 +1304,12 @@ const EditSalesReturnModal = ({ closeModal, estimate, getCustomerName }) => {
                     onChange={(e) =>
                       handleRowChange(index, 'totalValue', e.target.value)
                     }
-                    className="w-full"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "90px", // Set a small minimum width to ensure visibility
+                      flexBasis: "90px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
                 <td className="p-1 gap-2 flex">
                   <button

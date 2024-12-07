@@ -14,6 +14,7 @@ const payOutSchema = new mongoose.Schema(
       {
         billNo: { type: String },
         billAmount: { type: String },
+        paidAmount: { type: String },
         recievedAmount: { type: Number },
         balanceAmount: { type: Number },
       },

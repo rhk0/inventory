@@ -972,8 +972,8 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '80px',
-                      flexBasis: '80px',
+                      minWidth: '60px',
+                      flexBasis: '60px',
                       flexShrink: 1,
                     }}
                   />
@@ -986,8 +986,8 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
                     onChange={(e) => handlQtyChange(index, e.target.value)}
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '40px',
-                      flexBasis: '40px',
+                      minWidth: '50px',
+                      flexBasis: '50px',
                       flexShrink: 1,
                     }}
                   />
@@ -1029,8 +1029,8 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '50px',
-                      flexBasis: '50px',
+                      minWidth: '90px',
+                      flexBasis: '90px',
                       flexShrink: 1,
                     }}
                   />
@@ -1066,8 +1066,8 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: '50px',
-                              flexBasis: '50px',
+                              minWidth: '100px',
+                              flexBasis: '100px',
                               flexShrink: 1,
                             }}
                           />
@@ -1100,8 +1100,8 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: '50px',
-                              flexBasis: '50px',
+                              minWidth: '100px',
+                              flexBasis: '100px',
                               flexShrink: 1,
                             }}
                           />
@@ -1122,16 +1122,24 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
                               e.target.value,
                             )
                           }
-                          className="w-full"
-                        />
+                          className="w-full flex-grow bg-white"
+                          style={{
+                            minWidth: "30px", // Set a small minimum width to ensure visibility
+                            flexBasis: "30px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}                        />
                         <input
                           type="number"
                           value={row.igstRS}
                           onChange={(e) =>
                             handleRowChange(index, 'igstRS', e.target.value)
                           }
-                          className="w-full"
-                        />
+                          className="w-full flex-grow bg-white"
+                          style={{
+                            minWidth: "90px", // Set a small minimum width to ensure visibility
+                            flexBasis: "90px", // Allow it to shrink, but still have a base width
+                            flexShrink: 1, // Allow it to shrink on mobile
+                          }}                        />
                       </div>
                     </td>
                   )}
@@ -1145,8 +1153,8 @@ const EditPurchaseOrder = ({ closeModal, estimate }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: '70px',
-                      flexBasis: '70px',
+                      minWidth: '110px',
+                      flexBasis: '110px',
                       flexShrink: 1,
                     }}
                   />

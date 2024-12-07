@@ -1061,8 +1061,12 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     type="number"
                     value={row.qty}
                     onChange={(e) => handleQtyChange(index, e.target.value)}
-                    className="w-full"
-                  />
+                    className="w-full flex-grow"
+                    style={{
+                      minWidth: "50px", // Set a small minimum width to ensure visibility
+                      flexBasis: "50px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }} />
                 </td>
 
                 <td className="border p-2">
@@ -1084,8 +1088,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: "60px",
-                      flexBasis: "60px",
+                      minWidth: "70px",
+                      flexBasis: "70px",
                       flexShrink: 1,
                     }}
                   />
@@ -1121,8 +1125,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                         }
                         className="w-full flex-grow"
                         style={{
-                          minWidth: "40px",
-                          flexBasis: "40px",
+                          minWidth: "60px",
+                          flexBasis: "60px",
                           flexShrink: 1,
                         }}
                       />
@@ -1160,8 +1164,12 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full"
-                          />
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "60px", // Set a small minimum width to ensure visibility
+                              flexBasis: "60px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }} />
                         </div>
                       )}
                       {customerType === "Retailer" && (
@@ -1193,8 +1201,12 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full"
-                          />
+                            className="w-full flex-grow"
+                            style={{
+                              minWidth: "60px", // Set a small minimum width to ensure visibility
+                              flexBasis: "60px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }}                            />
                         </div>
                       )}
                     </>
@@ -1211,8 +1223,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                         }
                         className="w-full flex-grow"
                         style={{
-                          minWidth: "60px",
-                          flexBasis: "60px",
+                          minWidth: "90px",
+                          flexBasis: "90px",
                           flexShrink: 1,
                         }}
                       />
@@ -1239,8 +1251,12 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                               onChange={(e) =>
                                 handleRowChange(index, "cgstRS", e.target.value)
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                              />
                           </div>
                         </td>
                         <td className="border p-2">
@@ -1263,8 +1279,12 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                               onChange={(e) =>
                                 handleRowChange(index, "sgstRS", e.target.value)
                               }
-                              className="w-full"
-                            />
+                              className="w-full flex-grow"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                              />
                           </div>
                         </td>
                       </>
@@ -1297,8 +1317,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                             }
                             className="w-full flex-grow"
                             style={{
-                              minWidth: "60px",
-                              flexBasis: "60px",
+                              minWidth: "90px",
+                              flexBasis: "90px",
                               flexShrink: 1,
                             }}
                           />
@@ -1316,8 +1336,8 @@ const EditEstimateModal = ({ closeModal, estimate, getCustomerName }) => {
                     }
                     className="w-full flex-grow"
                     style={{
-                      minWidth: "70px",
-                      flexBasis: "70px",
+                      minWidth: "90px",
+                      flexBasis: "90px",
                       flexShrink: 1,
                     }}
                   />

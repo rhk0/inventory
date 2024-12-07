@@ -451,8 +451,12 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate }) => {
                         type="number"
                         value={row.taxable}
                         disabled
-                        className="w-full bg-white"
-                      />
+                        className="w-full flex-grow bg-white"
+                        style={{
+                          minWidth: "90px", // Set a small minimum width to ensure visibility
+                          flexBasis: "90px", // Allow it to shrink, but still have a base width
+                          flexShrink: 1, // Allow it to shrink on mobile
+                        }}                        />
                     </td>
                     {gstType === 'CGST/SGST' && (
                       <>
@@ -468,8 +472,12 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate }) => {
                               type="number"
                               value={row.cgstRS}
                               disabled
-                              className="w-full bg-white"
-                            />
+                              className="w-full flex-grow bg-white"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                              />
                           </div>
                         </td>
                         <td className="border p-2">
@@ -484,8 +492,12 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate }) => {
                               type="number"
                               value={row.sgstRS}
                               disabled
-                              className="w-full bg-white"
-                            />
+                              className="w-full flex-grow bg-white"
+                              style={{
+                                minWidth: "90px", // Set a small minimum width to ensure visibility
+                                flexBasis: "90px", // Allow it to shrink, but still have a base width
+                                flexShrink: 1, // Allow it to shrink on mobile
+                              }}                              />
                           </div>
                         </td>
                       </>
@@ -503,8 +515,12 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate }) => {
                             type="number"
                             value={row.igstRS}
                             disabled
-                            className="w-full bg-white"
-                          />
+                            className="w-full flex-grow bg-white"
+                            style={{
+                              minWidth: "90px", // Set a small minimum width to ensure visibility
+                              flexBasis: "90px", // Allow it to shrink, but still have a base width
+                              flexShrink: 1, // Allow it to shrink on mobile
+                            }}                            />
                         </div>
                       </td>
                     )}
@@ -515,8 +531,12 @@ const ViewSalesInvoiceModal = ({ closeModal, estimate }) => {
                     type="number"
                     value={row.totalValue}
                     disabled
-                    className="w-full bg-white "
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "90px", // Set a small minimum width to ensure visibility
+                      flexBasis: "90px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
               </tr>
             ))}

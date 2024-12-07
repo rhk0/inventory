@@ -479,8 +479,12 @@ const ViewPurchaseOrder = ({ closeModal, estimate, getSupplierName }) => {
                     type="number"
                     value={row.totalValue}
                     disabled
-                    className="w-full bg-white"
-                  />
+                    className="w-full flex-grow bg-white"
+                    style={{
+                      minWidth: "80px", // Set a small minimum width to ensure visibility
+                      flexBasis: "80px", // Allow it to shrink, but still have a base width
+                      flexShrink: 1, // Allow it to shrink on mobile
+                    }}                  />
                 </td>
               </tr>
             ))}
